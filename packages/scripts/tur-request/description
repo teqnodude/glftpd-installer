@@ -1,0 +1,7 @@
+Supposed to replace 'site request' & 'site reqfilled' on site
+and add !request, !reqfilled & !requests functions to irc.
+( !reqdel and !reqwipe too )
+
+Can also delete requests if they are older then a of days
+and unfilled, as well as deleting those that ARE filled after
+a (different?) number of days.

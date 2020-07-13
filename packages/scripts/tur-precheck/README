@@ -1,0 +1,232 @@
+--[ Intro ]----------------------------------------------
+
+ Tur-PreCheck. A script to only allow certain types 
+ of files to be uploaded. This has nothing to do with 
+ directories. Only files.
+
+ It can also be used ONLY to ban certain files from being
+ uploaded, as well as enforce that nobody uploads a .sfv and/or
+ into a dir where there already is one.
+
+ Oh, and it can also block those nasty double nfos called blabla(18).nfo
+ which have been dubbed ftprushnfos (rename instead of skip in 'if exists' rules).
+
+ It also works as a replacement for zipscript-c's 
+ precheck.sh if you want it to.
+
+--[ Install ]--------------------------------------------
+ 
+ Copy tur-predircheck.sh to /glftpd/bin. Set 755 on it. 
+
+ Required binaries that must be in your /glftpd/bin dir:
+ echo, cut, tr, egrep, grep, ls & basename
+
+ Change the options in the script: 
+
+ VERIFY_RAR_WITH_SFV="TRUE/FALSE"
+ Verify that each rar file uploaded exists in sfv.
+
+ VERIFY_MP3_WITH_SFV="TRUE/FALSE"
+ Verify that each mp3 file uploaded exists in sfv.
+
+ VERIFY_ZIP_WITH_CURRENT_DISKS="TRUE/FALSE"
+ Verify that all zip files match those previously uploaded in the same dir.
+ Nice so people does not mix releases together.
+
+ DONT_ALLOW_DIZ="TRUE/FALSE"
+ Dont allow uploading of .diz files. Normally, this is exctracted from the first
+ zip file uploaded so you should probably leave it at TRUE.
+ Actually, you can remove .diz from the ALLOWED setting below instead, but that
+ will then produce an error. DONT_ALLOW_DIZ="TRUE" wont. It will just not allow it.
+
+ -------------------------------------------------------------------------------
+
+ ALLOWED = Which filetypes to allow. Its a standard egrep line, part from 
+  using spaces to seperate instead of |. 
+  ( You can use | here instead of spaces if it makes you feel better. )
+ 
+  . = Any char, so if you want to specify a "real" . use \.
+  Any non alpha chars (alpha: a-z 0-9) should be escaped with a \
+ 
+  ^ forces start of word. $ forces end of word, 
+  ie \.nfo would hit on rel.nfo.fix whereas \.nfo$ would ONLY hit if the rel 
+  ends with .nfo 
+
+  Likewise, ^file\.nfo$ would only hit if the exact filename is file.nfo 
+ 
+  \.r[a|0-9][r|0-9]$ = Any file ending with .rar or .r01 to .r99
+ 
+  It is NOT case sensitive, so dont need \.r[aA|0-9]$ 
+ 
+  "" = Dont check allowed files. All is good and allowed.
+
+  NOTE: If you do not understand this syntax, despite the info I gave above
+  then you should probably not play with this script.
+
+ -------------------------------------------------------------------------------
+ 
+ BANNED = A reversed ALLOWED. While you allow .nfo above, you might want to NOT 
+  allow, for example, aks.nfo, which is a site nfo. 
+ 
+  Same rules apply here as for ALLOWED, but you really only need to add files with 
+  extensions that is added in ALLOWED, or it wont be ok anyway (ie, dont need \.imdb$
+  here since \.imdb$ isnt in the ALLOWED part anyway. 
+ 
+  BANNED has higher prio then ALLOWED, so if you add \.nfo$ as banned, no
+  nfos will be allowed.
+ 
+  "" = Disable checking for banned files. 
+ 
+  NOTE: I added LOTS of sitenfos here that I had in my skipl.. err got from a pal. 
+  Keep them there if you like or do your own list. It does not get slower just
+  cause you add more files here.
+ 
+ -------------------------------------------------------------------------------
+
+ NODOUBLESFV = TRUE/FALSE. If the user tries to upload a sfv, check that there isnt
+  one in the dir already. If so, dont allow it.
+  Check if you alraedy block this in your zipscript as some have the option to do
+  that directly. Thats probably faster so set this to FALSE if enabled in zipscript.
+
+ -------------------------------------------------------------------------------
+
+  If you want to announce this in irc and embarras the user, there is support for
+  this too, with dZSbot.tcl from dark0n3 and pzs-ng.
+  If you use pzs-ng (build 1445 and over (1.0 is fine)), TURGEN support is already in it.
+  Skip this if so.
+
+  If you want this, set GLLOG to your glftpd.log file. If you do NOT want announce,
+  set GLLOG=""
+
+  Check first that TURGEN is not already added on your bot. Its used for a few other
+  scripts as well. If it is, it should work from scratch.
+
+  If you are using the old dark0n3s zipscript, the following goes to dZSbot.tcl
+  If you are using pzs-ng, it goes into dZSconf.tcl
+
+  Note: On newer versions of pzs-ng, set msgtypes(DEFAULT) might not
+        exist in dZSconf.tcl. If so, find it in dZSbconf.defaults.tcl, copy 
+        the whole 'set msgtypes(DEFAULT) into dZSconf.tcl and then add TURGEN 
+        to set msgtypes(DEFAULT) in dZSconf.tcl.
+
+* To 'set msgtypes(DEFAULT)', add TURGEN
+
+  Add the following in the appropriate places:
+
+* set chanlist(TURGEN) "#YourChan"
+* set disable(TURGEN) 0
+* set variables(TURGEN) "%msg"
+
+  If you are using Dark0n3s dZSbot.tcl, this goes to dZSbot.tcl as well:
+* set announce(TURGEN)  "%msg"
+
+  If, however, you are using pzs-ng (beta3 -> build18111.0), then this goes to your
+  current theme file:
+* announce.TURGEN = "%msg"
+
+  Some notes on this:
+  In the TURGEN lines in the script, if you plan to change the output, you'll 
+  see ^B and ^_
+  Those are control codes for bold and underscore. You can NOT just type that
+  and expect it to be bold. You need to use vi. ctrl-b is bold and ctrl-_ is 
+  underscore.
+
+  -------------------------------------------------------------------------------
+
+ NOSAMENAME = TRUE/FALSE. If a user tries to upload, for example, test.rar when
+  TEST.rar is already there, he will be denied. This is to prevent cataclysmic
+  events which sometimes takes place when files are preed with different case
+  structures on the files.
+
+  Settings this to FALSE will skip this verification test.
+
+ -------------------------------------------------------------------------------
+
+ NODOUBLENFO = TRUE/FALSE. Same usage as NODOUBLESFV, but for .nfo files.
+
+ -------------------------------------------------------------------------------
+
+ NOFTPRUSHNFOS = TRUE/FALSE. Some ftp clients *ftprush*cough*cough* has a setting
+                 called 'rename' in the 'if file exists' rules. When this is
+                 enabled it will rename the nfo if it already exists.
+                 This creates those multiple blabla(18).nfo files you've seen.
+                 Setting this to true will disallow upload of a nfo file that
+                 looks like that. Ie: (0-100).nfo.
+
+                 Yes, you can use this as well as NODOUBLENFO to make sure you
+                 get the correct nfo, without the (number).nfo
+
+ -------------------------------------------------------------------------------
+
+ DENY_SFV_IN_SAMPLE_DIRS= TRUE/FALSE. If this is set to TRUE, it will not allow
+                          a user to upload a .sfv file into a Sample dir.
+                          Uses ERROR7 below as output in glftpd.
+
+ -------------------------------------------------------------------------------
+
+ DENY_WHEN_NO_SFV       = Here you can set files which requires a sfv file first.
+                          The default: "\.r[a0-9][r0-9]$ \.0[0-9][0-9]$ \.mp[2|3]"
+                          enforces sfv first on all rar files and mp2/mp3.
+
+                          Note that this is different from the same function in
+                          pzs-ng (for example). This is a PRE check. pzs-ng does
+                          it POST, meaning the user can upload the file and its
+                          removed afterwards. With this script, the user can not
+                          upload it at all, saving time and bandwidth.
+
+                          See the ALLOWED settings above for the format usage.
+                          Set to "" to disable this function.
+
+                          Uses ERROR8 below as output in glftpd.
+
+ -------------------------------------------------------------------------------
+
+ EXCLUDEDDIRS = Which dirs not to care in. This can be any part of the full path. 
+  If you add, for instance, just the word DIVX here, any release containing DIVX
+  will be okey to upload any files into. Therefor, add /DIVX instead, or even
+  /DIVX/
+ 
+  NOTE: If the dir in question is added as a 'nodupecheck' dir in glftpd.conf, it 
+  will NOT run there at all. Thats good but dont know if that is intentional by the gl 
+  coders. Better add the PRE dirs here anyway incase that functionality changes.
+  This was atleast true in 1.32. Not certain if its still like that in version 2+
+
+ -------------------------------------------------------------------------------
+
+ ERROR1 = What to say incase the file is not in the allowed list. 
+
+ ERROR2 = What to say incase the file is banned. 
+
+ ERROR3 = What to say in glftpd if there is already a .sfv in the dir.
+
+ ERROR4 = What to say if there is already a file with a different case structure
+          in this dir (Ie, test.rar is there. User tries to upload Test.rar).
+
+ ERROR5 = What to say in glftpd if there is already a .nfo in the dir.
+
+ ERROR6 = What to say in glftpd if the NOFTPRUSHNFOS are set to TRUE and it
+          hits one of those annoying files.
+ 
+ ERROR7 = What to say in glftpd if a user uploads a .sfv into a Sample dir.
+          If DENY_SFV_IN_SAMPLE_DIRS="TRUE" only.
+
+ ERROR8 = What to say incase a fileupload is blocked because of DENY_WHEN_NO_SFV
+
+ -------------------------------------------------------------------------------
+
+ Test if from shell: 
+ chroot /glftpd 
+ cd /bin 
+ ./tur-precheck.sh "filename.nfo" /some/fake/path 
+ 
+ If it just quits, it ok. If it gives error, it wouldnt have allowed that file to uploaded from glftpd. 
+ If it gives a "no such command" error, you are missing the binary it complains about in /glftpd/bin.
+ 
+ Now we need to load it as a pre_check script in glftpd.conf. Simply add:
+ pre_check /bin/tur-precheck.sh 
+ 
+ IMPORTANT: If you use zipscript-c, you probably already have a precheck in glftpd.conf. 
+ If so, remove that precheck and add the one for this script instead!
+
+
+--[ ALL DONE ]--------------------------------------------

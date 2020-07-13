@@ -1,0 +1,3 @@
+Used as an addon to the glftpd stats binary to output the selected information 
+on ONE line instead of one line per user/group. This is a modified version that 
+enables the !top command on irc for the top X uploaders on site.

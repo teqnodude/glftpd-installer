@@ -1,0 +1,46 @@
+######################
+# Important Settings #
+######################
+set debugmode               		"FALSE"
+set cmdpre                  		"!"
+set sitename                		"sname"
+set mainchan                		"channame"
+set invitechan              		"channame"
+set staffchan               		"ochan"
+set glroot                  		"/glftpd"
+set announce(THEMEFILE)     		"themes/glftpd.installer.theme"
+
+######################
+# Bins, Logs & Paths #
+######################
+set location(GROUP)             	"$glroot/etc/group"
+set location(PASSWD)            	"$glroot/etc/passwd"
+set location(USERS)             	"$glroot/ftp-data/users/"
+set location(GLCONF)            	"$glroot/etc/glftpd.conf"
+set glftpdlog(NORMAL)           	"$glroot/ftp-data/logs/glftpd.log"
+set loginlog(NORMAL)            	"$glroot/ftp-data/logs/login.log"
+set sysoplog(NORMAL)            	"$glroot/ftp-data/logs/sysop.log"
+set binary(GLFTPD)              	"$glroot/bin/glftpd"
+set binary(INCOMPLETE)          	"$glroot/bin/incomplete-list.sh"
+set binary(PASSCHK)             	"$glroot/bin/passchk"
+set binary(SHOWLOG)             	"$glroot/bin/showlog"
+set binary(STATS)               	"$glroot/bin/stats"
+set binary(WHO)                 	"$glroot/bin/sitewho"
+set binary(CURL)                	"/usr/bin/curl"
+set binary(DF)                  	"/bin/df"
+set binary(PING)                	"/bin/ping"
+set binary(UPTIME)              	"/usr/bin/uptime"
+    
+######################	
+# Misc. Settings     #	
+######################	
+set bindnopre                   	"FALSE"
+set speed(INCOMING)             	12500
+set speed(OUTGOING)             	12500
+
+set announcetochan(DN)                  0
+set announcetochan(DOWN)                0
+set announcetochan(DOWNLOADERS)         0
+set announcetochan(LEECHERS)            0
+set announcetochan(UP)                  0
+set announcetochan(UPLOADERS)           0

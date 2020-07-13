@@ -1,0 +1,6 @@
+This script will (like a great deal of other scripts) read the imdb-url in a
+.nfo and paste parts of what it finds in the IRC channel. So, what's different
+with this script?
+Well, unlike the others, this do not require tcl or perl in able to work, but it
+do support some external scripts to accomodate for pre-support and speedier irc-
+channel output. In it's basic form, it's a single, small(?) file.

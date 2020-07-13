@@ -1,0 +1,3 @@
+Based on http://www.lundman.net/wiki/index.php/Mediainfo-rar and https://mediaarea.net/en/MediaInfo
+
+Copy .sh mediainfo-rar and unrar to /glftpd/bin and load .tcl in eggdrop. Need to edit section names in script to get it working properly.

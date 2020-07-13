@@ -1,0 +1,3 @@
+site_cmd VACATION       EXEC    /bin/tur-vacation.sh
+custom-vacation         *
+

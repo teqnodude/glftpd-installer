@@ -1,0 +1,4 @@
+To enable trial and quota on site where people have to pass
+set limits during X number of days with X MB of upload.
+
+Requires MySQL/Mariadb server

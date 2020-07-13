@@ -1,0 +1,26 @@
+# Userfile for default.user
+# homedir is the directory 'cage', users are unable to see or do anything outside of it
+HOMEDIR /site
+# GENERAL: WKLY_ALLOTMENT, IDLE_TIME, MAX_DLSPEED, MAX_ULSPEED 
+GENERAL 0,120 -1 0 0
+# max logins per account, max logins from the same IP, max simult. downloads, max simult. uploads
+LOGINS 6 0 -1 -1
+FLAGS 3 
+TAGLINE No Tagline Set
+# DIR is the start-up dir for this user
+DIR /
+# Xfer information: FILES, KILOBYTES, SECONDS
+RATIO 3
+CREDITS 0
+ALLUP 0 0 0
+ALLDN 0 0 0
+WKUP 0 0 0
+WKDN 0 0 0
+DAYUP 0 0 0
+DAYDN 0 0 0
+MONTHUP 0 0 0
+MONTHDN 0 0 0
+# TIME: Login Times, Last_On, Time Limit, Time on Today
+TIME 0 0 0 0
+# NUKE: Last Nuked, Times Nuked, Total MBytes Nuked
+NUKE 0 0 0

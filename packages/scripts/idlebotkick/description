@@ -1,0 +1,8 @@
+A script for kicking all idlers, or a specific user.
+This is done from irc, usally by @ only.
+
+Running this with !kick only (default trigger) will kick
+everyone in the state of Idle. A verify time can be
+specified so that it verifies that they are still idle.
+You may also do !kick <username> and it will kick only
+that user from site (no verify time).

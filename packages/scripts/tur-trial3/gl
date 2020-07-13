@@ -1,0 +1,6 @@
+site_cmd PASSED         EXEC    /bin/tur-trial3.sh check
+custom-passed           *
+
+site_cmd TRIAL          EXEC    /bin/tur-trial3.sh
+custom-trial            1
+

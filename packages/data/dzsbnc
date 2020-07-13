@@ -1,0 +1,13 @@
+
+######################
+# Bouncers           #
+######################
+set bnc(ENABLED)            		"FALSE"
+set bnc(PING)               		"TRUE"
+set bnc(SECURE)             		"TRUE"
+set bnc(LIST)               		"Canada:bnc.host.ca:123 Germany:bnc.host.de:456 Sweden:bnc.host.se:789"
+set bnc(USER)               		"bncuser"
+set bnc(PASS)               		"bncpass"
+set bnc(TIMEOUT)   	    		"2"
+set announcetochan(BNC)                 "1"
+set trigger(bnc)                        "bnc"

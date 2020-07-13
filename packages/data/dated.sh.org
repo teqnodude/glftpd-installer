@@ -1,0 +1,43 @@
+#!/bin/bash
+#################################################################
+#                                                               #
+# Dated script created by Teqno                                 #
+#                                                               #
+#--[ Settings ]-------------------------------------------------#
+
+today=`date +%m%d`                      # 1231
+yesterday=`date --date "-1 day" +%m%d`  # 1230
+glroot=/glftpd                          # path to glftpd
+gllog=$glroot/ftp-data/logs/glftpd.log  # path to glftpd.log
+sections="
+"
+
+#--[ Script start ]---------------------------------------------#
+
+if [ "$1" != "close" ]
+then
+    for section in $sections
+    do
+	for branchpath in site
+	do
+    	    chmod o-w $glroot/$branchpath/$section/*
+	    mkdir -m 777 -p $glroot/$branchpath/$section/$today
+    	    echo `date "+%a %b %e %T %Y"` TURDAY: \"$section/$today\" \"$yesterday\" \"$section\" >> $gllog
+        done
+	rm $glroot/site/!Today_$section
+        cd /glftpd/site
+	ln -s ./$section/$today !Today_$section
+        cd ..
+    done
+else
+    for section in $sections
+    do
+	for branchpath in site
+        do
+	    chmod 755 $glroot/$branchpath/$section/$yesterday
+	    echo `date "+%a %b %e %T %Y"` TURDAYC: \"$section/$yesterday\" \"$today\" \"$section\" >> $gllog
+	done
+    done
+fi
+
+exit 0

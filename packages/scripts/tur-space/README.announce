@@ -1,0 +1,74 @@
+Since version 0.6, Tur-Space can announce to irc when moving
+and/or deleting releases.
+
+Here are the instructions for dZSbot.tcl and pzs-ng, should you want this.
+There are also instructions for other sitebots near the bottom.
+
+To enable writing this information to glftpd.log, specify
+the path to glftpd.log in tur-space.conf, as such:
+GLLOG=/glftpd/ftp-data/logs/glftpd.log
+
+That will enable it. Leaving GLLOG empty or putting a # infront of it will
+disable this function.
+
+Once that is done, we need to modify your botscript for two new triggers.
+If you use dark0n3's, its in dZSbot.tcl.
+If you use pzs-ng, its in dZSbconf.tcl.
+
+These are TSM & TSD (Tur-Speed Move and Tur-Speed Delete).
+
+First, to the already existing 'set msgtypes(DEFAULT)' we add: TSM TSD
+                                              Dont forget this ^^^ ^^^
+
+The next options are added near the other options of similar type (scroll down):
+
+set chanlist(TSM)    "#chan"
+set chanlist(TSD)    "#chan"
+(replace #chan with the chan you want the information in.)
+
+set disable(TSM)           0
+set disable(TSD)           0
+(You can disable one of the announces by setting this to 1. If you want
+ to disable both, its better to set GLLOG="" in tur-space.conf.)
+
+set variables(TSM)         "%release %relsize %incfree %destdir %destfree %destname"
+set variables(TSD)         "%release %relsize %destdir %destname"
+
+
+For dark0n3's dZSbot.tcl, you add:
+set announce(TSM)         "-xXx- \[SPACE\] - Freeing %bold%relsize MB%bold by moving %bold%release%bold to %destname archive (%destfree MB free)"
+set announce(TSD)         "-xXx- \[SPACE\] - Freeing %bold%relsize MB%bold from %destname archive by deleting %bold%release%bold"
+
+If you use pzs-ng, you'll want to edit the current theme file you have loaded and add:
+announce.TSM = "\[SPACE\] - Freeing %bold%relsize MB%bold by moving %bold%release%bold to %destname archive (%destfree MB free)"
+announce.TSD = "\[SPACE\] - Freeing %bold%relsize MB%bold from %destname archive by deleting %bold%release%bold"
+
+
+How you want the output to look for both move and delete. 
+As you can see, not all variables are used in the default output. %destdir for example, contains
+the full path to the section, so personally, I dont want to present it.
+All values are presented in MB.
+
+
+After all of those things have been added, rehash the bot and off you go.
+
+--------------------------------------------------------------------------
+
+Should you use any other sitebot, there are two lines you want to change if you need to modify
+the output tur-space puts in glftpd.log. These are in tur-space.sh:
+
+proc_announce "TSD: \"$source_release\" \"$check_release_size\" \"$source_release_path\" \"$source_name\""
+proc_announce "TSM: \"$source_release\" \"$source_size\" \"$trigger_device_free\" \"$dest_release_path\" \"$free_space\" \"$source_name\""
+
+For SS5, I THINK you can change it to:
+proc_announce "RAW: \"Freeing %check_release_size MB by deleting $source_release from $source_name\""
+
+And the same for TSM:... Dont quote me on this though.
+
+--------------------------------------------------------------------------
+
+Should your bot output this in the default channel instead of the defined
+#chan, see this post for how to fix dZSbot.tcl:
+http://www.grandis.nu/glftpd/modules.php?name=Forums&file=viewtopic&t=174&sid=3a61f59283578aa7e22fda62ad76e07c
+
+/Turranius 2004

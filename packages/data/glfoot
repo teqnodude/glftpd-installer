@@ -1,0 +1,180 @@
+userrejectsecure        !*
+userrejectinsecure      !-glftpd *
+denydiruncrypted        *
+denydatauncrypted       *
+
+CERT_FILE 		/glftpd/etc/ftpd-ecdsa.pem
+TLS_MIN_PROTOCOL        TLSv1
+TLS_MAX_PROTOCOL        TLSv1.2
+
+rootpath 		/glftpd
+datapath 		/ftp-data
+
+welcome_msg 		/ftp-data/misc/welcome.msg	*
+goodbye_msg		/ftp-data/misc/goodbye.msg	*
+newsfile		/ftp-data/misc/newsfile		*
+banner			/ftp-data/misc/banner
+color_mode 		0
+
+privpath		/site/PRE/SiteOP		1 =SiteOP
+hideinwho		/site/PRE/*			1
+upload			/site/*				*
+resume			/site/*				*
+makedir			/site/REQUESTS/*/		!*
+makedir			/site/*				*
+download		/site/*				*
+dirlog			/site/PRE/*			!*
+dirlog			/site/*				*
+rename			/site/*				1
+renameown		/site/*				*
+nuke			/site/*				1 A =NUKERS
+unnuke			/site/*				1 B =NUKERS
+delete			/site/PRE/*/*			*
+delete			/site/*				1
+deleteown		/site/*				*
+filemove		/site/*				=Admin
+nodupecheck		/site/PRE/*			*
+nodupecheck		/site/REQUESTS/*		*
+nodupecheck		/site/SPEEDTEST/*		*
+
+
+# secure_ip   		min. fields   min. CIDR bits   allow hostnames?   need ident?   users to whom this applies
+secure_ip     		2             8                0                  0				*
+
+# path-filter    	group   path/msgfile                    filters
+path-filter     	*	/ftp-data/misc/pathmsg		^[-A-Za-z0-9_.()[:space:]]*$  ^\.  ^-  
+
+#        		<cap 1st letter>	<lower/upper>	character conversions...
+file_names      	0			lower           [:space:]_
+dir_names       	0			none            [:space:]_
+
+display_size_unit       g
+display_speed_unit      m
+# use_dir_size k 	/site
+		
+show_totals     	*       	*
+hidden_files 		/ .requests lost+found .date .message .imdb .debug
+show_diz 		.imdb 		*
+show_diz 		.requests 	*
+
+free_space      	2048
+max_users       	200	5
+total_users     	200
+dupe_check      	0       no
+xdupe           	*.zip *.[Rr][Aa0-9][Aa0-9] *.[Mm][Pp][3] *.[Ff][Ll][Aa][Cc]
+creditloss              0 yes /site/SPEEDTEST/* *
+creditcheck             /site/SPEEDTEST/* 0
+dl_incomplete 		1
+noretrieve		passwd	passwd-	group	group-
+	
+min_homedir		/site
+	
+ignore_type  		*.[tT][xX][tT] *.[nN][fF][oO] [rR][eE][aA][dD][mM][eE] .message
+ignore_type  		*.[sS][fF][vV] *.[cC][rR][cC] *.[dD][iI][zZ]
+	
+oneliners 		/ftp-data/misc/oneliners	7
+requests 		/ftp-data/misc/requests		10
+lastonline		/ftp-data/misc/lastonline	10
+	
+nukedir_style 		[NUKED]-%N	2	50000
+	
+empty_nuke		25000
+multiplier_max		50
+
+calc_crc		*
+pre_dir_check   	/bin/tur-predircheck.sh 
+pre_check       	/bin/tur-precheck.sh    
+#post_check      	/bin/zipscript-c        *
+post_check 		/bin/mkv_check.sh *
+cscript         	DELE                    post    /bin/postdel
+cscript         	RMD                     post    /bin/datacleaner
+cscript         	SITE[:space:]NUKE       post    /bin/cleanup
+cscript         	SITE[:space:]UNNUKE     post    /bin/postunnuke
+cscript         	SITE[:space:]WIPE       post    /bin/cleanup
+cscript         	RETR                    post    /bin/dl_speedtest
+
+site_cmd RULES          TEXT	/ftp-data/misc/site.rules
+custom-rules            !8 *
+
+site_cmd RESCAN         EXEC	/bin/rescan
+custom-rescan           1
+
+site_cmd INVITE         EXEC	/bin/invite.sh
+custom-invite           *
+
+-addip           	1 2 7
+-adduser         	1 2 7
+-change          	1 7
+-changeallot     	1 2 7
+-changeflags     	1
+-changeratio     	1 2 7
+-changesratio    	1 7
+-changehomedir   	1
+-chmod           	1
+-chgadmin        	1 7
+-chpgrp          	1 7
+-chgrp           	1 7
+-chgrp-priv      	1
+-chpass          	1
+-delip           	1 2 7
+-delownip       	!8 *
+-deluser         	1 2 7
+-dirs           	!8 *
+-errlog          	1
+-flags          	!8 *
+-gadduser        	1 2 7
+-ginfo           	2 H
+-give            	G
+-group          	!3 *
+-groups         	!8 *
+-grp            	!8 *
+-groupcomment    	1
+-grpadd          	1
+-grpchange       	1
+-grpdel          	1
+-grplog          	1
+-grpnfo          	1 2
+-grpren          	1
+-grpstats        	*
+-help           	!8 *
+-info           	!8 *
+-kick            	D
+-kill            	E
+-logins          	1
+-misc           	!8 *
+-msg            	!8 *
+-msg*            	1
+-msg=            	1
+-msg{           	!8 *
+-nuke            	A
+-onel           	!8 *
+-oneladd        	!8 *
+-passwd         	!8 *
+-predupe         	C
+-purge           	1
+-readd           	1 2 7
+-renuser         	1 7
+-reqlog          	1 A B 7
+-request        	!8 *
+-requestadd     	!8 *
+-show            	1
+-showhiddenusers 	1
+-stat           	!8 *
+-stats          	!8 *
+-swho            	1 =SiteOP
+-take            	F
+-syslog          	1 =SiteOP
+-undupe          	C
+-unnuke          	B
+-update          	1
+-user           	!8 *
+-users           	1
+-usercomment     	1 7
+-userextra       	1 2 7
+-who             	1 =SiteOP
+-wipe            	1
+-seen            	1
+-laston          	1
+-userothers      	1
+-traffic         	1 7
+

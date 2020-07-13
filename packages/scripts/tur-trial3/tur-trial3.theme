@@ -1,0 +1,231 @@
+#--[ Theme file for Tur-Trial V3 ]------#
+
+## Note on cookies: The ones you can use are already in every announce. Not every
+## cookie is available everywhere.
+## A cookie not surrounded by spaces or another cookie must look like ${cookie} instead of $cookie
+## So 'blalba${$CURUSER}blabla' works while 'blabla$CURUSERblabla' does not.
+
+## Used for bold and underline. Dont edit. Use ${BOLD} and ${ULINE} to start/stop text.
+## For color, its ${COLOR}# where # is the number of the color. Needs a space after it
+## so "${COLOR}04 testin" works while "${COLOR}04testin" does not.
+##
+## You can also add your own color cookies if you dont want to be locked by the space.
+## Do it in vi if so. Enter a name (Like COLOR_BLUE="), hit cntr-v, cntr-c followed 
+## by the number code (same as when hitting cntr-k in mirc). In the end it should look
+## something like: COLOR_BLUE="12"
+## You can now use ${COLOR_BLUE}${CURUSER}. Dont forget to make a COLOR_BLACK to reset
+## the color.
+
+BOLD=""
+ULINE=""
+COLOR_RED="4"
+COLOR_GREEN="9"
+COLOR_DGREY="14"
+COLOR_LGREY="15"
+COLOR_ORANGE="7"
+COLOR_RESET="1"
+## No user was selected when checking !passed
+NO_USER_SELECTED="${COLOR_DGREY}Specify a ${COLOR_RED}username${COLOR_DGREY} to check to."
+
+## User checked does not exist.
+USER_NON_EXIST="${COLOR_DGREY}User ${COLOR_RED}$CURUSER${COLOR_DGREY} does not exist on site."
+
+## User is deleted.
+USER_IS_DELETED="${COLOR_DGREY}User ${COLOR_RED}$CURUSER${COLOR_DGREY} is ${COLOR_RED}deleted${COLOR_DGREY}."
+
+
+#--[ Trial Announces ]------------------#
+
+## If Quota is disabled and the user is not on trial.
+USER_NOT_ON_TRIAL="${BOLD}$CURUSER${BOLD}/$CURPRIGROUP is ${BOLD}not${BOLD} on trial."
+
+## User is on trial. $TIMELEFT is one of the two above.
+TRIAL_NORMAL="${COLOR_RED}$CURUSER/$CURPRIGROUP${COLOR_RESET} $TIMELEFT${COLOR_DGREY} - Status:$trial_line"
+
+## The user is on trial and has been given extra time to pass
+TRIAL_EXTRA_TIME="${BOLD}$CURUSER${BOLD}/$CURPRIGROUP $TIMELEFT ($given_time extra time) - Status:$trial_line"
+
+## This the $TIMELEFT cookie used above.
+TRIAL_TIME_LAST_HOUR="is in the last hour of trial"
+TRIAL_TIME_LEFT="is on trial and has another $TIME_COUNTH to pass"
+
+## Incase the trial time expired (waiting for the tcron job).
+TRIAL_TIME_OVERDUE="${BOLD}$CURUSER${BOLD}/$CURPRIGROUP is on trial. Time expired: Status:$trial_line"
+
+
+
+#--[ Quota Announces ]------------------#
+
+## If the user is excluded for a number of days.
+QUOTA_MONTH_EXCLUDED="${COLOR_RED}$CURUSER/$CURPRIGROUP${COLOR_DGREY} is excluded for another${COLOR_RED} $DAYS_LEFT${COLOR_DGREY}. If not, the quota would be:$trial_line"
+
+#--
+
+## User is excluded by group but passed anyway.
+QUOTA_GROUP_EXCLUDED_PASSED="${COLOR_RED}$CURUSER/$CURPRIGROUP${COLOR_DGREY} is in excluded group ${COLOR_RED}$EXCLUDED_BY${COLOR_DGREY}. ${COLOR_RED}$CURUSER ${COLOR_GREEN}passed${COLOR_DGREY} anyway with:$trial_line"
+
+## TOP_UPLOADERS = TRUE. User is excluded by group but passed the quota and the monthup position anyway.
+TOP_GROUP_EXCLUDED_PASSED="${BOLD}$CURUSER${BOLD} would also have ${BOLD}passed${BOLD} the monthup limit:$POSITION_NICE"
+
+## TOP_UPLOADERS = TRUE. User is excluded by group but passed the quota and failed the monthup position.
+TOP_GROUP_EXCLUDED_FAILED="${BOLD}$CURUSER${BOLD}'s monthup limit wouldnt look too good though:$POSITION_NICE"
+
+#--
+
+## User is excluded by group and havent passed yet.
+QUOTA_GROUP_EXCLUDED_FAILED="${COLOR_RED}$CURUSER/$CURPRIGROUP${COLOR_DGREY} is in excluded group ${COLOR_RED}$EXCLUDED_BY${COLOR_DGREY}. Had ${COLOR_RED}$CURUSER${COLOR_DGREY} not been, pass limits are:$trial_line"
+
+## TOP_UPLOADERS = TRUE. The user is excluded by group, failed quota but passed monthup position.
+TOP_GROUP_EXCLUDEDF_PASSED="${BOLD}$CURUSER${BOLD} would have passed the monthup limit though:$POSITION_NICE"
+
+## TOP_UPLOADERS = TRUE. The user is excluded by group, failed quota and failed monthup position.
+TOP_GROUP_EXCLUDEDF_FAILED="${BOLD}$CURUSER${BOLD}'s monthup limit wouldnt look too good though:$POSITION_NICE"
+
+
+#--
+
+## Normal quota. The user passed.
+QUOTA_NORMAL_PASSED="${COLOR_RED}$CURUSER/$CURPRIGROUP${COLOR_DGREY} has ${COLOR_GREEN}passed${COLOR_DGREY} quota and can relax for another${COLOR_RED} $DAYS_LEFT${COLOR_DGREY}:$trial_line"
+
+## TOP_UPLOADERS = TRUE. The user passed the quota and the monthup.
+TOP_NORMAL_PASSED="${BOLD}$CURUSER${BOLD} is also ${BOLD}safe${BOLD} for now on the monthup list:$POSITION_NICE"
+
+## TOP_UPLOADERS = TRUE. The user passed the quota but has not yet passed monthup.
+TOP_NORMAL_FAILED="${BOLD}$CURUSER${BOLD} still needs to beat a few better uploaders though:$POSITION_NICE"
+
+#--
+
+## Normal Quota. Havent passed yet.
+QUOTA_NORMAL_FAILED="${COLOR_RED}$CURUSER/$CURPRIGROUP${COLOR_DGREY} has to work hard for another${COLOR_RED} $DAYS_LEFT${COLOR_DGREY} to pass:$trial_line"
+
+## TOP_UPLOADERS = TRUE. The user havent passed quota yet but have passed the monthup position.
+TOP_QUOTA_NORMAL_PASSED="${BOLD}$CURUSER${BOLD} is looking ${BOLD}good${BOLD} on the monthup list though:$POSITION_NICE"
+
+## TOP_UPLOADERS = TRUE. The user havent passed quota yet and havent passed the monthup positions.
+TOP_QUOTA_NORMAL_FAILED="${BOLD}$CURUSER${BOLD} is also lagging behind on the monthup list:$POSITION_NICE"
+
+#--
+
+## TOP_UPLOADERS = FALSE & SHOW_MONTHUP = TRUE. The user is EXCLUDED from quota.
+POSITION_EXCLUDED="${COLOR_RED}$CURUSER${COLOR_DGREY}'s monthup for ${COLOR_RED}all${COLOR_DGREY} users are:$POSITION_NICE"
+
+## TOP_UPLOADERS = FALSE & SHOW_MONTHUP = TRUE. The user is on quota.
+POSITION_NORMAL="${COLOR_RED}$CURUSER${COLOR_DGREY}'s monthup for ${COLOR_RED}non-excluded${COLOR_DGREY} users are:$POSITION_NICE"
+
+#--
+
+## The user is manually excluded from quota. Passed anyway.
+QUOTA_MANUAL_EXCLUDED_PASSED="${BOLD}$CURUSER/$CURPRIGROUP${BOLD} is excluded from quota. $CURUSER passed anyway with:$trial_line"
+
+## The user is manually excluded from quota. Havent passed.
+QUOTA_MANUAL_EXCLUDED_FAILED="${BOLD}$CURUSER/$CURPRIGROUP${BOLD} is excluded from quota. Had he not been:$trial_line"
+
+## TOP_UPLOADERS = TRUE. User is manually excluded but passed the monthup anyway.
+TOP_QUOTA_EXCLUDED_PASSED="${BOLD}$CURUSER${BOLD} would also have ${BOLD}passed${BOLD} the top-up limit:$POSITION_NICE"
+
+## TOP_UPLOADERS = TRUE. User is manually excluded and havent passed the monthup.
+TOP_QUOTA_EXCLUDED_FAILED="${BOLD}$CURUSER${BOLD}'s top-up limit wouldnt look too good though:$POSITION_NICE"
+
+## TOP_UPLOADERS = FALSE. SHOW_MONTHUP = TRUE. User is not excluded by group (too).
+POSITION_EXCLUDED_NONGROUP="${COLOR_RED}$CURUSER${BOLD}${COLOR_DGREY}'s position for ${COLOR_RED}all${COLOR_DGREY} users are:${COLOR_RED}$POSITION_NICE"
+
+## TOP_UPLOADERS = FALSE. SHOW_MONTHUP = TRUE. User is ALSO excluded by group (Why?)
+POSITION_EXCLUDED_GROUP="${COLOR_RED}$CURUSER${COLOR_DGREY}'s position for ${COLOR_RED}non-excluded${COLOR_DGREY} users are:${COLOR_RED}$POSITION_NICE"
+
+#--
+
+## The user is excluded this month or longer. Passed quota anyway.
+QUOTA_MEXCLUDED_PASSED="${COLOR_RED}$CURUSER/$CURPRIGROUP${COLOR_DGREY} is excluded for another${COLOR_RED} $DAYS_LEFT${COLOR_DGREY}. ${COLOR_RED}$CURUSER${COLOR_DGREY} passed anyway with:$trial_line"
+
+## The user is excluded this month or longer. Havent passed.
+QUOTA_MEXCLUDED_FAILED="${COLOR_RED}$CURUSER/$CURPRIGROUP${COLOR_DGREY} is excluded for another${COLOR_RED} $DAYS_LEFT${COLOR_DGREY}. Had he not been:$trial_line"
+
+## TOP_UPLOADERS = TRUE. User is excluded this month or longer but passed the monthup anyway.
+TOP_QUOTA_MEXCLUDED_PASSED="${BOLD}$CURUSER${BOLD} would have ${BOLD}passed${BOLD} the top-up limit:$POSITION_NICE"
+
+## TOP_UPLOADERS = TRUE. User is excluded this month or longer and havent passed the monthup.
+TOP_QUOTA_MEXCLUDED_FAILED="${BOLD}$CURUSER${BOLD}'s top-up limit wouldnt look too good:$POSITION_NICE"
+
+## TOP_UPLOADERS = FALSE. SHOW_MONTHUP = TRUE. User is excluded this month or longer and not excluded by group.
+POSITION_MEXCLUDED_NONGROUP="${COLOR_RED}$CURUSER${COLOR_DGREY}'s position for ${COLOR_RED}all${COLOR_DGREY} users are:${COLOR_RED}$POSITION_NICE"
+
+## TOP_UPLOADERS = FALSE. SHOW_MONTHUP = TRUE. User is excluded this month or longer and is also excluded by group.
+POSITION_MEXCLUDED_GROUP="${COLOR_RED}$CURUSER${COLOR_DGREY}'s position for ${COLOR_RED}non-excluded${COLOR_DGREY} users are:${COLOR_RED}$POSITION_NICE"
+
+
+#--[ glftpd.log announces ]-------------#
+
+#--[ Passed Quota. Only announce on special stuff ]---#
+
+## If the user passes enough sections so PASS_SECTIONS_EXCLUDE kicks in.
+GLLOG_PASSED_MULTIPLE_SECTIONS="${BOLD}QUOTA: $CURUSER${BOLD} Passed quota in ${BOLD}$passed_sections sections${BOLD}.$trial_line - Gets excluded next month."
+
+## If the user passes more then once in any sections so PASS_TIMES_EXCLUDE kicks in.
+GLLOG_PASSED_MULTIPLE_TIMES="${BOLD}QUOTA: $CURUSER${BOLD} passed the quota limit ${BOLD}$times_over times in $times_over_sec${BOLD}.$trial_line - Gets excluded the next month."
+
+## If the user passes both the above so that PASS_BOTH_EXCLUDE_MONTHS kicks in.
+GLLOG_PASSED_MULTIPLE_BOTH="${BOLD}QUOTA: $CURUSER${BOLD} ALSO passed the quota limit ${BOLD}$times_over times in $times_over_sec${BOLD} - Gets excluded for the next $PASS_BOTH_EXCLUDE_MONTHS months instead."
+
+
+#--[ Failed Quota ]-----------------------------------#
+
+## User failed quota. 
+GLLOG_FAILED_QUOTA="${COLOR_LGREY}${BOLD}QUOTA: ${COLOR_ORANGE}$CURUSER${BOLD}${COLOR_DGREY} Failed Quota:$trial_line"
+
+## TOP_UPLOADERS = TRUE. User failed the monthly position.
+GLLOG_FAILED_TOPUP="${BOLD}QUOTA:${BOLD} Although, the reason were the Monthup:$POSITION_NICE"
+
+
+#--[ Failed Trial ]-----------------------------------#
+
+GLLOG_FAILED_TRIAL="${COLOR_LGREY}TRIAL: ${COLOR_RED}$CURUSER FAILED${COLOR_DGREY} trial with$trial_line${COLOR_DGREY} - Better luck next time."
+
+
+#--[ Passed Trial ]-----------------------------------#
+
+GLLOG_PASSED_TRIAL="${COLOR_LGREY}TRIAL: ${COLOR_RED}$CURUSER ${COLOR_GREEN}PASSED${COLOR_DGREY} trial with$trial_line${COLOR_DGREY} - Good work"
+
+
+#--[ tlimit Exectution ]------------------------------#
+
+## These are used when checking !trials/tlimit.
+TLIMIT_ANNOUNCE_TIME_LEFT="${BOLD}$CURUSER${BOLD}/$CURPRIGROUP -$trial_line - ${BOLD}$TIME_COUNTH${BOLD} remaining."
+TLIMIT_ANNOUNCE_NO_TIME="${BOLD}$CURUSER${BOLD}/$CURPROGROUP -$trial_line - ${BOLD}No${BOLD} time remaining."
+TLIMIT_ANNOUNCE_NO_USERS="No users active on trial."
+
+
+#--[ Defines how the $trial_line cookie looks ]-------#
+
+TRIAL_LINE_ANNOUNCE_PASSED="${COLOR_RED} ${cur_limit}/${pass_limit}${COLOR_DGREY}MB"
+TRIAL_LINE_ANNOUNCE_NOT_PASSED="${COLOR_RED} ${cur_limit}/${pass_limit}${COLOR_DGREY}MB (${COLOR_RED} ${per_day}${COLOR_RED}${COLOR_DGREY}MB/day )"
+TRIAL_LINE_ANNOUNCE_SEPERATOR=" or "
+
+
+#--[ Defines how the $POSITION_NICE cookie looks ]----#
+#--[          Only if TOP_UPLOADERS=FALSE        ]----#
+POSITION_NICE_ANNOUNCE_INFO="${COLOR_RED} ${curuser_position}/${total_quota_users}"
+
+
+#--[ Defines how the $POSITION_NICE cookie looks ]----#
+#--[          Only if TOP_UPLOADERS=TRUE         ]----#
+
+# If the monthup position for this section is disabled (-1).
+PN_WORD_END_DISABLED_PASSED=" ${BOLD}(Passed Quota)${BOLD}"
+PN_WORD_END_DISABLED_FAILED=" (Pass Quota)"
+
+# If the monthup position for this section is enabled.
+PN_WORD_END_ENABLED_PASSED=" ${BOLD}Needed: ${needed_position}(PASS)${BOLD}"
+PN_WORD_END_ENABLED_FAILED=" Needed: ${needed_position}"
+
+POSITION_NICE_ANNOUNCE="[ ${curuser_position}/${total_quota_users}${WORD} ]"
+
+
+#--[ Defines how the $POSITION_NICE cookie looks ]----#
+#--[                   Generic                   ]----#
+POSITION_NICE_SEPERATOR=" "
+
+
+
+## Leave this and we can see in the debug output when it loads the themefile.
+## Put a # infront of it to disable.
+#proc_debug "Theme file $theme loaded"

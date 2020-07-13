@@ -1,0 +1,237 @@
+Changelog for Tur-Space
+
+1.1   * Added:
+        Some extra verifications are added. In some wierd combination, it could wipe more then
+        it should.
+        Besides the automatic checks, I've also added a security fix in the config:
+        SECURITY_PATH="/glftpd/site/.*/"
+        Nothing in any parent dir of the SECURITY_PATH can be deleted or moved by this script.
+
+ Upgrade from 1.0.1
+      * Replace tur-space.sh
+      * Add to tur-space.conf, below MAX_LOOP:
+        SECURITY_PATH="/glftpd/site/.*/"
+
+1.0.1 * Fixed:
+        It still deleted/moved the wrong directory in the new year, even when running with :DATED.
+        Thanks aCe2k for the report AND fix.
+
+ Upgrade from 1.0
+      * Replace tur-space.sh
+
+
+1.0   * Fixed:
+        The :DATED option on incoming sections works by sorting by number instead of date, so
+        1001 is of course older then 1101. However, 0101 then seems to be older then 1201, which
+        of course, is not correct.
+
+        Now, if the dated dir function finds a dir starting with 12, it will ignore 01-06.
+
+      * Changed:
+        Its now a bit more forgiving on errors. Previously, it would quit and leave the lockfile
+        incase there was an error somewhere. It will now ONLY do this if there is a configuration
+        error. So if a disk or similar is temporarily gone, it will start to work again once the
+        disk is back. This was orginally done during the 0.? version phase for security.
+
+      * Added:
+        The lockfile is now automatically removed after 1440 minutes (24 hours).
+
+ Upgrade from 0.10
+      * Replace tur-space.sh
+
+0.10: * Added:
+        Added option DU_BINARY to config since the FBSD users du binary does not support
+        the m flag to output the result in MB.
+        As with DATE_BINARY, a gnu du will need to be compiled. See README on DU_BINARY.
+
+        Thanks [SiMoN] for reporting this and testing the fix on a FBSD 4.8-RELEASE version.
+
+ Upgrade from 0.9
+      * Replace tur-space.sh
+
+      * Add to tur-space.conf, beneith DATE_BINARY:
+        # DU_BINARY=""
+        Thats the default (disable) and means it will just use 'du' from the path, as before.
+        Its safe to have it disabled if you're running a gnu linux (redhat/fedora/debian etc).
+
+
+0.9 : * Fixed:
+        For some people (guess it could happen to everyone), it would sometimes start
+        to delete stuff from the wrong archive if you had multiple specified for one
+        source section.
+
+        Rewrote some parts to fix that.
+
+ Upgrade from 0.8
+      * Replace tur-space.sh & run './tur-space.sh sanity' to verify settings.
+
+
+0.8 : * Fixed/Add:
+        If you have multiple archive drives for one incoming section and one of them
+        is unmounted, it will still move releases to those that are still mounted instead
+        of just quitting. This is already in the "feature" list of tur-space, but I guess it 
+        broke somewhere along the way or wasnt implemented as I wanted it to be.
+
+        If something is unmounted though, it will NEVER delete anything. Only move if there
+        is enough space already to do so.
+
+      * Fixed/Add:
+        If the destination directory, when moving to the archive, already exists, it will now
+        delete it first before trying to move it again. 
+        You could run into problems with the verification after a copy (counts number of files)
+        if it left the dir and there was an extra file in the "incomplete" archived release
+        which wasnt on the release in the incoming section.
+
+ Upgrade from 0.7
+      * Replace tur-space.sh & run './tur-space.sh sanity' to verify settings.
+
+
+
+0.7 : * Fixed:
+        In 0.5, I added a function to break out of an endless loop, should it not find
+        anything to delete in the archive.
+        The part of the script this was added in is the same function that finds the 
+        oldest dir to move/delete in the incoming sections as well as the archive.
+
+        This caused a problem when it couldnt find anything to move/delete in an
+        incoming section since it then just quit.
+
+        That function has now been updated to know if its checking an incoming section
+        or an archive section.
+        If it cant find anything to delete in the archive section (bad) it will just
+        quit and warn you in the log.
+        If it cant find anything to delete in the incoming section, it will just
+        skip that section and move on to the next one (should there be another one.
+        Otherwise it will just quit as well).
+
+ Upgrade from 0.6:
+      * Replace tur-space.sh & run './tur-space.sh sanity' to verify settings.
+
+
+0.6 : * Added:
+        MAX_LOOP="10"
+        The safety check added in 0.5 can now be configured. Here you set how
+        many releases can be deleted from archive to make room for one release.
+        Should not have to touch this one really, unless you're DaShizNit =))
+
+      * Added:
+        Sanity check now checks that each defined device only returns one line 
+        when running df. Otherwise you'll get problems.
+
+        It will also check all INC* defined sections that the device set here matches
+        a defined TRIGGER=.
+
+      * Added:
+        OK ok! Alot of people want bot output, I get it =)
+        See README.announce for instructions.
+
+      * Fixed:
+        When reading the COPY_OPTIONS= from the config, I missed a - in the cutting.
+        Thus, --preserve=timestamps became --preserve
+        No biggie but fixed never the less.
+
+ Upgrade from 0.5:
+        * Add to tur-space.conf: 
+          MAX_LOOP="10" 
+          #GLLOG="/glftpd/ftp-data/logs/glftpd.log"
+
+        * If you want bot echoing, read README.announce.
+
+        * Replace tur-space.sh & run './tur-space.sh sanity' to verify settings.
+
+
+0.5 : * Added:
+        A safety check. Some people report it cleared out their archive. While
+        this has never happened to me and quite frankly, I cant tell why it did,
+        I've added a safety check. It cant delete more then 10 things from your 
+        archive to make space for a single release. If it tries, it will halt, log it
+        and leave the lockfile so it cant run again without user intervention.
+
+        Rewrite:
+        Because of the above, I rewrote the "Loop/Delete stuff to make space" routine.
+        Not that I could see anything wrong before, but this is more optimized.
+        I've tested this a thousand times now. I put 0day releases in the archive and
+        put a few DVDR in the incoming section and let it clear out 0days to fit the DVDR. 
+        Looking hunky doory.
+
+        Added:
+        A check that COPY_OPTIONS is set in the config. If its not, it will default
+        to -rf.
+
+        Added:
+        Sanity check now checks that the incoming dirs are in order too.
+
+        Added:
+        Logfile will, when moving a release to archive, show free space on the archive
+        as well.
+
+        Fixed:
+        If you have multiple archives on the same partition and one of them has nothing in
+        it to delete, it would previously keep looping, trying to find something to delete.
+        Since it cant, this is kinda useless. Instead, it will now halt if it cant find 
+        anything to delete in the archive, log it and leave the lockfile.
+        Should this happen, it will tell you what to do in the log. Namely, remove some 
+        stuff from the other archive one the same partition to make space for this one.
+
+        Fixed:
+        Possible endless loop when running in debug (test) mode.
+
+        Fixed:
+        If the archive had 0 MB free, it was not considered a valid target for a release
+        even if that was the only archive. This happened when trying to find the archive
+        with the most free space. If it was 0 MB, it wasnt considered good.
+
+ Upgrade from 0.4:
+        * Replace tur-space.sh
+
+
+0.4 : * Added:
+        COPY_OPTIONS="-rf --preserve=timestamps"
+        Lets you change the arguments used for cp.
+
+      * Added:
+        CHOWN_OPTIONS="-R 0:400"
+        Lets you decide what to chown the release to, after its moved.
+        Put a # infront of it in the config to disable.
+        Remove -R if you dont want it to chown recursivly.
+
+      * Added:
+        CHMOD_OPTIONS="-R 755"
+        Lets you decide what to chmod the release to, after its moved.
+        Put a # infront of it in the config to disable.
+        Remove -R if you dont want it to chmod recursivly.
+
+      * Added:
+        DATE_BINARY=""
+        Lets you decide which date binary to use. Disabled by default (with
+        a # infront). With it disabled, it uses the default 'date' binary but
+        users whos date does not support -d will have to specify a date binary here
+        that does support it (see README).
+
+      * Changed the top of tur-space.sh and the README.. The location of the config file 
+        must now be defined in tur-space.sh. Automatically reading it if it was in the
+        same dir as tur-space.sh didnt work for everyone.
+  
+
+ Upgrade from 0.3:
+        * Add to tur-space.conf:
+          COPY_OPTIONS="-rf"
+          #CHOWN_OPTIONS="-R 0:400"
+          #CHMOD_OPTIONS="-R 755"
+          #DATE_BINARY=""
+
+          (last 3 settings are disabled. See README for usage)
+
+        * Replace tur-space.sh
+
+
+0.3 : * It will no longer quit, leaving the lockfile if it does not find anything to delete in a 
+        defined section. Instead, it will log it as a warning and continue, skipping that sektion.
+
+      * "Lockfile exists" is no longer logged. 
+
+0.2 : * If it tried to archive something but needed to remove more then 2 things in the
+        archive to make room for it, it could screw up and find the wrong values for the releasename. 
+        This has now been fixed with the help of somayo. Thanks.
+
+0.1 : * Initial Release

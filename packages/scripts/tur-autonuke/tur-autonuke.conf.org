@@ -1,0 +1,116 @@
+#-[ Settings ]-------------------------------------------------------------------------#
+# 0,20,40 * * * * /glftpd/bin/tur-autonuke.sh
+#--[ Generics: dated dirs - See README for explanation ]--#
+today="$( date +%m%d )"                         #Today
+yesterday="$( date --date "yesterday" +%m%d )"  #Yesterday
+daysago2="$( date --date "-2 day" +%m%d )"      #2 days ago
+daysago3="$( date --date "-3 day" +%m%d )"      #3 days ago
+daysago4="$( date --date "-4 day" +%m%d )"      #4 days ago
+daysago5="$( date --date "-5 day" +%m%d )"      #5 days ago
+daysago6="$( date --date "-6 day" +%m%d )"      #6 days ago
+daysago7="$( date --date "-7 day" +%m%d )"      #1 week ago
+#---------------------------------------------------------#
+
+#--[ Generics: Main settings ]--#
+GLROOT="/glftpd"
+GLCONF="/glftpd/etc/glftpd.conf"
+GLLOG="/glftpd/ftp-data/logs/glftpd.log"
+LOG="/glftpd/ftp-data/logs/tur-autonuke.log"
+TEMPDIR="/glftpd/tmp"
+
+NUKEPROG="/glftpd/bin/nuker"
+NUKEUSER="glftpd"
+DIRS="
+"
+AFFILSDIRS="/glftpd/site/PRE"
+EXCLUDES="PRE nfofix nfo.fix nfo.update dirfix dir.fix sample.fix samplefix repack .fix. _fix_ missing COMPLETE"
+ALLOWED="[Approved_by_"    # What makes release ok?
+
+#---[ Totally empty module ]---#
+TOTALLYEMPTY="TRUE"     # Check for empty folders at all?
+PRENUKEEMPTY="TRUE"     # Send pre-nuke warning?
+EARLYEMPTY="60"          # Minutes before sending a per-nuke warning.
+TIMEEMPTY="720"          # Minutes before nuke.
+EMPTYMULTIPLIER="3"     # Nuke multiplier
+EMBARRESEMPTY="TRUE"    # Send detailed nuke report.
+EMPTYHOURS="TRUE"       # Use hours in bot and log output?
+
+
+#---[ Half empty module ]---#
+HALFEMPTY="FALSE"        # Check for "halfempty" folders at all?
+PRENUKEHALFEMPTY="TRUE" # Send pre-nuke warning?
+EARLYHALFEMPTY="60"     # Minumum age to send pre-nuke warning.
+TIMEHALFEMPTY="720"     # Minumum age to nuke.
+HALFEMPTYMULTIPLIER="3" # Nuke multiplier
+EMBARRESHALF="TRUE"     # Send detailed nuke report.
+EMPTYEXCLUDE=".fix.nfo .mpg .m2v .mpeg .zip .rar .r00 .r01 .mp3 .000 .001 .flac" # See README
+CLEANHOURS=""          	# Hours between cleaning index file.
+HALFHOURS="TRUE"        # Use hours in bot and log output?
+
+
+#---[ Incomplete module ]---#
+INCOMPLETE="FALSE"     	# Use symlinks nukes at all? TRUE/FALSE
+PRENUKEINCOM="TRUE"   	# Send pre-nuke warning?
+EARLYINCOM="60"      	# Minutes before sending a pre-nuke warning. 
+TIMEINCOM="720"       	# Minumum age in minutes to nuke. 
+INCOMMULTIPLIER="3"   	# Nuke multiplier
+EMBARRESINCOM="TRUE"  	# Send detailed nuke report.
+SYMLINKNAMES="(incomplete)- [incomplete]- [INCOMPLETE]-"  # What does your symlinks contain.
+CLEANSYMLINKS="TRUE"  	# Remove "dead" symlinks?
+CLEANMESSAGE="FALSE"  	# Clean .message file of incompletes?
+INCOMHOURS="TRUE"     	# Use hours in bot and log output?
+
+JUMPON="CD1 CD2 CD3 CD4 CD5 CD6 CD7 DISC1 DISC2 DISC3 DISC4 DVD1 DVD2 DVD3" # See README
+
+
+#---[ Banned words module ]---#
+BANNEDWORDS="FALSE"    # Use banned words module at all? TRUE/FALSE.
+
+BANDIRS="
+/site/TVRIP~.German:
+/site/DVDR~.DVDSCR:
+/site/0DAY/$today~.French:.Solaris:_PL-:.MacOS:.OS2.:.FreeBSD:.Slovak:.Dutch:.Hungarian:.eBook:.Pressbook:-Pressbook:-eBook
+/site/DIVX~.German:.Danish:.French:.Dutch:.STV:.concert:.anime:.documentary:.internal
+/site/ISO-APPZ~.French:.German
+/site/ISO-GAMES~.French:.German
+/site/XXX~.VCD:.VHS:
+/site/MP3~-Promo:-Single:-Vinyl:-CDS-:(Promo:.Promo:(Vinyl:.Vinyl
+/site/VCD~.German:.Danish:.French:.Dutch:.concert:.anime:.documentary:
+/site/SVCD-SWESUB~.German:.Danish:.French:.Dutch:.concert:.anime:.documentary:
+/site/SVCD~.German:.Danish:.French:.Dutch:.concert:.anime:.documentary:
+"
+
+BANEXCLUDE="" 		# Special exclude for this module.
+BANPRENUKE="TRUE"    	# Send a pre-nuke warning?
+EARLYBANPRENUKE="1"  	# Minutes before I send pre-nuke warning?
+TIMEBANNUKE="5"      	# Minutes, before I nuke it?
+BANMULTIPLIER="3"    	# Default Multiplier to nuke for banned words.
+EMBARRESBAN="TRUE"   	# Send detailed nuke report?
+CLEANBANHOURS=""     	# Hours between cleaning index file.
+BANHOURS="FALSE"     	# Use hours in bot and log output?
+
+#---[ Allowed words module ]---# <--
+ALLOWEDWORDS="FALSE" 	# Use Allowed Words module at all? TRUE/FALSE
+
+ALLOWDIRS=""
+ALLOWPRENUKE="TRUE"   	# Send a pre-nuke warning?
+EARLYALLOWPRENUKE="1" 	# Minutes before I send pre-nuke warning?
+TIMEALLOWNUKE="20"    	# Minutes before I nuke it?
+ALLOWMULTIPLIER="3"   	# Multiplier to nuke for non allowed word?
+EMBARRESALLOW="TRUE" 	# Send detailed nuke report?
+ALLOWHOURS="FALSE"    	# Use hours in bot and log output?
+
+
+#---[ Generics ]---#
+DELETENUKES="TRUE"      # Delete nuked folders after...
+TIMETODELEM="24"        # the are this many >hours< old.
+
+USEREXCLUDE="UNKNOWN"   # Dont show in EMBARRES nuke output.
+MATCHUSER="TRUE"        # Try to find username when sending nuke warn?
+NOUSERFOUND="glftpd"    # Cant find user to match? Use this.
+FORCENUKESYNTAX=""      # Force a nuke syntax. See README.
+USESPACES="FALSE"       # Problems nuking? Set to TRUE.
+LOCKFILE="TRUE"         # Use lockfile? (Recomended)
+LSM="ls -m"             # How do to ls -m. Dont change unless
+                        # you are need to. See readme.
+SHWING="FALSE"          # Shwing it, magistern (set to FALSE ya lamos)

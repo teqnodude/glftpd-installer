@@ -1,0 +1,111 @@
+Changelog for Tur-PreDirCheck
+
+1.4.1 : Fixed:
+        One obselete setting removed from the script. This setting had
+        already been removed from the config part and broke the test
+        phase of dirloglist_gl. Also got a report that checking if the
+        dir existed previously did not work because of this, but I fail to
+        see how.
+
+-------------------------------------------------------------
+
+Added dirloglist_gl for glftpd 2.* as well. No version update.
+
+-------------------------------------------------------------
+1.4   : Changed:
+        As with Tur-Search, I've abandoned the use of strings to
+        search the dirlog if the release is already on site.
+        Instead, I use dirloglist_gl which is a modified 
+        dirloglist to work inside glftpd.
+        Its much faster to use and speed is good when it comes
+        to predircheck scripts.
+
+        Changed:
+        Removed a few settings I didnt feel were needed, like the
+        parent checking etc.. It will now always check if the release
+        was upped in any of the dirs, no matter its section.
+
+        Changed:
+        Some settings were changed to a real egrep line.. see default
+        script.
+
+       If you're going to upgrade, it might be best to start from 
+       scratch.
+
+-------------------------------------------------------------
+1.3   : Added:
+        NUKE_PREFIX="_NUKED-"
+        Its ment for people who does not use the strings binary
+        to check if a dir was on site before or nuked.
+        In other words, those with CHECKPREEXISTS=FALSE
+
+        Just add your setting for how a nuked release is prefixed.
+
+        Note that this option is useless if you have CHECKPREEXISTS=TRUE
+        as that one does this same check and more.
+        
+        Leave NUKE_PREFIX="" to disable.
+
+        It uses ERROR2 and IERROR2 for announce (same as CHECKPREEXISTS uses).
+
+-------------------------------------------------------------
+1.2.2 : Fixed:
+        ALLOWDIRS_OVERRULES_DENYDIRS didnt work due to
+        spelling error.        
+
+        Manual fix, look for:
+        if [ "$DENYDIRS" ] && [ "$ALLOW_OVERRULE_DIRS" != "TRUE" ]; then
+        Change to:
+        if [ "$DENYDIRS" ] && [ "$ALLOW_OVERRULE_DIR" != "TRUE" ]; then
+
+-------------------------------------------------------------
+1.2.1 : Fixed:
+        The ALLOWFILE now works for stuff denied from all places
+        where a release would be denied previously.
+
+-------------------------------------------------------------
+1.2   : Added:
+        ALLOWDIRS  for those sections where you only allow
+                   certain groups/releases.
+
+        ERROR5     for announcing denials based on this to the user
+                   in glftpd.
+        IERROR5    for announcing denials based on this to irc.
+
+        ALLOWDIRS_OVERRULES_DENYGROUPS  See the README
+
+        ALLOWDIRS_OVERRULES_DENYDIRS    See the README
+
+        SKUPUSERS  For username exclude.
+
+        SKIPGROUPS For skipping based on the user primary group (only).
+
+        SKIPFLAGS  For skipping based on one or more flags.
+
+        Changed:
+        DENYGROUPS & DENYDIRS can now be specified per section.
+        Simply use Path:deny1|deny2|etc
+
+        To still use a global ban, specify /site as path.
+        /site:deny1|deny2|etc
+
+        Changed all "exit 1" to "exit 2" (again). Thanks LPC.
+
+-------------------------------------------------------------
+1.1   : Added
+        DENYGROUPS for banned groups.
+        DENYDIRS   for other stuff you dont want.
+        GLLOG      for bot announce
+        IERROR1-4  for what to say when breaking the rules.
+
+        See the README for usage instructions.
+
+        tur-dirallow.sh was updated to 1.1 too. It now only stores
+        the last allowed dirname in the allowfile.
+        Once the dir is created, another can be allowed, etc.
+
+-------------------------------------------------------------
+1.0   : Stealth updated =) Debug mode sent wrong ftp code,
+        confusing some clients.
+
+1.0   : Initial Release

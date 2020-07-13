@@ -1,0 +1,71 @@
+/* zsconfig.h - ZipScript-C config file
+ *
+ * This file only contains overrides of the defaults.
+ * Please see zsconfig.defaults.h for a complete list
+ * of all settings.
+ * If you need to change something, place the define in
+ * this file - do not edit the zsconfig.defaults.h!
+ *
+ * Please do not change settings you don not understand!
+ *
+ */
+#define debug_mode                      	FALSE
+#define debug_altlog                    	FALSE
+#define debug_announce                  	FALSE
+
+#define sitepath_dir                    	"/site/"
+#define group_dirs                      	"/site/PRE/"
+#define zip_dirs                        	"/site/0DAY/ /site/REQUESTS"
+#define nocheck_dirs                    	"/site/PRIVATE/"
+#define noforce_sfv_first_dirs          	"/site/REQUESTS/"
+#define audio_nocheck_dirs              	"/site/PRE/ /site/REQUESTS/"
+#define allowed_types_exemption_dirs    	""
+#define allowed_types                   	"jpg,jpeg,cue,m3u,txt,vob,png,m2ts,ts,log,mkv"
+    
+#define status_bar_type                 	BAR_FILE
+    
+#define incompleteislink                	1
+
+#define remove_dot_debug_on_delete      	TRUE
+#define remove_dot_files_on_delete      	TRUE
+    
+#define deny_double_sfv                 	TRUE
+#define force_sfv_first                 	TRUE
+    
+#define audio_genre_path                	"/site/music.by.genre/"
+#define audio_artist_path               	"/site/music.by.artist/"
+#define audio_year_path                 	"/site/music.by.year/"
+#define audio_group_path                	"/site/music.by.group/"
+#define allowed_constant_bitrates       	"192,320"
+#define allowed_years                   	"2017,2018,2019,2020,2021,2022,2023,2024,2025"
+#define banned_genres                   	""
+#define allowed_genres                  	""
+#define audio_genre_sort                	FALSE
+#define audio_year_sort                 	FALSE
+#define audio_artist_sort               	FALSE
+#define audio_group_sort                	FALSE
+#define audio_cbr_check                 	FALSE
+#define audio_cbr_warn                  	FALSE
+#define audio_year_check                	FALSE
+#define audio_year_warn                         FALSE
+#define audio_banned_genre_check                FALSE
+#define audio_allowed_genre_check               FALSE
+#define audio_genre_warn                        FALSE
+
+#define announce_norace                         TRUE
+
+#define incomplete_cd_indicator        	 	"../../[incomplete]-(%0)-%1"
+#define incomplete_indicator            	"../[incomplete]-%0"
+#define incomplete_nfo_indicator        	"../[no-nfo]-%0"
+#define incomplete_base_nfo_indicator   	"../../[no-nfo]-%1"
+
+#define enable_nfo_script               	TRUE
+#define nfo_script                      	"/bin/psxc-imdb.sh"
+#define enable_complete_script          	FALSE
+#define complete_script                 	"/bin/nfo_copy.sh"
+
+#define mark_empty_dirs_as_incomplete_on_rescan TRUE
+#define subdir_list                     	"cd??,disc??,disk??,dvd??,extra?,sub?,subtitle?,vobsub?,sample?,subpack?,ac3,audioaddon,addon,ac3addon,proof,cover?,tools"
+#define speedtest_delfile               	TRUE
+#define speedtest_dirs                  	"/site/SPEEDTEST/"
+#define strict_path_match               	TRUE

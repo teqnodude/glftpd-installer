@@ -1,0 +1,211 @@
+
+set chanlist(DEFAULT)           	"$mainchan"
+set chanlist(WELCOME)           	"$mainchan"
+
+set statsection(0)          		"DEFAULT"
+
+######################
+# Invite             #
+######################
+set enable_irc_invite       		"TRUE"
+set invite_channels         		$invitechan
+set privchannel(ochan)			"-glftpd =SiteOP =Admin 1"
+
+######################
+# Announcing         #
+######################
+set splitter(CHAR)          		"\n"
+set msgtypes(DEFAULT)           	"ADDUSER GADDUSER CHGRPADD CHGRPDEL ADDIP DELIP READDED DELUSER PURGED KILLED SYSOP BADHOSTMASK BADUSERNAME BADMSGINVITE BADPASSWORD BANNEDHOST DELETED LOGIN LOGOUT IPNOTADDED KILLGHOST TAGLINE TIMEOUT DEBUG IMDBFIND INVITE MSGINVITE REQUEST REQFILLED ANUKEL ANUKEEMPTY ANUKEHEMPTY ANUKEINC ANUKEBAN ANUKEALLOW VACATION VACATIONOFF TURGEN MSSREP TURNEWS RESET ULTEST DLTEST INFO TURDAY TURDAYC STAFF TSD TSM PREDIRCHECK GLVERSION MKV_FAIL MKV_PASS PREBW"
+
+## Staff channel announces
+set disable(ADDUSER)        		0
+set disable(GADDUSER)       		0
+set disable(CHGRPADD)       		0
+set disable(CHGRPDEL)       		0
+set disable(ADDIP)          		0
+set disable(DELIP)          		0
+set disable(READDED)       		0
+set disable(DELUSER)        		0
+set disable(PURGED)         		0
+set disable(SYSOP)          		0
+set disable(BADHOSTMASK)    		0
+set disable(BADUSERNAME)        	0
+set disable(BADPASSWORD)    		0
+set disable(BANNEDHOST)     		0
+set disable(DELETED)       		0
+set disable(IPNOTADDED)     		0
+set disable(SAMPLEDIR)      		1
+
+set redirect(ADDUSER)           	$staffchan
+set redirect(GADDUSER)          	$staffchan
+set redirect(CHGRPADD)          	$staffchan
+set redirect(CHGRPDEL)          	$staffchan
+set redirect(ADDIP)             	$staffchan
+set redirect(DELIP)             	$staffchan
+set redirect(READDED)           	$staffchan
+set redirect(DELUSER)           	$staffchan
+set redirect(PURGED)            	$staffchan
+set redirect(SYSOP)             	$staffchan
+set redirect(BADHOSTMASK)       	$staffchan
+set redirect(BADUSERNAME)       	$staffchan
+set redirect(BADPASSWORD)       	$staffchan
+set redirect(BANNEDHOST)        	$staffchan
+set redirect(DELETED)           	$staffchan
+set redirect(IPNOTADDED)        	$staffchan
+set redirect(MSSREP)            	$staffchan
+set redirect(TURNEWS)           	$staffchan
+set redirect(WIPE)              	$staffchan
+set redirect(WIPE-r)            	$staffchan
+set redirect(STAFF)             	$staffchan
+set redirect(BAD_FILE_0SIZE)    	$staffchan
+set redirect(BAD_FILE_CRC)      	$staffchan
+set redirect(BAD_FILE_SFV)      	$staffchan
+set redirect(BAD_FILE_ZIP)      	$staffchan
+set redirect(DOUBLESFV)         	$staffchan
+set redirect(RESUMESFV)         	$staffchan
+
+set redirect(VACATION)          	$mainchan
+set redirect(VACATIONOFF)       	$mainchan
+set redirect(TURGEN)            	$mainchan
+set redirect(MSSREP)            	$staffchan
+set redirect(ANUKEL)            	$mainchan
+set redirect(ANUKEEMPTY)        	$mainchan
+set redirect(ANUKEHEMPTY)       	$mainchan
+set redirect(ANUKEINC)          	$mainchan
+set redirect(ANUKEBAN)          	$mainchan
+set redirect(ANUKEALLOW)        	$mainchan
+set redirect(TURNEWS)           	$staffchan
+set redirect(INFO)              	$mainchan
+set redirect(TURDAY)            	$mainchan
+set redirect(TURDAYC)           	$mainchan
+set redirect(STAFF)             	$staffchan
+set redirect(TSD)               	$staffchan
+set redirect(TSM)               	$staffchan
+set redirect(PREDIRCHECK)		$mainchan
+set redirect(GLVERSION)                 $staffchan
+
+## Script announcements
+set disable(DEFAULT)        		0
+set disable(BADMSGINVITE)   		1
+set disable(INVITE)         		1
+set disable(MSGINVITE)      		1
+set disable(WELCOME)        		1
+
+## glFTPd announcements
+set disable(DELDIR)             	0
+set disable(NEWDIR)             	0
+set disable(NUKE)               	0
+set disable(UNNUKE)             	0
+set disable(REQFILLED)          	0
+set disable(REQUEST)            	0
+set disable(WIPE)               	1
+set disable(WIPE-r)             	1
+set disable(RACE_AUDIO)         	1
+set disable(RACE_OTHER)         	1
+set disable(RACE_RAR)           	1
+set disable(RACE_VIDEO)         	1
+set disable(RACE_ZIP)           	1
+set disable(SFV_AUDIO)          	1
+set disable(SFV_OTHER)          	1
+set disable(SFV_RAR)            	1
+set disable(SFV_VIDEO)          	1
+set disable(SAMPLEDIR)          	1
+set disable(SAMPLE)             	1
+set disable(NEWDISC)            	1
+set disable(SUBTITLES)          	1
+set disable(COVERS)             	1
+set disable(PROOF)              	1
+
+## Third party announcements
+set disable(IMDB)               	0
+set disable(IMDBFIND)           	0
+set disable(IMDBVAR)            	0
+set disable(PRE)                	0
+set disable(TURGEN)             	0
+
+set disable(ANUKEL)             	1
+set disable(ANUKEEMPTY)         	0
+set disable(ANUKEHEMPTY)        	0
+set disable(ANUKEINC)           	0
+set disable(ANUKEBAN)           	0
+set disable(ANUKEALLOW)         	0
+
+set disable(VACATION)           	0
+set disable(VACATIONOFF)        	0
+set disable(MSSREP)             	1
+set disable(TURNEWS)            	0
+set disable(INFO)               	0
+
+set disable(BAD_FILE_0SIZE)     	1
+set disable(BAD_FILE_NOSFV)     	1
+set disable(BAD_FILE_CRC)      		1
+set disable(BAD_FILE_SFV)       	1
+set disable(BAD_FILE_ZIP)       	1
+set disable(BAD_FILE_DUPERELEASE) 	1
+set disable(DOUBLESFV)                  1
+set disable(RESUMESFV)                  1
+
+set disable(TURDAY)             	0
+set disable(TURDAYC)            	0
+set disable(STAFF)              	0
+set disable(TSD)                	1
+set disable(TSM)                	1
+set disable(PREDIRCHECK)		1
+set disable(GLVERSION)                  0
+
+set announcetochan(INC)         	1
+set announcetochan(INCOMPLETE)  	1
+set announcetochan(INCOMPLETES) 	1
+
+set msgreplace(0)               	"NEWDIR:*/sample:SAMPLE"
+set msgreplace(1)               	"NEWDIR:*/cd?:NEWDISC"
+set msgreplace(2)               	"NEWDIR:*/dvd?:NEWDISC"
+set msgreplace(3)               	"NEWDIR:*/disc?:NEWDISC"
+set msgreplace(4)               	"NEWDIR:*/disk?:NEWDISC"
+set msgreplace(5)               	"NEWDIR:*/subs:SUBTITLES"
+set msgreplace(6)               	"NEWDIR:*/cover:COVERS"
+set msgreplace(7)               	"NEWDIR:*/covers:COVERS"
+set msgreplace(8)               	"NEWDIR:*/proof:PROOF"
+
+set disable(HALFWAY_NORACE_AUDIO)       1
+set disable(HALFWAY_NORACE_OTHER)       1
+set disable(HALFWAY_NORACE_RAR)         1
+set disable(HALFWAY_NORACE_VIDEO)       1
+set disable(HALFWAY_NORACE_ZIP)         1
+set disable(HALFWAY_RACE_AUDIO)         1
+set disable(HALFWAY_RACE_OTHER)         1
+set disable(HALFWAY_RACE_RAR)           1
+set disable(HALFWAY_RACE_VIDEO)         1
+set disable(HALFWAY_RACE_ZIP)           1
+set disable(NEWLEADER_AUDIO)            1
+set disable(NEWLEADER_OTHER)            1
+set disable(NEWLEADER_RAR)              1
+set disable(NEWLEADER_VIDEO)            1
+set disable(NEWLEADER_ZIP)              1
+set disable(RACE_AUDIO)                 1
+set disable(RACE_OTHER)                 1
+set disable(RACE_RAR)                   1
+set disable(RACE_VIDEO)                 1
+set disable(RACE_ZIP)                   1
+set disable(UPDATE_CBR)                 1
+set disable(UPDATE_OTHER)               1
+set disable(UPDATE_RAR)                 1
+set disable(UPDATE_VBR)                 1
+set disable(UPDATE_VIDEO)               1
+set disable(UPDATE_ZIP)                 1
+
+set announcetochan(BW)                  1
+set announcetochan(BWDN)                1
+set announcetochan(BWUP)                1
+set announcetochan(SPEED)               0
+
+set trigger(free)			""
+
+set disable(MKV_PASS)                   1
+set disable(MKV_FAIL)                   1
+set redirect(MKV_PASS)                 	$mainchan
+set redirect(MKV_FAIL)                  $mainchan
+
+set redirect(PREBW)                     $mainchan
+set disable(PREBW)                      0
+set chanlist(PREBW)                     $mainchan

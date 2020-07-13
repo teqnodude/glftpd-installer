@@ -1,0 +1,6 @@
+
+######################
+# Sections           #
+######################
+
+set denypost                            "/site/PRE/* */Extras/* */Tools/* */Subs* */SUBS* */subs* */Sample* */SAMPLE* */sample* */Proof* */PROOF* */proof*"

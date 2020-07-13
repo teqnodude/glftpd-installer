@@ -1,0 +1,12 @@
+site_cmd ADDAFFIL       EXEC    /bin/addaffil.sh
+custom-addaffil		1
+
+site_cmd DELAFFIL       EXEC    /bin/delaffil.sh
+custom-delaffil		1
+
+site_cmd LISTAFFILS     EXEC    /bin/listaffils.sh
+custom-listaffils	1
+
+site_cmd PRE            EXEC    /bin/foo-pre
+custom-pre		*
+

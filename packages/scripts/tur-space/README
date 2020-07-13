@@ -1,0 +1,338 @@
+Readme for Tur-Space.
+
+What is it?
+It is a script to either delete or archive releases from your incoming
+sections.
+
+But there are 100 other scripts that does the same thing?
+True. But neither of them did what I want. Or, if they did
+they were too advanced for me to tackle.
+I just wanted my own that I could mold as I liked.
+
+So whats so special?
+Well, this one works like this.
+You define one or more incoming drives. Like this:
+TRIGGER=/dev/hda1:25000:30000
+
+That means it will check /dev/hda1 - Once it gets 25000 MB (25GB) free, it will be processed.
+It will delete or move releases until there are 30000 MB (30GB) free.
+
+As you can see, it works pretty much like Zios Spacemaker. Why? Because I love that one but
+it has one or two fault in my case. 
+Lets say I have several DIVX archive disks thats not raided.
+Say I have DIVX1 -> DIVX5 archive. Zios spacemaker would move from the incoming section to
+DIVX1. If there is no space in DIVX1, it will move the oldest from there to DIVX2. 
+If there is no space in DIVX2.. etc
+
+Tur-Space moves to the defined archive with the most free space.
+If none of the defined archives have enough space it will
+find the oldest release in all of them and delete it.
+If theres still not enough space, it will delete the oldest release in the 
+dir it just deleted the last one in, until there IS enough space.
+
+So, instead of Incoming -> DIVX1 -> DIVX2 -> DIVX3.
+its Incoming -> DIVX1. Incoming -> DIVX2. Incoming -> DIVX3.
+
+Personally, I think thats better. Atleast in my case.
+
+Also, Tur-Space use 'tuls'. A stand-alone ls binary so it should work on all distros.
+
+Ok, some basic stuff. How to set it up.
+
+You should have some knowledge of the df binary and grep. Atleast its recomended.
+
+#------------------------------------------------------------------------------------------------#
+
+Start with editing tur-space.sh. The only setting here is where the config is. Previosly,
+tur-space.sh tried to locate the file if it was in the same dir as tur-space.conf, but that did
+not work too well everywhere, so now you have to hardcode its location.
+
+The config:
+
+[IGNOREDIRS]
+IGNORE="GROUPS lost\+found"
+
+In IGNORE, you set dirs that should never be moved. In this case, GROUPS and lost+found.
+It is case sensitive and matches whole dir. Example: New-GROUP-News would still be deleted/moved.
+Seperate dirs with a space.
+
+
+[VARIOUS]
+TULS=/glftpd/bin/tuls
+
+This script requires tuls. A stand-alone ls binary made by cruxis.
+It can be found on my site at http://www.grandis.nu/glftpd
+Make sure it works first and then specify its location here.
+
+
+TMP=/tmp
+
+A dir to store temporary stuff in.
+
+
+LOGFILE=/glftpd/ftp-data/logs/tur-space.log
+
+File to log to. This is NOT to glftpd.log
+
+
+GLLOG=/glftpd/ftp-data/logs/glftpd.log
+
+If you want announce to irc on move and delete, point this to your glftpd.log
+file and read README.announce
+
+
+COPY_OPTIONS="-rf --preserve=timestamps"
+
+We do a cp on the releases (copy) and the verify that its all there.
+Once verified, it runs rm -rf on the releases in its original location.
+This is where you set which options the cp binary runs with.
+The default '--preserve=timestamps' only seems to work on RedHat and
+perhaps some other distro. The only setting that MUST be here is -r for
+recursive copy. Oh, and unless you want to anwer "yes" to questions, -f is good too =)
+For Debian, you apparently want to use "-rf --preserve" - Thanks DaShizNit.
+
+
+CHOWN_OPTIONS="0:400"
+
+If you want it to change the owner of the release after its moved, set
+the options for chown here. The default '0:400' means in MY case
+glftpd:SiTEOPS. 400 might not be the GID for your siteops groups.
+You can check the GID for groups in /glftpd/etc/groups.
+You can not use the name here, unless you know what you're doing.
+Put a # infront of this one to disable running chown on the release.
+This is actually whats added as 'chown $CHOWN_OPTIONS dir', so you can
+add -R or whatever your system uses for a recursive chown, if you like.
+
+
+CHMOD_OPTIONS="755"
+
+If you like to change permissions on the release after its moved, set the
+chmod options here. Should be a straight forward option.
+Put a # infront of this one to disable changing permissions on it.
+This is actually whats added as 'chmod $CHMOD_OPTIONS dir', so you can
+add -R or whatever your system uses for a recursive chmod, if you like.
+
+
+DATE_BINARY=""
+
+If you're using FBSD, you need to download and compile sh-utils and specifically
+'gdate'. Its a GNU compliant date binary.
+You then specify the path to gdate here. tur-space requires your date binary
+to support '-d' as in:
+"-d, --date=STRING         display time described by STRING, not `now'"
+Leaving this empty will just use 'date' from your path. Should be fine for most
+linuxes.
+
+DU_BINARY=""
+
+Same as DATE_BINARY.. Used for FBSD because it needs a gnu du binary that supports
+du -csm (default du for FBSD dosnt support the m flag for MB output).
+Leave empty if you're running linux. Can always check if your current du binary
+supports it by running:
+du -csm /tmp | tail -n1 | cut -f1
+It should then return the size if the /tmp directory in MB.
+
+
+MAX_LOOP="10"
+
+There is a safety check in tur-space. It can only delete 10 items in your archive
+to make room for any one release. Ie, it will loop "until there is enough space to
+hold the release". Here you can modify that value incase you feel the need to.
+Incase you specify the wrong device / path for an archive, it will remove stuff from
+one directory, then check space again on another device. Since this havent changed, it
+will continue to delete stuff. So this is only for safety.
+
+
+SECURITY_PATH="/glftpd/site/.*/"
+
+This is a security. Nothing outside of this can be deleted and its just a safety
+precation. Use .* to specify anything, so /glftpd/site/.*/ means inside any subdir
+of /glftpd/site only.
+
+
+[TRIGGER]
+TRIGGER=/dev/hda1:25000:30000
+
+Incoming sections are defined here. One TRIGGER per disk.
+You may add more then one TRIGGER. Example:
+TRIGGER=/dev/hda1:25000:30000
+TRIGGER=/dev/hdb1:15000:20000
+
+So
+TRIGGER=device:Free_Space_in_MB_To_Start_Moving_or_Deleting_On:Amount_of_Space_in_MB_Required_Before_It_Quits
+
+It must start with TRIGGER=
+The '/dev/hda1' is the device to check space on. It must appear when
+running 'df' and only on one line. Run: 
+df | grep "/dev/hda1"
+and make sure it only returns one row.
+
+It can be any part of the df output, as long as its unique for that mount.
+Example: Say you have this line in your df output.
+192.168.0.15:/shares/5  196015808  45292840 140765888  25% /glftpd/site
+Thats a NFS share.
+
+Something unique would be /shares/5
+So:
+TRIGGER=/shares/5:25000:30000
+
+Do NOT define archive disks/mounts here. They will be freed of space, if needed, automatically.
+Note that they are seperated with a :, so the device part can not contain a ':'.
+
+
+[INCOMING]
+INCDVDR=/dev/hda1:/glftpd/site/DVDR:
+INCDIVX=/dev/hda1:/glftpd/site/DIVX:
+INCXBOX=/dev/hda1:/glftpd/site/XBOX:
+INC0DAYS=/dev/hdb1:/glftpd/site/0DAYS:DATED
+
+Ok, here you specify the incoming sections on the TRIGGER devices.
+They must start with INC, followed by the name of the section
+The name can be anything but it must be unique for each section.
+
+So, its INC<name>=Device:Full_Path:
+
+The Device must match the device specified in one of the TRIGGER above.
+
+As you can see from the INC0DAYS example above, DATED is added after the
+last :
+With DATED, it will find the oldest release by sorting by number instead of
+date. The first number in the dated dir must be the month in 01-12 format, ie
+0101 or 01-January etc, for DATED to work.
+
+If DATED is not defined (just a : at the end), it will find the oldest release
+by sorting on date.
+
+Dont forget the trailing :
+Dont specify a trailing / on the path ( /glftpd/site/XBOX/ = baaad ).
+
+The name here must be unique. You can NOT have two INCDVDR=
+If you do have two incoming drives for DVDR, add them using
+INCDVDR1 and INCDVDR2, then when it comes to the archive, make two setups. One
+for DVDR1 and one for DVDR2, pointing to the same destination dirs.
+
+
+[ARCHIVE]
+ARCDVDR=/dev/hdf1:/glftpd/site/Archive/DVDR/DVDR1
+ARCDVDR=/dev/hdg1:/glftpd/site/Archive/DVDR/DVDR2
+
+ARCDIVX=/dev/hdg1:/glftpd/site/Archive/DIVX/DIVX1
+ARCDIVX=/dev/hdh1:/glftpd/site/Archive/DIVX/DIVX2
+ARCDIVX=/dev/hdi1:/glftpd/site/Archive/DIVX/DIVX3
+
+ARCUTILS=/dev/hdj1:/glftpd/site/Archive/ISO-UTILS/ISO-UTILS1
+ARCUTILS=/dev/hdk1:/glftpd/site/Archive/ISO-UTILS/ISO-UTILS2
+
+ARC0DAYS=/dev/hdn1:/glftpd/site/Archive/0DAYS/0DAYS1/2004
+
+These are the archive sections for the INC sections above.
+Note that they must start with ARC, followed by the same name
+you used in the INComing sections. That is how it matches the INComing section with 
+the ARChive section.
+
+As you can see, you can specify more then one ARC<name> section
+for each INC<name> section. 
+
+The device the disk/mount to check if theres space for it and after the : is 
+the actual path it will move the releases to.
+
+As with the INC<name> sections, the device can be anything unique in the df
+output, that does not include a ':'.
+
+******************************************************************************
+In fact, if its mounted as above, the path itself should be unique. If so, you
+can even use this format:
+ARCDIVX=/glftpd/site/Archive/DIVX/DIVX1:/glftpd/site/Archive/DIVX/DIVX1
+ARCDIVX=/glftpd/site/Archive/DIVX/DIVX2:/glftpd/site/Archive/DIVX/DIVX2
+ARCDIVX=/glftpd/site/Archive/DIVX/DIVX3:/glftpd/site/Archive/DIVX/DIVX3
+******************************************************************************
+
+It will then try and find the archive with the most space free in it when moving.
+If no archive have enough space to move the release to, it will find the oldest 
+release in all of the archives.
+
+Once that is found, it will be deleted.
+If there is still not enough space, it will keep deleting from the archive
+it deleted the oldest one from, until there is enough space, or until it has deleted
+the MAX_LOOP= amount of releases.
+
+As you see, there is no ARCXBOX for the INCXBOX defined. That means
+releases from the INCXBOX section will simply be deleted.
+
+Thats all there is to it ! 
+
+#------------------------------------------------------------------------------------------------#
+
+Now, run it without arguments first. You'll see you have 2(3) options.
+
+Start with ./tur-space.sh sanity
+It will show the configuration and find the oldest releases in each INC section.
+It will also show you any apparent errors, like if you have ARCTV but no INCTV, etc
+( since that would be useless ).
+Make sure to check the top of the sanity check too for the chown/chmod options set. 
+
+
+Next, run ./tur-space.sh go debug
+*******************************************************************************
+That will NOT move anything. But it will act as if it does and show you exactly
+how it works.
+
+Since its not actually moving anything, space used etc will not change but it will
+still act as if the release it said it moved was (wont try to move something twice etc).
+It will break automatically after 20 loops so just let it work and then have a look 
+at the result.
+It will also log to the LOGFILE as if it ran live.
+*******************************************************************************
+
+If it says that there is already enough space on the TRIGGER device(s), you can change how
+much space it should trigger on and run debug again. Just change it back before running it live.
+
+Once you are satisfied, just run ./tur-space.sh go
+
+You can crontab it to run 'go' as often as you like. If there already is enough
+space on all the TRIGGER devices, it will just quit.
+
+#------------------------------------------------------------------------------------------------#
+
+NOTES:
+It has a lockfile, so you can not start it twice. However, should a bad error occur, like a
+configuration error, it will quit without removing the lockfile.
+If you run it and it just dies, check with debug and it will show you the last error in 
+the LOGFILE. Of course, you can check the LOGFILE yourself too.
+
+If one of your ARC<name> sections can not be found (unmounted perhaps) and it needs to delete
+something to fit a release, it will NOT do it, even if you have other ARC<name> that is also
+an archive to the same section.
+It will still move stuff to the other ARC<name> sections if there is enough free space though.
+This is to prevent it from deleting stuff because a mount failed or HD died etc.
+
+This is also displayed when running with 'sanity'. Try to add an ARChive with a non existing 
+device and you'll see what I mean.
+
+To disable a TRIGGER, INC<name> or ARC<name>, just put a # infront of it.
+Experts: It does a: for each in `grep "^INC" $config`, so #INC is not detected.
+
+Feel free to add any comments you like to the config. Just remember that
+comments may NOT start with: IGNORE, TULS, TMP, LOGFILE, TRIGGER, INC, ARC, COPY_OPTIONS,
+CHOWN_OPTIONS & CHMOD_OPTIONS (etc) or they will be considered an argument for tur-space.sh to read.
+
+It actually does not move releases right away. It copies them, using the $COPY_OPTIONS.
+
+After it has copied the full dir, it will check that the dir it copied has the same amount of files in it
+as the dir in the incoming section.
+If it does, it will rm -rf the dir in the incoming section and consider it done.
+
+However, if the copied dir does NOT contain the same amount of files, it will wait 5 seconds and then
+check again (to allow any cache to clear) and if its still not the same, it will log it and quit.
+This is one of those exits where it leaves the lockfile to prevent any damage. You'll have to check
+why it did this manually and fix it yourself. 
+
+#------------------------------------------------------------------------------------------------#
+One last thing. This is a script I made for me. It works how I want it to, so I wont modify it 
+because you want it to work in some other way. Unless you find any bugs, dont bother me about it. 
+
+You also can NOT hold me responsible if you configure it to delete your entire box, or if a bug
+does it. Sorry, but it can happen I guess.
+#------------------------------------------------------------------------------------------------#
+
+/Turranius - 2004/2005

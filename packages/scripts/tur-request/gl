@@ -1,0 +1,15 @@
+site_cmd REQUEST        EXEC    /bin/tur-request.sh request
+custom-request          *
+
+site_cmd REQFILLED      EXEC    /bin/tur-request.sh reqfilled
+custom-reqfilled        *
+
+site_cmd REQDEL         EXEC    /bin/tur-request.sh reqdel
+custom-reqdel           *
+
+site_cmd REQWIPE        EXEC    /bin/tur-request.sh reqwipe
+custom-reqwipe          *
+
+site_cmd REQUESTS       EXEC    /bin/tur-request.sh status
+custom-requests         *
+
