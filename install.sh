@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=9.8
+VER=9.9
 clear
 
 if [ ! -d ".tmp" ]
@@ -129,26 +129,29 @@ function version
 	else
 		echo -n "Install 32 or 64 bit version of glFTPD ? [32] [64], default 64 : " ; read version
 	fi
+	echo -n "Downloading relevant packages, please wait...                   "
+	latest=`lynx --dump https://glftpd.io | grep "latest stable version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr "[:space:]" "_" | sed 's/_$//'`
 	case $version in
 		32)
-		PK1="`ls packages | grep glftpd-LNX | grep x86`"
-		PK1DIR="`ls packages | grep glftpd-LNX | grep x86 | sed 's|.tgz||'`"
+		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)'`.tgz && cd ..
+		PK1="`ls packages| grep glftpd-LNX | grep x$version`"
+		PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
 		;;
 		64)
-		PK1="`ls packages | grep glftpd-LNX | grep x64`"
-		PK1DIR="`ls packages | grep glftpd-LNX | grep x64 | sed 's|.tgz||'`"
+		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)'`.tgz && cd ..
+		PK1="`ls packages | grep glftpd-LNX | grep x$version`"
+		PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
 		;;
 		*)
-		PK1="`ls packages | grep glftpd-LNX | grep x64`"
-		PK1DIR="`ls packages | grep glftpd-LNX | grep x64 | sed 's|.tgz||'`"
 		version="64"
+		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)'`.tgz && cd ..
+		PK1="`ls packages | grep glftpd-LNX | grep x$version`"
+		PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
 		;;
 	esac
 	
-	PK2="pzs-ng.tar.gz"
 	PK2DIR="pzs-ng"
-	PK3="eggdrop-1.8.4.tar.gz"
-	PK3DIR="eggdrop-1.8.4"
+	PK3DIR="eggdrop"
 	UP="tar xf"
 	BOTU="sitebot"
 	
@@ -169,11 +172,12 @@ function version
 	fi 
 	
 	cd packages
-	#echo
 	#echo -n "Extracting the Source files, please wait...                     "
-	$UP $PK1
-	$UP $PK2
-	$UP $PK3
+	$UP $PK1 && rm $PK1
+	git clone https://github.com/pzs-ng/pzs-ng >/dev/null 2>&1
+	git clone https://github.com/eggheads/eggdrop >/dev/null 2>&1
+	echo -e "[\e[32mDone\e[0m]"
+	echo
 	mkdir source
 	cp -R scripts source
 	cd ..
@@ -604,7 +608,7 @@ function glftpd
 	packages/scripts/tur-rules/rulesgen.sh MISC
 	cd packages
 	echo
-	echo -n "Installing $PK1DIR, please wait...          "
+	echo -n "Installing glftpd, please wait...                               "
 	echo "####### Here starts glFTPD scripts #######" >> /var/spool/cron/crontabs/root
 	#cd $PK1DIR ; mv -f ../data/installgl.sh ./ ; ./installgl.sh >/dev/null 2>&1
 	cd $PK1DIR && sed "s/changeme/$port/" ../data/installgl.sh.org > installgl.sh && chmod +x installgl.sh && ./installgl.sh >/dev/null 2>&1
@@ -744,7 +748,7 @@ function eggdrop
 	then
 		echo
 	fi
-	echo -n "Installing $PK3DIR, please wait...                        "
+	echo -n "Installing eggdrop, please wait...                              "
 	cd ../$PK3DIR ; ./configure --prefix="$glroot/sitebot" >/dev/null 2>&1 && make config >/dev/null 2>&1  && make >/dev/null 2>&1 && make install >/dev/null 2>&1
 	cd ../data
 	cat egghead > eggdrop.conf
@@ -781,7 +785,7 @@ function eggdrop
 	rm -f $glroot/sitebot/scripts/autobotchk
 	rm -f $glroot/sitebot/scripts/botchk
 	rm -f $glroot/sitebot/scripts/weed
-	ln -s $glroot/sitebot/eggdrop-1.8.4 $glroot/sitebot/sitebot
+	ln -s $glroot/sitebot/`ls $glroot/sitebot | grep eggdrop-` $glroot/sitebot/sitebot
 	chmod 666 $glroot/etc$glroot.conf
 	mkdir -pm 777 $glroot/site/PRE/SiteOP $glroot/site/REQUESTS $glroot/site/SPEEDTEST
 	chmod 777 $glroot/site/PRE
@@ -919,7 +923,7 @@ function pzsng
 	then
 		echo
 	fi
-	echo -n "Installing PZS-NG, please wait...                               "
+	echo -n "Installing pzs-ng, please wait...                               "
 	cd packages/pzs-ng
 	./configure >/dev/null 2>&1 ; make >/dev/null 2>&1 ; make install >/dev/null 2>&1
 	$glroot/libcopy.sh >/dev/null 2>&1

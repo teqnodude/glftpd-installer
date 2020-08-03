@@ -1,9 +1,10 @@
-## 9.x -
+## 9.9 -
 
 ### Updated
 
 - Changed so people can upload and download for free in SPEEDTEST folder
 - When searching for a block in tur-predircheck_manager you now get a reply if no result is found to avoid confusion
+- Removed all tar packages and grabbing the latest versions from github and webpages instead making the installer a lot smaller
 
 
 ## 9.8 - 2020-07-01
