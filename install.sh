@@ -89,7 +89,7 @@ function start
 	echo
 	while [[ -z $sitename ]]
 	do
-		echo -n "Please enter the name of the site : " ; read sitename
+		echo -n "Please enter the name of the site, without space : " ; read sitename
 	done
 	
 	sitename="`echo $sitename | sed -e 's/ /_/g'`"

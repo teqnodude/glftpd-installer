@@ -78,7 +78,7 @@ dpkg-reconfigure dash
 After a regular installation you are left with a file called install.cache located in install dir that will be used automatically the next time you run the installation script. Here are the various variables in install.cache if you want to make your installation unattended.
 
 ```
-sitename="Test" # Name of the site 
+sitename="Test" # Name of the site. Don't use space in sitename. 
 port="2010" # Port for the FTP
 version="64" # Bit version of glFTPD 32/64
 device="/dev/sda1" # What device to use for /site
