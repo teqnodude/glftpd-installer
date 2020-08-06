@@ -1,3 +1,10 @@
+## 10.x -
+
+### Updated
+
+- Increased the number of connections from default 64 to 300 for boxes that runs glFTPD in systemd
+
+
 ## 9.9 - 2020-08-03
 
 ### Updated
