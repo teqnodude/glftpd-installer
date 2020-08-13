@@ -8,12 +8,11 @@
 #################################################################
 
 bind pub - !mediainfo pub:mediainfo
+bind pub - !mi pub:mediainfo
 
-## Public chan.
 proc pub:mediainfo {nick output binary chan text} {
   set binary {/glftpd/bin/mediainfo.sh}
-  global channel
-    putquick "PRIVMSG $chan :Getting info, please wait..."
+  putquick "PRIVMSG $chan :Getting info, please wait..."
     foreach line [split [exec $binary $nick $text] "\n"] {
        putquick "PRIVMSG $chan :$line"
     }
