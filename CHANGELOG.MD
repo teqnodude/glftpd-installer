@@ -4,6 +4,10 @@
 
 - Increased the number of connections from default 64 to 300 for boxes that runs glFTPD in systemd
 
+### Fixes
+
+- Forgot to put both MVID and PRE section under allowed_types_exemption_dirs in zsconfig.h to allow the pre and upload of MVID
+
 
 ## 9.9 - 2020-08-03
 
