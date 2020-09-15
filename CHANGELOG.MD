@@ -4,6 +4,7 @@
 
 - Increased the number of connections from default 64 to 300 for boxes that runs glFTPD in systemd
 - Added EBOOKS as one of the possible sections to add with dated dirs which also includes the autogeneration of rules
+- Added checks for section EBOOKS in section_manager.sh
 
 ### Fixes
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.2
+VER=1.21
 #----------------------------------------------------------------#
 #								 #
 # Section Manager by Teqno     			 		 #
@@ -208,7 +208,6 @@ function pzsbot
 		sed -i "/set chanlist("$section")/d" $pzsbot
 		;;
 	        *)
-		#echo -n "Want to treat this as a 0DAY section ie 0DAY, MP3, FLAC, XXX-IMAGESET ? [Y]es [N]o, default N : "; read day
 		case $day in
                     [Yy])
 	    	    sed -i '/set paths(REQUEST)/i set paths('"$section"')				"/site/'"$section"'/*/*"' $pzsbot
@@ -241,7 +240,7 @@ function approve
 	        sed -i "/$section$/d" $approve
 	        ;;
 	        *)
-	    	if [[ ${section^^} != @(0DAY|MP3|FLAC) ]]
+	    	if [[ ${section^^} != @(0DAY|MP3|FLAC|EBOOKS) ]]
 	    	then
 	    		sed -i '/^SECTIONS="/a '"$section" $approve
 	    	else
@@ -278,7 +277,7 @@ function eur0pre
 		*)
 		sed -i "s/.allow=/.allow=$section\|/" $addaffil
 		sed -i "s/.allow=/.allow=$section\|/" $foopre
-		if [[ ${section^^} != @(0DAY|MP3|FLAC) ]]
+		if [[ ${section^^} != @(0DAY|MP3|FLAC|EBOOKS) ]]
 		then
 		    echo "section.$section.name=$section" >> $foopre
 	    	    echo "section.$section.dir=/site/$section" >> $foopre
@@ -359,7 +358,7 @@ function psxcimdb
     fi
 }
 
-if [[ "$(ls $glroot/site | grep -iw ^0DAY | tr '[a-z]' '[A-Z]')" != "0DAY" && "$(ls $glroot/site | grep -w ^FLAC | tr '[a-z]' '[A-Z]')" != "FLAC" && "$(ls $glroot/site | grep -w ^MP3 | tr '[a-z]' '[A-Z]')" != "MP3" ]] ;
+if [[ "$(ls $glroot/site | grep -iw ^0DAY | tr '[a-z]' '[A-Z]')" != "0DAY" && "$(ls $glroot/site | grep -w ^FLAC | tr '[a-z]' '[A-Z]')" != "FLAC" && "$(ls $glroot/site | grep -w ^MP3 | tr '[a-z]' '[A-Z]')" != "MP3" && "$(ls $glroot/site | grep -w ^EBOOKS | tr '[a-z]' '[A-Z]')" != "EBOOKS"]] ;
 then
         sed -i /dated.sh/d /var/spool/cron/crontabs/root
 fi
