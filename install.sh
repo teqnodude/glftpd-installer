@@ -460,7 +460,7 @@ function section_names
 	else
 		echo
 		echo "Valid Sections are : "
-		echo "0DAY ANIME APPS DVDR FLAC GAMES MP3 MBLURAY MVDVDR NSW PDA PS4 TV-HD TV-NL TV-SD X264 X265-2160 XVID XXX XXX-PAYSITE"
+		echo "0DAY ANIME APPS DVDR EBOOKS FLAC GAMES MP3 MBLURAY MVDVDR NSW PDA PS4 TV-HD TV-NL TV-SD X264 X265-2160 XVID XXX XXX-PAYSITE"
 		echo
 		while [[ -z $sections || $sections -gt 20 ]]
 		do
@@ -497,11 +497,11 @@ function section_generate
 		echo -n "Section $((counta+1)) is : " ; read section
 	fi
 	case ${section^^} in
-		0DAY|ANIME|APPS|DVDR|FLAC|GAMES|MP3|MBLURAY|MVDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE)
+		0DAY|ANIME|APPS|DVDR|EBOOKS|FLAC|GAMES|MP3|MBLURAY|MVDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE)
 		writ
 		;;
 		*)
-        while [[ ${section^^} != @(0DAY|ANIME|APPS|DVDR|FLAC|GAMES|MP3|MBLURAY|MVDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
+        while [[ ${section^^} != @(0DAY|ANIME|APPS|DVDR|EBOOKS|FLAC|GAMES|MP3|MBLURAY|MVDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
         do
             echo "Section [$section] is not in the above list of available sections, please try again."
             echo -n "Section $((counta+1)) is : " ; read section
@@ -514,7 +514,7 @@ function section_generate
 function writ
 {
 	section=${section^^}
-	if [[ ${section^^} = 0DAY || ${section^^} = FLAC || ${section^^} = MP3 ]] 
+	if [[ ${section^^} = 0DAY || ${section^^} = FLAC || ${section^^} = MP3 || ${section^^} = EBOOKS ]] 
 	then
 	
 		mkdir -pm 777 $rootdir/.tmp/site/${section^^}
@@ -731,7 +731,7 @@ function glftpd
 	cp ../scripts/extra/update_perms.sh $glroot/bin
 	cp ../scripts/extra/mkv_check.sh $glroot/bin && cp `which mkvinfo` $glroot/bin
 	cp ../scripts/extra/glftpd-version_check.sh $glroot/bin
-	echo "0 18 * * *               $glroot/bin/glftpd-version_check.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+	echo "0 18 * * *              $glroot/bin/glftpd-version_check.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 	cp ../scripts/section_manager/section_manager.sh $glroot
 	cp ../scripts/imdbrating/imdbrating.sh $glroot
 	sed -i "s|changeme|$device|" $glroot/section_manager.sh
@@ -893,7 +893,7 @@ function pzshfile
 	path=`cat $rootdir/.tmp/.path`
 	echo "#define check_for_missing_nfo_dirs		\"$path\"" >> zsconfig.h
 	echo "#define cleanupdirs				\"$path\"" >> zsconfig.h
-	echo "#define cleanupdirs_dated			\"/site/0DAY/%m%d/ /site/FLAC/%m%d/ /site/MP3/%m%d/\"" >> zsconfig.h
+	echo "#define cleanupdirs_dated			\"/site/0DAY/%m%d/ /site/FLAC/%m%d/ /site/MP3/%m%d/ /site/EBOOKS/%m%d/\"" >> zsconfig.h
 	echo "#define sfv_dirs				\"$path\"" >> zsconfig.h
 	echo "#define short_sitename				\"$sitename\"" >> zsconfig.h
 	chmod 755 zsconfig.h
@@ -1683,10 +1683,10 @@ function usercreation
 	echo
 	echo "[$username] created successfully and added to the groups Admin and SiteOP"
 	echo "These groups were also created: NUKERS, iND, VACATION & Friends"
-	sed -i "s/changeme/$username/" $glroot/sitebot/eggdrop.conf
-	sed -i "s/sname/$sitename/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
-	sed -i "s/ochan/$channelops/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
-	sed -i "s/channame/$announcechannels/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
+	sed -i "s/\"changeme\"/\"$username\"/" $glroot/sitebot/eggdrop.conf
+	sed -i "s/\"sname\"/\"$sitename\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
+	sed -i "s/\"ochan\"/\"$channelops\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
+	sed -i "s/\"channame\"/\"$announcechannels\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
 	
 	if [ "`cat $cache | grep -w username= | wc -l`" = 0 ]
 	then
@@ -1726,8 +1726,14 @@ function cleanup
 	then 
 		sed -i '/^sections/a '"MP3" $glroot/bin/dated.sh
 	fi
+
+        if [ "$(ls $glroot/site | grep -w ^EBOOKS)" = "EBOOKS" ]
+        then
+                sed -i '/^sections/a '"EBOOKS" $glroot/bin/dated.sh
+        fi
+
 	
-	if [[ "$(ls $glroot/site | grep -w ^0DAY)" = "0DAY" || "$(ls $glroot/site | grep -w ^FLAC)" = "FLAC" || "$(ls $glroot/site | grep -w ^MP3)" = "MP3" ]]
+	if [[ "$(ls $glroot/site | grep -w ^0DAY)" = "0DAY" || "$(ls $glroot/site | grep -w ^FLAC)" = "FLAC" || "$(ls $glroot/site | grep -w ^MP3)" = "MP3" || "$(ls $glroot/site | grep -w ^EBOOKS)" = "EBOOKS" ]]
 	then
 		echo "0 0 * * *         	$glroot/bin/dated.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 		echo "0 1 * * *         	$glroot/bin/dated.sh close >/dev/null 2>&1" >> /var/spool/cron/crontabs/root

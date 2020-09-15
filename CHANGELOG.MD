@@ -3,11 +3,12 @@
 ### Updated
 
 - Increased the number of connections from default 64 to 300 for boxes that runs glFTPD in systemd
+- Added EBOOKS as one of the possible sections to add with dated dirs which also includes the autogeneration of rules
 
 ### Fixes
 
 - Forgot to put both MVID and PRE section under allowed_types_exemption_dirs in zsconfig.h to allow the pre and upload of MVID
-
+- Channels did not get properly configured in ngBot.conf
 
 ## 9.9 - 2020-08-03
 

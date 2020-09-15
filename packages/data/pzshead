@@ -15,7 +15,7 @@
 
 #define sitepath_dir                    	"/site/"
 #define group_dirs                      	"/site/PRE/"
-#define zip_dirs                        	"/site/0DAY/ /site/REQUESTS"
+#define zip_dirs                        	"/site/0DAY/ /site/REQUESTS/ /site/EBOOKS/"
 #define nocheck_dirs                    	"/site/PRIVATE/"
 #define noforce_sfv_first_dirs          	"/site/REQUESTS/"
 #define audio_nocheck_dirs              	"/site/PRE/ /site/REQUESTS/"
