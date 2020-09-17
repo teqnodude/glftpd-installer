@@ -10,6 +10,7 @@
 
 - Forgot to put both MVID and PRE section under allowed_types_exemption_dirs in zsconfig.h to allow the pre and upload of MVID
 - Channels did not get properly configured in ngBot.conf
+- Corrected a coding error in section_manager.sh
 
 ## 9.9 - 2020-08-03
 
