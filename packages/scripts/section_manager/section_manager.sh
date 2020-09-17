@@ -358,7 +358,7 @@ function psxcimdb
     fi
 }
 
-if [[ "$(ls $glroot/site | grep -iw ^0DAY | tr '[a-z]' '[A-Z]')" != "0DAY" && "$(ls $glroot/site | grep -w ^FLAC | tr '[a-z]' '[A-Z]')" != "FLAC" && "$(ls $glroot/site | grep -w ^MP3 | tr '[a-z]' '[A-Z]')" != "MP3" && "$(ls $glroot/site | grep -w ^EBOOKS | tr '[a-z]' '[A-Z]')" != "EBOOKS" ]] ;
+if [[ "$(ls $glroot/site | grep -iw ^0DAY | tr '[a-z]' '[A-Z]')" != "0DAY" && "$(ls $glroot/site | grep -w ^FLAC | tr '[a-z]' '[A-Z]')" != "FLAC" && "$(ls $glroot/site | grep -w ^MP3 | tr '[a-z]' '[A-Z]')" != "MP3" && "$(ls $glroot/site | grep -w ^EBOOKS | tr '[a-z]' '[A-Z]')" != "EBOOKS" ]]
 then
         sed -i /dated.sh/d /var/spool/cron/crontabs/root
 fi

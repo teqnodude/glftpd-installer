@@ -1712,7 +1712,7 @@ function cleanup
 	cp -f packages/data/syscheck.sh $glroot/bin
 	mv -f $rootdir/.tmp/dated.sh $glroot/bin
 	
-	if [ "$(ls $glroot/site | grep -w ^0DAY)" = "0DAY" ] ; 
+	if [ "$(ls $glroot/site | grep -w ^0DAY)" = "0DAY" ]
 	then 
 		sed -i '/^sections/a '"0DAY" $glroot/bin/dated.sh
 	fi
