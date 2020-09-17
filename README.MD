@@ -27,6 +27,7 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  slv-PreBW
 *  tuls
 *  tur-addip
+*  tur-archiver
 *  tur-autonuke
 *  tur-free
 *  tur-ftpwho
@@ -116,6 +117,7 @@ psxcimdbchan="#main" # Trigger chan for PSXC-IMDB
 addip="y" # Install Tur-Addip
 oneline_stats="y" # Install Tur-Oneline_Stats
 ircnick="y" # Install Ircnick
+archiver="y" # Install Tur-Archiver
 username="admin" # Username for Administrator account
 password="password" # Password for Administrator account
 ip="*@192.168.1.*" # IP for Administrator account

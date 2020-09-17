@@ -1,5 +1,9 @@
 ## 10.x -
 
+### Added
+
+- Included Tur-Archiver for those that want to archive stuff
+
 ### Updated
 
 - Increased the number of connections from default 64 to 300 for boxes that runs glFTPD in systemd

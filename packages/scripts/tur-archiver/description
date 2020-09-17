@@ -1,0 +1,8 @@
+Tur-Archiver 2.x is a total rewrite from 1.x. It can copy, move   
+or make symlinks from whatever you want, to wherever you want.    
+                                                                   
+It is NOT a spacemaker and shouldnt be used as such.              
+                                                               
+It's more meant as a "sorter" of some kind. You specify WHERE it    
+should look, WHAT it should look for and WHERE you want to put it.
+By putting it, I mean either copy, move or make a symlink to it.  

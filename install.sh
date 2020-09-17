@@ -1618,6 +1618,43 @@ function ircnick
 	esac
 }
 
+## tur-archiver
+function archiver
+{
+        if [[ -f "$cache" && "`cat $cache | grep -w archiver | wc -l`" = 1 ]]
+        then
+                ask=`cat $cache | grep -w archiver | cut -d "=" -f2 | tr -d "\""`
+        else
+                echo
+                echo -e "\e[4mDescription for Tur-Archiver:\e[0m"
+                cat $rootdir/packages/scripts/tur-archiver/description
+                echo
+                echo -n "Install Tur-Archiver ? [Y]es [N]o, default Y : " ; read ask
+        fi
+
+        case $ask in
+                [Nn])
+                if [ "`cat $cache | grep -w archiver= | wc -l`" = 0 ]
+                then
+                        echo "archiver=\"n\"" >> $cache
+                fi
+                ;;
+                [Yy]|*)
+                if [ "`cat $cache | grep -w archiver= | wc -l`" = 0 ]
+                then
+                        echo "archiver=\"y\"" >> $cache
+                fi
+
+                echo -n "Installing Tur-Archiver, please wait...                         "
+                cp tur-archiver/*.sh $glroot/bin
+		gcc -o $glroot/bin/file_date tur-archiver/file_date.c
+		echo "0 0 * * *               $glroot/bin/tur-archiver.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+                echo -e "[\e[32mDone\e[0m]"
+                ;;
+        esac
+}
+
+
 ## usercreation
 function usercreation
 {
@@ -1789,6 +1826,7 @@ psxcimdb
 addip
 oneline_stats
 ircnick
+archiver
 usercreation
 cleanup
 echo 
