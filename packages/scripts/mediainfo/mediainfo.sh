@@ -138,7 +138,7 @@ else
                             channels=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Channel(s)" | cut -d ":" -f2 | sed 's/ //'`
                             if [ "$channels" ]; then echo -en "${COLOR1} $channels${COLOR2}" ; fi
                         fi
-                        language=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Language  " | cut -d ":" -f2 | sed 's/ //'`
+                        language=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Language  " | cut -d ":" -f2 | sed 's/ //' | head -1`
                         if [ "$language" ]; then echo -en "${COLOR1} $language${COLOR2}" ; fi
                         echo
                     done
