@@ -7,7 +7,7 @@ set statsection(0)          		"DEFAULT"
 ######################
 # Invite             #
 ######################
-set enable_irc_invite       		"TRUE"
+set enable_irc_invite       		"FALSE"
 set invite_channels         		$invitechan
 set privchannel(ochan)			"-glftpd =SiteOP =Admin 1"
 
