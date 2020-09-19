@@ -10,6 +10,7 @@
 - Added EBOOKS as one of the possible sections to add with dated dirs which also includes the autogeneration of rules
 - Added checks for section EBOOKS in section_manager.sh
 - Have set IRC invite to false by default since it poses a security risk where someone with username/password can get access to channels. Invite via FTP still possible.
+- Updated eggdrop settings to reflect recent changes 
 
 ### Fixes
 

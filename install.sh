@@ -235,7 +235,7 @@ function channel
         if [[ -f "$cache" && "`cat $cache | grep -w ircserver | wc -l`" = 1 ]]
         then
                 ircserver=`cat $cache | grep -w ircserver | cut -d "=" -f2 | tr -d "\""`
-                echo -n "Irc server         = $ircserver"
+                echo -n "IRC server         = $ircserver"
         fi
 	
 	if [[ -f "$cache" && "`cat $cache | grep -w channelnr | wc -l`" = 1 ]]
@@ -866,19 +866,19 @@ function irc
 		
 		case $ssl in
 			1)
-			sed -i "s/servername/${servername}:+${serverport}${password}/" $glroot/sitebot/eggdrop.conf
+			sed -i "s/servername/${servername} +${serverport} ${password}/" $glroot/sitebot/eggdrop.conf
 			
 			if [ "`cat $cache | grep -w ircserver= | wc -l`" = 0 ]
 			then
-				echo "ircserver=\"${servername}:+${serverport}${password}\"" >> $cache
+				echo "ircserver=\"${servername} +${serverport} ${password}\"" >> $cache
 			fi
 			;;
 			0)
-			sed -i "s/servername/${servername}:${serverport}${password}/" $glroot/sitebot/eggdrop.conf
+			sed -i "s/servername/${servername} ${serverport} ${password}/" $glroot/sitebot/eggdrop.conf
 			
 			if [ "`cat $cache | grep -w ircserver= | wc -l`" = 0 ]
 			then
-				echo "ircserver=\"${servername}:${serverport}${password}\"" >> $cache
+				echo "ircserver=\"${servername} ${serverport} ${password}\"" >> $cache
 			fi
 			;;
 		esac

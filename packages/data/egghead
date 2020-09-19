@@ -7,7 +7,7 @@
 set mod-path    "modules/"
 set help-path   "help/"
 set use-ssl     1
-set net-type    5
+set net-type    Other
 loadmodule dns
 loadmodule channels
 loadmodule server
@@ -23,11 +23,10 @@ loadmodule share
 bind evnt - init-server evnt:init-server 
 
 proc evnt:init-server {type} {
-  global botnick
-  putquick "MODE $botnick +i-ws"
+    global botnick
+    putquick "MODE $botnick +i-ws"
+    #putquick "PRIVMSG NickServ :identify password"
 }
 
-set servers {
-servername
-}
+addserver servername
 
