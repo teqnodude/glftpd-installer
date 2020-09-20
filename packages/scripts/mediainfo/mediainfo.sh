@@ -118,7 +118,7 @@ else
                 	if [[ `./mediainfo-rar $GLROOT/site/$section/$info/$media | grep failed | wc -l` = "1" ]] ; then echo "Couldn't extract information" ; exit 0 ; fi
                 	./mediainfo-rar $GLROOT/site/$section/$info/$media > $TMPFILE
                         release=`cat $TMPFILE | grep "^Filename" | cut -d ":" -f2 | sed -e "s|$GLROOT/site/$section/||" -e 's|/.*||' -e 's/ //'`
-                        echo -en "${COLOR1}$release${COLOR2}"
+                        echo -en "${COLOR1} $release${COLOR2}"
                         filesize=`cat $TMPFILE | grep "File size*" | grep "MiB\|GiB" | cut -d ":" -f2 | sed 's/ //'`
                         echo -en " |${COLOR1} $filesize${COLOR2}"
 			duration=`cat $TMPFILE | sed -n '/General/,/Video/p' | grep "^Duration" | uniq | cut -d ":" -f2 | sed 's/ //'`
