@@ -18,6 +18,7 @@
 - Channels did not get properly configured in ngBot.conf
 - Corrected a coding error in section_manager.sh
 - Video releases with multiple languages listed in mediainfo only show the first language in the list to prevent weird output in irc channel
+- Mediainfo script could not handle movie releases that didn't include year in the name
 
 ## 9.9 - 2020-08-03
 

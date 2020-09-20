@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.6
+VER=1.7
 #---------------------------------------------------------------#
 #                                                               #
 # Mediainfo by Teqno                                       	#
@@ -12,9 +12,6 @@ VER=1.6
 GLROOT=/glftpd
 TMP=$GLROOT/tmp
 TMPFILE=$TMP/mediainfo.txt
-INPUT=`echo "$@" | cut -d " " -f2`
-TV=`echo $INPUT | grep -o ".*.S[0-9][0-9]E[0-9][0-9].\|.*.E[0-9][0-9].\|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]."`
-MOVIE=`echo $INPUT | sed 's/[0-9][0-9][0-9][0-9]p//' | grep -o ".*.[0-9][0-9][0-9][0-9]."`
 COLOR1=7 # Orange
 COLOR2=14 # Dark grey
 COLOR3=4 # Red
@@ -29,6 +26,15 @@ HELP="
 ${COLOR2}Please enter full releasename ie ${COLOR3}Terminator.Salvation.2009.THEATRICAL.1080p.BluRay.x264-FLAME\n
 ${COLOR2}Only works for releases in: $SECTIONS\n
 "
+
+INPUT=`echo "$@" | cut -d " " -f2`
+TV=`echo $INPUT | grep -o ".*.S[0-9][0-9]E[0-9][0-9].\|.*.E[0-9][0-9].\|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]." | sed 's|^/||'`
+if [[ `echo $INPUT | sed 's/[0-9][0-9][0-9][0-9]p//' | grep -o ".*.[0-9][0-9][0-9][0-9]." | sed 's|^/||' | cut -d"/" -f4` ]]
+then
+    MOVIE=`echo $INPUT | sed 's/[0-9][0-9][0-9][0-9]p//' | grep -o ".*.[0-9][0-9][0-9][0-9]." | sed 's|^/||'`
+else
+    MOVIE=`echo $INPUT | sed 's|[0-9][0-9][0-9][0-9]p.*||'`
+fi
 
 if [ -z $INPUT ]
 then
