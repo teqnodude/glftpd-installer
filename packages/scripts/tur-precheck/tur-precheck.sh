@@ -7,10 +7,9 @@ VERIFY_ZIP_WITH_CURRENT_DISKS="TRUE"
 
 DONT_ALLOW_DIZ="TRUE"
 
-#ALLOWED="\.r[a|0-9][r|0-9]$ \.0[0-9][0-9]$ \.zip$ \.mp[g|2|3|4]$ \.vob$ \.avi$ \.jpg$ \.nfo$ \.diz$ \.sfv$ \.mkv$ \.m2ts$ \.flac$ \.s[0-9][0-9]$ \.t[0-9][0-9]$ \.u[0-9][0-9]$ \.v[0-9][0-9]$ \.w[0-9][0-9]$"
-ALLOWED=""
+ALLOWED="\.[r-z|0][a|0-9][r|0-9]$ \.zip$ \.mp[g|2|3|4]$ \.vob$ \.avi$ \.jpg$ \.nfo$ \.diz$ \.sfv$ \.mkv$ \.m2ts$ \.flac$"
 
-BANNED="^5a\.nfo$ ^aks\.nfo$ ^atl\.nfo$ ^atlvcd\.nfo$ ^bar\.nfo$ ^cas\-pre\.jpg$ ^cmt\.nfo$ ^coke\.nfo$ ^dim\.nfo$ ^dkz\.nfo$ ^echobase\.nfo$ ^firesite\.nfo$ ^fireslut\.nfo$ ^ifk\.nfo$ ^lips\.nfo$ ^magfields\.nfo$ ^mfmfmfmf\.nfo$ ^mm\.nfo$ ^mob\.nfo$ ^mod\.nfo$ ^pbox\.nfo$ ^ph\.nfo$ ^pike\.nfo$ ^pre\.nfo$ ^release\.nfo$ ^sexy\.nfo$ ^tf\.nfo$ ^twh\.nfo$ ^valhalla\.nfo$ ^zn\.nfo$ ^imdb\.nfo$ ^vdrlake\.nfo$ ^dm\.nfo$ ^nud\.nfo$ ^thecasino\.nfo$ ^dtsiso21\.jpg$ ^dagger\.jpg$"
+BANNED="^tvmaze\.nfo$ ^5a\.nfo$ ^aks\.nfo$ ^atl\.nfo$ ^atlvcd\.nfo$ ^bar\.nfo$ ^cas\-pre\.jpg$ ^cmt\.nfo$ ^coke\.nfo$ ^dim\.nfo$ ^dkz\.nfo$ ^echobase\.nfo$ ^firesite\.nfo$ ^fireslut\.nfo$ ^ifk\.nfo$ ^lips\.nfo$ ^magfields\.nfo$ ^mfmfmfmf\.nfo$ ^mm\.nfo$ ^mob\.nfo$ ^mod\.nfo$ ^pbox\.nfo$ ^ph\.nfo$ ^pike\.nfo$ ^pre\.nfo$ ^release\.nfo$ ^sexy\.nfo$ ^tf\.nfo$ ^twh\.nfo$ ^valhalla\.nfo$ ^zn\.nfo$ ^imdb\.nfo$ ^vdrlake\.nfo$ ^dm\.nfo$ ^nud\.nfo$ ^thecasino\.nfo$ ^dtsiso21\.jpg$ ^dagger\.jpg$"
 
 NODOUBLESFV="FALSE"
 NOSAMENAME="TRUE"
