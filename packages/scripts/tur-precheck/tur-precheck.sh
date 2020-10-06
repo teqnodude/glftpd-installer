@@ -7,7 +7,7 @@ VERIFY_ZIP_WITH_CURRENT_DISKS="TRUE"
 
 DONT_ALLOW_DIZ="TRUE"
 
-ALLOWED="\.[r-z|0][a|0-9][r|0-9]$ \.zip$ \.mp[g|2|3|4]$ \.vob$ \.avi$ \.jpg$ \.nfo$ \.diz$ \.sfv$ \.mkv$ \.m2ts$ \.flac$"
+ALLOWED="\.[r-z|0-9][a|0-9][r|0-9]$ \.zip$ \.mp[g|2|3|4]$ \.vob$ \.avi$ \.jpg$ \.nfo$ \.diz$ \.sfv$ \.mkv$ \.m2ts$ \.flac$"
 
 BANNED="^tvmaze\.nfo$ ^5a\.nfo$ ^aks\.nfo$ ^atl\.nfo$ ^atlvcd\.nfo$ ^bar\.nfo$ ^cas\-pre\.jpg$ ^cmt\.nfo$ ^coke\.nfo$ ^dim\.nfo$ ^dkz\.nfo$ ^echobase\.nfo$ ^firesite\.nfo$ ^fireslut\.nfo$ ^ifk\.nfo$ ^lips\.nfo$ ^magfields\.nfo$ ^mfmfmfmf\.nfo$ ^mm\.nfo$ ^mob\.nfo$ ^mod\.nfo$ ^pbox\.nfo$ ^ph\.nfo$ ^pike\.nfo$ ^pre\.nfo$ ^release\.nfo$ ^sexy\.nfo$ ^tf\.nfo$ ^twh\.nfo$ ^valhalla\.nfo$ ^zn\.nfo$ ^imdb\.nfo$ ^vdrlake\.nfo$ ^dm\.nfo$ ^nud\.nfo$ ^thecasino\.nfo$ ^dtsiso21\.jpg$ ^dagger\.jpg$"
 
