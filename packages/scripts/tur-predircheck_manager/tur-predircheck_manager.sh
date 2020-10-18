@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.6
+VER=1.61
 #--[ Intro ]----------------------------------------------------#
 #                                                       	#
 # Tur-predircheck_manager. A script for lazy people to block  	#
@@ -242,19 +242,31 @@ fi
 
 if [[ "$ARGS" = "add group"* ]]
 then
-	group=`echo $ARGS | awk -F " " '{print $3}'`
-	echo "Blocking group $group"
-	$glroot/bin/sed -i "/^DENYGROUPS=/ s/\"$/|\\\-$group\\\$\"/" $predircheck
+        group=`echo $ARGS | awk -F " " '{print $3}'`
+        if [ "`cat $predircheck | grep "^DENYGROUPS" | grep $group`" ]
+        then
+            echo "Group already added"
+            exit 0
+        else
+            echo "Blocking group $group"
+            $glroot/bin/sed -i "/^DENYGROUPS=/ s/\"$/|\\\-$group\\\$\"/" $predircheck
+            $glroot/bin/sed -i "/^DENYGROUPS=/ s/\/site:|/\/site:/gI" $predircheck
+        fi
 fi
 
 if [[ "$ARGS" = "del group"* ]]
 then
-	group=`echo $ARGS | awk -F " " '{print $3}'`
-	echo "Unblocking group $group"
-	$glroot/bin/sed -i "/^DENYGROUPS=/ s/\\\\-$group\\\$//gI" $predircheck
-	$glroot/bin/sed -i "/^DENYGROUPS=/ s/|\"/\"/gI" $predircheck
-	$glroot/bin/sed -i "/^DENYGROUPS=/ s/||/|/gI" $predircheck
-	$glroot/bin/sed -i "/^DENYGROUPS=/ s/\/site:|/\/site:/gI" $predircheck
+        group=`echo $ARGS | awk -F " " '{print $3}'`
+        if [ "`cat $predircheck | grep "^DENYGROUPS" | grep $group`" ]
+        then
+            echo "Unblocking group $group"
+            $glroot/bin/sed -i "/^DENYGROUPS=/ s/\\\\-$group\\\$//gI" $predircheck
+            $glroot/bin/sed -i "/^DENYGROUPS=/ s/|\"/\"/gI" $predircheck
+            $glroot/bin/sed -i "/^DENYGROUPS=/ s/||/|/gI" $predircheck
+            $glroot/bin/sed -i "/^DENYGROUPS=/ s/\/site:|/\/site:/gI" $predircheck
+        else
+            "echo Group not found"
+        fi
 fi
 
 exit 0

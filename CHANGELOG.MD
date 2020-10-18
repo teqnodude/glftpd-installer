@@ -12,6 +12,7 @@
 - Have set IRC invite to false by default since it poses a security risk where someone with username/password can get access to channels. Invite via FTP still possible.
 - Updated eggdrop settings to reflect recent changes 
 - Update of list of files that are banned and allowed during upload in tur-precheck
+- Added check for existing group in tur-predircheck_manager
 
 ### Fixes
 
