@@ -66,7 +66,7 @@ NUKE_SECTION_GENRE=0
 NUKE_EP_BEFORE_YEAR=0
 NUKE_ORIGIN_COUNTRY=0
 NUKE_NETWORK=0
-NUKE_LANGAUGE=0
+NUKE_LANGUAGE=0
 
 # Space delimited list of TV shows to never nuke, use releasename and not show name ie use The.Flash and NOT The Flash
 ALLOWED_SHOWS=""
