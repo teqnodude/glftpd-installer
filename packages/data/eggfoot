@@ -30,11 +30,11 @@ set temp-path 		"logs/"
 set console 		"mkcobxs"
 logfile msbxco * 	"logs/eggdrop.log"
 
-##### SCRIPTS #####
+# SCRIPTS
 source scripts/getops.tcl
 source scripts/seen.tcl
 
-##### MY SCRIPTS #############
+# MY SCRIPTS
 source scripts/pzs-ng/ngBot.tcl
 source scripts/rud-news.tcl
 source scripts/tur-predircheck_manager.tcl

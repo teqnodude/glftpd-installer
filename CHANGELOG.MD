@@ -13,6 +13,8 @@
 - Updated eggdrop settings to reflect recent changes 
 - Update of list of files that are banned and allowed during upload in tur-precheck
 - Added check for existing group in tur-predircheck_manager
+- Renamed TVMaze_nuke to tvmaze-nuker and added network and language to the list of things to exempt and nuke releases for
+- Sort of eggdrop scripts in installer has been added to create a better overview of loaded scripts in eggdrop 
 
 ### Fixes
 

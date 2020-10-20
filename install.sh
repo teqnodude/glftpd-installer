@@ -1779,11 +1779,11 @@ function cleanup
 
 	if [[ "$(ls $glroot/site | grep -w ^TV-HD)" = "TV-HD" || "$(ls $glroot/site | grep -w ^TV-NL)" = "TV-NL" || "$(ls $glroot/site | grep -w ^TV-SD)" = "TV-SD" ]]
 	then
-		cp -f packages/scripts/extra/TVMaze.tcl $glroot/sitebot/scripts/pzs-ng/plugins
-		cp -f packages/scripts/extra/TVMaze.zpt $glroot/sitebot/scripts/pzs-ng/plugins
-		cp -f packages/scripts/extra/TVMaze_nuke.sh $glroot/bin
+		cp -f packages/scripts/tvmaze-nuker/TVMaze.tcl $glroot/sitebot/scripts/pzs-ng/plugins
+		cp -f packages/scripts/tvmaze-nuker/TVMaze.zpt $glroot/sitebot/scripts/pzs-ng/plugins
+		cp -f packages/scripts/tvmaze-nuker/tvmaze-nuker.sh $glroot/bin
 		echo "source scripts/pzs-ng/plugins/TVMaze.tcl" >> $glroot/sitebot/eggdrop.conf
-		touch $glroot/ftp-data/logs/tvmaze_nuke.log
+		touch $glroot/ftp-data/logs/tvmaze-nuker.log
 	fi
 
 	echo "#*/5 * * * *		$glroot/bin/tur-space.sh go >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
@@ -1793,8 +1793,10 @@ function cleanup
 	chmod 755 $glroot/bin/*.sh
 	chmod 777 $glroot/ftp-data/logs
 	chmod 666 $glroot/ftp-data/logs/*
+        echo "EOF" >> $glroot/sitebot/eggdrop.conf && cat $glroot/sitebot/eggdrop.conf | sed -n '/MY SCRIPTS/,/EOF/p' | sort > .tmp/myscripts && sed -i '/EOF/d' .tmp/myscripts
+        sed -i '/MY SCRIPTS/,$d' $glroot/sitebot/eggdrop.conf
+        cat .tmp/myscripts >> $glroot/sitebot/eggdrop.conf
 	rm -rf .tmp >/dev/null 2>&1
-	
 }
 start
 port

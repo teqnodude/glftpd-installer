@@ -1,20 +1,20 @@
 #!/bin/bash
-VER=1.0
+VER=2.0
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
 #
 # Changelog
 # 20XX-00-00 v.1x Orginale creator Sokar aka PicdleRick
-# 2020-04-18 v.2x Code modifications and improvements Teqno/TeRRaNoVA
+# 2020-10-20 v.2x Code modifications and improvements Teqno/TeRRaNoVA
 #
-# Installation: copy TVMaze_nuke.sh to glftpd/bin and chmod it
+# Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
 # plugins dir.
 #
 # Modify GLROOT into /glftpd or /jail/glftpd.
 #
-# To ensure log file exist, run: "./TVMaze_nuke.sh sanity" from
+# To ensure log file exist, run: "./tvmaze-nuker.sh sanity" from
 # shell, this will create the log file and set the correct
 # permissions.
 #
@@ -23,7 +23,7 @@ VER=1.0
 GLROOT=/glftpd
 GLCONF=$GLROOT/etc/glftpd.conf
 DEBUG=0
-LOG_FILE=$GLROOT/ftp-data/logs/tvmaze_nuke.log
+LOG_FILE=$GLROOT/ftp-data/logs/tvmaze-nuker.log
 
 # Username of person to nuke with. This user must be a glftpd user account.
 NUKE_USER=glftpd
@@ -37,35 +37,45 @@ NUKE_SHOW_TYPES=""
 
 # Show Types: Animation Award_Show Documentary Game_Show News Panel_Show Reality Scripted Sports Talk_Show Variety
 NUKE_SECTION_TYPES="
-/site/TV-HD:(Sports|Game_Show)
-/site/TV-NL:(Sports|Game_Show)
-/site/TV-SD:(Sports|Game_Show)
+/site/TV-720:(Sports|Award_Show)
 "
 
 # Configured like NUKE_SECTION_TYPES
-# Genres: Action Adult Adventure Anime Children Comedy Crime DIY Drama Espionage Family Fantasy Food History Horror Legal Medical Music Mystery Nature Romance Science-Fiction
+# Genres: Action Adult Adventure Anime Children Comedy Crime DIY Drama Espionage Family Fantasy Food History Horror Legal Medical Music Mystery Nature Romance Science-Fiction 
 # Sports Supernatural Thriller Travel War Western
 NUKE_SECTION_GENRES="
-/site/TV-HD:(Sports|Game_Show)
-/site/TV-NL:(Sports|Game_Show)
-/site/TV-SD:(Sports|Game_Show)
+/site/TV-720:(Food|Music)
 "
 
-# Space delimited list of episodes with an air date before this year will be nuked
+# Episodes with an air date before this year will be nuked
 NUKE_EPS_BEFORE_YEAR="2018"
 
-# Space delimited list of TV Shows produced in these countries will be nuked
+# Space delimited list of countries that will be nuked
 NUKE_ORIGIN_COUNTRIES="DE"
 
+# Space delimited list of Networks to nuke
+NUKE_NETWORKS=""
+
+# Space delimited list of Languages to never nuke
+NUKE_LANGUAGES="Japanese Korean"
+
 # 0 = Nuke / 1 = Do not nuke
-NUKE_EP_BEFORE_YEAR=0
 NUKE_SHOW_TYPE=0
 NUKE_SECTION_TYPE=0
 NUKE_SECTION_GENRE=0
+NUKE_EP_BEFORE_YEAR=0
 NUKE_ORIGIN_COUNTRY=0
+NUKE_NETWORK=0
+NUKE_LANGAUGE=0
 
 # Space delimited list of TV shows to never nuke, use releasename and not show name ie use The.Flash and NOT The Flash
 ALLOWED_SHOWS=""
+
+# Space delimited list of Networks to never nuke
+ALLOWED_NETWORKS=""
+
+# Space delimited list of Languages to never nuke
+ALLOWED_LANGUAGES=""
 
 # Space delimited list of sections to never nuke
 EXCLUDED_SECTIONS="ARCHIVE REQUEST"
@@ -92,12 +102,12 @@ fi
 if [ ! -f $LOG_FILE ]
 then
     echo
-    echo "Log file $LOG_FILE do not exist, create it by running ./TVMaze_nuke.sh sanity"
+    echo "Log file $LOG_FILE do not exist, create it by running ./tvmaze-nuker.sh sanity"
     echo
     exit 1
 fi
 
-if [ $# -ne 7 ]
+if [ $# -ne 8 ]
 then
     echo
     echo "ERROR! Missing arguments."
@@ -110,14 +120,15 @@ fi
 RLS_NAME=`sed -e 's/^"//' -e 's/"$//' <<<"$1"`
 SHOW_GENRES=`sed -e 's/^"//' -e 's/"$//' <<<"$2"`
 SHOW_COUNTRY=`sed -e 's/^"//' -e 's/"$//' <<<"$3"`
-SHOW_NETWORK=`sed -e 's/^"//' -e 's/"$//' <<<"$4"`
-SHOW_STATUS=`sed -e 's/^"//' -e 's/"$//' <<<"$5"`
-SHOW_TYPE=`sed -e 's/^"//' -e 's/"$//' <<<"$6"`
-EP_AIR_DATE=`sed -e 's/^"//' -e 's/"$//' <<<"$7"`
+SHOW_LANGUAGE=`sed -e 's/^"//' -e 's/"$//' <<<"$4"`
+SHOW_NETWORK=`sed -e 's/^"//' -e 's/"$//' <<<"$5"`
+SHOW_STATUS=`sed -e 's/^"//' -e 's/"$//' <<<"$6"`
+SHOW_TYPE=`sed -e 's/^"//' -e 's/"$//' <<<"$7"`
+EP_AIR_DATE=`sed -e 's/^"//' -e 's/"$//' <<<"$8"`
 
 if [ "$DEBUG" -eq 1 ]
 then
-    LogMsg "Release: $RLS_NAME Genres: $SHOW_GENRES Country: $SHOW_COUNTRY Network: $SHOW_NETWORK Status: $SHOW_STATUS Type: $SHOW_TYPE Air date: $EP_AIR_DATE"
+    LogMsg "Release: $RLS_NAME Genres: $SHOW_GENRES Country: $SHOW_COUNTRY Language: $SHOW_LANGUAGE Network: $SHOW_NETWORK Status: $SHOW_STATUS Type: $SHOW_TYPE Air date: $EP_AIR_DATE"
 fi
 
 for show in $ALLOWED_SHOWS
@@ -125,11 +136,39 @@ do
     result=`echo "$RLS_NAME" | grep -i "$show"`
     if [ -n "$result" ]
     then
-	if [ "$DEBUG" -eq 1 ]
-	then
-	    LogMsg "Skipping allowed show: $RLS_NAME"
-	fi
+        if [ "$DEBUG" -eq 1 ]
+        then
+            LogMsg "Skipping allowed show: $RLS_NAME"
+        fi
         echo "Skipping allowed show: $RLS_NAME"
+        exit 0
+    fi
+done
+
+for network in $ALLOWED_NETWORKS
+do
+    result=`echo "$SHOW_NETWORK" | grep -i "$network"`
+    if [ -n "$result" ]
+    then
+        if [ "$DEBUG" -eq 1 ]
+        then
+            LogMsg "Skipping allowed network: $RLS_NAME - $SHOW_NETWORK"
+        fi
+        echo "Skipping allowed network: $RLS_NAME - $SHOW_NETWORK"
+        exit 0
+    fi
+done
+
+for section in $EXCLUDED_SECTIONS
+do
+    result=`echo "$RLS_NAME" | grep -i "$section/"`
+    if [ -n "$result" ]
+    then
+        if [ "$DEBUG" -eq 1 ]
+        then
+            LogMsg "Skipping excluded section: $RLS_NAME - $section"
+        fi
+        echo "Skipping excluded section: $RLS_NAME - $section"
         exit 0
     fi
 done
@@ -141,12 +180,28 @@ do
     then
         if [ "$DEBUG" -eq 1 ]
         then
-    	    LogMsg "Skipping group: $RLS_NAME"
-	fi
-        echo "Skipping group: $RLS_NAME"
+            LogMsg "Skipping excluded group: $RLS_NAME - $group"
+        fi
+        echo "Skipping excluded group: $RLS_NAME - $group"
         exit 0
     fi
 done
+
+if [ "$NUKE_SHOW_TYPE" -eq 1 ]
+then
+    if [ -n "$NUKE_SHOW_TYPES" ]
+    then
+        for type in $NUKE_SHOW_TYPES
+        do
+            if [ "$SHOW_TYPE" == "$type" ]
+            then
+                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type TV shows are not allowed"
+                LogMsg "Nuked release: {$RLS_NAME} because its show type is $SHOW_TYPE which is not allowed."
+                exit 0
+            fi
+        done
+    fi
+fi
 
 if [ "$NUKE_SECTION_TYPE" -eq 1 ]
 then
@@ -158,7 +213,7 @@ then
         then
             if [ "`echo $SHOW_TYPE | egrep -i $denied`" ]
             then
-                type="`echo $SHOW_TYPE | egrep -oi $denied`"
+        	type="`echo $SHOW_TYPE | egrep -oi $denied`"
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type type of TV show is not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $type which is not allowed in section $section."
                 exit 0
@@ -206,22 +261,6 @@ then
     fi
 fi
 
-if [ "$NUKE_SHOW_TYPE" -eq 1 ]
-then
-    if [ -n "$NUKE_SHOW_TYPES" ]
-    then
-        for type in $NUKE_SHOW_TYPES
-        do
-            if [ "$SHOW_TYPE" == "$type" ]
-            then
-                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type TV shows are not allowed"
-                LogMsg "Nuked release: {$RLS_NAME} because its show type is $SHOW_TYPE which is not allowed."
-                exit 0
-            fi
-        done
-    fi
-fi
-
 if [ "$NUKE_ORIGIN_COUNTRY" -eq 1 ]
 then
     if [ -n "$NUKE_ORIGIN_COUNTRIES" ]
@@ -232,6 +271,38 @@ then
             then
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "TV shows from $country are not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its country of origin is $SHOW_COUNTRY which is not allowed."
+                exit 0
+            fi
+        done
+    fi
+fi
+
+if [ "$NUKE_NETWORK" -eq 1 ]
+then
+    if [ -n "$NUKE_NETWORKS" ]
+    then
+        for network in $NUKE_NETWORKS
+        do
+            if [ "$SHOW_NETWORK" == "$network" ]
+            then
+                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Network $network is not allowed"
+                LogMsg "Nuked release: {$RLS_NAME} because its network is $SHOW_NETWORK which is not allowed."
+                exit 0
+            fi
+        done
+    fi
+fi
+
+if [ "$NUKE_LANGUAGE" -eq 1 ]
+then
+    if [ -n "$NUKE_LANGUAGES" ]
+    then
+        for language in $NUKE_LANGUAGES
+        do
+            if [ "$SHOW_LANGUAGE" == "$language" ]
+            then
+                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Language $language is not allowed"
+                LogMsg "Nuked release: {$RLS_NAME} because its language is $SHOW_LANGUAGE which is not allowed."
                 exit 0
             fi
         done

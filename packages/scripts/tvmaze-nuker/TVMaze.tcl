@@ -4,7 +4,7 @@
 #              Initial code for TVRage by Meij <meijie@gmail.com>              #
 #                           TVMaze rework by MrCode                            #
 #                                                                              #
-# APIs https://www.tvmaze.com/api                                              #
+# APIs http://www.tvmaze.com/api                                               #
 #                                                                              #
 ################################################################################
 #
@@ -23,8 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
-# - 20200223 - Sked:	Add average rating as variable (thanks to teqnodude)
-# - 20200222 - Sked:	Use https (thanks to teqnodude)
+# - 20201020 - Teqno/TeRRaNoVA:	Added imdb-rating, imdb url, language etc with required shell script for nuke
 # - 20190815 - Sked:	Fix finding shows with newer Tcl packages
 # - 20160310 - Sked:	Fix show_network
 # - 20160117 - Sked:	Cleanup for inclusion in pzs-ng
@@ -49,11 +48,11 @@ namespace eval ::ngBot::plugin::TVMaze {
 	## For the type, options are http/socks4/socks5 or others depending on the TclCurl version
 	set tvmaze(proxytype) "socks5"
 	set tvmaze(proxyhost) ""
-	set tvmaze(proxyport) 8080
-	set tvmaze(proxyuser) "username"
-	set tvmaze(proxypass) "password"
+	set tvmaze(proxyport) "8080"
+	set tvmaze(proxyuser) ""
+	set tvmaze(proxypass) ""
 	##
-	set tvmaze(sections) { "/site/TV-HD/" "/site/TV-SD/" }
+	set tvmaze(sections) { "/site/TV-HD/" "/site/TV-NL/" "/site/TV-SD/" }
 	##
 	## Timeout in milliseconds. (default: 3000)
 	set tvmaze(timeout)  3000
@@ -83,7 +82,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 	##
 	## Default f00-pre example:
 	set tvmaze(pre-regexp) {^"(.[^"]+)" ".[^"]*" ".[^"]*" "(.[^"]+)"}
-	set tvmaze(pre-path)   "%1"
+	set tvmaze(pre-path)   "%2/%1"
 	##
 	## Default eur0-pre example:
 	#set tvmaze(pre-regexp) {^"(.[^"]+)"}
@@ -103,8 +102,9 @@ namespace eval ::ngBot::plugin::TVMaze {
 	set ${np}::zeroconvert(%tvmaze_show_id)                   "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_genres)               "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_country)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_language)             "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_network)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_status)               "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_status)               "ENDED"
 	set ${np}::zeroconvert(%tvmaze_show_latest_title)         "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_latest_episode)       "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_latest_airdate)       "N/A"
@@ -115,23 +115,22 @@ namespace eval ::ngBot::plugin::TVMaze {
 	set ${np}::zeroconvert(%tvmaze_show_type)                 "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_premiered)            "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_started)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_ended)                "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_ended)                "Said"
 	set ${np}::zeroconvert(%tvmaze_show_airtime)              "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_runtime)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_rating)               "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_url)               "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_season_episode)    "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_season)            "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_number)            "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_original_airdate)  "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_title)             "N/A"
-        set ${np}::zeroconvert(%tvmaze_show_rating)               "N/A"
-        set ${np}::zeroconvert(%tvmaze_show_imdb)                 "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_rating)               "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_imdb)      		  "N/A"
 	##
 	##################################################
 
 	## Version
-	set tvmaze(version) "20200223"
+	set tvmaze(version) "20190815"
 	## Useragent
 	set tvmaze(useragent) "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.5) Gecko/2008120122 Firefox/3.0.5"
 
@@ -162,18 +161,17 @@ namespace eval ::ngBot::plugin::TVMaze {
 				return -code -1
 			}
 		} else {
-			if {[catch {package require http 2}]} {
+			if {[catch {package require http}]} {
 				${ns}::Error "\"http\" package not found, unloading script."
 				return -code -1
 			}
-			# We want at least protocol TLS 1.X
-			if {[catch {package require tls 1.7}]} {
-				${ns}::Error "\"tls\" package not found, unloading script."
-				return -code -1
-			}
+			if {[catch {package require tls}]} {
+                                ${ns}::Error "\"tls\" package not found, unloading script."
+                                return -code -1
+                        }
 		}
 
-		set variables(TVMAZE-MSGFULL) "%tvmaze_show_name %tvmaze_show_id %tvmaze_show_genres %tvmaze_show_country %tvmaze_show_network %tvmaze_show_status %tvmaze_show_latest_title %tvmaze_show_latest_episode %tvmaze_show_latest_airdate %tvmaze_show_next_title %tvmaze_show_next_episode %tvmaze_show_next_airdate %tvmaze_show_url %tvmaze_show_type %tvmaze_show_premiered %tvmaze_show_started %tvmaze_show_ended %tvmaze_show_airtime %tvmaze_show_runtime %tvmaze_show_rating %tvmaze_episode_url %tvmaze_episode_season_episode %tvmaze_episode_season %tvmaze_episode_number %tvmaze_episode_original_airdate %tvmaze_episode_title %tvmaze_show_rating %tvmaze_show_imdb"
+		set variables(TVMAZE-MSGFULL) "%tvmaze_show_name %tvmaze_show_id %tvmaze_show_genres %tvmaze_show_country %tvmaze_show_language %tvmaze_show_network %tvmaze_show_status %tvmaze_show_latest_title %tvmaze_show_latest_episode %tvmaze_show_latest_airdate %tvmaze_show_next_title %tvmaze_show_next_episode %tvmaze_show_next_airdate %tvmaze_show_url %tvmaze_show_type %tvmaze_show_premiered %tvmaze_show_started %tvmaze_show_ended %tvmaze_show_airtime %tvmaze_show_runtime %tvmaze_episode_url %tvmaze_episode_season_episode %tvmaze_episode_season %tvmaze_episode_number %tvmaze_episode_original_airdate %tvmaze_episode_title %tvmaze_show_rating %tvmaze_show_imdb"
 		set variables(TVMAZE) "$variables(NEWDIR) $variables(TVMAZE-MSGFULL)"
 		set variables(TVMAZE-PRE) "$variables(PRE) $variables(TVMAZE-MSGFULL)"
 		set variables(TVMAZE-MSGSHOW) $variables(TVMAZE-MSGFULL)
@@ -316,82 +314,60 @@ namespace eval ::ngBot::plugin::TVMaze {
 			}
 		}
 
-                foreach path $tvmaze(sections) {
-                        if {[string match -nocase "$path*" $release]} {
-                                set logLen [llength $logData]
+		foreach path $tvmaze(sections) {
+			if {[string match -nocase "$path*" $release]} {
+				set logLen [llength $logData]
 
-                                if {[catch {${ns}::FindInfo [file tail $release] $logData} logData] != 0} {
-                                        ${ns}::Error "$logData. ($release)"
-                                        return 0
-                                }
+				if {[catch {${ns}::FindInfo [file tail $release] $logData} logData] != 0} {
+					${ns}::Error "$logData. ($release)"
+					return 0
+				}
 
-                                set empty 1
-                                foreach piece [lrange $logData $logLen end] {
-                                        if {![string equal $piece ""]} {
-                                                set empty 0
+				set empty 1
+				foreach piece [lrange $logData $logLen end] {
+					if {![string equal $piece ""]} {
+						set empty 0
 
-                                                break
-                                        }
-                                }
+						break
+					}
+				}
 
-                                if {($empty == 0) || ([string is true -strict $tvmaze(announce-empty)])} {
+				if {($empty == 0) || ([string is true -strict $tvmaze(announce-empty)])} {
 
                                         set listlength [llength $logData]
-                                        if {$listlength > 28} {
+                                        if {$listlength > 7} {
                                                 append rls_name "\"[string map {" " _} [lindex $logData 0]]\""
-                                                append arg1 "\"[string map {" " _} [lindex $logData 1]]\""
-                                                append arg2 "\"[string map {" " _} [lindex $logData 2]]\""
-                                                append arg3 "\"[string map {" " _} [lindex $logData 3]]\""
-                                                append arg4 "\"[string map {" " _} [lindex $logData 4]]\""
-                                                append arg5 "\"[string map {" " _} [lindex $logData 5]]\""
-                                                append show_genres "\"[string map {" " _} [lindex $logData 6]]\""
-                                                append show_country "\"[string map {" " _} [lindex $logData 7]]\""
-                                                append show_network "\"[string map {" " _} [lindex $logData 8]]\""
-                                                append show_status "\"[string map {" " _} [lindex $logData 9]]\""
-                                                append arg10 "\"[string map {" " _} [lindex $logData 10]]\""
-                                                append arg11 "\"[string map {" " _} [lindex $logData 11]]\""
-                                                append arg12 "\"[string map {" " _} [lindex $logData 12]]\""
-                                                append arg13 "\"[string map {" " _} [lindex $logData 13]]\""
-                                                append arg14 "\"[string map {" " _} [lindex $logData 14]]\""
-                                                append arg15 "\"[string map {" " _} [lindex $logData 15]]\""
-                                                append arg16 "\"[string map {" " _} [lindex $logData 16]]\""
-                                                append show_type "\"[string map {" " _} [lindex $logData 17]]\""
-                                                append arg18 "\"[string map {" " _} [lindex $logData 18]]\""
-                                                append arg19 "\"[string map {" " _} [lindex $logData 19]]\""
-                                                append arg20 "\"[string map {" " _} [lindex $logData 20]]\""
-                                                append arg21 "\"[string map {" " _} [lindex $logData 21]]\""
-                                                append arg22 "\"[string map {" " _} [lindex $logData 22]]\""
-                                                append arg23 "\"[string map {" " _} [lindex $logData 23]]\""
-                                                append arg24 "\"[string map {" " _} [lindex $logData 24]]\""
-                                                append arg25 "\"[string map {" " _} [lindex $logData 25]]\""
-                                                append arg26 "\"[string map {" " _} [lindex $logData 26]]\""
-                                                append ep_airdate "\"[string map {" " _} [lindex $logData 27]]\""
-                                                append arg28 "\"[string map {" " _} [lindex $logData 28]]\""
+                                                append show_genres "\"[string map {" " _} [lindex $logData 1]]\""
+                                                append show_country "\"[string map {" " _} [lindex $logData 2]]\""
+						append show_language "\"[string map {" " _} [lindex $logData 3]]\""
+                                                append show_network "\"[string map {" " _} [lindex $logData 4]]\""
+                                                append show_status "\"[string map {" " _} [lindex $logData 5]]\""
+                                                append show_type "\"[string map {" " _} [lindex $logData 6]]\""
+                                                append ep_airdate "\"[string map {" " _} [lindex $logData 7]]\""
 
-                                                exec /glftpd/bin/TVMaze_nuke.sh $rls_name $show_genres $show_country $show_network $show_status $show_type $ep_airdate
+                                                exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate
                                         }
 
-                                        ${np}::sndall $target $section [${np}::ng_format $target $section $logData]
-                                }
 
-                                break
-                        }
+					${np}::sndall $target $section [${np}::ng_format $target $section $logData]
+				}
+
+				break
+			}
 
 
-                }
-
+		}
 
 		return 1
 	}
 
 	proc FindInfo {string logData {strict true}} {
 		variable ns
-		# Check line 268 for correct lindex of episode_url !
-		set output_order [list show_name show_id show_genres show_country show_network show_status \
+		set output_order [list show_name show_id show_genres show_country show_language show_network show_status \
 						show_latest_title show_latest_episode show_latest_airdate \
 						show_next_title show_next_episode show_next_airdate \
 						show_url show_type show_premiered \
-						show_started show_ended show_airtime show_runtime show_rating \
+						show_started show_ended show_airtime show_runtime \
 						episode_url episode_season_episode episode_season episode_number \
 						episode_original_airdate episode_title show_rating show_imdb]
 
@@ -406,6 +382,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		catch {regexp -- {^[sS](\d+)[eE](\d+)$} $episode_str -> episode_season episode_number}
 
 		#regsub -all -- {[\._]} $show_str " " show_str
+		#regsub -all -- {[\._]|US|UK|AU|CA|NZ|20[0-9][0-9]} $show_str " " show_str
 		regsub -all -- {[\._]|[A-Z][A-Z]|20[0-9][0-9]} $show_str " " show_str
 		set show_str [string trim $show_str]
 
@@ -439,9 +416,11 @@ namespace eval ::ngBot::plugin::TVMaze {
 		regexp {\"id\":(\d+)} $data -> info(show_id)
 		regexp {\"name\":\"(.*?)\"} $data -> info(show_name)
 		regexp {\"url\":\"(.*?)\"} $data -> info(show_url)
-		set info(show_url) [regsub "http" $info(show_url) "https"]
+		set url [regsub "http" $info(show_url) "https"]
+		set info(show_url) $url
 		regexp {\"status\":\"(.*?)\"} $data -> info(show_status)
 		regexp {\"country\":.*?\"code\":\"(.*?)\"} $data -> info(show_country)
+		regexp {\"language\":\"(.*?)\"} $data -> info(show_language)
 		regexp {\"premiered\":\"(.*?)\"} $data -> info(show_premiered)
 		regexp {\"type\":\"(.*?)\"} $data -> info(show_type)
 		regexp {\"runtime\":(\d+)} $data -> info(show_runtime)
@@ -529,13 +508,14 @@ namespace eval ::ngBot::plugin::TVMaze {
 				set info(show_ended) [string range $info(show_latest_airdate) 0 3]
 			}
 		}
+		
 
-                # imdb url
-                regexp {\"externals\":.*?\"imdb\":\"(.*?)\"} $data -> show_imdb
-                if {[info exists show_imdb]} {
-                        set imdburl [regsub "tt" $show_imdb "https://imdb.com/title/tt"]
-                        set info(show_imdb) $imdburl
-                }
+		# imdb url
+		regexp {\"externals\":.*?\"imdb\":\"(.*?)\"} $data -> show_imdb
+		if {[info exists show_imdb]} {
+			set imdburl [regsub "tt" $show_imdb "https://imdb.com/title/tt"]
+			set info(show_imdb) $imdburl
+		}
 
 		# in case of SXXEXX
 		if {![string equal "$season" ""] && ![string equal "$epnumber" ""]} {
@@ -578,6 +558,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 				# Verify if we can use quoteString or the older mapReply
 				# else fallback to the original formatQuery
 				# Use "commands" as quoteString is an alias (of mapReply)
+				http::register https 443 tls::socket
 				if {[string length [info commands ::http::quoteString]]} {
 					set uri "$uri[::http::quoteString $query]"
 				} elseif {[string length [info procs ::http::mapReply]]} {
@@ -587,7 +568,6 @@ namespace eval ::ngBot::plugin::TVMaze {
 				}
 			}
 			::http::config -useragent $tvmaze(useragent)
-			::http::register https 443 [list ::tls::socket -autoservername true]
 			set token [::http::geturl "$uri" -timeout $tvmaze(timeout)]
 
 			if {![string equal -nocase [::http::status $token] "ok"]} {

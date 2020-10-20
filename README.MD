@@ -42,7 +42,7 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  tur-trial3
 *  tur-undupe
 *  tur-vacation
-*  tvmaze_nuke
+*  tvmaze-nuker
 *  whereami
 *  syscheck
 
