@@ -525,7 +525,6 @@ namespace eval ::ngBot::plugin::TVMaze {
 
 			regexp {\"name\":\"(.*?)\"} $data -> info(episode_title)
 			regexp {\"url\":\"(.*?)\"} $data -> info(episode_url)
-			set info(episode_url) [regsub "http" $info(episode_url) "https"]
 			regexp {\"airdate\":\"(.*?)\"} $data -> info(episode_original_airdate)
 			regexp {\"season\":(\d+)} $data -> info(episode_season)
 			regexp {\"number\":(\d+)} $data -> info(episode_number)
