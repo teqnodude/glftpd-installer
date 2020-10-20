@@ -64,7 +64,7 @@ NUKE_SECTION_LANGUAGES="
 /site/TV-HD:(Japanese|Korean)
 "
 
-# 0 = Nuke / 1 = Do not nuke
+# 1 = Nuke / 0 = Do not nuke
 NUKE_SHOW_TYPE=0
 NUKE_SECTION_TYPE=0
 NUKE_SECTION_GENRE=0
