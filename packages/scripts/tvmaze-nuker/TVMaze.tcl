@@ -161,11 +161,11 @@ namespace eval ::ngBot::plugin::TVMaze {
 				return -code -1
 			}
 		} else {
-			if {[catch {package require http}]} {
+			if {[catch {package require http 2}]} {
 				${ns}::Error "\"http\" package not found, unloading script."
 				return -code -1
 			}
-			if {[catch {package require tls}]} {
+			if {[catch {package require tls 1.7}]} {
                                 ${ns}::Error "\"tls\" package not found, unloading script."
                                 return -code -1
                         }
@@ -416,8 +416,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		regexp {\"id\":(\d+)} $data -> info(show_id)
 		regexp {\"name\":\"(.*?)\"} $data -> info(show_name)
 		regexp {\"url\":\"(.*?)\"} $data -> info(show_url)
-		set url [regsub "http" $info(show_url) "https"]
-		set info(show_url) $url
+		set info(show_url) [regsub "http" $info(show_url) "https"]
 		regexp {\"status\":\"(.*?)\"} $data -> info(show_status)
 		regexp {\"country\":.*?\"code\":\"(.*?)\"} $data -> info(show_country)
 		regexp {\"language\":\"(.*?)\"} $data -> info(show_language)
@@ -526,8 +525,8 @@ namespace eval ::ngBot::plugin::TVMaze {
 
 			regexp {\"name\":\"(.*?)\"} $data -> info(episode_title)
 			regexp {\"url\":\"(.*?)\"} $data -> info(episode_url)
+			set info(episode_url) [regsub "http" $info(episode_url) "https"]
 			regexp {\"airdate\":\"(.*?)\"} $data -> info(episode_original_airdate)
-
 			regexp {\"season\":(\d+)} $data -> info(episode_season)
 			regexp {\"number\":(\d+)} $data -> info(episode_number)
 
