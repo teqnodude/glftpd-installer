@@ -59,6 +59,11 @@ NUKE_NETWORKS=""
 # Space delimited list of Languages to never nuke
 NUKE_LANGUAGES="Japanese Korean"
 
+# Configured like NUKE_SECTION_TYPES
+NUKE_SECTION_LANGUAGES="
+/site/TV-HD:(Japanese|Korean)
+"
+
 # 0 = Nuke / 1 = Do not nuke
 NUKE_SHOW_TYPE=0
 NUKE_SECTION_TYPE=0
@@ -67,6 +72,7 @@ NUKE_EP_BEFORE_YEAR=0
 NUKE_ORIGIN_COUNTRY=0
 NUKE_NETWORK=0
 NUKE_LANGUAGE=0
+NUKE_SECTION_LANGUAGE=0
 
 # Space delimited list of TV shows to never nuke, use releasename and not show name ie use The.Flash and NOT The Flash
 ALLOWED_SHOWS=""
@@ -307,6 +313,25 @@ then
             fi
         done
     fi
+fi
+
+if [ "$NUKE_SECTION_LANGUAGE" -eq 1 ]
+then
+    for rawdata in $NUKE_SECTION_LANGUAGES
+    do
+        section="`echo "$rawdata" | cut -d ':' -f1`"
+        denied="`echo "$rawdata" | cut -d ':' -f2`"
+        if [ "`echo "$RLS_NAME" | egrep -i "$section/"`" ]
+        then
+            if [ "`echo $SHOW_LANGUAGE | egrep -i $denied`" ]
+            then
+                language="`echo $SHOW_LANGUAGE | egrep -oi $denied`"
+                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Language $language is not allowed"
+                LogMsg "Nuked release: {$RLS_NAME} because its language is $language which is not allowed in section $section."
+                exit 0
+            fi
+        fi
+    done
 fi
 
 exit 0

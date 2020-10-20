@@ -15,6 +15,7 @@
 - Added check for existing group in tur-predircheck_manager
 - Renamed TVMaze_nuke to tvmaze-nuker and added network and language to the list of things to exempt and nuke releases for
 - Sort of eggdrop scripts in installer has been added to create a better overview of loaded scripts in eggdrop 
+- Added the ability to nuke specific language in specific section in tvmaze-nuker
 
 ### Fixes
 
