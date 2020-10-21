@@ -335,15 +335,36 @@ namespace eval ::ngBot::plugin::TVMaze {
 				if {($empty == 0) || ([string is true -strict $tvmaze(announce-empty)])} {
 
                                         set listlength [llength $logData]
-                                        if {$listlength > 7} {
+                                        if {$listlength > 29} {
                                                 append rls_name "\"[string map {" " _} [lindex $logData 0]]\""
-                                                append show_genres "\"[string map {" " _} [lindex $logData 1]]\""
-                                                append show_country "\"[string map {" " _} [lindex $logData 2]]\""
-						append show_language "\"[string map {" " _} [lindex $logData 3]]\""
-                                                append show_network "\"[string map {" " _} [lindex $logData 4]]\""
-                                                append show_status "\"[string map {" " _} [lindex $logData 5]]\""
-                                                append show_type "\"[string map {" " _} [lindex $logData 6]]\""
-                                                append ep_airdate "\"[string map {" " _} [lindex $logData 7]]\""
+                                                append arg1 "\"[string map {" " _} [lindex $logData 1]]\""
+                                                append arg2 "\"[string map {" " _} [lindex $logData 2]]\""
+                                                append arg3 "\"[string map {" " _} [lindex $logData 3]]\""
+                                                append arg4 "\"[string map {" " _} [lindex $logData 4]]\""
+                                                append arg5 "\"[string map {" " _} [lindex $logData 5]]\""
+                                                append show_genres "\"[string map {" " _} [lindex $logData 6]]\""
+                                                append show_country "\"[string map {" " _} [lindex $logData 7]]\""
+						append show_language "\"[string map {" " _} [lindex $logData 8]]\""
+                                                append show_network "\"[string map {" " _} [lindex $logData 9]]\""
+                                                append show_status "\"[string map {" " _} [lindex $logData 10]]\""
+                                                append arg11 "\"[string map {" " _} [lindex $logData 11]]\""
+                                                append arg12 "\"[string map {" " _} [lindex $logData 12]]\""
+                                                append arg13 "\"[string map {" " _} [lindex $logData 13]]\""
+                                                append arg14 "\"[string map {" " _} [lindex $logData 14]]\""
+                                                append arg15 "\"[string map {" " _} [lindex $logData 15]]\""
+                                                append arg16 "\"[string map {" " _} [lindex $logData 16]]\""
+                                                append arg17 "\"[string map {" " _} [lindex $logData 17]]\""
+                                                append show_type "\"[string map {" " _} [lindex $logData 18]]\""
+                                                append arg19 "\"[string map {" " _} [lindex $logData 19]]\""
+                                                append arg20 "\"[string map {" " _} [lindex $logData 20]]\""
+                                                append arg21 "\"[string map {" " _} [lindex $logData 21]]\""
+                                                append arg22 "\"[string map {" " _} [lindex $logData 22]]\""
+                                                append arg23 "\"[string map {" " _} [lindex $logData 23]]\""
+                                                append arg24 "\"[string map {" " _} [lindex $logData 24]]\""
+                                                append arg25 "\"[string map {" " _} [lindex $logData 25]]\""
+                                                append arg26 "\"[string map {" " _} [lindex $logData 26]]\""
+                                                append arg27 "\"[string map {" " _} [lindex $logData 27]]\""
+                                                append ep_airdate "\"[string map {" " _} [lindex $logData 28]]\""
 
                                                 exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate
                                         }
@@ -381,8 +402,6 @@ namespace eval ::ngBot::plugin::TVMaze {
 		catch {regexp -- {^(\d+)x(\d+)$} $episode_str -> episode_season episode_number}
 		catch {regexp -- {^[sS](\d+)[eE](\d+)$} $episode_str -> episode_season episode_number}
 
-		#regsub -all -- {[\._]} $show_str " " show_str
-		#regsub -all -- {[\._]|US|UK|AU|CA|NZ|20[0-9][0-9]} $show_str " " show_str
 		regsub -all -- {[\._]|[A-Z][A-Z]|20[0-9][0-9]} $show_str " " show_str
 		set show_str [string trim $show_str]
 
@@ -566,6 +585,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 				}
 			}
 			::http::config -useragent $tvmaze(useragent)
+			::http::register https 443 [list ::tls::socket -autoservername true]
 			set token [::http::geturl "$uri" -timeout $tvmaze(timeout)]
 
 			if {![string equal -nocase [::http::status $token] "ok"]} {

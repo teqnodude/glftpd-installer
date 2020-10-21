@@ -25,6 +25,7 @@
 - Video releases with multiple languages listed in mediainfo only show the first language in the list to prevent weird output in irc channel
 - Mediainfo script could not handle movie releases that didn't include year in the name
 - I missed setting converting http to https during lookup of episode in TVMaze.tcl. Also increased security for TLS requiring at least 1.7 of tcl-tls for script to work.
+- Variables was set incorrectly in TVMaze.tcl that caused errors in tvmaze-nuker
 
 ## 9.9 - 2020-08-03
 
