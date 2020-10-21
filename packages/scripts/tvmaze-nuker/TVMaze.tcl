@@ -365,9 +365,9 @@ namespace eval ::ngBot::plugin::TVMaze {
                                                 append arg26 "\"[string map {" " _} [lindex $logData 26]]\""
                                                 append arg27 "\"[string map {" " _} [lindex $logData 27]]\""
                                                 append ep_airdate "\"[string map {" " _} [lindex $logData 28]]\""
-						#putquick "PRIVMSG $chan :arg1: $arg1 - arg2: $arg2 - arg3: $arg3 - arg4: $arg4 - arg5: $arg5 - arg11: $arg11 - arg12: $arg12 - arg13: $arg13"
-						#putquick "PRIVMSG $chan :arg14: $arg14 - arg15: $arg15 - arg16: $arg16 - arg17: $arg17 - arg19: $arg19 - arg20: $arg20 - arg21: $arg21 - arg22: $arg22"
-						#putquick "PRIVMSG $chan :arg23: $arg23 - arg24: $arg24 - arg25: $arg25 - arg26: $arg26 - arg27: $arg27"
+                                                #putquick "PRIVMSG #development :arg1: $arg1 - arg2: $arg2 - arg3: $arg3 - arg4: $arg4 - arg5: $arg5 - arg11: $arg11 - arg12: $arg12 - arg13: $arg13"
+                                                #putquick "PRIVMSG #development :arg14: $arg14 - arg15: $arg15 - arg16: $arg16 - arg17: $arg17 - arg19: $arg19 - arg20: $arg20 - arg21: $arg21 - arg22: $arg22"
+                                                #putquick "PRIVMSG #development :arg23: $arg23 - arg24: $arg24 - arg25: $arg25 - arg26: $arg26 - arg27: $arg27"
                                                 exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate
                                         }
 
