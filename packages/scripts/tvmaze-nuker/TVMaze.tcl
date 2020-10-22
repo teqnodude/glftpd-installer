@@ -404,7 +404,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		catch {regexp -- {^(\d+)x(\d+)$} $episode_str -> episode_season episode_number}
 		catch {regexp -- {^[sS](\d+)[eE](\d+)$} $episode_str -> episode_season episode_number}
 
-		regsub -all -- {[\._]|[A-Z][A-Z]|20[0-9][0-9]} $show_str " " show_str
+		regsub -all -- {[\._]|[A-Z][A-Z]|[A-Z][A-Z][A-Z]|20[0-9][0-9]} $show_str " " show_str
 		set show_str [string trim $show_str]
 
 		array set info [${ns}::GetShowAndEpisode $show_str $episode_season $episode_number]
