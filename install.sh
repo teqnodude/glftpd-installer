@@ -1493,14 +1493,6 @@ function psxcimdb
 		echo "source scripts/pzs-ng/plugins/psxc-imdb.tcl" >> $glroot/sitebot/eggdrop.conf
 		cat gl >> $glroot/etc/glftpd.conf
 		echo -e "[\e[32mDone\e[0m]"
-		CHECK=`cat $glroot/etc/glftpd.conf | grep -w ".imdb"`
-		
-		if [ "$CHECK" = "" ] 
-		then
-			cat $glroot/etc/glftpd.conf | sed "s/show_diz .message/show_diz .message .imdb/" > $glroot/etc/glftpd.conf
-			touch $glroot/ftp-data/logs/psxc-moviedata.log ; chmod 666 $glroot/ftp-data/logs/psxc-moviedata.log
-		fi
-		
 		sed -i "s/#changethis/$imdbchan/" $glroot/sitebot/scripts/pzs-ng/plugins/psxc-imdb.tcl
 		cd ..
 		
