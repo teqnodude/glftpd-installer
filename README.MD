@@ -119,6 +119,7 @@ addip="y" # Install Tur-Addip
 oneline_stats="y" # Install Tur-Oneline_Stats
 ircnick="y" # Install Ircnick
 archiver="y" # Install Tur-Archiver
+section_traffic="y" # Install Section-Traffic
 username="admin" # Username for Administrator account
 password="password" # Password for Administrator account
 ip="*@192.168.1.*" # IP for Administrator account
