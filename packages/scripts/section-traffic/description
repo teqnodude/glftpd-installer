@@ -1,0 +1,3 @@
+This script requires the use of xferlog-import to work. It
+shows the up / down / total stats for sections on site on irc
+by the !st command.

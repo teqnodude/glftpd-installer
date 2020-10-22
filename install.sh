@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=9.9
+VER=10.0
 clear
 
 if [ ! -d ".tmp" ]
@@ -92,7 +92,7 @@ function start
 		echo -n "Please enter the name of the site, without space : " ; read sitename
 	done
 	
-	sitename="`echo $sitename | sed -e 's/ /_/g'`"
+	sitename="`echo $sitename | sed 's/ /_/g'`"
 	
 	if [ ! -f $cache ]
 	then
@@ -758,7 +758,7 @@ function eggdrop
 	cd ../data
 	cat egghead > eggdrop.conf
 	cat $rootdir/.tmp/eggchan >> eggdrop.conf
-	cat bot.chan | sed -e "s/changeme/$sitename/" > $glroot/sitebot/logs/bot.chan
+	cat bot.chan | sed "s/changeme/$sitename/" > $glroot/sitebot/logs/bot.chan
 	cat $rootdir/.tmp/bot.chan.tmp >> $glroot/sitebot/logs/bot.chan
 	echo "set username 		\"$sitename\"" >> eggdrop.conf
 	echo "set nick 		\"$sitename\"" >> eggdrop.conf
@@ -1169,7 +1169,7 @@ function request
 		chmod 755 $glroot/bin/tur-request.sh
 		cp *.tcl $glroot/sitebot/scripts
 		cp file_date $glroot/bin
-		sed -e "s/changeme/$sitename/" tur-request.conf > $glroot/bin/tur-request.conf
+		sed "s/changeme/$sitename/" tur-request.conf > $glroot/bin/tur-request.conf
 		touch $glroot/site/REQUESTS/.requests ; chmod 666 $glroot/site/REQUESTS/.requests
 		echo "1 18 * * * 		$glroot/bin/tur-request.sh status auto >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 		echo "1 0 * * * 		$glroot/bin/tur-request.sh checkold >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
@@ -1203,7 +1203,6 @@ function trial
 		then
 			echo "trial=\"n\"" >> $cache
 		fi
-		#echo "0 0 * * * 		$glroot/bin/reset -d" >> /var/spool/cron/crontabs/root
 		;;
 		[Yy]|*)
 		if [ "`cat $cache | grep -w trial= | wc -l`" = 0 ]
@@ -1211,36 +1210,47 @@ function trial
 			echo "trial=\"y\"" >> $cache
 		fi
 		
-		if [ ! -e "/usr/bin/mysql" ] 
-		then
-			echo
-			echo "Tur-Trial3 needs a SQL server but MySQL was not found on your server"
-			echo "No need to panic though, Tur-Trial3 will still be installed - you will just have to install"
-			echo "MySQL before you can use the script."
-			echo
-		fi
-		
 		echo -n "Installing Tur-Trial3, please wait...                       	"
-		cd tur-trial3 
-		cp *.sh $glroot/bin
-		cp tur-trial3.conf $glroot/bin
-		cp tur-trial3.theme $glroot/bin
-		cp tur-trial3.tcl $glroot/sitebot/scripts
-		echo "source scripts/tur-trial3.tcl" >> $glroot/sitebot/eggdrop.conf
-		echo "*/31 * * * * 		$glroot/bin/tur-trial3.sh update >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		echo "*/30 * * * * 		$glroot/bin/tur-trial3.sh tcron >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		echo "45 23 * * * 		$glroot/bin/tur-trial3.sh qcron >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		echo "0 0 * * * 		$glroot/bin/midnight.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+                if [ ! -e /usr/bin/mysql ]
+                then
+                        echo "No MySQL installed, can't install script. Install MySQL and run ./cleanup.sh and this installer again."
+                else
+	    		cd tur-trial3 
+			cp tur-trial3.sh $glroot/bin
+			cp midnight.sh $glroot/bin
+			cp tur-trial3.conf $glroot/bin
+			cp tur-trial3.theme $glroot/bin
+			cp tur-trial3.tcl $glroot/sitebot/scripts
+		        cp import.sql import.sql.new
+        	        current=`shasum /etc/mysql/mariadb.conf.d/50-server.cnf | cut -d' ' -f1`
+            	        new=`shasum 50-server.cnf | cut -d' ' -f1`
+	                if [ "$current" != "$new" ]
+    		        then
+            		        mv  /etc/mysql/mariadb.conf.d/50-server.cnf  /etc/mysql/mariadb.conf.d/50-server.cnf.bak
+                    		cp -f 50-server.cnf /etc/mysql/mariadb.conf.d/
+	                fi
+    		        if [ ! -d $glroot/backup/mysql ]
+            		then
+                    		service mysql stop && mysql_install_db >/dev/null 2>&1 && service mysql start
+	                fi
+    		        ./setup-tur-trial3.sh create && rm import.sql.new
+
+			echo "source scripts/tur-trial3.tcl" >> $glroot/sitebot/eggdrop.conf
+	    		echo "*/31 * * * * 		$glroot/bin/tur-trial3.sh update >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+		    	echo "*/30 * * * * 		$glroot/bin/tur-trial3.sh tcron >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+	    		echo "45 23 * * * 		$glroot/bin/tur-trial3.sh qcron >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+			echo "0 0 * * * 		$glroot/bin/midnight.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 		
-		if [ -f "`which mysql`" ]
-		then
-			cp `which mysql` $glroot/bin
+	    		if [ -f "`which mysql`" ]
+			then
+				cp `which mysql` $glroot/bin
+			fi
+		
+			cat gl >> $glroot/etc/glftpd.conf
+			cd ..
+			touch $glroot/ftp-data/logs/tur-trial3.log
+			echo -e "[\e[32mDone\e[0m]"
 		fi
-		
-		cat gl >> $glroot/etc/glftpd.conf
-		cd ..
-		touch $glroot/ftp-data/logs/tur-trial3.log
-		echo -e "[\e[32mDone\e[0m]"
 		;;
 	esac
 }
@@ -1487,7 +1497,7 @@ function psxcimdb
 		
 		if [ "$CHECK" = "" ] 
 		then
-			cat $glroot/etc/glftpd.conf | sed -e "s/show_diz .message/show_diz .message .imdb/" > $glroot/etc/glftpd.conf
+			cat $glroot/etc/glftpd.conf | sed "s/show_diz .message/show_diz .message .imdb/" > $glroot/etc/glftpd.conf
 			touch $glroot/ftp-data/logs/psxc-moviedata.log ; chmod 666 $glroot/ftp-data/logs/psxc-moviedata.log
 		fi
 		
@@ -1654,6 +1664,66 @@ function archiver
         esac
 }
 
+## section-traffic
+function section-traffic
+{
+        if [[ -f "$cache" && "`cat $cache | grep -w section_traffic | wc -l`" = 1 ]]
+        then
+                ask=`cat $cache | grep -w section_traffic | cut -d "=" -f2 | tr -d "\""`
+        else
+                echo
+                echo -e "\e[4mDescription for Section-Traffic:\e[0m"
+                cat $rootdir/packages/scripts/section-traffic/description
+                echo
+                echo -n "Install Section-Traffic ? [Y]es [N]o, default Y : " ; read ask
+        fi
+
+        case $ask in
+                [Nn])
+                if [ "`cat $cache | grep -w section_traffic= | wc -l`" = 0 ]
+                then
+                        echo "section_traffic=\"n\"" >> $cache
+                fi
+                ;;
+                [Yy]|*)
+    		if [ "`cat $cache | grep -w section_traffic= | wc -l`" = 0 ]
+    		then
+            		echo "section_traffic=\"y\"" >> $cache
+    		fi
+
+    		echo -n "Installing Section-Traffic, please wait...                      "
+		if [ ! -e /usr/bin/mysql ]
+		then
+			echo "No MySQL installed, can't install script. Install MySQL and run ./cleanup.sh and this installer again."
+		else
+			current=`shasum /etc/mysql/mariadb.conf.d/50-server.cnf | cut -d' ' -f1`
+			new=`shasum section-traffic/50-server.cnf | cut -d' ' -f1`
+			if [ "$current" != "$new" ]
+			then
+				mv  /etc/mysql/mariadb.conf.d/50-server.cnf  /etc/mysql/mariadb.conf.d/50-server.cnf.bak
+				cp -f section-traffic/50-server.cnf /etc/mysql/mariadb.conf.d/
+			fi
+			if [ ! -d $glroot/backup/mysql ]
+			then
+				service mysql stop && mysql_install_db >/dev/null 2>&1 && service mysql start
+			fi
+			cd section-traffic
+			cp xferlog-import_3.3.sh $glroot/bin && sed -i "s/changeme/$sitename/" $glroot/bin/xferlog-import_3.3.sh
+			cp section-traffic.sh $glroot/bin && sed -i "s/changeme/$sitename/" $glroot/bin/section-traffic.sh
+			cp section-traffic.tcl $glroot/sitebot/scripts
+			echo "source scripts/section-traffic.tcl" >> $glroot/sitebot/eggdrop.conf
+			sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/section-traffic.tcl
+			cp import.sql import.sql.new && sed -i "s/changeme/$sitename/" import.sql.new
+			./setup-section-traffic.sh create && rm import.sql.new
+			echo "*/30 * * * *            $glroot/bin/xferlog-import_3.3.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+			echo "30 0 * * *              $glroot/bin/section-traffic.sh cleanup >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+			cd ..
+            		echo -e "[\e[32mDone\e[0m]"
+		fi
+                ;;
+        esac
+}
+
 
 ## usercreation
 function usercreation
@@ -1737,7 +1807,7 @@ function usercreation
 function cleanup
 {
 	cd ../../
-	mkdir $glroot/backup
+	if [ ! -d $glroot/backup ]; then mkdir $glroot/backup ; fi
 	mv packages/$PK1DIR packages/source/
 	mv packages/$PK2DIR packages/source/
 	mv packages/$PK3DIR packages/source/
@@ -1829,14 +1899,10 @@ addip
 oneline_stats
 ircnick
 archiver
+section-traffic
 usercreation
 cleanup
 echo 
-if [ -f $glroot/bin/tur-trial3.sh ]
-then
-		echo "You have chosen to install Tur-Trial3, please run $glroot/bin/setupsql.sh"
-		echo
-fi
 echo "If you are planning to uninstall glFTPD, then run cleanup.sh"
 echo
 echo "To get the bot running you HAVE to do this ONCE to create the initial userfile"

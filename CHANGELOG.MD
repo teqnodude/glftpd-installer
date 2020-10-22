@@ -1,8 +1,9 @@
-## 10.x -
+## 10.0 - 2020-10-22
 
 ### Added
 
 - Included Tur-Archiver for those that want to archive stuff
+- Included my own Section-Traffic that stores xferlog in mysql db and pulls it out to view interesting stats on sections and users
 
 ### Updated
 
@@ -16,6 +17,7 @@
 - Renamed TVMaze_nuke to tvmaze-nuker and added network and language to the list of things to exempt and nuke releases for
 - Sort of eggdrop scripts in installer has been added to create a better overview of loaded scripts in eggdrop 
 - Added the ability to nuke specific language in specific section in tvmaze-nuker
+- I have automated the creation of SQL databases, tables and users for Section-Traffic and Tur-Trial3. If MySQL is not installed then user gets notified.
 
 ### Fixes
 

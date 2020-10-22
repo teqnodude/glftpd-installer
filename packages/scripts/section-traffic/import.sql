@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS `changeme` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `datetime` datetime DEFAULT NULL,
+  `ip` varchar(20) DEFAULT NULL,
+  `FTPuser` varchar(20) DEFAULT NULL,
+  `FTPgroup` varchar(20) DEFAULT NULL,
+  `path` varchar(300) DEFAULT NULL,
+  `filename` varchar(255) DEFAULT NULL,
+  `relname` varchar(255) DEFAULT NULL,
+  `section` varchar(30) DEFAULT NULL,
+  `transfertime` bigint(20) DEFAULT NULL,
+  `bytes` bigint(20) DEFAULT NULL,
+  `direction` char(1) DEFAULT '',
+  `ident` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `IP` (`ip`(7)),
+  KEY `Direction` (`direction`),
+  KEY `FTPuser` (`FTPuser`(2)),
+  KEY `Section` (`section`(2)),
+  KEY `Filename` (`filename`(8))
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;

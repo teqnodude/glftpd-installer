@@ -23,7 +23,8 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  mediainfo
 *  precheck
 *  psxc-imdb
-*  section manager
+*  section_manager
+*  section-traffic
 *  slv-PreBW
 *  tuls
 *  tur-addip
@@ -55,7 +56,7 @@ List of required packages for every script to work
 
 **Debian**
 ``` 
-apt-get install autoconf bc curl diffutils ftp git libflac-dev libssl-dev lm-sensors lynx make mariadb-server mkvtoolnix ncftp passwd rsync smartmontools tcl tcl-dev tcl-tls tcpd wget zip
+apt-get install autoconf bc curl diffutils ftp git libflac-dev libssl-dev lm-sensors lynx make mariadb-server ncftp passwd rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip
 ``` 
 **BASH** needs to be the default shell. To change from default DASH to BASH in Debian do 
 ``` 
