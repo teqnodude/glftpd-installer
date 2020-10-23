@@ -62,7 +62,7 @@ NUKE_SECTION_LANGUAGES="
 /site/TV-HD:(English)
 "
 
-# 1 = Nuke / 0 = Do not nuke
+# 1 = Enable / 0 = Disable
 NUKE_SHOW_TYPE=0
 NUKE_SECTION_TYPE=0
 NUKE_SECTION_GENRE=0
