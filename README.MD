@@ -66,14 +66,15 @@ dpkg-reconfigure dash
 
 ### Normal installation
 
-![Screenshot_1](https://user-images.githubusercontent.com/36924638/64728657-c9cb9700-d4db-11e9-9878-1c72595d7ccf.png)
-![Screenshot_2](https://user-images.githubusercontent.com/36924638/64728658-c9cb9700-d4db-11e9-9694-e389735e407e.png)
-![Screenshot_3](https://user-images.githubusercontent.com/36924638/64728659-ca642d80-d4db-11e9-9e1f-aeed185d02de.png)
-![Screenshot_4](https://user-images.githubusercontent.com/36924638/64728660-ca642d80-d4db-11e9-9736-32d804b527cf.png)
+![Screenshot_1](https://user-images.githubusercontent.com/36924638/97006923-de80b800-1540-11eb-9659-47d74d52d86f.png)
+![Screenshot_2](https://user-images.githubusercontent.com/36924638/97006924-dfb1e500-1540-11eb-9829-f9ec441847a9.png)
+![Screenshot_3](https://user-images.githubusercontent.com/36924638/97006927-dfb1e500-1540-11eb-8b16-2908683c3220.png)
+![Screenshot_4](https://user-images.githubusercontent.com/36924638/97006929-e04a7b80-1540-11eb-8ed7-35be067b03c4.png)
 
 ### Unattended installation
 
-![Screenshot_5](https://user-images.githubusercontent.com/36924638/64728661-ca642d80-d4db-11e9-8c1f-6da2ce4b7f8c.png)
+![Screenshot_5](https://user-images.githubusercontent.com/36924638/97006907-d6287d00-1540-11eb-983d-a5ce4a4f058e.png)
+![Screenshot_6](https://user-images.githubusercontent.com/36924638/97005571-ea6b7a80-153e-11eb-91d0-902ceff6e7be.png)
 
 ## How to do an Unattended installation
 
@@ -101,7 +102,7 @@ router="y" # If site is behind router
 pasv_addr="123.123.123.123" # IP or DNS to use as passive address for glFTPD
 pasv_ports="6000-7000" # Port range to use for passive mode for glFTPD
 # What ircserver should the bot connect to. + = SSL port. Remove :ircpassword if no password is required
-ircserver="irc.example.org:+7000:ircpassword" 
+ircserver="irc.example.org +7000 ircpassword" 
 eur0presystem="y" # Install Eur0-pre-system with foo-pre
 slvprebw="y" # Install Slv-PreBW
 idlebotkick="y" # Install Idlebotkick
