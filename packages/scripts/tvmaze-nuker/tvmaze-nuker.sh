@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=2.0
+VER=2.1
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -7,6 +7,7 @@ VER=2.0
 # Changelog
 # 20XX-00-00 v.1x Orginale creator Sokar aka PicdleRick
 # 2020-10-20 v.2x Code modifications and improvements Teqno/TeRRaNoVA
+# 2020-10-23 v.2.1 Changed the way languages are handled by Teqno
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
