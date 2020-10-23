@@ -1,3 +1,9 @@
+## 10.x -
+
+### Updated
+- Changed the way languages are handled in tvmaze-nuker
+
+
 ## 10.0 - 2020-10-22
 
 ### Added

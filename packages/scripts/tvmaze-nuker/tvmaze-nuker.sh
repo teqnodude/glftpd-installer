@@ -56,12 +56,9 @@ NUKE_ORIGIN_COUNTRIES="DE"
 # Space delimited list of Networks to nuke
 NUKE_NETWORKS=""
 
-# Space delimited list of Languages to never nuke
-NUKE_LANGUAGES="Japanese Korean"
-
-# Configured like NUKE_SECTION_TYPES
+# Languages to NOT nuke. Configured like NUKE_SECTION_TYPES
 NUKE_SECTION_LANGUAGES="
-/site/TV-HD:(Japanese|Korean)
+/site/TV-HD:(English)
 "
 
 # 1 = Nuke / 0 = Do not nuke
@@ -71,7 +68,6 @@ NUKE_SECTION_GENRE=0
 NUKE_EP_BEFORE_YEAR=0
 NUKE_ORIGIN_COUNTRY=0
 NUKE_NETWORK=0
-NUKE_LANGUAGE=0
 NUKE_SECTION_LANGUAGE=0
 
 # Space delimited list of TV shows to never nuke, use releasename and not show name ie use The.Flash and NOT The Flash
@@ -79,9 +75,6 @@ ALLOWED_SHOWS=""
 
 # Space delimited list of Networks to never nuke
 ALLOWED_NETWORKS=""
-
-# Space delimited list of Languages to never nuke
-ALLOWED_LANGUAGES=""
 
 # Space delimited list of sections to never nuke
 EXCLUDED_SECTIONS="ARCHIVE REQUEST"
@@ -299,22 +292,6 @@ then
     fi
 fi
 
-if [ "$NUKE_LANGUAGE" -eq 1 ]
-then
-    if [ -n "$NUKE_LANGUAGES" ]
-    then
-        for language in $NUKE_LANGUAGES
-        do
-            if [ "$SHOW_LANGUAGE" == "$language" ]
-            then
-                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Language $language is not allowed"
-                LogMsg "Nuked release: {$RLS_NAME} because its language is $SHOW_LANGUAGE which is not allowed."
-                exit 0
-            fi
-        done
-    fi
-fi
-
 if [ "$NUKE_SECTION_LANGUAGE" -eq 1 ]
 then
     for rawdata in $NUKE_SECTION_LANGUAGES
@@ -323,7 +300,7 @@ then
         denied="`echo "$rawdata" | cut -d ':' -f2`"
         if [ "`echo "$RLS_NAME" | egrep -i "$section/"`" ]
         then
-            if [ "`echo $SHOW_LANGUAGE | egrep -i $denied`" ]
+            if [ "`echo $SHOW_LANGUAGE | egrep -i $denied | wc -l`" = 0 ]
             then
                 language="`echo $SHOW_LANGUAGE | egrep -oi $denied`"
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Language $language is not allowed"
