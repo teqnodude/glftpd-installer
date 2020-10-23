@@ -302,9 +302,8 @@ then
         then
             if [ "`echo $SHOW_LANGUAGE | egrep -i $denied | wc -l`" = 0 ]
             then
-                language="`echo $SHOW_LANGUAGE | egrep -oi $denied`"
-                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Language $language is not allowed"
-                LogMsg "Nuked release: {$RLS_NAME} because its language is $language which is not allowed in section $section."
+                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Language $SHOW_LANGUAGE is not allowed"
+                LogMsg "Nuked release: {$RLS_NAME} because its language is $SHOW_LANGUAGE which is not allowed in section $section."
                 exit 0
             fi
         fi
