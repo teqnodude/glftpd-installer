@@ -330,8 +330,8 @@ then
         then
             if [ ! -z "$SHOW_RATING" ] && [ "$rating" -lt "$limit" ]
             then
-                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Rating $rating is below the limit of $limit"
-                LogMsg "Nuked release: {$RLS_NAME} because its rating $rating is below the limit of $limit for section $section."
+                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Rating $SHOW_RATING is below the limit of $limit"
+                LogMsg "Nuked release: {$RLS_NAME} because its rating $SHOW_RATING is below the limit of $limit for section $section."
                 exit 0
             fi
         fi
