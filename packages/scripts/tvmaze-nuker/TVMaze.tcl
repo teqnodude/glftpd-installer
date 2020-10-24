@@ -23,6 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
+# - 20201024 - Teqno:   Defined arguments for use with tvmaze-nuker and added show_rating as variable passed on shell script
 # - 20201020 - Teqno/TeRRaNoVA:	Added imdb-rating, imdb url, language etc with required shell script for nuke
 # - 20190815 - Sked:	Fix finding shows with newer Tcl packages
 # - 20160310 - Sked:	Fix show_network
