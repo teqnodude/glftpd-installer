@@ -335,7 +335,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 				if {($empty == 0) || ([string is true -strict $tvmaze(announce-empty)])} {
 
                                         set listlength [llength $logData]
-                                        if {$listlength > 32} {
+                                        if {$listlength > 31} {
                                                 append rls_name "\"[string map {" " _} [lindex $logData 0]]\""
                                                 append user "\"[string map {" " _} [lindex $logData 1]]\""
                                                 append group "\"[string map {" " _} [lindex $logData 2]]\""
@@ -368,7 +368,8 @@ namespace eval ::ngBot::plugin::TVMaze {
 						append ep_title "\"[string map {" " _} [lindex $logData 29]]\""
 						append show_rating "\"[string map {" " _} [lindex $logData 30]]\""
 						append show_imdb "\"[string map {" " _} [lindex $logData 31]]\""
-                                                exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate
+
+                                                exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
                                         }
 
 					${np}::sndall $target $section [${np}::ng_format $target $section $logData]

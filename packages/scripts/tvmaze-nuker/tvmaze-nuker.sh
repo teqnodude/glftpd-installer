@@ -54,12 +54,17 @@ NUKE_EPS_BEFORE_YEAR="2018"
 # Space delimited list of countries that will be nuked
 NUKE_ORIGIN_COUNTRIES="DE"
 
-# Space delimited list of Networks to nuke
+# Space delimited list of Networks to nuke, remember to replace space with _ in Network names
 NUKE_NETWORKS=""
 
-# Languages to NOT nuke. Configured like NUKE_SECTION_TYPES
+# Languages to NOT nuke.
 NUKE_SECTION_LANGUAGES="
 /site/TV-HD:(English)
+"
+
+# What rating should be the minimum *allowed* per section? For now, no decimals are allowed.
+NUKE_SECTION_RATINGS="
+/site/TV-HD:5
 "
 
 # 1 = Enable / 0 = Disable
@@ -70,11 +75,12 @@ NUKE_EP_BEFORE_YEAR=0
 NUKE_ORIGIN_COUNTRY=0
 NUKE_NETWORK=0
 NUKE_SECTION_LANGUAGE=0
+NUKE_SECTION_RATING=0
 
 # Space delimited list of TV shows to never nuke, use releasename and not show name ie use The.Flash and NOT The Flash
 ALLOWED_SHOWS=""
 
-# Space delimited list of Networks to never nuke
+# Space delimited list of Networks to never nuke, remember to replace space with _ in Network names
 ALLOWED_NETWORKS=""
 
 # Space delimited list of sections to never nuke
@@ -107,7 +113,7 @@ then
     exit 1
 fi
 
-if [ $# -ne 8 ]
+if [ $# -ne 9 ]
 then
     echo
     echo "ERROR! Missing arguments."
@@ -125,10 +131,11 @@ SHOW_NETWORK=`sed -e 's/^"//' -e 's/"$//' <<<"$5"`
 SHOW_STATUS=`sed -e 's/^"//' -e 's/"$//' <<<"$6"`
 SHOW_TYPE=`sed -e 's/^"//' -e 's/"$//' <<<"$7"`
 EP_AIR_DATE=`sed -e 's/^"//' -e 's/"$//' <<<"$8"`
+SHOW_RATING=`sed -e 's/^"//' -e 's/"$//' <<<"$9"`
 
 if [ "$DEBUG" -eq 1 ]
 then
-    LogMsg "Release: $RLS_NAME Genres: $SHOW_GENRES Country: $SHOW_COUNTRY Language: $SHOW_LANGUAGE Network: $SHOW_NETWORK Status: $SHOW_STATUS Type: $SHOW_TYPE Air date: $EP_AIR_DATE"
+    LogMsg "Release: $RLS_NAME Genres: $SHOW_GENRES Country: $SHOW_COUNTRY Language: $SHOW_LANGUAGE Network: $SHOW_NETWORK Status: $SHOW_STATUS Type: $SHOW_TYPE Air date: $EP_AIR_DATE Rating: $SHOW_RATING"
 fi
 
 for show in $ALLOWED_SHOWS
@@ -305,6 +312,25 @@ then
             then
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Language $SHOW_LANGUAGE is not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its language is $SHOW_LANGUAGE which is not allowed in section $section."
+                exit 0
+            fi
+        fi
+    done
+fi
+
+if [ "$NUKE_SECTION_RATING" -eq 1 ]
+then
+    for rawdata in $NUKE_SECTION_RATINGS
+    do
+        section="`echo "$rawdata" | cut -d ':' -f1`"
+        limit="`echo "$rawdata" | cut -d ':' -f2`"
+        rating="`echo $SHOW_RATING | awk '{print int($1)}'`"
+        if [ "`echo "$RLS_NAME" | egrep -i "$section/"`" ]
+        then
+            if [ ! -z "$SHOW_RATING" ] && [ "$rating" -lt "$limit" ]
+            then
+                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Rating $rating is below the limit of $limit"
+                LogMsg "Nuked release: {$RLS_NAME} because its rating $rating is below the limit of $limit for section $section."
                 exit 0
             fi
         fi
