@@ -28,7 +28,7 @@ MBIT			= "%b{%value}%c1{Mbit/s}"
 fakesection.INVITE	= "iNViTE"
 
 ## Default announce
-announce.DEFAULT				= "%b{iNFO%c1{:}} %c1{%msg}"
+announce.DEFAULT				= "%b{INFO%c1{:}} %c1{%msg}"
 
 ## Login announcements
 announce.LOGIN					= "%b{LOGiN%c1{:}} %c3{%b{%u_name}} %c1{/} %c3{%g_name} %c1{has logged in.}"
