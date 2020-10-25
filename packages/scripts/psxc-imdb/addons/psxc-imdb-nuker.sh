@@ -83,18 +83,31 @@ NO_NUKE_GENRES=""
 # genre the release is nuked on.
 NUKE_GENRES_MSG="NUKEGENRE movies not allowed."
 
+# Nuke movies in sections that do not have the specified languages
+# Example: NUKE_LANGUAGES="
+# /site/X264:(English|Swedish)
+# "
+# Leave empty to disable the nuke of languages
+NUKE_LANGUAGES="
+/site/X264:(Swedish)
+"
+
+# Nuke message for languages nuked. You can use NUKELANGUAGE as the name of the
+# language the release is nuked on.
+NUKE_LANGUAGES_MSG="only NUKELANGUAGE movies are allowed."
+
 # What should be the multiplier of these nukes?
-MULTIPLIER=3
+MULTIPLIER=5
 #MULTIPLIER=2
 
 # You can select a number of groups not to nuke here (affils etc). Separate
 # the groupname with a space.
-NO_NUKE_GROUP="siteops affils"
+NO_NUKE_GROUP=""
 #NO_NUKE_GROUP=""
 
 # You can also exclude a number of people from being nuked. Separate list by
 # a space.
-NO_NUKE_USER="sitop pr0nking"
+NO_NUKE_USER=""
 #NO_NUKE_USER=""
 
 # You can also include dirs here which holds the name of all affils. This is
@@ -106,7 +119,7 @@ NO_NUKE_AFFIL_DIR="/site/AFFILS /site/GROUPS"
 
 # You can also enter a list of groups which release movies you never want to
 # nuke, no matter how bad score, votes etc.
-NO_NUKE_RELGROUP="CPY QSP"
+NO_NUKE_RELGROUP=""
 #NO_NUKE_RELGROUP=""
 
 # If you wish to keep all releases uploaded in certain dirs, enter them here.
@@ -142,8 +155,8 @@ NUKE_LOGFILE="$GLROOT/ftp-data/logs/imdb-nukes.log"
 NUKE_WARN_FILE=$GLROOT/ftp-data/logs/glftpd.log
 #NUKE_WARN_FILE=""
 
-NUKE_WARN_MSG="[ BOLDIMDB NUKEWARNINGBOLD ] : [ BOLDRELNAMEBOLD ] is a nukee - REASON"
-#NUKE_WARN_MSG=""
+#NUKE_WARN_MSG="[ BOLDIMDB NUKEWARNINGBOLD ] : [ BOLDRELNAMEBOLD ] is a nukee - REASON"
+NUKE_WARN_MSG="RELNAME violate the rules - REASON"
 
 NUKE_WARN_TRIGGER="UPDATE:"
 #NUKE_WARN_TRIGGER="RAW:"
@@ -161,7 +174,7 @@ CHECK_SUB="NO"
 
 # In case you do nuking on the fly, what user should be the one doing the nuking?
 # This has got to be a valid user in glftpd's password list.
-NUKER_PERSON="sitebot"
+NUKER_PERSON="glftpd"
 
 # Sometimes an imdb lookup fails. For some moderate protection against this (you
 # do not wish to autonuke a release if the imdb script haven't found the data)
@@ -392,6 +405,29 @@ else
   NUKE_REASON="$GEN_NUKE_REASON"
  fi
 
+# Nuke of languages not specified
+ LAN_NUKE_REASON=""
+ if [ ! -z "$IMDBLANGUAGE" ]; then
+   if [ ! -z "$NUKE_LANGUAGES" ]; then
+    for NUKE_LANUAGE in $NUKE_LANGUAGES
+    do
+        section="`echo "$NUKE_LANUAGE" | cut -d ':' -f1`"
+        denied="`echo "$NUKE_LANUAGE" | cut -d ':' -f2`"
+        if [ "`echo "$GLROOT/$IMDBRELPATH" | egrep -i "$section/"`" ]
+        then
+            if [ ! "`echo $IMDBLANGUAGE | egrep -i $denied`" ]
+            then
+		LAN_NUKE_REASON="`echo "$NUKE_LANGUAGES_MSG" | sed -e "s|NUKELANGUAGE|$denied|g" -e "s|(||" -e "s|)||"`"
+            fi
+        fi
+    done
+   fi
+ fi 
+ if [ ! -z "$LAN_NUKE_REASON" ]; then
+  let COMBO=COMBO+1
+  NUKE_REASON="$LAN_NUKE_REASON"
+ fi
+
 # If there's no reason to nuke, let's just exit
  if [ -z "$NUKE_REASON" ]; then
   exit 0
@@ -543,7 +579,7 @@ if [ -z "$NUKE_WARN_FILE" ] && [ -z "$NUKE_LOGFILE" ]; then
  $GLROOT/bin/nuker -r $GLFTPD_CONF -N $NUKER_PERSON -n {$IMDBRELPATH}/ $MULTIPLIER $NUKE_REASON >/dev/null 2>&1
 else
  if [ ! -z "$NUKE_LOGFILE" ]; then
-  echo "`date +%s`""%""$IMDBRELPATH""%""$MULTIPLIER""%""$NUKE_REASON" >> $NUKE_LOGFILE
+  echo "$DATE $IMDBRELPATH $MULTIPLIER $NUKE_REASON" >> $NUKE_LOGFILE
  fi
  if [ ! -z "$NUKE_WARN_FILE" ]; then
   NUKE_WARN_MSG="`echo "$NUKE_WARN_MSG" | sed "s%RELNAME%$IMDBDIRNAME%g" | sed "s%REASON%$NUKE_REASON%g" | sed "s%MOVIENAME%$IMDBNAME%g" | sed "s%BOLD%$BOLD%g"`" 

@@ -2,6 +2,8 @@
 
 ### Updated
 - Changed the way languages are handled in tvmaze-nuker
+- Updated psxc-imdb-nuker with my own code to allow the nuke of specified language per section. Also included relevant code for theme and ngBot.conf
+- Updated versions of psxc-imdb files, noticed I forgot to do that earlier
 
 
 ## 10.0 - 2020-10-22
@@ -34,6 +36,7 @@
 - Mediainfo script could not handle movie releases that didn't include year in the name
 - I missed setting converting http to https during lookup of episode in TVMaze.tcl. Also increased security for TLS requiring at least 1.7 of tcl-tls for script to work.
 - Variables was set incorrectly in TVMaze.tcl that caused errors in tvmaze-nuker
+
 
 ## 9.9 - 2020-08-03
 

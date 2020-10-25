@@ -290,3 +290,6 @@ announce.PREBW                                  = "%b{PREBW%c1{:}} %c1{-}%c2{%se
 
 ## glFTPd version check
 announce.GLVERSION                              = "%c8{%msg}"
+
+## psxc-imdb
+announce.UPDATE					= "%c3{%msg}
