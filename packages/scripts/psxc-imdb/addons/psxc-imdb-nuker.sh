@@ -88,9 +88,7 @@ NUKE_GENRES_MSG="NUKEGENRE movies not allowed."
 # /site/X264:(English|Swedish)
 # "
 # Leave empty to disable the nuke of languages
-NUKE_LANGUAGES="
-/site/X264:(Swedish)
-"
+NUKE_LANGUAGES=""
 
 # Nuke message for languages nuked. You can use NUKELANGUAGE as the name of the
 # language the release is nuked on.
@@ -413,11 +411,11 @@ else
     do
         section="`echo "$NUKE_LANUAGE" | cut -d ':' -f1`"
         denied="`echo "$NUKE_LANUAGE" | cut -d ':' -f2`"
-        if [ "`echo "$GLROOT/$IMDBRELPATH" | egrep -i "$section/"`" ]
+        if [ "`echo "$IMDBRELPATH" | egrep -i "$section/"`" ]
         then
             if [ ! "`echo $IMDBLANGUAGE | egrep -i $denied`" ]
             then
-		LAN_NUKE_REASON="`echo "$NUKE_LANGUAGES_MSG" | sed -e "s|NUKELANGUAGE|$denied|g" -e "s|(||" -e "s|)||"`"
+		LAN_NUKE_REASON="`echo "$NUKE_LANGUAGES_MSG" | sed "s/NUKELANGUAGE/$denied/" | sed -e "s|(||" -e "s|)||" -e "s/|/, /g"`"
             fi
         fi
     done
