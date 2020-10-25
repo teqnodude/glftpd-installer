@@ -5,7 +5,9 @@
 #####################################################
 #
 # This script first appeared with psxc-imdb v2.0k
-
+# 
+# Changelog: 2020-10-25 - Teqno added language as nuke option and bumped the version to 2.9j
+# 
 # Config
 ########
 # Any of the following variables put in psxc-imdb.conf will override what is
@@ -16,7 +18,7 @@
 #############################################################################
 
 # Version number. No need to change
-VERSION=2.9i
+VERSION=2.9j
 
 # glftpd's root dir
 GLROOT=/glftpd
