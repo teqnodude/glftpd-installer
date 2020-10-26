@@ -768,7 +768,7 @@ function eggdrop
 	mv eggdrop.conf $glroot/sitebot
 	cp botchkhead .botchkhead
 	echo "botdir=$glroot/sitebot" >> .botchkhead
-	echo "botscript=$PK3DIR" >> .botchkhead
+	echo "botscript=sitebot" >> .botchkhead
 	echo "botname=$sitename" >> .botchkhead
 	echo "userfile=./logs/bot.user" >> .botchkhead
 	echo "pidfile=pid.$sitename" >> .botchkhead

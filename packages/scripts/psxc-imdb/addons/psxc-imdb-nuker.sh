@@ -94,7 +94,7 @@ NUKE_LANGUAGES=""
 
 # Nuke message for languages nuked. You can use NUKELANGUAGE as the name of the
 # language the release is nuked on.
-NUKE_LANGUAGES_MSG="only NUKELANGUAGE movies are allowed."
+NUKE_LANGUAGES_MSG="Language is IMDBLANGUAGE, only NUKELANGUAGE movies are allowed."
 
 # What should be the multiplier of these nukes?
 MULTIPLIER=5
@@ -417,7 +417,7 @@ else
         then
             if [ ! "`echo $IMDBLANGUAGE | egrep -i $denied`" ]
             then
-		LAN_NUKE_REASON="`echo "$NUKE_LANGUAGES_MSG" | sed "s/NUKELANGUAGE/$denied/" | sed -e "s|(||" -e "s|)||" -e "s/|/, /g"`"
+		LAN_NUKE_REASON="`echo "$NUKE_LANGUAGES_MSG" | sed "s/IMDBLANGUAGE/$IMDBLANGUAGE/" | sed "s/NUKELANGUAGE/$denied/" | sed -e "s|(||" -e "s|)||" -e "s/|/, /g"`"
             fi
         fi
     done
