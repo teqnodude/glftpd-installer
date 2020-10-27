@@ -124,7 +124,7 @@ NO_NUKE_RELGROUP=""
 
 # If you wish to keep all releases uploaded in certain dirs, enter them here.
 # Paths are relative to GLROOT
-NO_NUKE_DIR="/site/ARCHIVE /site/PRIVATE"
+NO_NUKE_DIR="/site/ARCHIVE /site/REQUESTS"
 #NO_NUKE_DIR=""
 
 # The location of glftpd.conf. This is the full path.
