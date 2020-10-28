@@ -94,8 +94,8 @@ EXCLUDED_GROUPS=""
 
 function LogMsg()
 {
-    timestamp=`date --rfc-3339=seconds`
-    echo "$timestamp $@" >> $LOG_FILE
+    DATE=`date "+%Y-%m-%d %H:%M:%S"`
+    echo "$DATE $@" >> $LOG_FILE
 }
 
 if [ "$1" = "sanity" ]
