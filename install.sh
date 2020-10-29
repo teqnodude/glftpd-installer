@@ -729,7 +729,7 @@ function glftpd
 	ln -s $glroot/etc/glftpd.conf /etc/glftpd.conf
 	chmod 777 $glroot/ftp-data/msgs
 	cp ../scripts/extra/update_perms.sh $glroot/bin
-	cp ../scripts/extra/mkv_check.sh $glroot/bin
+	cp ../scripts/extra/mkv_check.sh $glroot/bin && cp `which mkvinfo` $glroot/bin
 	cp ../scripts/extra/glftpd-version_check.sh $glroot/bin
 	echo "0 18 * * *              $glroot/bin/glftpd-version_check.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 	cp ../scripts/section_manager/section_manager.sh $glroot
