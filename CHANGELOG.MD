@@ -10,6 +10,7 @@
 ### Fixes
 
 - Noticed that botchk in sitebot dir wasn't setup properly during install
+- Added extra check to ensure that script could connect to FTP before the adding of users & groups to prevent long timeouts
 
 
 ## 10.0 - 2020-10-22

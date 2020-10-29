@@ -1760,12 +1760,37 @@ function usercreation
 		ip="*@$localip"
 	fi
 
+	if [ "`cat $cache | grep -w username= | wc -l`" = 0 ]
+	then
+		echo "username=\"$username\"" >> $cache
+		echo "password=\"$password\"" >> $cache
+		echo "ip=\"$ip\"" >> $cache
+	fi
+
 	if [ "$router" = "y" ] 
 	then
 		connection="-E ftp://localhost"
 	else
 		connection="ftp://localhost"
 	fi
+
+	success="230 User glftpd logged in."
+status=`ftp -nv localhost $port <<EOF
+quote USER glftpd
+quote PASS glftpd
+quit
+EOF`
+	if [ "$(echo $status | grep -c "$success")" -eq 0 ]
+        then
+		if [ -e /etc/systemd/system/glftpd.socket ]
+		then
+			systemctl stop glftpd.socket >/dev/null && systemctl start glftpd.socket >/dev/null
+		fi
+		if [ -e /etc/rc.d/rc.inetd ]
+		then
+			/etc/rc.d/rc.inetd stop >/dev/null && /etc/rc.d/rc.inetd start >/dev/null
+		fi
+        fi
 	ncftpls -u glftpd -p glftpd -P $port -Y "site change glftpd flags +347ABCDEFGH" $connection > /dev/null
 	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd SiteOP SiteOP" $connection > /dev/null
 	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd Admin Administrators/SYSOP" $connection > /dev/null
@@ -1786,13 +1811,6 @@ function usercreation
 	sed -i "s/\"sname\"/\"$sitename\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
 	sed -i "s/\"ochan\"/\"$channelops\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
 	sed -i "s/\"channame\"/\"$announcechannels\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
-	
-	if [ "`cat $cache | grep -w username= | wc -l`" = 0 ]
-	then
-		echo "username=\"$username\"" >> $cache
-		echo "password=\"$password\"" >> $cache
-		echo "ip=\"$ip\"" >> $cache
-	fi
 }
 
 ## CleanUp / Config
