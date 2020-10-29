@@ -1810,7 +1810,7 @@ EOF`
 		echo "[$username] created successfully and added to the groups Admin and SiteOP"
 		echo "These groups were also created: NUKERS, iND, VACATION & Friends"
 	else
-		echo "Couldn't connect to the newly installed FTP and add user and groups. Manual add of user and groups are needed."
+		echo -e "\e[0;31mCouldn't connect to the newly installed FTP and add user and groups. Manual add of user and groups is needed.\e[0m"
 	fi
 	sed -i "s/\"changeme\"/\"$username\"/" $glroot/sitebot/eggdrop.conf
 	sed -i "s/\"sname\"/\"$sitename\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
