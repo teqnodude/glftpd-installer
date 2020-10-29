@@ -259,6 +259,7 @@ function channel
 	
 	while [ $counta -lt $channelnr ] 
 	do
+		chanpassword=""
 		if [[ -f "$cache" && "`cat $cache | grep -w "channame$((counta+1))" | wc -l`" = 1 ]]
 		then
 			channame=`cat $cache | grep -w "channame$((counta+1))" | cut -d "=" -f2 | tr -d "\"" | cut -d " " -f1`
@@ -1826,7 +1827,7 @@ function cleanup
 	mv packages/$PK1DIR packages/source/
 	mv packages/$PK2DIR packages/source/
 	mv packages/$PK3DIR packages/source/
-	mv packages/scripts/eur0-pre-system/foo-tools packages/source/
+	if [ "$(cat install.cache | grep eur0presystem | cut -d "=" -f2 | tr -d "\"")" = "y" ]; then mv packages/scripts/eur0-pre-system/foo-tools packages/source/ ; fi
 	mv $rootdir/.tmp/site/* $glroot/site/
 	cp -r packages/source/pzs-ng $glroot/backup
 	cp packages/data/pzs-ng-update.sh $glroot/backup 

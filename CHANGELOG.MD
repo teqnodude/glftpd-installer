@@ -11,6 +11,7 @@
 
 - Noticed that botchk in sitebot dir wasn't setup properly during install
 - Added extra check to ensure that script could connect to FTP before the adding of users & groups to prevent long timeouts
+- There was a bug before where you were only allowed to enter the required channel password once when having multiple channels
 
 
 ## 10.0 - 2020-10-22
