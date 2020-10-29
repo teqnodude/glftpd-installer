@@ -1791,22 +1791,27 @@ EOF`
 			/etc/rc.d/rc.inetd stop >/dev/null && /etc/rc.d/rc.inetd start >/dev/null
 		fi
         fi
-	ncftpls -u glftpd -p glftpd -P $port -Y "site change glftpd flags +347ABCDEFGH" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd SiteOP SiteOP" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd Admin Administrators/SYSOP" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd Friends Friends" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd NUKERS NUKERS" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd VACATION VACATION" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd iND Independent Racers" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site gadduser Admin $username $password $ip" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp $username SiteOP" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site change $username flags +1347ABCDEFGH" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site change $username ratio 0" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp glftpd Admin" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp glftpd SiteOP" $connection > /dev/null
-	echo
-	echo "[$username] created successfully and added to the groups Admin and SiteOP"
-	echo "These groups were also created: NUKERS, iND, VACATION & Friends"
+	if [ "$(echo $status | grep -c "$success")" -eq 1 ]
+	then
+		ncftpls -u glftpd -p glftpd -P $port -Y "site change glftpd flags +347ABCDEFGH" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd SiteOP SiteOP" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd Admin Administrators/SYSOP" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd Friends Friends" $connection > /dev/null
+	    	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd NUKERS NUKERS" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd VACATION VACATION" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd iND Independent Racers" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site gadduser Admin $username $password $ip" $connection > /dev/null
+	    	ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp $username SiteOP" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site change $username flags +1347ABCDEFGH" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site change $username ratio 0" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp glftpd Admin" $connection > /dev/null
+		ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp glftpd SiteOP" $connection > /dev/null
+		echo
+		echo "[$username] created successfully and added to the groups Admin and SiteOP"
+		echo "These groups were also created: NUKERS, iND, VACATION & Friends"
+	else
+		echo "Couldn't connect to the newly installed FTP and add user and groups. Manual add of user and groups are needed."
+	fi
 	sed -i "s/\"changeme\"/\"$username\"/" $glroot/sitebot/eggdrop.conf
 	sed -i "s/\"sname\"/\"$sitename\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
 	sed -i "s/\"ochan\"/\"$channelops\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
