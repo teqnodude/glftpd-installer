@@ -23,6 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
+# - 20201103 - Teqno:	Changed regex for TVMaze lookup since old regex broke down with certain names
 # - 20201024 - Teqno:   Defined arguments for use with tvmaze-nuker and added show_rating as variable passed on shell script
 # - 20201020 - Teqno/TeRRaNoVA:	Added imdb-rating, imdb url, language etc with required shell script for nuke
 # - 20190815 - Sked:	Fix finding shows with newer Tcl packages
@@ -405,7 +406,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		catch {regexp -- {^(\d+)x(\d+)$} $episode_str -> episode_season episode_number}
 		catch {regexp -- {^[sS](\d+)[eE](\d+)$} $episode_str -> episode_season episode_number}
 
-		regsub -all -- {[\._]|[A-Z][A-Z]|[A-Z][A-Z][A-Z]|20[0-9][0-9]} $show_str " " show_str
+		regsub -all -- {[\._]|[\._][A-Z][A-Z]\.|[\._][A-Z][A-Z][A-Z]\.} $show_str " " show_str
 		set show_str [string trim $show_str]
 
 		array set info [${ns}::GetShowAndEpisode $show_str $episode_season $episode_number]
