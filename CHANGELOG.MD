@@ -6,6 +6,7 @@
 - Updated psxc-imdb-nuker with my own code to allow the nuke of specified language per section. Also included relevant code for theme and ngBot.conf
 - Updated versions of psxc-imdb files, noticed I forgot to do that earlier
 - Added language of movie as part of warning and nuke reason for better overview why it got nuked in psxc-imdb-nuker
+- Changed the look for !imdb lookup and regular announce
 
 ### Fixes
 

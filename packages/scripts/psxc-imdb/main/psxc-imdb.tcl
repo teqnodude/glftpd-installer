@@ -166,8 +166,10 @@ namespace eval ::ngBot::plugin::psxc-IMDb {
 
                 lappend msgtypes(SECTION) "IMDB" "IMDBVAR"
                 lappend msgtypes(DEFAULT) "IMDBFIND" "IMDBFINDVAR"
-                set variables(IMDB)        "%pf %msg %imdbdestination"
-                set variables(IMDBFIND)    "%pf %msg %imdbdestination"
+                #set variables(IMDB)        "%pf %msg %imdbdestination"
+		set variables(IMDB)         "%pf %imdbdirname %imdburl %imdbtitle %imdbgenre %imdbrating %imdbcountry %imdblanguage %imdbcertification %imdbruntime %imdbdirector %imdbbusinessdata %imdbpremiereinfo %imdblimitedinfo %imdbvotes %imdbscore %imdbname %imdbyear %imdbnumscreens %imdbislimited %imdbcastleadname %imdbcastleadchar %imdbtagline %imdbplot %imdbbar %imdbcasting %imdbcommentshort %imdbdestination"
+                #set variables(IMDBFIND)    "%pf %msg %imdbdestination"
+		set variables(IMDBFIND)     "%pf %imdbdirname %imdburl %imdbtitle %imdbgenre %imdbrating %imdbcountry %imdblanguage %imdbcertification %imdbruntime %imdbdirector %imdbbusinessdata %imdbpremiereinfo %imdblimitedinfo %imdbvotes %imdbscore %imdbname %imdbyear %imdbnumscreens %imdbislimited %imdbcastleadname %imdbcastleadchar %imdbtagline %imdbplot %imdbbar %imdbcasting %imdbcommentshort %imdbdestination"
                 set variables(IMDBVAR)     "%pf %imdbdirname %imdburl %imdbtitle %imdbgenre %imdbrating %imdbcountry %imdblanguage %imdbcertification %imdbruntime %imdbdirector %imdbbusinessdata %imdbpremiereinfo %imdblimitedinfo %imdbvotes %imdbscore %imdbname %imdbyear %imdbnumscreens %imdbislimited %imdbcastleadname %imdbcastleadchar %imdbtagline %imdbplot %imdbbar %imdbcasting %imdbcommentshort %imdbdestination"
                 set variables(IMDBFINDVAR) "%pf %imdbdirname %imdburl %imdbtitle %imdbgenre %imdbrating %imdbcountry %imdblanguage %imdbcertification %imdbruntime %imdbdirector %imdbbusinessdata %imdbpremiereinfo %imdblimitedinfo %imdbvotes %imdbscore %imdbname %imdbyear %imdbnumscreens %imdbislimited %imdbcastleadname %imdbcastleadchar %imdbtagline %imdbplot %imdbbar %imdbcasting %imdbcommentshort %imdbdestination"
 

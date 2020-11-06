@@ -82,7 +82,8 @@ LIGHTGREY="15"
 COLOROFF=""
 
 # Word before text output
-PREWORD="$BOLD""IMDB:""$BOLD"
+#PREWORD="$BOLD""IMDB:""$BOLD"
+PREWORD=""
 #PREWORD="${BOLD}${RED}[${BLUE}HUBBA-BUBBA${RED}]${COLOROFF} :${BOLD}"
 
 # Verbose mode. Default is on ("").
