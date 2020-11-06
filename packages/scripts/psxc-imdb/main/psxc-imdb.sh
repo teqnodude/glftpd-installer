@@ -17,6 +17,9 @@ CONFFILE=/etc/psxc-imdb.conf
 # version number. do not change.
 VERSION="v2.9w"
 
+# Changelog 2020-11-06: Modified line for grabbing Languages since it only grabbed the first language listed.
+
+
 ######################################################################################################
 
 RECVDARGS="$1"
@@ -549,7 +552,7 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     COUNTRYCLEAN=$(echo $COUNTRY | sed "s/Country......: *//")
     TAGLINE="Tagline......: $(sed -n 's/^ Taglines //p' "$TMPFILE" | sed "s/ See more ..*//" | sed s/\"/$QUOTECHAR/g | head -n 1)"
     TAGLINECLEAN=$(echo $TAGLINE | sed "s/Tagline......: *//")
-    LANGUAGE="Language.....: $(sed -n '/^ Language$/,/^ [^ *]/p' "$TMPFILE" | sed -n 's/^ \\\* //p' | sed s/\"/$QUOTECHAR/g | head -n $LANGUAGENUM | tr '\n' '/' | sed "s/[ /]*$//")"
+    LANGUAGE="Language.....: $(sed -n '/^ Language$/,/^ [A-Z]/p' "$TMPFILE" | sed -n 's/^ \\\* //p' | sed s/\"/$QUOTECHAR/g | head -n $LANGUAGENUM | tr '\n' '/' | sed "s/[ /]*$//")"
     LANGUAGECLEAN=$(echo $LANGUAGE | sed "s/Language.....: *//")
     # Yeah, this keeps getting worse ;)
     if [ -z $PLOTWIDTH ]; then

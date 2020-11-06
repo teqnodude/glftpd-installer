@@ -284,7 +284,7 @@ if [ ! -z "$NUKE_LOGFILE" ]; then
   touch $NUKE_LOGFILE || { 
    echo "config error. could not create $NUKE_LOGFILE."; exit 0;
   };
-  chmod 777 $NUKE_LOGFILE || {
+  chmod 666 $NUKE_LOGFILE || {
    echo "config error. could not chmod $NUKE_LOGFILE."; exit 0;
   };
  fi

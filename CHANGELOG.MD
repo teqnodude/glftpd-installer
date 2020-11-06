@@ -13,6 +13,7 @@
 - Added extra check to ensure that script could connect to FTP before the adding of users & groups to prevent long timeouts
 - There was a bug before where you were only allowed to enter the required channel password once when having multiple channels
 - Changed regex for TVMaze lookup since old regex broke down with certain names
+- Modified line in psxc-imdb.sh that handled the grab of languages since it only grabbed the first language listed when having multiple languages
 
 ## 10.0 - 2020-10-22
 
