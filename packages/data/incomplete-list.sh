@@ -107,7 +107,12 @@ do
 	done
 	
 done
-echo "No more incompletes found."
+if [ "`$cleanup $glroot 2>/dev/null | grep -e "^Incomplete" | wc -l`" = 0 ]
+then
+    echo "No incomplete releases found."
+else
+    echo "No more incompletes found."
+fi
 IFS="$IFSORIG"
 
 exit 0
