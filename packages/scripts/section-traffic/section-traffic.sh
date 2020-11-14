@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #--[ Intro ]----------------------------------------------------#
 #                                                               #
 # Section Traffic by Teqno                                      #
@@ -57,12 +57,13 @@ if [ "$ARGS" = "help" ]
 then
     echo "${COLOR2}Run without argument to show stats for current month."
     echo "${COLOR2}To check another month: ${COLOR1}$TRIGGER 2020-08"
-    echo "${COLOR2}To check a specific user: ${COLOR1}$TRIGGER user username"
-    echo "${COLOR2}To check a specific user and month: ${COLOR1}$TRIGGER user username month 2020-08"
+    echo "${COLOR2}To check a specific user: ${COLOR1}$TRIGGER user <username>"
+    echo "${COLOR2}To check a specific user and month: ${COLOR1}$TRIGGER user <username> month 2020-08"
     echo "${COLOR2}To check the top 10 downloaded releases for current month: ${COLOR1}$TRIGGER top"
     echo "${COLOR2}To check the top 10 downloaded releases for specific month: ${COLOR1}$TRIGGER top month 2020-08"
     echo "${COLOR2}To check the top 30 downloaded releases for current month: ${COLOR1}$TRIGGER top 30"
     echo "${COLOR2}To check the top 30 downloaded releases for specific month: ${COLOR1}$TRIGGER top month 2020-08 30"
+    echo "${COLOR2}To check stats for specific release: ${COLOR1}$TRIGGER release <releasename> <username>"
     exit 0
 fi
 
@@ -87,143 +88,15 @@ tunit=GB
 iunit=GB
 ounit=GB
 
-if [[ "$ARGS" = "user"* ]]
+if [[ "$ARGS" = "release"* ]]
 then
+    release=`echo $ARGS | cut -d ' ' -f2`
+    username=`echo $ARGS | cut -d ' ' -f3`
+    echo "${COLOR2}Stats for release${COLOR1} $release ${COLOR2}for user${COLOR1} $username"
+    query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where relname='$release' and FTPuser='$username') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where relname='$release' and direction='i' and FTPuser='$username') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where relname='$release' and direction='o' and FTPuser='$username') as outgoing,(select count(id) as files from $SQLTB where relname='$release' and direction='i' and FTPuser='$username') as filesinc,(select count(id) as files from $SQLTB where relname='$release' and direction='o' and FTPuser='$username') as filesout FROM $SQLTB"`
 
-    if [ "`echo $ARGS | cut -d ' ' -f3`" != "month" ]
-    then
-        month=`date +%Y-%m`
-    else
-        month=`echo $ARGS | cut -d ' ' -f4`
-    fi
-    username=`echo $ARGS | cut -d ' ' -f2`
-
-    echo "${COLOR2}Section stats for${COLOR1} $month ${COLOR2}on${COLOR1} $SQLTB ${COLOR2}for user${COLOR1} $username"
-
-    for section in `ls /glftpd/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
+    echo $query | while read -r traffic incoming outgoing filesinc filesout;
     do
-        query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%' and FTPuser='$username') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i' and FTPuser='$username') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o' and FTPuser='$username') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
-
-        echo $query | while read -r traffic incoming outgoing lastup;
-        do
-            if [ $traffic == "NULL" ]
-            then
-                traffic=0
-            fi
-            if [ $incoming == "NULL" ]
-            then
-                incoming=0
-            fi
-            if [ $outgoing == "NULL" ]
-            then
-                outgoing=0
-            fi
-            if [ "$lastup" == "NULL" ]
-            then
-                lastup="No upload"
-            fi
-
-            if [ `echo $traffic | cut -d'.' -f1` -gt 1024 ]
-            then
-                rawtraffic=`echo "$traffic / 1024" | bc -l`
-                firstnum=`echo $rawtraffic | cut -d'.' -f1`
-                secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
-                traffic="$firstnum.$secondnum"
-                tunit=TB
-            fi
-
-            if [ `echo $incoming | cut -d'.' -f1` -gt 1024 ]
-            then
-                rawtraffic=`echo "$incoming / 1024" | bc -l`
-                firstnum=`echo $rawtraffic | cut -d'.' -f1`
-                secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
-                incoming="$firstnum.$secondnum"
-                iunit=TB
-            fi
-
-            if [ `echo $outgoing | cut -d'.' -f1` -gt 1024 ]
-            then
-                rawtraffic=`echo "$outgoing / 1024" | bc -l`
-                firstnum=`echo $rawtraffic | cut -d'.' -f1`
-                secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
-                outgoing="$firstnum.$secondnum"
-                ounit=TB
-            fi
-            echo "${COLOR2}Section:${COLOR1} $section ${COLOR2}- Up:${COLOR1} ${incoming} ${COLOR2}$iunit - Down:${COLOR1} ${outgoing} ${COLOR2}$ounit - Total:${COLOR1} ${traffic} ${COLOR2}$tunit - Last upload:${COLOR1} ${lastup}"
-        done
-    done
-    echo "${COLOR3}The statistics have a 30 min delay"
-    exit 0
-fi
-
-if [[ "$ARGS" = "top"* ]]
-then
-    if [ "`echo $ARGS | cut -d ' ' -f2`" != "month" ]
-    then
-        if [[ "`echo $ARGS | cut -d ' ' -f2`" =~ ^-?[0-9]+$ ]]
-        then
-            if [ "`echo $ARGS | cut -d ' ' -f2`" -le "30" ]
-            then
-                topres=`echo $ARGS | cut -d ' ' -f2`
-            else
-                echo "Not allowed to check for more than 30 top releases"
-                exit 0
-            fi
-        else
-            topres=10
-        fi
-        month=`date +%Y-%m`
-    else
-        if [[ "`echo $ARGS | cut -d ' ' -f4`" =~ ^-?[0-9]+$ ]]
-        then
-            if [ "`echo $ARGS | cut -d ' ' -f4`" -le "30" ]
-            then
-                topres=`echo $ARGS | cut -d ' ' -f4`
-            else
-                echo "Not allowed to check for more than 30 top releases"
-                exit 0
-            fi
-        else
-            topres=10
-        fi
-        month=`echo $ARGS | cut -d ' ' -f3`
-    fi
-    query=`$SQL -t -e "SELECT relname, section, count(*) as download FROM $SQLTB where datetime like '$month%' and direction='o' group by relname order by download desc limit 10"`
-    i=1
-    echo "${COLOR2}Top 10 downloaded releases for${COLOR1} $month"
-    echo $query > $TMP/section-traffic.tmp
-    cat $TMP/section-traffic.tmp | tr -s "-" | sed -e 's|+-+-+-+||g' -e 's/| |/\n/g' -e 's/^ | //' -e 's/ //g' -e 's/|$//' > $TMP/section-traffic2.tmp
-    for rel in `cat $TMP/section-traffic2.tmp`
-    do
-        position="$((i++))"
-        position=`printf "%2.0d\n" $position |sed "s/ /0/"`
-        relname=`echo $rel | cut -d'|' -f1`
-        section=`echo $rel | cut -d'|' -f2`
-        download=`echo $rel | cut -d'|' -f3`
-        echo "${BOLD}$position${BOLD}.${COLOR1} ${relname} ${COLOR2}- Section:${COLOR1} $section ${COLOR2}- Files:${COLOR1} ${download}"
-    done
-    rm $TMP/section-traffic*
-    echo "${COLOR3}The statistics have a 30 min delay"
-    exit 0
-fi
-
-if [ -z $ARGS ]
-then
-    month=`date +%Y-%m`
-else
-    month=$ARGS
-fi
-
-echo "${COLOR2}Section stats for${COLOR1} $month ${COLOR2}on${COLOR1} $SQLTB"
-
-for section in `ls /glftpd/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
-do
-
-    query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
-
-    echo $query | while read -r traffic incoming outgoing lastup;
-    do
-
         if [ $traffic == "NULL" ]
         then
             traffic=0
@@ -236,9 +109,13 @@ do
         then
             outgoing=0
         fi
-        if [ "$lastup" == "NULL" ]
+        if [ "$filesinc" == "NULL" ]
         then
-            lastup="No upload"
+            filesinc="No files"
+        fi
+        if [ "$filesout" == "NULL" ]
+        then
+            filesout="No files"
         fi
 
         if [ `echo $traffic | cut -d'.' -f1` -gt 1024 ]
@@ -266,7 +143,193 @@ do
             secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
             outgoing="$firstnum.$secondnum"
             ounit=TB
+	fi
+        echo "${COLOR2}Up:${COLOR1} ${incoming} ${COLOR2}$iunit - Down:${COLOR1} ${outgoing} ${COLOR2}$ounit - Total:${COLOR1} ${traffic} ${COLOR2}$tunit - Files Incoming:${COLOR1} ${filesinc} ${COLOR2} - Files Outgoing: ${COLOR1} ${filesout}"
+    done	
+    echo "${COLOR3}The statistics have a 30 min delay"
+    exit 0
+fi
+
+if [[ "$ARGS" = "user"* ]]
+then
+
+    if [ "`echo $ARGS | cut -d ' ' -f3`" != "month" ]
+    then
+	month=`date +%Y-%m`
+    else
+	month=`echo $ARGS | cut -d ' ' -f4`
+    fi
+    username=`echo $ARGS | cut -d ' ' -f2`
+
+    echo "${COLOR2}Section stats for${COLOR1} $month ${COLOR2}on${COLOR1} $SQLTB ${COLOR2}for user${COLOR1} $username"
+
+    for section in `ls /glftpd/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
+    do
+	query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%' and FTPuser='$username') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i' and FTPuser='$username') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o' and FTPuser='$username') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
+
+	echo $query | while read -r traffic incoming outgoing lastup;
+	do
+	    if [ $traffic == "NULL" ]
+	    then
+		traffic=0
+	    fi
+	    if [ $incoming == "NULL" ]
+	    then
+		incoming=0
+	    fi
+	    if [ $outgoing == "NULL" ]
+	    then
+		outgoing=0
+	    fi
+	    if [ "$lastup" == "NULL" ]
+	    then
+	        lastup="No upload"
+	    fi
+    
+	    if [ `echo $traffic | cut -d'.' -f1` -gt 1024 ]
+	    then
+		rawtraffic=`echo "$traffic / 1024" | bc -l`
+		firstnum=`echo $rawtraffic | cut -d'.' -f1`
+		secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
+		traffic="$firstnum.$secondnum"
+		tunit=TB
+	    fi
+    
+	    if [ `echo $incoming | cut -d'.' -f1` -gt 1024 ]
+	    then
+		rawtraffic=`echo "$incoming / 1024" | bc -l`
+		firstnum=`echo $rawtraffic | cut -d'.' -f1`
+		secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
+		incoming="$firstnum.$secondnum"
+		iunit=TB
+	    fi
+    
+	    if [ `echo $outgoing | cut -d'.' -f1` -gt 1024 ]
+	    then
+		rawtraffic=`echo "$outgoing / 1024" | bc -l`
+		firstnum=`echo $rawtraffic | cut -d'.' -f1`
+		secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
+		outgoing="$firstnum.$secondnum"
+		ounit=TB
+	    fi	
+	    echo "${COLOR2}Section:${COLOR1} $section ${COLOR2}- Up:${COLOR1} ${incoming} ${COLOR2}$iunit - Down:${COLOR1} ${outgoing} ${COLOR2}$ounit - Total:${COLOR1} ${traffic} ${COLOR2}$tunit - Last upload:${COLOR1} ${lastup}"
+	done
+    done
+    echo "${COLOR3}The statistics have a 30 min delay"
+    exit 0
+fi
+
+if [[ "$ARGS" = "top"* ]]
+then
+    if [ "`echo $ARGS | cut -d ' ' -f2`" != "month" ]
+    then
+	if [[ "`echo $ARGS | cut -d ' ' -f2`" =~ ^-?[0-9]+$ ]]
+	then
+	    if [ "`echo $ARGS | cut -d ' ' -f2`" -le "30" ]
+	    then
+		topres=`echo $ARGS | cut -d ' ' -f2`
+	    else
+		echo "Not allowed to check for more than 30 top releases"
+		exit 0
+	    fi
+	else
+	    topres=10
+	fi
+        month=`date +%Y-%m`
+    else
+        if [[ "`echo $ARGS | cut -d ' ' -f4`" =~ ^-?[0-9]+$ ]]
+        then
+            if [ "`echo $ARGS | cut -d ' ' -f4`" -le "30" ]
+            then
+                topres=`echo $ARGS | cut -d ' ' -f4`
+            else
+                echo "Not allowed to check for more than 30 top releases"
+                exit 0
+            fi
+        else
+            topres=10
         fi
+        month=`echo $ARGS | cut -d ' ' -f3`
+    fi
+    query=`$SQL -t -e "SELECT relname, section, count(*) as download FROM $SQLTB where datetime like '$month%' and direction='o' group by relname order by download desc limit $topres"`
+    i=1
+    echo "${COLOR2}Top $topres downloaded releases for${COLOR1} $month"
+    echo $query > $TMP/section-traffic.tmp
+    cat $TMP/section-traffic.tmp | tr -s "-" | sed -e 's|+-+-+-+||g' -e 's/| |/\n/g' -e 's/^ | //' -e 's/ //g' -e 's/|$//' > $TMP/section-traffic2.tmp
+    for rel in `cat $TMP/section-traffic2.tmp`
+    do
+	position="$((i++))"
+	position=`printf "%2.0d\n" $position |sed "s/ /0/"`
+	relname=`echo $rel | cut -d'|' -f1`
+	section=`echo $rel | cut -d'|' -f2`
+	download=`echo $rel | cut -d'|' -f3`
+	echo "${BOLD}$position${BOLD}.${COLOR1} ${relname} ${COLOR2}- Section:${COLOR1} $section ${COLOR2}- Files:${COLOR1} ${download}"
+    done
+    rm $TMP/section-traffic*
+    echo "${COLOR3}The statistics have a 30 min delay"
+    exit 0    
+fi
+
+if [ -z $ARGS ]
+then
+    month=`date +%Y-%m`
+else
+    month=$ARGS
+fi
+
+echo "${COLOR2}Section stats for${COLOR1} $month ${COLOR2}on${COLOR1} $SQLTB"
+
+for section in `ls /glftpd/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
+do
+
+    query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
+
+    echo $query | while read -r traffic incoming outgoing lastup;
+    do
+
+	if [ $traffic == "NULL" ]
+	then
+	    traffic=0
+	fi
+	if [ $incoming == "NULL" ]
+	then
+    	    incoming=0
+	fi
+	if [ $outgoing == "NULL" ]
+	then
+    	    outgoing=0
+	fi
+	if [ "$lastup" == "NULL" ]
+	then
+    	    lastup="No upload"
+	fi
+
+	if [ `echo $traffic | cut -d'.' -f1` -gt 1024 ]
+	then
+	    rawtraffic=`echo "$traffic / 1024" | bc -l`
+	    firstnum=`echo $rawtraffic | cut -d'.' -f1`
+	    secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
+	    traffic="$firstnum.$secondnum"
+	    tunit=TB
+	fi
+
+	if [ `echo $incoming | cut -d'.' -f1` -gt 1024 ]
+	then
+	    rawtraffic=`echo "$incoming / 1024" | bc -l`
+	    firstnum=`echo $rawtraffic | cut -d'.' -f1`
+	    secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
+	    incoming="$firstnum.$secondnum"
+	    iunit=TB
+	fi
+
+	if [ `echo $outgoing | cut -d'.' -f1` -gt 1024 ]
+	then
+	    rawtraffic=`echo "$outgoing / 1024" | bc -l`
+	    firstnum=`echo $rawtraffic | cut -d'.' -f1`
+	    secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
+	    outgoing="$firstnum.$secondnum"
+	    ounit=TB
+	fi
         echo "${COLOR2}Section:${COLOR1} $section ${COLOR2}- Up:${COLOR1} ${incoming} ${COLOR2}$iunit - Down:${COLOR1} ${outgoing} ${COLOR2}$ounit - Total:${COLOR1} ${traffic} ${COLOR2}$tunit - Last upload:${COLOR1} ${lastup}"
     done
 done
@@ -281,11 +344,11 @@ do
     fi
     if [ $incoming == "NULL" ]
     then
-        incoming=0
+	incoming=0
     fi
     if [ $outgoing == "NULL" ]
     then
-        outgoing=0
+	outgoing=0
     fi
     if [ "$lastup" == "NULL" ]
     then
@@ -295,26 +358,26 @@ do
     if [ `echo $traffic | cut -d'.' -f1` -gt 1024 ]
     then
         rawtraffic=`echo "$traffic / 1024" | bc -l`
-        firstnum=`echo $rawtraffic | cut -d'.' -f1`
+	firstnum=`echo $rawtraffic | cut -d'.' -f1`
         secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
-        traffic="$firstnum.$secondnum"
+	traffic="$firstnum.$secondnum"
         tunit=TB
     fi
 
     if [ `echo $incoming | cut -d'.' -f1` -gt 1024 ]
     then
-        rawtraffic=`echo "$incoming / 1024" | bc -l`
+	rawtraffic=`echo "$incoming / 1024" | bc -l`
         firstnum=`echo $rawtraffic | cut -d'.' -f1`
-        secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
+	secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
         incoming="$firstnum.$secondnum"
-        iunit=TB
+	iunit=TB
     fi
 
     if [ `echo $outgoing | cut -d'.' -f1` -gt 1024 ]
     then
-        rawtraffic=`echo "$outgoing / 1024" | bc -l`
+	rawtraffic=`echo "$outgoing / 1024" | bc -l`
         firstnum=`echo $rawtraffic | cut -d'.' -f1`
-        secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
+	secondnum=`echo $rawtraffic | cut -d'.' -f2 | cut -b1-2`
         outgoing="$firstnum.$secondnum"
         ounit=TB
     fi
