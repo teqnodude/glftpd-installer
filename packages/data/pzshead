@@ -62,7 +62,7 @@
 #define enable_nfo_script               	TRUE
 #define nfo_script                      	"/bin/psxc-imdb.sh"
 #define enable_complete_script          	FALSE
-#define complete_script                 	"/bin/nfo_copy.sh"
+#define complete_script                 	"/bin/mss-rlscomp.sh"
 
 #define mark_empty_dirs_as_incomplete_on_rescan TRUE
 #define subdir_list                     	"cd??,disc??,disk??,dvd??,extra?,sub?,subtitle?,vobsub?,sample?,subpack?,ac3,audioaddon,addon,ac3addon,proof,cover?,tools"

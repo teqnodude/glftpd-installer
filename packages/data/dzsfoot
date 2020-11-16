@@ -198,6 +198,12 @@ set disable(UPDATE_ZIP)                 1
 set announcetochan(BW)                  1
 set announcetochan(BWDN)                1
 set announcetochan(BWUP)                1
+set announcetochan(DN)                  0
+set announcetochan(DOWN)                0
+set announcetochan(DOWNLOADERS)         0
+set announcetochan(LEECHERS)            0
+set announcetochan(UP)                  0
+set announcetochan(UPLOADERS)           0
 set announcetochan(SPEED)               0
 
 set trigger(free)			""

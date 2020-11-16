@@ -284,6 +284,12 @@ do
 
     query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
 
+    if [[ -z $query ]]
+    then
+        echo "${COLOR3}No data in db"
+        exit 0
+    fi
+
     echo $query | while read -r traffic incoming outgoing lastup;
     do
 
