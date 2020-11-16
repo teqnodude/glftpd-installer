@@ -133,16 +133,16 @@ EOF
 sed -i 's/sections="/sections="\nMP3:^10./' packages/scripts/tur-rules/tur-rules.sh
 }
 
-function MVDVDR
+function MDVDR
 {
 cat << EOF >> site.rules
-MVDVDR :
+MDVDR :
 11.1 Spoken language: English/Nordic..............................................................................[NUKE 5X]
 11.2 NO DVD9|DUBBED|SUBBED|TC|TS..................................................................................[NUKE 5X]
 11.3 NO iNTERNALs.................................................................................................[NUKE 5X]
 
 EOF
-sed -i 's/sections="/sections="\nMVDVDR:^11./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nMDVDR:^11./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function TV-SD

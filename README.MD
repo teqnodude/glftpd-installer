@@ -93,7 +93,7 @@ channelops="#main" # Ops channel
 ircnickname="l337" # Irc nickname of bot owner
 sections="3" # How many sections will be created
 # Allowed section names: 
-# 0DAY ANIME APPS DVDR FLAC GAMES MP3 MBLURAY MVDVDR NSW PDA 
+# 0DAY ANIME APPS DVDR FLAC GAMES MP3 MBLURAY MDVDR NSW PDA 
 # PS4 TV-HD TV-NL TV-SD X264 X265-2160 XVID XXX XXX-PAYSITE
 section1="0DAY" # Name of section 1
 section2="MP3" # Name of section 2

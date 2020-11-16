@@ -461,7 +461,7 @@ function section_names
 	else
 		echo
 		echo "Valid Sections are : "
-		echo "0DAY ANIME APPS DVDR EBOOKS FLAC GAMES MP3 MBLURAY MVDVDR NSW PDA PS4 TV-HD TV-NL TV-SD X264 X265-2160 XVID XXX XXX-PAYSITE"
+		echo "0DAY ANIME APPS DVDR EBOOKS FLAC GAMES MP3 MBLURAY MDVDR NSW PDA PS4 TV-HD TV-NL TV-SD X264 X265-2160 XVID XXX XXX-PAYSITE"
 		echo
 		while [[ -z $sections || $sections -gt 20 ]]
 		do
@@ -498,11 +498,11 @@ function section_generate
 		echo -n "Section $((counta+1)) is : " ; read section
 	fi
 	case ${section^^} in
-		0DAY|ANIME|APPS|DVDR|EBOOKS|FLAC|GAMES|MP3|MBLURAY|MVDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE)
+		0DAY|ANIME|APPS|DVDR|EBOOKS|FLAC|GAMES|MP3|MBLURAY|MDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE)
 		writ
 		;;
 		*)
-        while [[ ${section^^} != @(0DAY|ANIME|APPS|DVDR|EBOOKS|FLAC|GAMES|MP3|MBLURAY|MVDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
+        while [[ ${section^^} != @(0DAY|ANIME|APPS|DVDR|EBOOKS|FLAC|GAMES|MP3|MBLURAY|MDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
         do
             echo "Section [$section] is not in the above list of available sections, please try again."
             echo -n "Section $((counta+1)) is : " ; read section
