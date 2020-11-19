@@ -798,7 +798,7 @@ proc_checkold() {
             if [ "$gllog" ]; then
               OUTPUT="$STATUSANNOUNCE"
               proc_cookies
-              LINETOSAY="$OUTPUT Deleting $dir because its from $reldate"
+              LINETOSAY="$OUTPUT 14Deleting4 $dir 14because it's from4 $reldate"
               echo `$datebin "+%a %b %e %T %Y"` TURGEN: \"$LINETOSAY\" >> $gllog
               unset LINETOSAY
             fi
@@ -806,7 +806,7 @@ proc_checkold() {
             if [ "$gllog" ]; then
               OUTPUT="$STATUSANNOUNCE"
               proc_cookies
-              LINETOSAY="$OUTPUT Was going to delete $dir because its from $reldate, but seems I couldnt."
+              LINETOSAY="$OUTPUT 14Was going to delete4 $dir 14because it's from4 $reldate,14 but seems I couldnt."
               echo `$datebin "+%a %b %e %T %Y"` TURGEN: \"$LINETOSAY\" >> $gllog
               unset LINETOSAY
             fi
