@@ -1589,7 +1589,12 @@ proc_status() {
     USR=`echo $LINETOSAY | cut -d'~' -f2 | sed -e 's/ by //g' -e 's/ (.*//g'`
     DAT=`echo $LINETOSAY | cut -d' ' -f8- | sed 's/at //g'`
     #OUTPUT="$LINETOSAY"
-    OUTPUT="14 $POS4 $REL 14by user4 $USR 14created at4 $DAT"
+    if [ "$mode" = "irc" ]
+    then
+	OUTPUT="14 $POS4 $REL 14created by4 $USR 14at4 $DAT"
+    else
+        OUTPUT="$POS $REL created by $USR at $DAT"
+    fi
     proc_cookies
     if [ "$AUTO" = "TRUE" ]; then
       proc_output "$HEADER $OUTPUT"
