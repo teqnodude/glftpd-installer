@@ -156,6 +156,7 @@ proc_cookies() {
   else
     OUTPUT=`echo $OUTPUT | sed -e "s/%BOLD%//g"`
     OUTPUT=`echo $OUTPUT | sed -e "s/%ULINE%//g"`
+    OUTPUT=`echo $OUTPUT | sed -e 's/[0-9][0-9]//g' -e 's/[0-9]//g'`
   fi
 }
 
