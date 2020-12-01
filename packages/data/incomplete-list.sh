@@ -48,7 +48,7 @@ lred=4
 # grab sections from the sitebot's conf instead
 if [ ! -z "$botconf" ] && [ -e "$botconf" ]
 then
-	sections="`grep "^set paths(" $botconf | sed 's/^set paths(\(.*\))[[:space:]]\{1,\}\"\(.*\)\*\"/\1:\2/'`"
+	sections="`grep "^set paths(" $botconf | sed 's/^set paths(\(.*\))[[:space:]]\{1,\}\"\(.*\)\*\"/\1:\2/' | sort`"
 fi
 
 IFSORIG="$IFS"

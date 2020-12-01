@@ -8,6 +8,7 @@
 - Added language of movie as part of warning and nuke reason for better overview why it got nuked in psxc-imdb-nuker
 - Changed the look for !imdb lookup and regular announce
 - Included the ability to check stats for specific release and user in section-traffic
+- Added sorting of sections in incomplete-list.sh 
 
 ### Fixes
 
@@ -16,6 +17,7 @@
 - There was a bug before where you were only allowed to enter the required channel password once when having multiple channels
 - Changed regex for TVMaze lookup since old regex broke down with certain names
 - Modified line in psxc-imdb.sh that handled the grab of languages since it only grabbed the first language listed when having multiple languages
+
 
 ## 10.0 - 2020-10-22
 
