@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.61
+VER=1.62
 #--[ Intro ]----------------------------------------------------#
 #                                                       	#
 # Tur-predircheck_manager. A script for lazy people to block  	#
@@ -170,6 +170,13 @@ then
 	section=`echo $ARGS | awk -F " " '{print $3}'`
 	regexp=`echo $ARGS | awk -F " " '{print $4}'`
 	regexpc=`echo $INPUT | awk -F " " '{print $4}'`
+        if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc" | wc -l`" = 1 ]
+        then
+        	echo "$regexpc found in blocklist"
+        	sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc"
+        	exit 0
+        fi
+
 	echo "Blocking $regexpc in section $section"
 	$glroot/bin/sed -i "0,/\/site\/$section:/s/$section:/$section:$regexp|/" $predircheck
 	$glroot/bin/sed -i "/\/site\/$section:/ s/|$//gI" $predircheck
@@ -207,7 +214,13 @@ then
         regexpc=`echo $INPUT | awk -F " " '{print $5}'`
         if [ ! -z $regexp ]
         then
-            echo "Adding wordblock $regexpc in section $section"
+            if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc" | wc -l`" = 1 ]
+            then
+                    echo "$regexpc found in blocklist"
+	            sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc"
+    	            exit 0
+            fi
+    	    echo "Adding wordblock $regexpc in section $section"
             $glroot/bin/sed -i "/\/site\/$section:/ s/$startword/$regexp|$startword/" $predircheck
             $glroot/bin/sed -i "/\/site\/$section:/ s/\\|$//gI" $predircheck
             $glroot/bin/sed -i "/\/site\/$section:/ s/||/|/gI" $predircheck

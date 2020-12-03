@@ -9,6 +9,7 @@
 - Changed the look for !imdb lookup and regular announce
 - Included the ability to check stats for specific release and user in section-traffic
 - Added sorting of sections in incomplete-list.sh 
+- Added checks in tur-predircheck_manager to prevent adding duplicate blocks in blocklist
 
 ### Fixes
 
