@@ -18,6 +18,7 @@
 - There was a bug before where you were only allowed to enter the required channel password once when having multiple channels
 - Changed regex for TVMaze lookup since old regex broke down with certain names
 - Modified line in psxc-imdb.sh that handled the grab of languages since it only grabbed the first language listed when having multiple languages
+- Fixed country lookup of releases in TVMaze.tcl
 
 
 ## 10.0 - 2020-10-22
