@@ -461,7 +461,17 @@ namespace eval ::ngBot::plugin::TVMaze {
 			}
 			if {$country != ""} {
 				if {$country == "UK"} {set country GB}
-				set mazecn [dict get [dict get [dict get [dict get [lindex $data $i] show] network] country] code]
+                                if {[dict exists [dict get [lindex $data $i] show] network] && [dict get [dict get [lindex $data $i] show] network] != "null"} {
+                                        set mazecn [dict get [dict get [dict get [dict get [lindex $data $i] show] network] country] code]
+                                } elseif {[dict exists [dict get [lindex $data $i] show] webChannel] && [dict get [dict get [lindex $data $i] show] webChannel] != "null"} {
+                                        if {[dict get [dict get [dict get [lindex $data $i] show] webChannel] country] != "null"} {
+                                                set mazecn [dict get [dict get [dict get [dict get [lindex $data $i] show] webChannel] country] code]
+                                        } else {
+                                                set mazecn "EARTH"
+                                        }
+                                } else {
+                                        set mazecn ""
+                                }
 				if {$mazecn == $country} {
 					set data [lindex $data $i]
 					set matches 1
