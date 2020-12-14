@@ -368,14 +368,14 @@ namespace eval ::ngBot::plugin::TVMaze {
                                                 append show_ended "\"[string map {" " _} [lindex $logData 21]]\""
                                                 append show_airtime "\"[string map {" " _} [lindex $logData 22]]\""
                                                 append show_runtime "\"[string map {" " _} [lindex $logData 23]]\""
-                                                append ep_url "\"[string map {" " _} [lindex $logData 24]]\""
-                                                append ep_season_episode "\"[string map {" " _} [lindex $logData 25]]\""
-                                                append ep_season "\"[string map {" " _} [lindex $logData 26]]\""
-                                                append ep_number "\"[string map {" " _} [lindex $logData 27]]\""
-                                                append ep_airdate "\"[string map {" " _} [lindex $logData 28]]\""
-						append ep_title "\"[string map {" " _} [lindex $logData 29]]\""
-			    			append show_rating "\"[string map {" " _} [lindex $logData 30]]\""
-						append show_imdb "\"[string map {" " _} [lindex $logData 31]]\""
+			    			append show_rating "\"[string map {" " _} [lindex $logData 24]]\""
+						append show_imdb "\"[string map {" " _} [lindex $logData 25]]\""
+                                                append ep_url "\"[string map {" " _} [lindex $logData 26]]\""
+                                                append ep_season_episode "\"[string map {" " _} [lindex $logData 27]]\""
+                                                append ep_season "\"[string map {" " _} [lindex $logData 28]]\""
+                                                append ep_number "\"[string map {" " _} [lindex $logData 29]]\""
+                                                append ep_airdate "\"[string map {" " _} [lindex $logData 30]]\""
+						append ep_title "\"[string map {" " _} [lindex $logData 31]]\""
 
                                                 exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
                                         }
