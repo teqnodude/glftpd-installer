@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.62
+VER=1.63
 #--[ Intro ]----------------------------------------------------#
 #                                                       	#
 # Tur-predircheck_manager. A script for lazy people to block  	#
@@ -160,6 +160,7 @@ fi
 if [[ "$ARGS" = "search"* ]]
 then
     search=`echo $ARGS | awk -F " " '{print $2}'`
+    [ -z "$search" ] && echo "Please enter a word to search for" && exit 0
     sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep --color=always -i "$search"
     if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep --color=always -i "$search" | wc -l`" = 0 ]
     then

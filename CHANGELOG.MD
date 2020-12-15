@@ -19,6 +19,7 @@
 - Changed regex for TVMaze lookup since old regex broke down with certain names
 - Modified line in psxc-imdb.sh that handled the grab of languages since it only grabbed the first language listed when having multiple languages
 - Fixed country lookup of releases in TVMaze.tcl
+- Added check for empty searches in tur-predircheck_manager
 
 
 ## 10.0 - 2020-10-22
