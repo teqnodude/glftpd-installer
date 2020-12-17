@@ -23,6 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
+# - 20201217 - Teqno:	With the help of sirmarksalot releases with date is now supported
 # - 20201214 - Teqno:	With the help of sirmarksalot the lookup of releases by specific country is now fixed
 # - 20201103 - Teqno:   Changed regex for TVMaze lookup since old regex broke down with certain names
 # - 20201024 - Teqno:   Defined arguments for use with tvmaze-nuker and added show_rating as variable passed on shell script
