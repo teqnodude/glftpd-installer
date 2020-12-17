@@ -404,7 +404,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 						episode_original_airdate episode_title]
 
 		set show_str $string
-		if {(![regexp -- {^(.*?)(\d+x\d+|[sS]\d+[eE]\d+).*$} $string -> show_str episode_str]) && ([string is true -strict $strict])} {
+		if {(![regexp -- {^(.*?)(\d{4}\.\d{2}\.\d{2}|[sS]\d+[eE]\d+).*$} $string -> show_str episode_str]) && ([string is true -strict $strict])} {
 			return -code error "Unable to parse season and episode info from \"$string\""
 		}
 
@@ -412,6 +412,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		set episode_number ""
 		catch {regexp -- {^(\d+)x(\d+)$} $episode_str -> episode_season episode_number}
 		catch {regexp -- {^[sS](\d+)[eE](\d+)$} $episode_str -> episode_season episode_number}
+		catch {regexp -- {^(\d{4})\.(\d{2}\.\d{2})} $episode_str -> episode_season episode_number}
 
 		regsub -all -- {[\._]} $show_str " " show_str
 		set show_str [string trim $show_str]
@@ -586,14 +587,18 @@ namespace eval ::ngBot::plugin::TVMaze {
 
 		# in case of SXXEXX
 		if {![string equal "$season" ""] && ![string equal "$epnumber" ""]} {
-			set data [GetFromApi "https://api.tvmaze.com/shows/${info(show_id)}/episodebynumber?season=${season}&number=${epnumber}" ""]
+			if {[regexp -- {^(\d{4})\.(\d{2})\.(\d{2})} ${season}.${epnumber} -> dyear dmonth dday]} {
+		    		set data [GetFromApi "https://api.tvmaze.com/shows/${info(show_id)}/episodesbydate?date=${dyear}-${dmonth}-${dday}" ""]
+		        } else {
+				set data [GetFromApi "https://api.tvmaze.com/shows/${info(show_id)}/episodebynumber?season=${season}&number=${epnumber}" ""]
+		        }			
 			if {[string equal "Connection" [string range $data 0 9]]} {
 				return -code error $data
 			}
 
 			regexp {\"name\":\"(.*?)\"} $data -> info(episode_title)
 			regexp {\"url\":\"(.*?)\"} $data -> info(episode_url)
-			set info(episode_url) [regsub "http" $info(episode_url) "https"]
+			catch {set info(episode_url) [regsub "http" $info(episode_url) "https"]}
 			regexp {\"airdate\":\"(.*?)\"} $data -> info(episode_original_airdate)
 
 			regexp {\"season\":(\d+)} $data -> info(episode_season)
