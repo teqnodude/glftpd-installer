@@ -23,6 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
+# - 20201219 - Teqno:	With the help of sirmarksalot fix for checking next episode number
 # - 20201217 - Teqno:	With the help of sirmarksalot releases with date is now supported
 # - 20201214 - Teqno:	With the help of sirmarksalot the lookup of releases by specific country is now fixed
 # - 20201103 - Teqno:   Changed regex for TVMaze lookup since old regex broke down with certain names
@@ -561,7 +562,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		# merge episode Ep/Season
 		regexp {\"nextepisode\":.*?\"season\":(\d+),} $show_embedded -> show_next_episode_season
 		regexp {\"nextepisode\":.*?\"number\":(\d+),} $show_embedded -> show_next_episode_number
-		if {[info exists show_next_episode_season] && [info exists show_latest_episode_number]} {
+		if {[info exists show_next_episode_season] && [info exists show_next_episode_number]} {
 			set show_next_episode_season [format S%02d $show_next_episode_season]
 			set show_next_episode_number [format E%02d $show_next_episode_number]
 			set info(show_next_episode) "${show_next_episode_season}${show_next_episode_number}"

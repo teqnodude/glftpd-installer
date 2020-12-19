@@ -21,7 +21,7 @@
 - Fixed country lookup of releases in TVMaze.tcl
 - Added check for empty searches in tur-predircheck_manager
 - TVMaze.tcl now supports dated releases too
-
+- Fix for checking next episode number in TVMaze.tcl
 
 ## 10.0 - 2020-10-22
 
