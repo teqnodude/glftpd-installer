@@ -158,7 +158,7 @@ if [ ! -d "$2/$1" ]; then
 
   if [ "$ALLOWDIRS" ]; then
     for rawdata in $ALLOWDIRS; do
-      section="`echo "$rawdata" | cut -d ':' -f1`$"
+      section="`echo "$rawdata" | cut -d ':' -f1`"
       allowed="`echo "$rawdata" | cut -d ':' -f2`"
       if [ "`echo "$2" | egrep "$section"`" ]; then
         if [ -z "`echo "$1" | egrep -i "$allowed"`" ]; then
@@ -200,7 +200,7 @@ if [ ! -d "$2/$1" ]; then
 
   if [ "$DENYDIRS" ] && [ "$ALLOW_OVERRULE_DIR" != "TRUE" ]; then
     for rawdata in $DENYDIRS; do
-      section="`echo "$rawdata" | cut -d ':' -f1`$"
+      section="`echo "$rawdata" | cut -d ':' -f1`"
       denied="`echo "$rawdata" | cut -d ':' -f2`"
 
       if [ "`echo "$2" | egrep -i "$section"`" ]; then

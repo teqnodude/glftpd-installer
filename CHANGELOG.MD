@@ -24,6 +24,7 @@
 - TVMaze.tcl now supports dated releases too
 - Fix for checking next episode number in TVMaze.tcl
 - Couldn't grab latest stable glftpd properly
+- tur-predircheck did not block properly
 
 ## 10.0 - 2020-10-22
 
