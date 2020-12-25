@@ -25,6 +25,7 @@
 - Fix for checking next episode number in TVMaze.tcl
 - Couldn't grab latest stable glftpd properly
 - tur-predircheck did not block properly
+- glftpd-version_check wasn't working properly due to change on website
 
 ## 10.0 - 2020-10-22
 
