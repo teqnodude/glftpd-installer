@@ -4,8 +4,9 @@ denydiruncrypted        *
 denydatauncrypted       *
 
 CERT_FILE 		/glftpd/etc/ftpd-ecdsa.pem
-TLS_MIN_PROTOCOL        TLSv1
-TLS_MAX_PROTOCOL        TLSv1.2
+TLS_MIN_PROTOCOL        TLSv1.2
+TLS_MAX_PROTOCOL        TLSv1.3
+SSL_CLEAN_SHUTDOWN      1
 
 rootpath 		/glftpd
 datapath 		/ftp-data
@@ -52,7 +53,7 @@ display_size_unit       g
 display_speed_unit      m
 # use_dir_size k 	/site
 		
-show_totals     	*       	*
+#show_totals     	10       	*
 hidden_files 		/ .requests lost+found .date .message .imdb .debug
 show_diz 		.imdb 		*
 show_diz 		.requests 	*

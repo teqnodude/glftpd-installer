@@ -133,18 +133,19 @@ function version
 	latest=`lynx --dump https://glftpd.io | grep "latest stable version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr "[:space:]" "_" | sed 's/_$//'`
 	case $version in
 		32)
-		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)'`.tgz && cd ..
+		version="86"
+		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz && cd ..
 		PK1="`ls packages| grep glftpd-LNX | grep x$version`"
 		PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
 		;;
 		64)
-		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)'`.tgz && cd ..
+		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz && cd ..
 		PK1="`ls packages | grep glftpd-LNX | grep x$version`"
 		PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
 		;;
 		*)
 		version="64"
-		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)'`.tgz && cd ..
+		cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz && cd ..
 		PK1="`ls packages | grep glftpd-LNX | grep x$version`"
 		PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
 		;;

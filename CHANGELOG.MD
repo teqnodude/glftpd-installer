@@ -10,6 +10,7 @@
 - Included the ability to check stats for specific release and user in section-traffic
 - Added sorting of sections in incomplete-list.sh 
 - Added checks in tur-predircheck_manager to prevent adding duplicate blocks in blocklist
+- Updated glftpd.conf to reflect changes in new version of glFTPD
 
 ### Fixes
 
@@ -22,6 +23,8 @@
 - Added check for empty searches in tur-predircheck_manager
 - TVMaze.tcl now supports dated releases too
 - Fix for checking next episode number in TVMaze.tcl
+- Couldn't grab latest stable glftpd properly
+- Updated glftpd.conf to reflect changes in new version of glFTPD
 
 ## 10.0 - 2020-10-22
 
