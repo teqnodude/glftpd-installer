@@ -11,6 +11,7 @@
 - Added sorting of sections in incomplete-list.sh 
 - Added checks in tur-predircheck_manager to prevent adding duplicate blocks in blocklist
 - Updated glftpd.conf to reflect changes in new version of glFTPD
+- Added adapative nukes and blocks to tvmaze-nuker and tur-predircheck where nukes made by tvmaze-nuker becomes blocks in tur-predircheck
 
 ### Fixes
 

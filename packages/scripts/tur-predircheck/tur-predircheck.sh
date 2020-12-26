@@ -32,6 +32,9 @@ ALLOWDIRS=""
 ALLOWDIRS_OVERRULES_DENYGROUPS=FALSE
 ALLOWDIRS_OVERRULES_DENYDIRS=FALSE
 
+# file needs to be chmod 666 for tvmaze-nuker to be able to write to it
+BLOCKFILE=/bin/tur-predircheck.block
+
 #--[ Error Output ]---------------------------------------------------#
 
 ## $1 = CreateDir, $2 = InPath
@@ -40,6 +43,7 @@ ERROR2="$1 is already on site or was nuked. Wanker."
 ERROR3="Denying creation of $1. This group is BANNED!"
 ERROR4="Denying creation of $1. Watch what you're doing!"
 ERROR5="Denying creation of $1. Not allowed group/release."
+ERROR6="Denying creation of $1. Release found in blocklist."
 
 DEBUG=FALSE
 
@@ -53,6 +57,7 @@ IERROR2="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}which is already
 IERROR3="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}which is from a BANNED GROUP."
 IERROR4="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}but was denied."
 IERROR5="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}which isnt an allowed group or release."
+IERROR6="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}but was denied in blocklist."
 
 
 #--[ Script Start ]---------------------------------------------------#
@@ -216,7 +221,6 @@ if [ ! -d "$2/$1" ]; then
   fi
 
   if [ "$DIRLOGLIST_GL" ]; then
-    #if [ "`$DIRLOGLIST_GL | grep "/$1$"`" ]; then
     if [ "`$DIRLOGLIST_GL | grep -iv "STATUS: 3" | grep "/$1$"`" ]; then
       proc_checkallow "$1"
       proc_debug "Stop & Deny: It was found in dirlog, thus already upped before (NOPARENT CHECK)."
@@ -224,6 +228,22 @@ if [ ! -d "$2/$1" ]; then
       echo -e "$ERROR2\n"
       exit 2
     fi
+  fi
+
+  if [ -e "$BLOCKFILE" ]; then
+    for rawdata in `cat $BLOCKFILE`; do
+      section="`echo "$rawdata" | cut -d ':' -f1`"
+      denied="`echo "$rawdata" | cut -d ':' -f2`"
+      if [ "`echo "$2" | egrep -i "$section"`" ]; then
+        if [ "`echo "$1" | egrep -i "$denied"`" ]; then
+	  proc_checkallow "$1"    
+	  proc_debug "Stop & Deny: This dir seems denied in BLOCKLIST"
+	  if [ "$IERROR6" ]; then OUTPUT="$IERROR6"; proc_announce; fi
+	  echo -e "$ERROR6\n"
+	  exit 2
+        fi
+      fi
+    done
   fi
 
 fi
