@@ -1,4 +1,4 @@
-## 10.x -
+## 10.1 - 2020-12-30
 
 ### Updated
 
@@ -27,6 +27,7 @@
 - Couldn't grab latest stable glftpd properly
 - tur-predircheck did not block properly
 - glftpd-version_check wasn't working properly due to change on website
+- psxc-imdb-nuker didn't nuke when release had multiple languages
 
 ## 10.0 - 2020-10-22
 

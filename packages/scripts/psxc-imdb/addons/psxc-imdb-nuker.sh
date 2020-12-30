@@ -415,9 +415,9 @@ else
         denied="`echo "$NUKE_LANUAGE" | cut -d ':' -f2`"
         if [ "`echo "$IMDBRELPATH" | egrep -i "$section/"`" ]
         then
-            if [ ! "`echo $IMDBLANGUAGE | egrep -i $denied`" ]
+            if [ ! "`echo \"$IMDBLANGUAGE\" | egrep -i \"$denied\"`" ]
             then
-		LAN_NUKE_REASON="`echo "$NUKE_LANGUAGES_MSG" | sed "s/IMDBLANGUAGE/$IMDBLANGUAGE/" | sed "s/NUKELANGUAGE/$denied/" | sed -e "s|(||" -e "s|)||" -e "s/|/, /g"`"
+		LAN_NUKE_REASON="`echo "$NUKE_LANGUAGES_MSG" | sed "s|IMDBLANGUAGE|$IMDBLANGUAGE|" | sed "s/NUKELANGUAGE/$denied/" | sed -e "s|(||" -e "s|)||" -e "s/|/, /g"`"
             fi
         fi
     done
