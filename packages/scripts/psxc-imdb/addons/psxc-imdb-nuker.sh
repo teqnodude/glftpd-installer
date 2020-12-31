@@ -6,7 +6,9 @@
 #
 # This script first appeared with psxc-imdb v2.0k
 # 
-# Changelog: 2020-10-25 - Teqno added language as nuke option and bumped the version to 2.9j
+# Changelog: 
+# 2020-10-25 - Teqno added language as nuke option and bumped the version to 2.9j
+# 2020-12-31 - Teqno fixed didn't nuke when releases had multiple languages and bumped version to 2.9k
 # 
 # Config
 ########
@@ -18,7 +20,7 @@
 #############################################################################
 
 # Version number. No need to change
-VERSION=2.9j
+VERSION=2.9k
 
 # glftpd's root dir
 GLROOT=/glftpd
