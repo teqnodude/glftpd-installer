@@ -23,19 +23,20 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
-# - 20201219 - Teqno:	With the help of sirmarksalot fix for checking next episode number
-# - 20201217 - Teqno:	With the help of sirmarksalot releases with date is now supported
-# - 20201214 - Teqno:	With the help of sirmarksalot the lookup of releases by specific country is now fixed
-# - 20201103 - Teqno:   Changed regex for TVMaze lookup since old regex broke down with certain names
-# - 20201024 - Teqno:   Defined arguments for use with tvmaze-nuker and added show_rating as variable passed on shell script
+# - 20210102 - Teqno/TeRRaNoVA: Releases with 2020+ in releasename couldn't be found due to incorrect regex
+# - 20201219 - Teqno: With the help of sirmarksalot fix for checking next episode number
+# - 20201217 - Teqno: With the help of sirmarksalot releases with date is now supported
+# - 20201214 - Teqno: With the help of sirmarksalot the lookup of releases by specific country is now fixed
+# - 20201103 - Teqno: Changed regex for TVMaze lookup since old regex broke down with certain names
+# - 20201024 - Teqno: Defined arguments for use with tvmaze-nuker and added show_rating as variable passed on shell script
 # - 20201020 - Teqno/TeRRaNoVA: Added imdb-rating, imdb url, language etc with required shell script for nuke
-# - 20200223 - Sked:	Add average rating as variable (thanks to teqnodude)
-# - 20200222 - Sked:	Use https (thanks to teqnodude)
-# - 20190815 - Sked:	Fix finding shows with newer Tcl packages
-# - 20160310 - Sked:	Fix show_network
-# - 20160117 - Sked:	Cleanup for inclusion in pzs-ng
-# - 20160115 - MrCode:	Refactoring
-# - 20151222 - MrCode:	Revamp TVRage to TVMaze
+# - 20200223 - Sked: Add average rating as variable (thanks to teqnodude)
+# - 20200222 - Sked: Use https (thanks to teqnodude)
+# - 20190815 - Sked: Fix finding shows with newer Tcl packages
+# - 20160310 - Sked: Fix show_network
+# - 20160117 - Sked: Cleanup for inclusion in pzs-ng
+# - 20160115 - MrCode: Refactoring
+# - 20151222 - MrCode: Revamp TVRage to TVMaze
 #
 #################################################################################
 
@@ -434,7 +435,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 
 	proc GetShowAndEpisode {show season epnumber {year ""} {country ""}} {
 		variable tvmaze
-		regexp {(.*)\s(19[4-9][0-9]|20[0-1][0-9])$} $show -> show year
+		regexp {(.*)\s(19[4-9][0-9]|20[0-9][0-9])$} $show -> show year
 		regexp {(.*)\s(AU|US|CA|UK|NZ)$} $show -> show country
 		set data [GetFromApi "https://api.tvmaze.com/search/shows?q=" $show]
 		if {[string equal "Connection" [string range $data 0 9]]} {

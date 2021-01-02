@@ -1,3 +1,10 @@
+## 10.x - 
+
+### Fixes
+
+- Releases with 2020+ in releasename couldn't be found due to incorrect regex in TVMaze.tcl
+
+
 ## 10.1 - 2020-12-30
 
 ### Updated
@@ -28,6 +35,7 @@
 - tur-predircheck did not block properly
 - glftpd-version_check wasn't working properly due to change on website
 - psxc-imdb-nuker didn't nuke when release had multiple languages
+
 
 ## 10.0 - 2020-10-22
 
