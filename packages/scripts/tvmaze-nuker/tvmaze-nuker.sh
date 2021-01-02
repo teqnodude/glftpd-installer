@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=2.3
+VER=2.4
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -10,6 +10,7 @@ VER=2.3
 # 2020-10-23 v.2.1 Changed the way languages are handled by Teqno
 # 2020-10-24 v.2.2 Added the ability to nuke shows based on rating by Teqno
 # 2020-12-26 v.2.3 Added the creation of blockfile for adaptive blocking in tur-predircheck by Teqno
+# 2021-01-03 v.2.4 Fixed format of adapative blocking
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
@@ -213,7 +214,7 @@ then
 		    section=`echo $RLS_NAME | cut -d'/' -f1-3`
                     exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
                     block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
-		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^$block" >> $BLOCKFILE
+		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE
                 fi
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type TV shows are not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $SHOW_TYPE which is not allowed."
@@ -238,7 +239,7 @@ then
                 then
                     exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
                     block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
-		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^$block" >> $BLOCKFILE
+		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE
                 fi
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type type of TV show is not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $type which is not allowed in section $section."
@@ -263,7 +264,7 @@ then
                 then
                     exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
                     block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
-		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^$block" >> $BLOCKFILE
+		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE
                 fi
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$genre genre is not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its genre is $genre which is not allowed in section $section."
@@ -289,7 +290,7 @@ then
 			section=`echo $RLS_NAME | cut -d'/' -f1-3`
                 	exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
                 	block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
-			[ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^$block" >> $BLOCKFILE
+			[ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE
             	    fi
                     $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Episode air date must be $NUKE_EPS_BEFORE_YEAR or newer"
                     LogMsg "Nuked release: {$RLS_NAME} because its year of release of $ep_air_year is before $NUKE_EPS_BEFORE_YEAR"
@@ -313,7 +314,7 @@ then
 		    section=`echo $RLS_NAME | cut -d'/' -f1-3`
             	    exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
             	    block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
-		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^$block" >> $BLOCKFILE
+		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE
             	fi
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "TV shows from $country are not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its country of origin is $SHOW_COUNTRY which is not allowed."
@@ -336,7 +337,7 @@ then
 		    section=`echo $RLS_NAME | cut -d'/' -f1-3`
             	    exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
             	    block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
-		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^$block" >> $BLOCKFILE
+		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE
             	fi
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Network $network is not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its network is $SHOW_NETWORK which is not allowed."
@@ -360,7 +361,7 @@ then
             	then
             	    exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
             	    block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
-		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^$block" >> $BLOCKFILE
+		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE
             	fi
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Language $SHOW_LANGUAGE is not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its language is $SHOW_LANGUAGE which is not allowed in section $section."
@@ -385,7 +386,7 @@ then
             	then
             	    exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
             	    block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
-		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^$block" >> $BLOCKFILE
+		    [ ! `cat $BLOCKFILE | grep $block` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE
             	fi
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Rating $SHOW_RATING is below the limit of $limit"
                 LogMsg "Nuked release: {$RLS_NAME} because its rating $SHOW_RATING is below the limit of $limit for section $section."

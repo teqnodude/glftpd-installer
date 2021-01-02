@@ -3,7 +3,7 @@
 ### Fixes
 
 - Releases with 2020+ in releasename couldn't be found due to incorrect regex in TVMaze.tcl
-
+- Fixed format of adaptive blocking in tvmaze-nuker
 
 ## 10.1 - 2020-12-30
 
