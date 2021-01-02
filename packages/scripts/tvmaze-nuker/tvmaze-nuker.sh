@@ -92,7 +92,7 @@ EXCLUDED_SECTIONS="ARCHIVE REQUEST"
 # Space delimited list of groups to never nuke ie affils
 EXCLUDED_GROUPS=""
 
-# Blockfile for adaptive nukes that needs to be created and chmod 666
+# Blockfile for adaptive blocking that needs to be created and chmod 666
 BLOCKFILE=$GLROOT/bin/tur-predircheck.block
 
 #--[ Script Start ]---------------------------------------------#
