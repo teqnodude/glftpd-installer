@@ -27,6 +27,7 @@ done
 
 sed -i 's/MAXDIRLOGSIZE 10000/MAXDIRLOGSIZE 1000000/' $glroot/bin/sources/olddirclean2.c
 sed -i 's/echo "You/#echo "You/' $glroot/bin/sources/compile.sh
-cd $glroot/bin/sources && ./compile.sh && cd .. && ./update_perms.sh
+cd $glroot/bin/sources && ./compile.sh 
+[ -e "$glroot/bin/update_perms.sh" ] && cd $glroot/bin && ./update_perms.sh
 
 exit 0
