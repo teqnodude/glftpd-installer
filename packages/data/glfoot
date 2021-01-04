@@ -51,7 +51,7 @@ dir_names       	0			none            [:space:]_
 
 display_size_unit       g
 display_speed_unit      m
-allow_ascii_uploads     *.[Tt][Xx][Tt] *.[Dd][Ii][Zz] *.[Nn][Ff][Oo]
+allow_ascii_uploads     *.[Tt][Xx][Tt] *.[Dd][Ii][Zz] *.[Nn][Ff][Oo] *.[Ss][Ff][Vv]
 # use_dir_size k 	/site
 		
 #show_totals     	10       	*
