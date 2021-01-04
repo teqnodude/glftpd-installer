@@ -1,5 +1,9 @@
 ## 10.x - 
 
+### Added
+
+- Added a script for easy update of glFTPd
+
 ### Fixes
 
 - Releases with 2020+ in releasename couldn't be found due to incorrect regex in TVMaze.tcl
@@ -17,7 +21,7 @@
 - Included the ability to check stats for specific release and user in section-traffic
 - Added sorting of sections in incomplete-list.sh 
 - Added checks in tur-predircheck_manager to prevent adding duplicate blocks in blocklist
-- Updated glftpd.conf to reflect changes in new version of glFTPD
+- Updated glftpd.conf to reflect changes in new version of glFTPd
 - Added adapative nukes and blocks to tvmaze-nuker and tur-predircheck where nukes made by tvmaze-nuker becomes blocks in tur-predircheck
 
 ### Fixes
@@ -46,7 +50,7 @@
 
 ### Updated
 
-- Increased the number of connections from default 64 to 300 for boxes that runs glFTPD in systemd
+- Increased the number of connections from default 64 to 300 for boxes that runs glFTPd in systemd
 - Added EBOOKS as one of the possible sections to add with dated dirs which also includes the autogeneration of rules
 - Added checks for section EBOOKS in section_manager.sh
 - Have set IRC invite to false by default since it poses a security risk where someone with username/password can get access to channels. Invite via FTP still possible.
@@ -117,13 +121,13 @@
 
 - Free: in statline didn't follow display_size_unit in glftpd.conf because developer forgot to implement new cookies.
 - In certain situations debian users are having an incomplete PATH variable, have implemented a check against that which corrects the PATH
-- Because new version of glFTPD is compiled against newer GLIBC_2.28 then change to glftpd-full-static is required for systems with older versions, set as default now
+- Because new version of glFTPd is compiled against newer GLIBC_2.28 then change to glftpd-full-static is required for systems with older versions, set as default now
 - Fixed the grabbing of foo-tools by setting a specific git version since the developer of foo-tools broke foo-pre with newer version.
 
 ### Updated
 
 - Included search function in tur-predircheck_manager to make it easier spot blocks in large blocklists
-- Updated packages for glFTPD to version 2.10a
+- Updated packages for glFTPd to version 2.10a
 - Updated section_manager to remove line from crontab related to the creation of dated dirs if no dated sections are found.
 - Disabled timer for rud-news.tcl 
 - Changed settings for rud-news.tcl and included fitting colors to better highlight when news is added
@@ -146,9 +150,9 @@
 
 - Updated mediainfo to show Title for Audio when present instead of Format to highlight modes like DTS-HD MA 5.1 etc
 - Added colors to mediainfo to better highlight relevant info
-- Updated packages for glFTPD to the latest version 2.10 and updated glftpd.conf to reflect the new changes
-- Updated pzs-ng because of update to glFTPD 2.10 since old version was not compatible
-- Updated cleanup.sh script because of new versions of pzs-ng and glFTPD
+- Updated packages for glFTPd to the latest version 2.10 and updated glftpd.conf to reflect the new changes
+- Updated pzs-ng because of update to glFTPd 2.10 since old version was not compatible
+- Updated cleanup.sh script because of new versions of pzs-ng and glFTPd
 - Updated README.MD to include Debian package passwd in list of requirements and the fact that the script has to be run as root to prevent future problems
 
 
@@ -429,7 +433,7 @@ which was solved by a simple copy and renaming of existing groupfile
 ### Updated
 
 - Updated eggdrop from 1.8.3 to 1.8.4
-- Updated glFTPD from 2.08 to 2.09
+- Updated glFTPd from 2.08 to 2.09
 
 ### Fixes
 
@@ -456,7 +460,7 @@ which was solved by a simple copy and renaming of existing groupfile
 
 ### Updated
 
-- Removed the copy of libcopy.sh from pzs-ng since it's now recommended to use the one that glFTPD got.
+- Removed the copy of libcopy.sh from pzs-ng since it's now recommended to use the one that glFTPd got.
 - Replaced incomplete-list.sh with a fully working one that also displays missing nfo, hack by me based on original script.
 - Fixed turranius dirloglist_gl by using the dirloglist.c and glconf.h from sources in /glftpd. Script works now as intended.
 
@@ -501,12 +505,12 @@ which was solved by a simple copy and renaming of existing groupfile
 
 ### Added
 
-- Updated glFTPD version to 2.08 final
+- Updated glFTPd version to 2.08 final
 - Updated psxc-imdb to latest version due to change of imdb.com layout
 
 ### Fixes
 
-- Due to update of glFTPD the install script of glFTPD needed to be updated to support IPv6.
+- Due to update of glFTPd the install script of glFTPd needed to be updated to support IPv6.
 
 
 ## 5.2 - 2017-10-10
@@ -545,7 +549,7 @@ which was solved by a simple copy and renaming of existing groupfile
 ### Updated
 
 - Replaced incomplete-list script with my own custom made.
-- Set the default port 2010 for glFTPD
+- Set the default port 2010 for glFTPd
 - Updated theme to show fastest/slowest racers and removed some unncessary output
 
 ### Fixes
@@ -580,7 +584,7 @@ which was solved by a simple copy and renaming of existing groupfile
 
 - eggdrop updated to latest version
 - pzs-ng updated to latest version
-- glFTPD updated to 2.07.1 and added both 32/64bit version as an option
+- glFTPd updated to 2.07.1 and added both 32/64bit version as an option
 
 ### Fixes
 
@@ -609,7 +613,7 @@ which was solved by a simple copy and renaming of existing groupfile
 ### Updated
 
 - pzs-ng updated to v2
-- glFTPD updated to 2.02RC1
+- glFTPd updated to 2.02RC1
 
 ### Fixes
 
@@ -655,8 +659,8 @@ which was solved by a simple copy and renaming of existing groupfile
 ### Other
 
 - Why the jump in build number you ask? - Simple the installer is now 
-installing glFTPD 2.00 final so why not use 2.00 as the release number
-seeing as v1.x was for glFTPD 1 branch so v2.x was thought to be good
+installing glFTPd 2.00 final so why not use 2.00 as the release number
+seeing as v1.x was for glFTPd 1 branch so v2.x was thought to be good
 enough for this new version :)
 
 
@@ -694,7 +698,7 @@ enough for this new version :)
 
 ### Updated
 
-- glFTPD > 2.0 Final
+- glFTPd > 2.0 Final
 - pzs-ng > 1.131
 
 ### Removed
@@ -706,7 +710,7 @@ enough for this new version :)
 
 ### Updated
 
-- glFTPD > beta4
+- glFTPd > beta4
 - pzs-ng > 0.828
 - tur-trial3 > beta12
 - eggdrop > 1.6.17
@@ -808,7 +812,7 @@ it up during the installation. Really a precaution for all the newbies out there
 
 ### Updated
 
-- glFTPD updated to RC3
+- glFTPd updated to RC3
 - psxc-imdb updated to 2.7b
 - epinfo changed to epguru 2.2
 
@@ -861,7 +865,7 @@ to the beginning of the installation.
 
 ### Fixes
 
-- Have added new code so that when you install glFTPD and the sitebot,
+- Have added new code so that when you install glFTPd and the sitebot,
 all scripts are set to the right permissions 755 and are chown'd to
 the name of your sitebot (where it asks for the name of your site). This 
 fixed many issues where things would look like there were working but 
