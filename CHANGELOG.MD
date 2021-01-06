@@ -4,6 +4,10 @@
 
 - Added a script for easy update of glFTPd
 
+### Updated
+
+- Added support for the use of /dev/disk/by- instead of /dev/sdX in tur-space(thanks to Mystery-X)
+
 ### Fixes
 
 - Releases with 2020+ in releasename couldn't be found due to incorrect regex in TVMaze.tcl
