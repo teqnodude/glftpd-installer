@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.1
+VER=1.2
 
 ## Set where tur-space.conf is located here.
 config=/glftpd/bin/tur-space.conf
@@ -776,11 +776,28 @@ proc_help() {
   proc_exit
 }
 
+proc_translate_by_id(){
+  trigger_deviceid_check="$1"
+  depth_full_path="`echo "$trigger_deviceid_check" | awk -F'/' '{print NF-1}'`"
+  device_relative_location="`ls -l "$trigger_deviceid_check" | tr -s ' '  | cut -d ' ' -f11`"
+  depth_retour="`echo "$device_relative_location" | awk -F'../' '{print NF-1}'`"
+  device_root="`echo "$trigger_deviceid_check" | cut -d '/' -f$(expr $depth_full_path - $depth_retour)`"
+  device_name="`echo "$device_relative_location" | cut -d '/' -f $(expr $depth_retour + 1)`"
+  trigger_device="`echo "/$device_root/$device_name"`"
+}
+
 proc_go() {
   for triggers in `grep "^TRIGGER=" $config`; do
     unset mount_error; unset no_delete; unset mount_errors; unset did_something
 
     trigger_device="`echo "$triggers" | cut -d '=' -f2 | cut -d ':' -f1`"
+	
+	if [ -z "${trigger_device##*/disk/by-*}" ] ;then
+	  org_trigger_device="`echo "$trigger_device"`"
+	  proc_translate_by_id $trigger_device
+	  proc_debug "Translated $org_trigger_device to actual device $trigger_device"
+	fi
+	
     trigger_free="`echo "$triggers" | cut -d ':' -f2`"
     trigger_clean="`echo "$triggers" | cut -d ':' -f3`"
 
