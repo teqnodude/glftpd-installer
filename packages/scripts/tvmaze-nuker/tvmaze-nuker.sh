@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=2.6
+VER=2.7
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -13,6 +13,7 @@ VER=2.6
 # 2021-01-03 v.2.4 Fixed format of adapative blocking
 # 2021-01-05 v.2.5 Fixed check for previous blocks
 # 2021-01-08 v.2.6 Automatic sorting of adaptive blocklist
+# 2021-01-26 v.2.7 Fixed incorrect nuke when language is null
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
@@ -359,6 +360,7 @@ then
         then
             if [ ! "`echo $SHOW_LANGUAGE | egrep -i $denied`" ]
             then
+		[ "$SHOW_LANGUAGE" == "null" ] && exit 0
     		if [ "$NUKE_ADAPTIVE" -eq 1 ]
             	then
             	    exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
