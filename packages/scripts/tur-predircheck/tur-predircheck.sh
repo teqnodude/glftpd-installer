@@ -11,7 +11,7 @@ SKIPFLAGS=""
 
 #--[ On Site Before Settings ]----------------------------------------#
 
-NUKE_PREFIX=""
+NUKE_PREFIX="[NUKED]-"
 
 DIRLOGLIST_GL="/bin/dirloglist_gl"
 
