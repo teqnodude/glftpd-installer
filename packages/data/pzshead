@@ -17,7 +17,7 @@
 #define group_dirs                      	"/site/PRE/"
 #define zip_dirs                        	"/site/0DAY/ /site/REQUESTS/ /site/EBOOKS/"
 #define nocheck_dirs                    	"/site/PRIVATE/"
-#define noforce_sfv_first_dirs          	"/site/REQUESTS/"
+#define noforce_sfv_first_dirs          	"/site/PRE/ /site/REQUESTS/"
 #define audio_nocheck_dirs              	"/site/PRE/ /site/REQUESTS/"
 #define allowed_types_exemption_dirs    	"/site/PRE/ /site/MVID/"
 #define allowed_types                   	"jpg,jpeg,cue,m3u,txt,vob,png,m2ts,ts,log,mkv"
