@@ -18,4 +18,4 @@ proc pub:mediainfo {nick output binary chan text} {
     }
 }
 
-putlog "Mediainfo.tcl 1.7 by Teqno loaded"
+putlog "Mediainfo.tcl 1.8 by Teqno loaded"
