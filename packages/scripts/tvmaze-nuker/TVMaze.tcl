@@ -23,6 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
+# - 20210219 - TeRRaNoVA: Added support for Sxx / Dxx / SxxDxx / Exx
 # - 20210102 - Teqno/TeRRaNoVA: Releases with 2020+ in releasename couldn't be found due to incorrect regex
 # - 20201219 - Teqno: With the help of sirmarksalot fix for checking next episode number
 # - 20201217 - Teqno: With the help of sirmarksalot releases with date is now supported
@@ -407,7 +408,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 						episode_original_airdate episode_title]
 
 		set show_str $string
-		if {(![regexp -- {^(.*?)(\d{4}\.\d{2}\.\d{2}|[sS]\d+[eE]\d+).*$} $string -> show_str episode_str]) && ([string is true -strict $strict])} {
+		if {(![regexp -- {^(.*?)(\d{4}\.\d{2}\.\d{2}|[sS]\d+[eE]\d+|[sS]\d+[dD]\d+|[eE]\d+|[dD]\d+|[sS]\d+).*$} $string -> show_str episode_str]) && ([string is true -strict $strict])} {
 			return -code error "Unable to parse season and episode info from \"$string\""
 		}
 

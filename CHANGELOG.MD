@@ -16,6 +16,7 @@
 - Fixed check for previous blocks in tvmaze-nuker
 - Fixed incorrect nuke when language is null in tvmaze-nuker
 - Fixed mediainfo where it exclude NFOFIX
+- Added support for Sxx / Dxx / SxxDxx / Exx in TVMaze.tcl(thanks to TeRRaNoVA)
 
 
 ## 10.1 - 2020-12-30
