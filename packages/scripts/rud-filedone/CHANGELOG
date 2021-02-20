@@ -1,0 +1,33 @@
+0.5
++ Added support for printing the owner of the file
+* Fixed irc trigger for directories containing multiple files
+* Removed debug print from rud-mp4size.tcl
++ Added support for executing rud-filedone as sample script
+
+0.4:
+* Rewrote rud-mkvsize.tcl for ngBot.
++ Added rud-mp4size.tcl.
+
+0.3:
+* Rewrote parsing logics in rud-mkvsize.tcl to use EBML rules.
+
+0.2:
++ Added a CHANGELOG
+* Update version to 0.2
+* Clean up Makefile a bit
+* Change variable declarations in Makefile to use := instead of =.
+* Use strrchr instead of strsep to find the filename extension
+* Simplify firstRar
+* Don't trust argv to contain terminating NULL
+* Return negative errno from writeLog
++ Added test code and test script
+
+0.1:
++ Added version string to bundle package.
+- Removed tcl snippets from rud-filedone.c.
++ Add rud-mkvsize.tcl. Adapt Makefile and README for it.
++ Add a bundle target to create a rud-filedone.tar.bz of .c, README and Makefile.
++ Added a README file with install instructions.
++ Added install and clean targets.
+- Removed debug prints.
++ First serious c program, jay!

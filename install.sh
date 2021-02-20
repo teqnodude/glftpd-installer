@@ -742,6 +742,7 @@ function glftpd
 	chmod u+s $glroot/bin/undupe
 	chmod u+s $glroot/bin/sed
 	chmod u+s $glroot/bin/nuker
+	cur=`pwd` && cd ../scripts/rud-filedone && make >/dev/null 2>&1 && mv rud-filedone $glroot/bin && touch $glroot/ftp-data/logs/rud-filedone.log && cd $cur && unset cur
 	if [ -f /etc/systemd/system/glftpd.socket ]
 	then
 	    sed -i 's/#MaxConnections=64/MaxConnections=300/' /etc/systemd/system/glftpd.socket

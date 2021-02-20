@@ -8,6 +8,7 @@
 
 - Added support for the use of /dev/disk/by- instead of /dev/sdX in tur-space(thanks to Mystery-X)
 - Sorting of adaptive blocklist is now done automatically by tvmaze-nuker to easier spot find relevant show if one wants to remove it from blocklist
+- Replaced mkv_check with rud-filedone because of the added support of mp4
 
 ### Fixes
 
