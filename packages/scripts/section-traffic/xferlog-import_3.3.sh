@@ -132,7 +132,7 @@ $SQL "update $SQLTB set section=(select substring_index(substring_index(path,'/'
 $SQL "delete from $SQLTB where section='PRE'"
 $SQL "update $SQLTB set filename=(select substring_index(path,'/',-1) path)"
 $SQL "update $SQLTB set relname=(select substring_index(substring_index(path,'/',-2), '/',1) path)"
-$SQL "update $SQLTB set relname=(select substring_index(substring_index(path,'/',-3), '/',1) path) where relname='sample' or relname='proof' or relname='cd1' or relname='cd2' or relname='disk1' or relname='disk2' or relname='covers' or relname='subs'"
+$SQL "update $SQLTB set relname=(select substring_index(substring_index(path,'/',-3), '/',1) path) where relname='sample' or relname='proof' or relname like 'cd%' or relname like 'disk%' or relname='covers' or relname='subs'"
 cat $tmp/xferlog.processing >> $archive
 
 rm -f $tmp/xferlog.processing

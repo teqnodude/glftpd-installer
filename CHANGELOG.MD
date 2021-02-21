@@ -18,7 +18,7 @@
 - Fixed incorrect nuke when language is null in tvmaze-nuker
 - Fixed mediainfo where it exclude NFOFIX
 - Added support for Sxx / Dxx / SxxDxx / Exx in TVMaze.tcl(thanks to TeRRaNoVA)
-
+- Releases wasn't properly imported into SQL by xferlog-import_3.3.sh
 
 ## 10.1 - 2020-12-30
 
