@@ -389,7 +389,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 
                                                 exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
 						if {[string equal $tvmaze(imdbfile) "true"]} {
-						exec /glftpd/bin/tvmaze.sh $rls_name $show_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating $show_imdb $show_summary $show_premiered
+							exec /glftpd/bin/tvmaze.sh $rls_name $show_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating $show_imdb $show_summary $show_premiered
 						}
 
                                         }
