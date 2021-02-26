@@ -71,6 +71,8 @@ else
     echo "============================ TVMAZE INFO v1.0 ================================" >> $glroot$RLS_NAME/.imdb
     SHOW_GENRES=`echo $SHOW_GENRES | sed -e 's/ /_/g' -e 's|/|-|g'`
     touch "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
+    chmod 666 "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
+    chmod 666 $glroot$RLS_NAME/.imdb
 fi
 
 exit 0
