@@ -71,7 +71,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 	set tvmaze(announce-empty) false
 	##
 	## Channel trigger. (Leave blank to disable)
-	set tvmaze(ctrigger) "!tvs"
+	set tvmaze(ctrigger) "!tv"
 	##
 	## Private message trigger. (Leave blank to disable)
 	set tvmaze(ptrigger) ""

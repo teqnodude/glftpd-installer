@@ -44,7 +44,7 @@ SHOW_PREMIERED=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${13}"`
 
 if [ "$debug" -eq 1 ]
 then
-    echo "============================ TVMAZE INFO v1.0 ================================"
+    echo "============================ TVMAZE INFO v$VER ================================"
     echo ""
     echo "Title........: $SHOW_NAME"
     echo "Premiered....: $SHOW_PREMIERED"
@@ -61,12 +61,12 @@ then
     echo "-"
     echo "Plot.........: $SHOW_SUMMARY"
     echo ""
-    echo "============================ TVMAZE INFO v1.0 ================================"
+    echo "============================ TVMAZE INFO v$VER ================================"
 else
     [ -z "$SHOW_RATING" ] && SHOW_RATING="NA"
     [ -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
     [ -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
-    echo "============================ TVMAZE INFO v1.0 ================================" > $glroot$RLS_NAME/.imdb
+    echo "============================ TVMAZE INFO v$VER ================================" > $glroot$RLS_NAME/.imdb
     echo "" >> $glroot$RLS_NAME/.imdb
     echo "Title........: $SHOW_NAME" >> $glroot$RLS_NAME/.imdb
     echo "Premiered....: $SHOW_PREMIERED" >> $glroot$RLS_NAME/.imdb
@@ -83,7 +83,7 @@ else
     echo "-" >> $glroot$RLS_NAME/.imdb
     echo "Plot.........: $SHOW_SUMMARY" >> $glroot$RLS_NAME/.imdb
     echo "" >> $glroot$RLS_NAME/.imdb
-    echo "============================ TVMAZE INFO v1.0 ================================" >> $glroot$RLS_NAME/.imdb
+    echo "============================ TVMAZE INFO v$VER ================================" >> $glroot$RLS_NAME/.imdb
     SHOW_GENRES=`echo $SHOW_GENRES | sed -e 's/ /_/g' -e 's|/|-|g'`
     touch "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
     chmod 666 "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
