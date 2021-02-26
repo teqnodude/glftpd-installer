@@ -1870,6 +1870,7 @@ function cleanup
 	then
 		cp -f packages/scripts/tvmaze-nuker/TVMaze.tcl $glroot/sitebot/scripts/pzs-ng/plugins
 		cp -f packages/scripts/tvmaze-nuker/TVMaze.zpt $glroot/sitebot/scripts/pzs-ng/plugins
+		cp -f packages/scripts/tvmaze-nuker/tvmaze.sh $glroot/bin
 		cp -f packages/scripts/tvmaze-nuker/tvmaze-nuker.sh $glroot/bin
 		echo "source scripts/pzs-ng/plugins/TVMaze.tcl" >> $glroot/sitebot/eggdrop.conf
 		touch $glroot/ftp-data/logs/tvmaze-nuker.log
