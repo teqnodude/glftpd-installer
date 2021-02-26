@@ -30,6 +30,18 @@ SHOW_IMDB=`sed -e 's/^"//' -e 's/"$//' <<<"${11}"`
 SHOW_SUMMARY=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' -e 's|<p>||' -e 's|</p>||' -e 's|<b>||g' -e 's|</b>||g'<<<"${12}"`
 SHOW_PREMIERED=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${13}"`
 
+[ -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
+[ -z "$SHOW_COUNTRY" ] && SHOW_COUNTRY="NA"
+[ -z "$SHOW_LANGUAGE" ] && SHOW_LANGUAGE="NA"
+[ -z "$SHOW_NETWORK" ] && SHOW_NETWORK="NA"
+[ -z "$SHOW_STATUS" ] && SHOW_STATUS="NA"
+[ -z "$SHOW_TYPE" ] && SHOW_TYPE="NA"
+[ -z "$SHOW_EP_AIR_DATE" ] && SHOW_EP_AIR_DATE="NA"
+[ -z "$SHOW_RATING" ] && SHOW_RATING="NA"
+[ -z "$SHOW_IMDB" ] && SHOW_IMDB="NA"
+[ -z "$SHOW_SUMMARY" ] && SHOW_SUMMARY="NA"
+[ -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
+
 if [ "$debug" -eq 1 ]
 then
     echo "============================ TVMAZE INFO v1.0 ================================"
@@ -51,6 +63,9 @@ then
     echo ""
     echo "============================ TVMAZE INFO v1.0 ================================"
 else
+    [ -z "$SHOW_RATING" ] && SHOW_RATING="NA"
+    [ -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
+    [ -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
     echo "============================ TVMAZE INFO v1.0 ================================" > $glroot$RLS_NAME/.imdb
     echo "" >> $glroot$RLS_NAME/.imdb
     echo "Title........: $SHOW_NAME" >> $glroot$RLS_NAME/.imdb
