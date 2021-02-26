@@ -27,7 +27,7 @@ SHOW_TYPE=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' <<<"$8"`
 EP_AIR_DATE=`sed -e 's/^"//' -e 's/"$//' <<<"$9"`
 SHOW_RATING=`sed -e 's/^"//' -e 's/"$//' <<<"${10}"`
 SHOW_IMDB=`sed -e 's/^"//' -e 's/"$//' <<<"${11}"`
-SHOW_SUMMARY=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' -e 's|<p>||' -e 's|</p>||' -e 's|<b>||g' -e 's|</b>||g'<<<"${12}"`
+SHOW_SUMMARY=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' -e 's|<p>||' -e 's|</p>||' -e 's|<b>||g' -e 's|</b>||g' -e 's|<i>||g' -e 's|</i>||g' <<<"${12}"`
 SHOW_PREMIERED=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${13}"`
 
 [ -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
