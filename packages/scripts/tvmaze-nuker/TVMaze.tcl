@@ -23,6 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
+# - 20210226 - Teqno: Added support for the creation of .imdb and tag file with TVMaze info that require external tvmaze.sh script. To enable set tvmaze(imdbfile) true in the settings below.
 # - 20210219 - TeRRaNoVA: Added support for Sxx / Dxx / SxxDxx / Exx
 # - 20210102 - Teqno/TeRRaNoVA: Releases with 2020+ in releasename couldn't be found due to incorrect regex
 # - 20201219 - Teqno: With the help of sirmarksalot fix for checking next episode number
@@ -70,7 +71,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 	set tvmaze(announce-empty) false
 	##
 	## Channel trigger. (Leave blank to disable)
-	set tvmaze(ctrigger) "!tv"
+	set tvmaze(ctrigger) "!tvs"
 	##
 	## Private message trigger. (Leave blank to disable)
 	set tvmaze(ptrigger) ""
@@ -83,6 +84,9 @@ namespace eval ::ngBot::plugin::TVMaze {
 	##
 	## Genre splitter.
 	set tvmaze(splitter) " / "
+	## 
+	## Creation of .imdb file with TVMaze info that require tvmaze.sh external script in /glftpd/bin
+	set tvmaze(imdbfile) false
 	##
 	## Pre line regexp.
 	##  We need to reconstruct the full path to the release. Since not all
@@ -129,6 +133,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 	set ${np}::zeroconvert(%tvmaze_show_runtime)              "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_rating)               "N/A"
 	set ${np}::zeroconvert(%tvmaze_show_imdb)      		  "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_summary)              "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_url)               "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_season_episode)    "N/A"
 	set ${np}::zeroconvert(%tvmaze_episode_season)            "N/A"
@@ -184,7 +189,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 			}
 		}
 
-		set variables(TVMAZE-MSGFULL) "%tvmaze_show_name %tvmaze_show_id %tvmaze_show_genres %tvmaze_show_country %tvmaze_show_language %tvmaze_show_network %tvmaze_show_status %tvmaze_show_latest_title %tvmaze_show_latest_episode %tvmaze_show_latest_airdate %tvmaze_show_next_title %tvmaze_show_next_episode %tvmaze_show_next_airdate %tvmaze_show_url %tvmaze_show_type %tvmaze_show_premiered %tvmaze_show_started %tvmaze_show_ended %tvmaze_show_airtime %tvmaze_show_runtime %tvmaze_show_rating %tvmaze_show_imdb %tvmaze_episode_url %tvmaze_episode_season_episode %tvmaze_episode_season %tvmaze_episode_number %tvmaze_episode_original_airdate %tvmaze_episode_title"
+		set variables(TVMAZE-MSGFULL) "%tvmaze_show_name %tvmaze_show_id %tvmaze_show_genres %tvmaze_show_country %tvmaze_show_language %tvmaze_show_network %tvmaze_show_status %tvmaze_show_latest_title %tvmaze_show_latest_episode %tvmaze_show_latest_airdate %tvmaze_show_next_title %tvmaze_show_next_episode %tvmaze_show_next_airdate %tvmaze_show_url %tvmaze_show_type %tvmaze_show_premiered %tvmaze_show_started %tvmaze_show_ended %tvmaze_show_airtime %tvmaze_show_runtime %tvmaze_show_rating %tvmaze_show_imdb %tvmaze_show_summary %tvmaze_episode_url %tvmaze_episode_season_episode %tvmaze_episode_season %tvmaze_episode_number %tvmaze_episode_original_airdate %tvmaze_episode_title"
 		set variables(TVMAZE) "$variables(NEWDIR) $variables(TVMAZE-MSGFULL)"
 		set variables(TVMAZE-PRE) "$variables(PRE) $variables(TVMAZE-MSGFULL)"
 		set variables(TVMAZE-MSGSHOW) $variables(TVMAZE-MSGFULL)
@@ -347,7 +352,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 
 				if {($empty == 0) || ([string is true -strict $tvmaze(announce-empty)])} {
 					set listlength [llength $logData]
-					if {$listlength > 31} {
+					if {$listlength > 32} {
                                                 append rls_name "\"[string map {" " _} [lindex $logData 0]]\""
                                                 append user "\"[string map {" " _} [lindex $logData 1]]\""
                                                 append group "\"[string map {" " _} [lindex $logData 2]]\""
@@ -374,14 +379,19 @@ namespace eval ::ngBot::plugin::TVMaze {
                                                 append show_runtime "\"[string map {" " _} [lindex $logData 23]]\""
 			    			append show_rating "\"[string map {" " _} [lindex $logData 24]]\""
 						append show_imdb "\"[string map {" " _} [lindex $logData 25]]\""
-                                                append ep_url "\"[string map {" " _} [lindex $logData 26]]\""
-                                                append ep_season_episode "\"[string map {" " _} [lindex $logData 27]]\""
-                                                append ep_season "\"[string map {" " _} [lindex $logData 28]]\""
-                                                append ep_number "\"[string map {" " _} [lindex $logData 29]]\""
-                                                append ep_airdate "\"[string map {" " _} [lindex $logData 30]]\""
-						append ep_title "\"[string map {" " _} [lindex $logData 31]]\""
+						append show_summary "\"[string map {" " _} [lindex $logData 26]]\""
+                                                append ep_url "\"[string map {" " _} [lindex $logData 27]]\""
+                                                append ep_season_episode "\"[string map {" " _} [lindex $logData 28]]\""
+                                                append ep_season "\"[string map {" " _} [lindex $logData 29]]\""
+                                                append ep_number "\"[string map {" " _} [lindex $logData 30]]\""
+                                                append ep_airdate "\"[string map {" " _} [lindex $logData 31]]\""
+						append ep_title "\"[string map {" " _} [lindex $logData 32]]\""
 
                                                 exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
+						if {[string equal $tvmaze(imdbfile) "true"]} {
+						exec /glftpd/bin/tvmaze.sh $rls_name $show_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating $show_imdb $show_summary $show_premiered
+						}
+
                                         }
 			
 			    		${np}::sndall $target $section [${np}::ng_format $target $section $logData]
@@ -403,7 +413,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 						show_latest_title show_latest_episode show_latest_airdate \
 						show_next_title show_next_episode show_next_airdate \
 						show_url show_type show_premiered \
-						show_started show_ended show_airtime show_runtime show_rating show_imdb \
+						show_started show_ended show_airtime show_runtime show_rating show_imdb show_summary \
 						episode_url episode_season_episode episode_season episode_number \
 						episode_original_airdate episode_title]
 
@@ -494,6 +504,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		set info(show_status) [dict get [dict get $data show] status]
 		set info(show_premiered) [dict get [dict get $data show] premiered]
 		set info(show_type) [dict get [dict get $data show] type]
+		set info(show_summary) [dict get [dict get $data show] summary]
                 regexp {(\d+)} [dict get [dict get $data show] runtime] -> info(show_runtime)
                 regexp {(\d+(\.\d+)?)} [dict get [dict get [dict get $data show] rating] average] -> info(show_rating)
 

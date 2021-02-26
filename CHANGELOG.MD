@@ -3,12 +3,14 @@
 ### Added
 
 - Added a script for easy update of glFTPd
+- Added tvmaze.sh that enables the creation of .imdb and tag file with TVMaze info for TV releases
 
 ### Updated
 
 - Added support for the use of /dev/disk/by- instead of /dev/sdX in tur-space(thanks to Mystery-X)
 - Sorting of adaptive blocklist is now done automatically by tvmaze-nuker to easier spot find relevant show if one wants to remove it from blocklist
 - Replaced mkv_check with rud-filedone because of the added support of mp4
+- Updated TVMaze.tcl to pass on information to the new script tvmaze.sh that enable the creation of .imdb and tag file with TVMaze info for TV releases
 
 ### Fixes
 
@@ -19,6 +21,9 @@
 - Fixed mediainfo where it exclude NFOFIX
 - Added support for Sxx / Dxx / SxxDxx / Exx in TVMaze.tcl(thanks to TeRRaNoVA)
 - Releases wasn't properly imported into SQL by xferlog-import_3.3.sh
+- Eggdrop changed format for adding servers in conf
+- Forgot to remove the copying of mkv_check since it's no longer used
+
 
 ## 10.1 - 2020-12-30
 

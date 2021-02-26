@@ -28,5 +28,5 @@ proc evnt:init-server {type} {
     #putquick "PRIVMSG NickServ :identify password"
 }
 
-addserver servername
+server add servername
 
