@@ -23,6 +23,7 @@
 - Releases wasn't properly imported into SQL by xferlog-import_3.3.sh
 - Eggdrop changed format for adding servers in conf
 - Forgot to remove the copying of mkv_check since it's no longer used
+- Removed the enforcement of http:// to https:// for show_url in TVMaze.tcl after the update of TVMaze api
 
 
 ## 10.1 - 2020-12-30

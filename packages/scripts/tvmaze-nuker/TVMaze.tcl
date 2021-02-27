@@ -23,6 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
+# - 20210227 - Teqno: Removed the enforcement of http:// to https:// for show_url after the update of TVMaze api
 # - 20210226 - Teqno: Added support for the creation of .imdb and tag file with TVMaze info that require external tvmaze.sh script. To enable set tvmaze(imdbfile) true in the settings below.
 # - 20210219 - TeRRaNoVA: Added support for Sxx / Dxx / SxxDxx / Exx
 # - 20210102 - Teqno/TeRRaNoVA: Releases with 2020+ in releasename couldn't be found due to incorrect regex
@@ -500,7 +501,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		set info(show_language) [dict get [dict get $data show] language]
                 regexp {(\d+)} [dict get [dict get $data show] id] -> info(show_id)
 		set info(show_name) [dict get [dict get $data show] name]
-		set info(show_url) [regsub "http" [dict get [dict get $data show] url] "https"]
+		set info(show_url) [dict get [dict get $data show] url]
 		set info(show_status) [dict get [dict get $data show] status]
 		set info(show_premiered) [dict get [dict get $data show] premiered]
 		set info(show_type) [dict get [dict get $data show] type]
