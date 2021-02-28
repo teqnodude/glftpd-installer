@@ -134,7 +134,7 @@ do
         chmod 666 "$glroot$section/$rls_name/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
         if [ "$preserve" -eq 1 ]
         then
-	find $glroot$section -type d -name "$rls_name" -print0 | while read -r -d '' dir; do file="$(find "$dir" -maxdepth 1 -type f  -printf '%T+ %p\n' | sort -r | head -3 | tail -1 | cut -d' ' -f2-)";if [ -n "$file" ]; then touch "$dir" -mr "$file"; fi; done
+	    find $glroot$section -type d -name "$rls_name" -print0 | while read -r -d '' dir; do file="$(find "$dir" -maxdepth 1 -type f  -printf '%T+ %p\n' | sort -r | head -3 | tail -1 | cut -d' ' -f2-)";if [ -n "$file" ]; then touch "$dir" -mr "$file"; fi; done
         fi
     fi
     done
