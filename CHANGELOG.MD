@@ -4,6 +4,7 @@
 
 - Added a script for easy update of glFTPd
 - Added tvmaze.sh that enables the creation of .imdb and tag file with TVMaze info for TV releases
+- Added tvmaze-rescan.sh that enables the user to rescan sections for the creation of .imdb and tag file with TVMaze info
 
 ### Updated
 
