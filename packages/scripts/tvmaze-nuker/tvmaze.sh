@@ -41,7 +41,7 @@ EP_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${15}"`
 [ "$SHOW_TYPE" == "null" -o -z "$SHOW_TYPE" ] && SHOW_TYPE="NA"
 [ "$SHOW_EP_AIR_DATE" == "null" -o -z "$SHOW_EP_AIR_DATE" ] && SHOW_EP_AIR_DATE="NA"
 [ "$SHOW_RATING" == "null" -o -z "$SHOW_RATING" ] && SHOW_RATING="NA"
-[ "$SHOW_IMDB" == "null" -o -z "$SHOW_IMDB" ] && SHOW_IMDB="NA" || SHOW_IMDB="https://imdb.com/title/$SHOW_IMDB"
+[ "$SHOW_IMDB" == "null" -o -z "$SHOW_IMDB" ] && SHOW_IMDB="NA"
 [ "$SHOW_SUMMARY" == "null" -o -z "$SHOW_SUMMARY" ] && SHOW_SUMMARY="NA"
 [ "$SHOW_PREMIERED" == "null" -o -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
 [ "$SHOW_URL" == "null" -o -z "$SHOW_URL" ] && SHOW_URL="NA"
