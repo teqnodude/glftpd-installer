@@ -23,6 +23,7 @@
 # 4. Rehash or restart your eggdrop for the changes to take effect.
 #
 # Changelog:
+# - 20210228 - Teqno: Added the passing of TVMaze link for show and episode to tvmaze.sh
 # - 20210227 - Teqno: Removed the enforcement of http:// to https:// for show_url after the update of TVMaze api
 # - 20210226 - Teqno: Added support for the creation of .imdb and tag file with TVMaze info that require external tvmaze.sh script. To enable set tvmaze(imdbfile) true in the settings below.
 # - 20210219 - TeRRaNoVA: Added support for Sxx / Dxx / SxxDxx / Exx
@@ -390,7 +391,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 
                                                 exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
 						if {[string equal $tvmaze(imdbfile) "true"]} {
-							exec /glftpd/bin/tvmaze.sh $rls_name $show_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating $show_imdb $show_summary $show_premiered
+							exec /glftpd/bin/tvmaze.sh $rls_name $show_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating $show_imdb $show_summary $show_premiered $show_url $ep_url
 						}
 
                                         }

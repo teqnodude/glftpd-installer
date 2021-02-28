@@ -11,6 +11,7 @@
 - Sorting of adaptive blocklist is now done automatically by tvmaze-nuker to easier spot find relevant show if one wants to remove it from blocklist
 - Replaced mkv_check with rud-filedone because of the added support of mp4
 - Updated TVMaze.tcl to pass on information to the new script tvmaze.sh that enable the creation of .imdb and tag file with TVMaze info for TV releases
+- Added TVMaze link for show and episode in tvmaze.sh
 
 ### Fixes
 

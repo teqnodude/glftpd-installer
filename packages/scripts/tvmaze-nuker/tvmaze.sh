@@ -1,11 +1,12 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #--[ Info ]-----------------------------------------------------#
 #
 # This script enables the creation of .imdb and tag file with
 # TVMaze info. Copy this to /glftpd/bin and chmod 755.
 #
 # Changelog
+# 2021-02-28 v.1.1 Added TVMaze link for show and episode
 # 2021-02-26 v.1.0 Orginal creator Teqno
 #
 #--[ Settings ]-------------------------------------------------#
@@ -29,6 +30,9 @@ SHOW_RATING=`sed -e 's/^"//' -e 's/"$//' <<<"${10}"`
 SHOW_IMDB=`sed -e 's/^"//' -e 's/"$//' <<<"${11}"`
 SHOW_SUMMARY=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' -e 's|<p>||' -e 's|</p>||' -e 's|<b>||g' -e 's|</b>||g' -e 's|<i>||g' -e 's|</i>||g' <<<"${12}"`
 SHOW_PREMIERED=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${13}"`
+SHOW_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${14}"`
+EP_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${15}"`
+
 
 [ -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
 [ -z "$SHOW_COUNTRY" ] && SHOW_COUNTRY="NA"
@@ -41,6 +45,8 @@ SHOW_PREMIERED=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${13}"`
 [ -z "$SHOW_IMDB" ] && SHOW_IMDB="NA"
 [ -z "$SHOW_SUMMARY" ] && SHOW_SUMMARY="NA"
 [ -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
+[ -z "$SHOW_URL" ] && SHOW_URL="NA"
+[ -z "$EP_URL" ] && EP_URL="NA"
 
 if [ "$debug" -eq 1 ]
 then
@@ -50,6 +56,8 @@ then
     echo "Premiered....: $SHOW_PREMIERED"
     echo "-"
     echo "IMDB Link....: $SHOW_IMDB"
+    echo "TVMaze Link..: $SHOW_URL"
+    echo "Episode Link.: $EP_URL"
     echo "Genre........: $SHOW_GENRES"
     echo "Type.........: $SHOW_TYPE"
     echo "User Rating..: $SHOW_RATING"
@@ -72,6 +80,8 @@ else
     echo "Premiered....: $SHOW_PREMIERED" >> $glroot$RLS_NAME/.imdb
     echo "-" >> $glroot$RLS_NAME/.imdb
     echo "IMDB Link....: $SHOW_IMDB" >> $glroot$RLS_NAME/.imdb
+    echo "TVMaze Link..: $SHOW_URL" >> $glroot$RLS_NAME/.imdb
+    echo "Episode Link.: $EP_URL" >> $glroot$RLS_NAME/.imdb
     echo "Genre........: $SHOW_GENRES" >> $glroot$RLS_NAME/.imdb
     echo "Type.........: $SHOW_TYPE" >> $glroot$RLS_NAME/.imdb
     echo "User Rating..: $SHOW_RATING" >> $glroot$RLS_NAME/.imdb
