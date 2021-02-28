@@ -70,9 +70,6 @@ then
     echo ""
     echo "============================ TVMAZE INFO v$VER ================================"
 else
-    [ -z "$SHOW_RATING" ] && SHOW_RATING="NA"
-    [ -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
-    [ -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
     echo "============================ TVMAZE INFO v$VER ================================" > $glroot$RLS_NAME/.imdb
     echo "" >> $glroot$RLS_NAME/.imdb
     echo "Title........: $SHOW_NAME" >> $glroot$RLS_NAME/.imdb
