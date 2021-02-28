@@ -6,7 +6,7 @@ VER=1.1
 # TVMaze info. Copy this to /glftpd/bin and chmod 755.
 #
 # Changelog
-# 2021-02-28 v.1.1 Added TVMaze link for show and episode
+# 2021-02-28 v.1.1 Added TVMaze link for show and episode. Also ensured empty values are set as NA.
 # 2021-02-26 v.1.0 Orginal creator Teqno
 #
 #--[ Settings ]-------------------------------------------------#
@@ -33,20 +33,19 @@ SHOW_PREMIERED=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${13}"`
 SHOW_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${14}"`
 EP_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${15}"`
 
-
-[ -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
-[ -z "$SHOW_COUNTRY" ] && SHOW_COUNTRY="NA"
-[ -z "$SHOW_LANGUAGE" ] && SHOW_LANGUAGE="NA"
-[ -z "$SHOW_NETWORK" ] && SHOW_NETWORK="NA"
-[ -z "$SHOW_STATUS" ] && SHOW_STATUS="NA"
-[ -z "$SHOW_TYPE" ] && SHOW_TYPE="NA"
-[ -z "$SHOW_EP_AIR_DATE" ] && SHOW_EP_AIR_DATE="NA"
-[ -z "$SHOW_RATING" ] && SHOW_RATING="NA"
-[ -z "$SHOW_IMDB" ] && SHOW_IMDB="NA"
-[ -z "$SHOW_SUMMARY" ] && SHOW_SUMMARY="NA"
-[ -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
-[ -z "$SHOW_URL" ] && SHOW_URL="NA"
-[ -z "$EP_URL" ] && EP_URL="NA"
+[ "$SHOW_GENRES" == "null" -o -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
+[ "$SHOW_COUNTRY" == "null" -o -z "$SHOW_COUNTRY" ] && SHOW_COUNTRY="NA"
+[ "$SHOW_LANGUAGE" == "null" -o -z "$SHOW_LANGUAGE" ] && SHOW_LANGUAGE="NA"
+[ "$SHOW_NETWORK" == "null" -o -z "$SHOW_NETWORK" ] && SHOW_NETWORK="NA"
+[ "$SHOW_STATUS" == "null" -o -z "$SHOW_STATUS" ] && SHOW_STATUS="NA"
+[ "$SHOW_TYPE" == "null" -o -z "$SHOW_TYPE" ] && SHOW_TYPE="NA"
+[ "$SHOW_EP_AIR_DATE" == "null" -o -z "$SHOW_EP_AIR_DATE" ] && SHOW_EP_AIR_DATE="NA"
+[ "$SHOW_RATING" == "null" -o -z "$SHOW_RATING" ] && SHOW_RATING="NA"
+[ "$SHOW_IMDB" == "null" -o -z "$SHOW_IMDB" ] && SHOW_IMDB="NA" || SHOW_IMDB="https://imdb.com/title/$SHOW_IMDB"
+[ "$SHOW_SUMMARY" == "null" -o -z "$SHOW_SUMMARY" ] && SHOW_SUMMARY="NA"
+[ "$SHOW_PREMIERED" == "null" -o -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
+[ "$SHOW_URL" == "null" -o -z "$SHOW_URL" ] && SHOW_URL="NA"
+[ "$EP_URL" == "null" -o -z "$EP_URL" ] && EP_URL="NA"
 
 if [ "$debug" -eq 1 ]
 then
