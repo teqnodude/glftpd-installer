@@ -40,7 +40,7 @@ for section in $sections
 do
     for rls_name in `ls $glroot$section | egrep -v "$exclude"`
     do
-    SHOW=`echo $rls_name | egrep -o ".*.S[0-9][0-9]E[0-9][0-9].|.*.E[0-9][0-9].|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].|.*.Part.[0-9]." | sed -e 's|.S[0-9][0-9].*||' -e 's|.Part.*||' -e 's|[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].*||' -e 's|.[0-9][0-9][0-9][0-9].*||' -e 's|.(AU|US|CA|UK|NZ).*||' | tr '.' ' '`
+    SHOW=`echo $rls_name | egrep -o ".*.S[0-9][0-9]E[0-9][0-9].|.*.E[0-9][0-9].|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].|.*.Part.[0-9]." | sed -e 's|.S[0-9][0-9].*||' -e 's|.Part.*||' -e 's|[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].*||' -e 's|.[0-9][0-9][0-9][0-9].*||' -e 's|.AU.*||' -e 's|.CA.*||' -e 's|.NZ.*||' -e 's|.UK.*||' -e 's|.US.*||' | tr '.' ' '`
     lynx --dump "https://api.tvmaze.com/singlesearch/shows?q=$SHOW" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze.tmp
     SHOW_ID=`cat $glroot$tmp/tvmaze.tmp | grep 'id":' | head -1 | cut -d':' -f2 | tr -d '"'`
     SHOW_NAME=`cat $glroot$tmp/tvmaze.tmp | grep 'name":' | head -1 | cut -d':' -f2 | tr -d '"'`
