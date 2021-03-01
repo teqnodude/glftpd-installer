@@ -6,8 +6,8 @@ VER=1.1
 # TVMaze info. Copy this to /glftpd/bin and chmod 755.
 #
 # Changelog
-# 2021-02-28 v.1.1 Added TVMaze link for show and episode. Also ensured empty values are set as NA.
-# 2021-02-26 v.1.0 Orginal creator Teqno
+# 2021-02-28 v1.1 Added TVMaze link for show and episode. Also ensured empty values are set as NA.
+# 2021-02-26 v1.0 Orginal creator Teqno
 #
 #--[ Settings ]-------------------------------------------------#
 

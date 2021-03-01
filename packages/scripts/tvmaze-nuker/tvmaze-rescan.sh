@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -9,7 +9,8 @@ VER=1.0
 # creates an .imdb file and tag file in each release with it.
 # 
 # Changelog
-# 2021-02-28 : Teqno original creator
+# 2021-03-01 : v1.1 Fixed releases with year and country code
+# 2021-02-28 : v1.0 Teqno original creator
 #
 #--[ Settings ]-------------------------------------------------#
 
@@ -39,7 +40,7 @@ for section in $sections
 do
     for rls_name in `ls $glroot$section | egrep -v "$exclude"`
     do
-    SHOW=`echo $rls_name | egrep -o ".*.S[0-9][0-9]E[0-9][0-9].|.*.E[0-9][0-9].|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].|.*.Part.[0-9]." | sed -e 's|.S[0-9][0-9].*||' -e 's|.Part.*||' -e 's|[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].*||' | tr '.' ' '`
+    SHOW=`echo $rls_name | egrep -o ".*.S[0-9][0-9]E[0-9][0-9].|.*.E[0-9][0-9].|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].|.*.Part.[0-9]." | sed -e 's|.S[0-9][0-9].*||' -e 's|.Part.*||' -e 's|[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].*||' -e 's|.[0-9][0-9][0-9][0-9].*||' -e 's|.(AU|US|CA|UK|NZ).*||' | tr '.' ' '`
     lynx --dump "https://api.tvmaze.com/singlesearch/shows?q=$SHOW" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze.tmp
     SHOW_ID=`cat $glroot$tmp/tvmaze.tmp | grep 'id":' | head -1 | cut -d':' -f2 | tr -d '"'`
     SHOW_NAME=`cat $glroot$tmp/tvmaze.tmp | grep 'name":' | head -1 | cut -d':' -f2 | tr -d '"'`

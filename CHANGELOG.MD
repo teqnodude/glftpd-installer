@@ -26,7 +26,7 @@
 - Eggdrop changed format for adding servers in conf
 - Forgot to remove the copying of mkv_check since it's no longer used
 - Removed the enforcement of http:// to https:// for show_url in TVMaze.tcl after the update of TVMaze api
-
+- Fixed releases with year and country code in tvmaze-rescan.sh and did some cosmetic changes in related scripts
 
 ## 10.1 - 2020-12-30
 

@@ -5,15 +5,15 @@ VER=2.7
 # This script comes without any warranty, use it at your own risk.
 #
 # Changelog
-# 20XX-00-00 v.1x Orginale creator Sokar aka PicdleRick
-# 2020-10-20 v.2x Code modifications and improvements Teqno/TeRRaNoVA
-# 2020-10-23 v.2.1 Changed the way languages are handled by Teqno
-# 2020-10-24 v.2.2 Added the ability to nuke shows based on rating by Teqno
-# 2020-12-26 v.2.3 Added the creation of blockfile for adaptive blocking in tur-predircheck by Teqno
-# 2021-01-03 v.2.4 Fixed format of adapative blocking
-# 2021-01-05 v.2.5 Fixed check for previous blocks
-# 2021-01-08 v.2.6 Automatic sorting of adaptive blocklist
-# 2021-01-26 v.2.7 Fixed incorrect nuke when language is null
+# 20XX-00-00 v1x Orginale creator Sokar aka PicdleRick
+# 2020-10-20 v2x Code modifications and improvements Teqno/TeRRaNoVA
+# 2020-10-23 v2.1 Changed the way languages are handled by Teqno
+# 2020-10-24 v2.2 Added the ability to nuke shows based on rating by Teqno
+# 2020-12-26 v2.3 Added the creation of blockfile for adaptive blocking in tur-predircheck by Teqno
+# 2021-01-03 v2.4 Fixed format of adapative blocking
+# 2021-01-05 v2.5 Fixed check for previous blocks
+# 2021-01-08 v2.6 Automatic sorting of adaptive blocklist
+# 2021-01-26 v2.7 Fixed incorrect nuke when language is null
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
