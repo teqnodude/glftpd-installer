@@ -131,6 +131,7 @@ do
         echo "Plot.........: $SHOW_SUMMARY" >> $glroot$section/$rls_name/.imdb
         echo "" >> $glroot$section/$rls_name/.imdb
         echo "============================ TVMAZE INFO v`cat $glroot/bin/tvmaze.sh | grep 'VER=' | cut -d'=' -f2` ================================" >> $glroot$section/$rls_name/.imdb
+	find $glroot$section/$rls_name/ -iname "*tvmaze*" -exec rm {} +
         touch "$glroot$section/$rls_name/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
         chmod 666 "$glroot$section/$rls_name/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
         if [ "$preserve" -eq 1 ]
