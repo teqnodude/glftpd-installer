@@ -41,38 +41,38 @@ do
     for rls_name in `ls $glroot$section | egrep -v "$exclude"`
     do
     SHOW=`echo $rls_name | egrep -o ".*.S[0-9][0-9]E[0-9][0-9].|.*.E[0-9][0-9].|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].|.*.Part.[0-9]." | sed -e 's|.S[0-9][0-9].*||' -e 's|.Part.*||' -e 's|[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].*||' -e 's|.[0-9][0-9][0-9][0-9].*||' -e 's|.AU.*||' -e 's|.CA.*||' -e 's|.NZ.*||' -e 's|.UK.*||' -e 's|.US.*||' | tr '.' ' '`
-    lynx --dump "https://api.tvmaze.com/singlesearch/shows?q=$SHOW" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze.tmp
-    SHOW_ID=`cat $glroot$tmp/tvmaze.tmp | grep 'id":' | head -1 | cut -d':' -f2 | tr -d '"'`
-    SHOW_NAME=`cat $glroot$tmp/tvmaze.tmp | grep 'name":' | head -1 | cut -d':' -f2 | tr -d '"'`
-    SHOW_GENRES=`cat $glroot$tmp/tvmaze.tmp | grep 'genres":' | sed -n '/"genres"/,/]/p' | tr '\n' ' ' | tr -d '[' | tr -d ']' | sed 's/"genres"://' | tr -d '"'`
-    SHOW_COUNTRY=`cat $glroot$tmp/tvmaze.tmp | grep 'country":' | head -1 | cut -d':' -f3 | tr -d '"'`
-    SHOW_LANGUAGE=`cat $glroot$tmp/tvmaze.tmp | grep 'language":' | head -1 | cut -d':' -f2 | tr -d '"'`
-    SHOW_NETWORK=`cat $glroot$tmp/tvmaze.tmp | grep 'name":' | head -2 | tail -1 | cut -d':' -f2 | tr -d '"'`
-    SHOW_STATUS=`cat $glroot$tmp/tvmaze.tmp | grep 'status":' | head -1 | cut -d':' -f2 | tr -d '"'`
-    SHOW_TYPE=`cat $glroot$tmp/tvmaze.tmp | grep 'type":' | head -1 | cut -d':' -f2 | tr -d '"'`
-    SHOW_RATING=`cat $glroot$tmp/tvmaze.tmp | grep 'rating":' | head -1 | cut -d':' -f3 | tr -d '"' | tr -d '}'`
-    SHOW_IMDB=`cat $glroot$tmp/tvmaze.tmp | grep 'imdb":' | head -1 | cut -d':' -f2 | tr -d '"' | tr -d '}'`
-    SHOW_URL=`cat $glroot$tmp/tvmaze.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-    SHOW_SUMMARY=`cat $glroot$tmp/tvmaze.tmp | grep 'summary":' | head -1 | cut -d':' -f2 | tr -d '"' | sed -e 's|<p>||' -e 's|</p>||' -e 's|<b>||g' -e 's|</b>||g' -e 's|<i>||g' -e 's|</i>||g'`
+    lynx --dump "https://api.tvmaze.com/singlesearch/shows?q=$SHOW" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
+    SHOW_ID=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'id":' | head -1 | cut -d':' -f2 | tr -d '"'`
+    SHOW_NAME=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'name":' | head -1 | cut -d':' -f2 | tr -d '"'`
+    SHOW_GENRES=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'genres":' | sed -n '/"genres"/,/]/p' | tr '\n' ' ' | tr -d '[' | tr -d ']' | sed 's/"genres"://' | tr -d '"'`
+    SHOW_COUNTRY=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'country":' | head -1 | cut -d':' -f3 | tr -d '"'`
+    SHOW_LANGUAGE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'language":' | head -1 | cut -d':' -f2 | tr -d '"'`
+    SHOW_NETWORK=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'name":' | head -2 | tail -1 | cut -d':' -f2 | tr -d '"'`
+    SHOW_STATUS=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'status":' | head -1 | cut -d':' -f2 | tr -d '"'`
+    SHOW_TYPE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'type":' | head -1 | cut -d':' -f2 | tr -d '"'`
+    SHOW_RATING=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'rating":' | head -1 | cut -d':' -f3 | tr -d '"' | tr -d '}'`
+    SHOW_IMDB=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'imdb":' | head -1 | cut -d':' -f2 | tr -d '"' | tr -d '}'`
+    SHOW_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
+    SHOW_SUMMARY=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'summary":' | head -1 | cut -d':' -f2 | tr -d '"' | sed -e 's|<p>||' -e 's|</p>||' -e 's|<b>||g' -e 's|</b>||g' -e 's|<i>||g' -e 's|</i>||g'`
     if [ `echo $rls_name | egrep -o "S[0-9][0-9]E[0-9][0-9]"` ]
     then
         SEASON=`echo $rls_name | egrep -o "S[0-9][0-9]" | tr -d 'S'`
         EPISODE=`echo $rls_name | egrep -o "E[0-9][0-9]" | tr -d 'E'`
-        lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze.tmp
-        EP_URL=`cat $glroot$tmp/tvmaze.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
+        lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
+        EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
     fi
     if [ `echo $rls_name | egrep -o "[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]"` ]
     then
         DATE=`echo $rls_name | egrep -o "[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]" | tr '.' '-'`
-        lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodesbydate?date=$DATE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze.tmp
-        EP_URL=`cat $glroot$tmp/tvmaze.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
+        lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodesbydate?date=$DATE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
+        EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
     fi
     if [ `echo $rls_name | egrep -o "Part.[0-9]"` ]
     then
         SEASON=1
         EPISODE=`echo $rls_name | grep -o "Part.[0-9]" | grep -o "[0-9]"`
-        lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze.tmp
-        EP_URL=`cat $glroot$tmp/tvmaze.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
+        lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
+        EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
     fi
     [ "$SHOW_GENRES" == "null" -o -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
     [ "$SHOW_COUNTRY" == "null" -o -z "$SHOW_COUNTRY" ] && SHOW_COUNTRY="NA"
@@ -141,6 +141,6 @@ do
     done
 done
 
-rm $glroot$tmp/tvmaze.tmp
+rm $glroot$tmp/tvmaze-rescan.tmp
 
 exit 0
