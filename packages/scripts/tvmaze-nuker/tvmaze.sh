@@ -28,7 +28,7 @@ SHOW_TYPE=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' <<<"$8"`
 EP_AIR_DATE=`sed -e 's/^"//' -e 's/"$//' <<<"$9"`
 SHOW_RATING=`sed -e 's/^"//' -e 's/"$//' <<<"${10}"`
 SHOW_IMDB=`sed -e 's/^"//' -e 's/"$//' <<<"${11}"`
-SHOW_SUMMARY=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' -e 's|<p>||' -e 's|</p>||' -e 's|<b>||g' -e 's|</b>||g' -e 's|<i>||g' -e 's|</i>||g' <<<"${12}"`
+SHOW_SUMMARY=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' -e 's|<.*[b|i|p]>||' <<<"${12}"`
 SHOW_PREMIERED=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${13}"`
 SHOW_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${14}"`
 EP_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${15}"`
@@ -65,6 +65,8 @@ then
     echo "Language.....: $SHOW_LANGUAGE"
     echo "Network......: $SHOW_NETWORK"
     echo "Status.......: $SHOW_STATUS"
+    echo "Premiered....: $SHOW_PREMIERED"
+    echo "Airdate......: $SHOW_EP_AIR_DATE"
     echo "-"
     echo "Plot.........: $SHOW_SUMMARY"
     echo ""
@@ -86,13 +88,15 @@ else
     echo "Language.....: $SHOW_LANGUAGE" >> $glroot$RLS_NAME/.imdb
     echo "Network......: $SHOW_NETWORK" >> $glroot$RLS_NAME/.imdb
     echo "Status.......: $SHOW_STATUS" >> $glroot$RLS_NAME/.imdb
+    echo "Premiered....: $SHOW_PREMIERED" >> $glroot$RLS_NAME/.imdb
+    echo "Airdate......: $SHOW_EP_AIR_DATE" >> $glroot$RLS_NAME/.imdb
     echo "-" >> $glroot$RLS_NAME/.imdb
     echo "Plot.........: $SHOW_SUMMARY" >> $glroot$RLS_NAME/.imdb
     echo "" >> $glroot$RLS_NAME/.imdb
     echo "============================ TVMAZE INFO v$VER ================================" >> $glroot$RLS_NAME/.imdb
     SHOW_GENRES=`echo $SHOW_GENRES | sed -e 's/ /_/g' -e 's|/|-|g'`
-    touch "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
-    chmod 666 "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_PREMIERED})_-=[TVMAZE]"
+    touch "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
+    chmod 666 "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
     chmod 666 $glroot$RLS_NAME/.imdb
 fi
 
