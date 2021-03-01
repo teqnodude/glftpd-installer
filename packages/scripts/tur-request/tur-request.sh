@@ -851,11 +851,11 @@ proc_request() {
     fi
   fi
 
-  if [ "`$dirloglist_gl | grep -iv "STATUS: 3" | grep "/$WHAT$"`" ]; then
+  if [ "`$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$"`" ]; then
     if [ "$mode" = "gl" ]; then
-	echo "Release already exist on site: `$dirloglist_gl | grep -iv "STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
+	echo "Release already exist on site: `$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
     else
-	echo "14Release already exist on site: 4`$dirloglist_gl | grep -iv "STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
+	echo "14Release already exist on site: 4`$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
     fi
     exit 0
   fi
