@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.21
+VER=1.22
 #----------------------------------------------------------------#
 #								 #
 # Section Manager by Teqno     			 		 #
@@ -43,329 +43,316 @@ rootdir=`pwd`
 
 function start
 {
-    echo "Already configured sections: "`cat $pzsbot | grep "set sections" | sed 's/REQUEST//g' | cut -d "\"" -f2`
-    while [[ -z $section ]]
-    do
-	    echo -n "What section do you want to manage, if not listed just type it in : "; read section
-    done
-    section=${section^^}
-    echo -n "What do you wanna do with $section ? [A]dd [R]remove, default A : "; read action
-    echo -n "Is this a dated section ? [Y]es [N]o, default N : "; read day
-    echo -n "Does it contain zip files ? [Y]es [N]o, default N : "; read zipfiles
-    echo -n "Is this a movie section ? [Y]es [N]o, default N : " ; read movie
+echo "Already configured sections: "`cat $pzsbot | grep "set sections" | sed 's/REQUEST//g' | cut -d "\"" -f2`
+while [[ -z $section ]]
+do
+    echo -n "What section do you want to manage, if not listed just type it in : "; read section
+done
+section=${section^^}
+echo -n "What do you wanna do with $section ? [A]dd [R]remove, default A : "; read action
+echo -n "Is this a dated section ? [Y]es [N]o, default N : "; read day
+echo -n "Does it contain zip files ? [Y]es [N]o, default N : "; read zipfiles
+echo -n "Is this a movie section ? [Y]es [N]o, default N : " ; read movie
 
-    case $action in
-	[Rr])
-	
-	if [ `cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep "$section$" | wc -l` = "0" ]
-	then
-		echo "Section does not exist, please try again."
-		exit 2
+case $action in
+    [Rr])
+        if [ `cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep "$section$" | wc -l` = "0" ]
+        then
+	    echo "Section does not exist, please try again."
+	    exit 2
 	else
-		actionname="Removed the section from"
-		echo -n "Remove folder $section under $glroot/site ? [Y]es [N]o, default N : " ; read remove
-		case $remove in
-		    [Yy])
+	    actionname="Removed the section from"
+	    echo -n "Remove folder $section under $glroot/site ? [Y]es [N]o, default N : " ; read remove
+	    case $remove in
+	        [Yy])
 		    echo "Removing $section, please wait..."
 		    rm -rf $glroot/site/$section
 		    echo "$actionname $glroot/site"
 		    ;;
-		    *)
+		*)
 		    echo "Remember, section folder $section needs to be removed under $glroot/site"
 		    ;;
-		esac
+	    esac
 	fi
-
 	;;	
-	*)
-	if [ `cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep "$section$" | wc -l` = "1" ]
-	then
-		echo "Section already exist, please try again."
-	exit 2
+    *)
+        if [ `cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep "$section$" | wc -l` = "1" ]
+        then
+    	    echo "Section already exist, please try again."
+	    exit 2
 	else
-    		actionname="Added the section to"
-	        echo -n "Create folder $section under $glroot/site ? [Y]es [N]o, default N : " ; read create
-	        case $create in
-	    	    [Yy])
+    	    actionname="Added the section to"
+	    echo -n "Create folder $section under $glroot/site ? [Y]es [N]o, default N : " ; read create
+	    case $create in
+	        [Yy])
 		    echo "$actionname $glroot/site"
 		    mkdir -m 777 $glroot/site/$section
 		    ;;
-		    *)
+		*)
 		    echo "Remember, section folder $section needs to be created under $glroot/site"
 		    ;;
-		esac
+	    esac
 	fi
-        
-        ;;
-    esac
+	;;
+esac
 }
 
 function turautonuke
 {
-    if [ -f "$turautonuke" ]
-    then
-	    case $action in
-		[Rr])
-		sed -i "/\/site\/$section$/d" $turautonuke
-		;;
-		*)
-		case $day in
-		    [Yy])
+if [ -f "$turautonuke" ]
+then
+    case $action in
+        [Rr])
+	    sed -i "/\/site\/$section$/d" $turautonuke
+	    ;;
+	*)
+	    case $day in
+		[Yy])
 		    sed -i '/^DIRS/a '"/site/$section/\$today" $turautonuke
 		    sed -i '/^DIRS/a '"/site/$section/\$yesterday" $turautonuke
 		    ;;
-		    *)
+		*)
 		    sed -i '/^DIRS/a '"/site/$section" $turautonuke
 		    ;;
-		esac
-		;;
 	    esac
-	    echo "$actionname Tur-Autonuke"
-    else	
-	    echo "Tur-Autonuker config file not found"
-    fi
+	    ;;
+    esac
+    echo "$actionname Tur-Autonuke"
+else	
+    echo "Tur-Autonuker config file not found"
+fi
 }
 
 function turspace
 {
-    if [ -f "$turspace" ]
-    then
-	    case $action in
-		[Rr])
-		sed -i "/\/site\/$section:/d" $turspace
-		;;
-		*)
-		case $day in
-		    [Yy])
+if [ -f "$turspace" ]
+then
+    case $action in
+	[Rr])
+	    sed -i "/\/site\/$section:/d" $turspace
+	    ;;
+	*)
+	    case $day in
+	        [Yy])
 		    sed -i '/^\[INCOMING\]/a '"INC$section=$incoming:$glroot/site/$section:DATED" $turspace
 		    ;;
-		    *)
+		*)
 		    sed -i '/^\[INCOMING\]/a '"INC$section=$incoming:$glroot/site/$section:" $turspace
 		    ;;
-		esac
-		;;
 	    esac
-	    echo "$actionname Tur-Space"
-    else
-	    echo "Tur-Space config file not found"
-    fi
+	    ;;
+    esac
+    echo "$actionname Tur-Space"
+else
+    echo "Tur-Space config file not found"
+fi
 }
 
 function pzsng
 {
-    if [ -f "$pzsng/zipscript/conf/zsconfig.h" ]
-    then
-	    case $action in
-	        [Rr])
-                sed -i -e "s/\/site\/$section\/%m%d\///gI" -e "s/\/site\/$section\///gI" $pzsng/zipscript/conf/zsconfig.h
-                sed -i 's/ "$/"/g' $pzsng/zipscript/conf/zsconfig.h
-                sed -i 's/" /"/g' $pzsng/zipscript/conf/zsconfig.h
-                sed -i '/\//s/\/  \//\/ \//g' $pzsng/zipscript/conf/zsconfig.h
-	        ;;
-	        *)
-
-		case $day in
-	    	    [Yy])
+if [ -f "$pzsng/zipscript/conf/zsconfig.h" ]
+then
+    case $action in
+	[Rr])
+            sed -i -e "s/\/site\/$section\/%m%d\///gI" -e "s/\/site\/$section\///gI" $pzsng/zipscript/conf/zsconfig.h
+            sed -i 's/ "$/"/g' $pzsng/zipscript/conf/zsconfig.h
+            sed -i 's/" /"/g' $pzsng/zipscript/conf/zsconfig.h
+            sed -i '/\//s/\/  \//\/ \//g' $pzsng/zipscript/conf/zsconfig.h
+	    ;;
+	*)
+	    case $day in
+	        [Yy])
 		    sed -i "/\bcleanupdirs_dated\b/ s/\"$/ \/site\/$section\/%m%d\/\"/" $pzsng/zipscript/conf/zsconfig.h    
 		    ;;
-		    *)
+		*)
 		    sed -i "/\bcleanupdirs\b/ s/\"$/ \/site\/$section\/\"/" $pzsng/zipscript/conf/zsconfig.h
 		    ;;
-		esac
+	    esac
 
-		case $zipfiles in
-		    [Yy])
+	    case $zipfiles in
+	        [Yy])
 		    sed -i "/\bzip_dirs\b/ s/\"$/ \/site\/$section\/\"/" $pzsng/zipscript/conf/zsconfig.h
 		    ;;
-		    *)
+		*)
 		    sed -i "/\bsfv_dirs\b/ s/\"$/ \/site\/$section\/\"/" $pzsng/zipscript/conf/zsconfig.h
 		    ;;
-		esac
-		sed -i "/\bcheck_for_missing_nfo_dirs\b/ s/\"$/ \/site\/$section\/\"/" $pzsng/zipscript/conf/zsconfig.h
-		;;
 	    esac
-	    
-	    echo
-	    echo -n "Recompiling PZS-NG for changes to go into effect, please wait..."
-	    cd $pzsng && make distclean >/dev/null 2>&1 && ./configure -q && make >/dev/null 2>&1 && make install >/dev/null 2>&1 && cd $rootdir
-	    echo -e "   \e[32mDone\e[0m"
-	    echo "$actionname PZS-NG"
-    else 
-	    echo "PZS-NG config file not found"
-    fi
+	    sed -i "/\bcheck_for_missing_nfo_dirs\b/ s/\"$/ \/site\/$section\/\"/" $pzsng/zipscript/conf/zsconfig.h
+	    ;;
+    esac
+    echo
+    echo -n "Recompiling PZS-NG for changes to go into effect, please wait..."
+    cd $pzsng && make distclean >/dev/null 2>&1 && ./configure -q && make >/dev/null 2>&1 && make install >/dev/null 2>&1 && cd $rootdir
+    echo -e "   \e[32mDone\e[0m"
+    echo "$actionname PZS-NG"
+else 
+    echo "PZS-NG config file not found"
+fi
 }
 
 function pzsbot
 {
-    if [ -f "$pzsbot" ]
-    then
-	    case $action in
-		[Rr])
-		before=`cat $pzsbot | grep "set sections" | cut -d "\"" -f2`
-		after=`cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep -vw "$section$" | sort | xargs`
-		sed -i "/set sections/s/$before/$after/gI" $pzsbot
-	        sed -i "/set paths("$section")/d" $pzsbot
-		sed -i "/set chanlist("$section")/d" $pzsbot
-		;;
-	        *)
-		case $day in
-                    [Yy])
+if [ -f "$pzsbot" ]
+then
+    case $action in
+	[Rr])
+	    before=`cat $pzsbot | grep "set sections" | cut -d "\"" -f2`
+	    after=`cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep -vw "$section$" | sort | xargs`
+	    sed -i "/set sections/s/$before/$after/gI" $pzsbot
+	    sed -i "/set paths("$section")/d" $pzsbot
+	    sed -i "/set chanlist("$section")/d" $pzsbot
+	    ;;
+	*)
+	    case $day in
+                [Yy])
 	    	    sed -i '/set paths(REQUEST)/i set paths('"$section"')				"/site/'"$section"'/*/*"' $pzsbot
 		    ;;
-		    *)
+		*)
 	    	    sed -i '/set paths(REQUEST)/i set paths('"$section"')				"/site/'"$section"'/*"' $pzsbot
-    	    	    
-		    ;;
-		esac
-		sed -i '/set chanlist(REQUEST)/i set chanlist('"$section"')			"$mainchan"' $pzsbot
-		sed -i "/set sections/s/\"$/\ $section\"/g" $pzsbot
-		;;
+    	    	    ;;
 	    esac
-	    sed -i '/set sections/s/  / /g' $pzsbot
-	    sed -i '/set sections/s/ "/"/g' $pzsbot
-	    sed -i '/set sections/s/" /"/g' $pzsbot
-
-	    echo "$actionname PZS-NG bot"
-    else 
-	    echo "PZS-NG bot config file not found"
-    fi
+	    sed -i '/set chanlist(REQUEST)/i set chanlist('"$section"')			"$mainchan"' $pzsbot
+	    sed -i "/set sections/s/\"$/\ $section\"/g" $pzsbot
+	    ;;
+    esac
+    sed -i '/set sections/s/  / /g' $pzsbot
+    sed -i '/set sections/s/ "/"/g' $pzsbot
+    sed -i '/set sections/s/" /"/g' $pzsbot
+    echo "$actionname PZS-NG bot"
+else 
+    echo "PZS-NG bot config file not found"
+fi
 }
 
 function approve
 {
-    if [ -f "$approve" ]
-    then
-	    case $action in
-	        [Rr])
-	        sed -i "/$section$/d" $approve
-	        ;;
-	        *)
-	    	if [[ ${section^^} != @(0DAY|MP3|FLAC|EBOOKS) ]]
-	    	then
-	    		sed -i '/^SECTIONS="/a '"$section" $approve
-	    	else
-	    	        sed -i '/^DAYSECTIONS="/a '"$section" $approve
-	    	fi
-	        ;;
-	    esac
-	    sections=`cat $approve | sed -n '/^SECTIONS="/,/"/p' | grep -v DAYSECTIONS | grep -v NUMDAYFOLDERS | grep -v SECTIONS | grep -v "\"" | wc -l`
-	    daysections=`cat $approve | sed -n '/^DAYSECTIONS="/,/"/p' | grep -v DAYSECTIONS | grep -v NUMDAYFOLDERS | grep -v SECTIONS | grep -v "\"" | wc -l`
-	    current=`cat $approve | grep -i ^numfolders= | cut -d "\"" -f2`
-	    ncurrent=`cat $approve | grep -i ^numdayfolders= | cut -d "\"" -f2`
-	    sed -i -e "s/^NUMFOLDERS=\".*\"/NUMFOLDERS=\"$sections\"/" $approve
-	    sed -i -e "s/^NUMDAYFOLDERS=\".*\"/NUMDAYFOLDERS=\"$daysections\"/" $approve
-	    echo "$actionname Approve"
-    else
-	    echo "Approve config file not found"
-    fi
+if [ -f "$approve" ]
+then
+    case $action in
+        [Rr])
+    	    sed -i "/$section$/d" $approve
+	    ;;
+	*)
+	    if [[ ${section^^} != @(0DAY|MP3|FLAC|EBOOKS) ]]
+	    then
+	    	sed -i '/^SECTIONS="/a '"$section" $approve
+	    else
+	        sed -i '/^DAYSECTIONS="/a '"$section" $approve
+	    fi
+	    ;;
+    esac
+    sections=`cat $approve | sed -n '/^SECTIONS="/,/"/p' | grep -v DAYSECTIONS | grep -v NUMDAYFOLDERS | grep -v SECTIONS | grep -v "\"" | wc -l`
+    daysections=`cat $approve | sed -n '/^DAYSECTIONS="/,/"/p' | grep -v DAYSECTIONS | grep -v NUMDAYFOLDERS | grep -v SECTIONS | grep -v "\"" | wc -l`
+    current=`cat $approve | grep -i ^numfolders= | cut -d "\"" -f2`
+    ncurrent=`cat $approve | grep -i ^numdayfolders= | cut -d "\"" -f2`
+    sed -i -e "s/^NUMFOLDERS=\".*\"/NUMFOLDERS=\"$sections\"/" $approve
+    sed -i -e "s/^NUMDAYFOLDERS=\".*\"/NUMDAYFOLDERS=\"$daysections\"/" $approve
+    echo "$actionname Approve"
+else
+    echo "Approve config file not found"
+fi
 }
 
 function eur0pre
 {
-    if [[ -f "$addaffil" && -f "$foopre" ]]
-    then
-	    case $action in
-		[Rr])
-                before=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq`
-                after=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
-		sed -i "/allow=/s/$before/$after/g" $addaffil
-                before=`cat $foopre | grep "allow="| cut -d "=" -f2 | cut -d "'" -f1 | uniq`
-                after=`cat $foopre | grep "allow="| cut -d "=" -f2 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
-		sed -i "/allow=/s/$before/$after/g" $foopre
-		sed -i "/section.$section\./d" $foopre
-		;;
-		*)
-		sed -i "s/.allow=/.allow=$section\|/" $addaffil
-		sed -i "s/.allow=/.allow=$section\|/" $foopre
-		if [[ ${section^^} != @(0DAY|MP3|FLAC|EBOOKS) ]]
-		then
-		    echo "section.$section.name=$section" >> $foopre
-	    	    echo "section.$section.dir=/site/$section" >> $foopre
-		    echo "section.$section.gl_credit_section=0" >> $foopre
-		    echo "section.$section.gl_stat_section=0" >> $foopre
-		else
-		    echo "section.$section.name=$section" >> $foopre
-	    	    echo "section.$section.dir=/site/$section/MMDD" >> $foopre
-		    echo "section.$section.gl_credit_section=0" >> $foopre
-		    echo "section.$section.gl_stat_section=0" >> $foopre		    
-		fi
-		;;
-	    esac
-	    sed -i "/allow=/s/=|/=/" $addaffil
-	    sed -i "/allow=/s/||/|/" $addaffil
-	    sed -i "/allow=/s/|'/'/" $addaffil
-	    sed -i "/allow=/s/=|/=/" $foopre
-	    sed -i "/allow=/s/||/|/" $foopre
-	    sed -i "/allow=/s/|$//" $foopre
-	    
-	    echo "$actionname addaffil + foo-pre"
-    else
-	    echo "Either addaffil or foopre config file not found"
-    fi
+if [[ -f "$addaffil" && -f "$foopre" ]]
+then
+    case $action in
+	[Rr])
+            before=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq`
+            after=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
+	    sed -i "/allow=/s/$before/$after/g" $addaffil
+            before=`cat $foopre | grep "allow="| cut -d "=" -f2 | cut -d "'" -f1 | uniq`
+            after=`cat $foopre | grep "allow="| cut -d "=" -f2 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
+	    sed -i "/allow=/s/$before/$after/g" $foopre
+	    sed -i "/section.$section\./d" $foopre
+	    ;;
+	*)
+	    sed -i "s/.allow=/.allow=$section\|/" $addaffil
+	    sed -i "s/.allow=/.allow=$section\|/" $foopre
+	    if [[ ${section^^} != @(0DAY|MP3|FLAC|EBOOKS) ]]
+	    then
+	        echo "section.$section.name=$section" >> $foopre
+		echo "section.$section.dir=/site/$section" >> $foopre
+		echo "section.$section.gl_credit_section=0" >> $foopre
+		echo "section.$section.gl_stat_section=0" >> $foopre
+	    else
+	        echo "section.$section.name=$section" >> $foopre
+	    	echo "section.$section.dir=/site/$section/MMDD" >> $foopre
+		echo "section.$section.gl_credit_section=0" >> $foopre
+		echo "section.$section.gl_stat_section=0" >> $foopre		    
+	    fi
+	    ;;
+    esac
+    sed -i "/allow=/s/=|/=/" $addaffil
+    sed -i "/allow=/s/||/|/" $addaffil
+    sed -i "/allow=/s/|'/'/" $addaffil
+    sed -i "/allow=/s/=|/=/" $foopre
+    sed -i "/allow=/s/||/|/" $foopre
+    sed -i "/allow=/s/|$//" $foopre
+    echo "$actionname addaffil + foo-pre"
+else
+    echo "Either addaffil or foopre config file not found"
+fi
 
 }
 
 function turlastul
 {
-    if [ -f "$turlastul" ]
-    then
-	    case $action in
-		[Rr])
-                before=`cat $turlastul | grep "sections="| cut -d "=" -f2 | tr -d "\""`
-                after=`cat $turlastul | grep "sections="| cut -d "=" -f2  | tr -d "\"" | sed 's/ /\n/g' | sort | grep -vw "$section$" | xargs`
-                sed -i "/sections=/s/$before/$after/g" $turlastul
-
-		;;
-		*)
-		sed -i "s/^sections=\"/sections=\"$section /" $turlastul
-
-		;;
-	    esac
-	    sed -i '/^sections=/s/  / /g' $turlastul
-	    sed -i '/^sections=/s/" /"/g' $turlastul
-	    sed -i '/^sections=/s/ "/"/g' $turlastul
-
-	    echo "$actionname Tur-Lastul"
-    else
-	    echo "Tur-Lastul config file not found"
-    fi
+if [ -f "$turlastul" ]
+then
+    case $action in
+	[Rr])
+            before=`cat $turlastul | grep "sections="| cut -d "=" -f2 | tr -d "\""`
+            after=`cat $turlastul | grep "sections="| cut -d "=" -f2  | tr -d "\"" | sed 's/ /\n/g' | sort | grep -vw "$section$" | xargs`
+            sed -i "/sections=/s/$before/$after/g" $turlastul
+	    ;;
+	*)
+	    sed -i "s/^sections=\"/sections=\"$section /" $turlastul
+	    ;;
+    esac
+    sed -i '/^sections=/s/  / /g' $turlastul
+    sed -i '/^sections=/s/" /"/g' $turlastul
+    sed -i '/^sections=/s/ "/"/g' $turlastul
+    echo "$actionname Tur-Lastul"
+else
+    echo "Tur-Lastul config file not found"
+fi
 }
 
 function psxcimdb
 {
-    if [ -f "$psxcimdb" ]
-    then
-	    case $movie in
-		[Yy])
-
-		case $action in
-		    [Rr])
+if [ -f "$psxcimdb" ]
+then
+    case $movie in
+	[Yy])
+	    case $action in
+	        [Rr])
 		    sed -i "/^SCANDIRS/ s/\/site\/\b$section\b//" $psxcimdb
 		    ;;
-		    *)
+		*)
 	    	    sed -i "s/^SCANDIRS=\"/SCANDIRS=\"\/site\/$section /" $psxcimdb
 		    ;;
-		esac
-		sed -i '/^SCANDIRS=/s/  / /g' $psxcimdb
-		sed -i '/^SCANDIRS=/s/" /"/g' $psxcimdb
-		sed -i '/^SCANDIRS=/s/ "/"/g' $psxcimdb
-
-		echo "$actionname PSXC-IMDB"
-		;;
 	    esac
-    else
-	    echo "PSXC-IMDB config file not found"
-    fi
+	    sed -i '/^SCANDIRS=/s/  / /g' $psxcimdb
+	    sed -i '/^SCANDIRS=/s/" /"/g' $psxcimdb
+	    sed -i '/^SCANDIRS=/s/ "/"/g' $psxcimdb
+	    echo "$actionname PSXC-IMDB"
+	    ;;
+    esac
+else
+    echo "PSXC-IMDB config file not found"
+fi
 }
 
 
 case `ls $glroot/site` in
     0DAY*|FLAC*|MP3*|EBOOK*)
-    echo
-    ;;
+	echo
+	;;
     *)
-    sed -i /dated.sh/d /var/spool/cron/crontabs/root
-    ;;
+	sed -i /dated.sh/d /var/spool/cron/crontabs/root
+	;;
 esac
 
 start
