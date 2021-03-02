@@ -13,6 +13,8 @@
 - Replaced mkv_check with rud-filedone because of the added support of mp4
 - Updated TVMaze.tcl to pass on information to the new script tvmaze.sh that enable the creation of .imdb and tag file with TVMaze info for TV releases
 - Added TVMaze link for show and episode in tvmaze.sh
+- Cosmetic changes for tvmaze.sh and tvmaze-rescan.sh and change from premiered to show type in tag file
+- In tvmaze-rescan.sh you can now scan up to 3 dirs in depth and I've also included a check to only scan TV releases that match set regex. I've also included a check to prevent double instances of script.
 
 ### Fixes
 

@@ -1,12 +1,13 @@
 #!/bin/bash
-VER=1.1
+VER=1.2
 #--[ Info ]-----------------------------------------------------#
 #
 # This script enables the creation of .imdb and tag file with
 # TVMaze info. Copy this to /glftpd/bin and chmod 755.
 #
 # Changelog
-# 2021-02-28 v1.1 Added TVMaze link for show and episode. Also ensured empty values are set as NA.
+# 2021-03-02 v1.2 Cosmetic changes in code and change from premiered to show type in tag file
+# 2021-02-28 v1.1 Added TVMaze link for show and episode
 # 2021-02-26 v1.0 Orginal creator Teqno
 #
 #--[ Settings ]-------------------------------------------------#
@@ -25,10 +26,10 @@ SHOW_LANGUAGE=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' <<<"$5"`
 SHOW_NETWORK=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' <<<"$6"`
 SHOW_STATUS=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' <<<"$7"`
 SHOW_TYPE=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' <<<"$8"`
-EP_AIR_DATE=`sed -e 's/^"//' -e 's/"$//' <<<"$9"`
+EP_AIR_DATE=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g' <<<"$9"`
 SHOW_RATING=`sed -e 's/^"//' -e 's/"$//' <<<"${10}"`
 SHOW_IMDB=`sed -e 's/^"//' -e 's/"$//' <<<"${11}"`
-SHOW_SUMMARY=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' -e 's|<.*[b|i|p]>||' <<<"${12}"`
+SHOW_SUMMARY=`sed -e 's/^"//' -e 's/"$//' -e 's|_| |g' -e 's|<*.[b|i|p]>||g' <<<"${12}"`
 SHOW_PREMIERED=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${13}"`
 SHOW_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${14}"`
 EP_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${15}"`
@@ -46,6 +47,7 @@ EP_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${15}"`
 [ "$SHOW_PREMIERED" == "null" -o -z "$SHOW_PREMIERED" ] && SHOW_PREMIERED="NA"
 [ "$SHOW_URL" == "null" -o -z "$SHOW_URL" ] && SHOW_URL="NA"
 [ "$EP_URL" == "null" -o -z "$EP_URL" ] && EP_URL="NA"
+
 
 if [ "$debug" -eq 1 ]
 then
