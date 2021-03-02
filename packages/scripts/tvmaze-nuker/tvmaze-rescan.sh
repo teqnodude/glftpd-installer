@@ -95,14 +95,14 @@ function rescan {
 	    EPISODE=`echo $rls_name | egrep -o "E[0-9][0-9]" | tr -d 'E'`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
 	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"' | sed 's/-.*//g'`
+	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	if [ `echo $rls_name | egrep -o "[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]"` ]
 	then
 	    DATE=`echo $rls_name | egrep -o "[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]" | tr '.' '-'`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodesbydate?date=$DATE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
 	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"' | sed 's/-.*//g'`
+	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	if [ `echo $rls_name | egrep -o "Part.[0-9]"` ]
 	then
@@ -110,7 +110,7 @@ function rescan {
 	    EPISODE=`echo $rls_name | grep -o "Part.[0-9]" | grep -o "[0-9]"`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
 	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"' | sed 's/-.*//g'`
+	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	[ "$SHOW_GENRES" == "null" -o -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
 	[ "$SHOW_COUNTRY" == "null" -o -z "$SHOW_COUNTRY" ] && SHOW_COUNTRY="NA"
