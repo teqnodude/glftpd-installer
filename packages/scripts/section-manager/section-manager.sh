@@ -345,15 +345,7 @@ else
 fi
 }
 
-
-case `ls $glroot/site` in
-    0DAY*|FLAC*|MP3*|EBOOK*)
-	echo
-	;;
-    *)
-	sed -i /dated.sh/d /var/spool/cron/crontabs/root
-	;;
-esac
+[ ! `ls /glftpd/site | egrep -i "0DAY|FLAC|MP3|EBOOK"` ] && sed -i /dated.sh/d /var/spool/cron/crontabs/root
 
 start
 pzsng
