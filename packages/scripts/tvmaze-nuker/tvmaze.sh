@@ -1,11 +1,12 @@
 #!/bin/bash
-VER=1.2
+VER=1.3
 #--[ Info ]-----------------------------------------------------#
 #
 # This script enables the creation of .imdb and tag file with
 # TVMaze info. Copy this to /glftpd/bin and chmod 755.
 #
 # Changelog
+# 2021-03-03 v1.3 Added option for maximum width for plot summary
 # 2021-03-02 v1.2 Cosmetic changes in code and change from premiered to show type in tag file
 # 2021-02-28 v1.1 Added TVMaze link for show and episode
 # 2021-02-26 v1.0 Orginal creator Teqno
@@ -93,7 +94,7 @@ else
     echo "Premiered....: $SHOW_PREMIERED" >> $glroot$RLS_NAME/.imdb
     echo "Airdate......: $SHOW_EP_AIR_DATE" >> $glroot$RLS_NAME/.imdb
     echo "-" >> $glroot$RLS_NAME/.imdb
-    echo "Plot.........: $SHOW_SUMMARY" >> $glroot$RLS_NAME/.imdb
+    echo "Plot.........: $SHOW_SUMMARY" | fold -s -w $width >> $glroot$RLS_NAME/.imdb
     echo "" >> $glroot$RLS_NAME/.imdb
     echo "============================ TVMAZE INFO v$VER ================================" >> $glroot$RLS_NAME/.imdb
     SHOW_GENRES=`echo $SHOW_GENRES | sed -e 's/ /_/g' -e 's|/|-|g'`

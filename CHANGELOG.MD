@@ -15,6 +15,9 @@
 - Added TVMaze link for show and episode in tvmaze.sh
 - Cosmetic changes for tvmaze.sh and tvmaze-rescan.sh and change from premiered to show type in tag file
 - In tvmaze-rescan.sh you can now scan up to 3 dirs in depth and I've also included a check to only scan TV releases that match set regex. I've also included a check to prevent double instances of script.
+- Added the ability to nuke shows based on status in tvmaze-nuker.sh
+- Added the option for width for plot summary in tvmaze-rescan.sh and tvmaze.sh
+- Added the option to skip releases that has a .imdb file in tvmaze-rescan.sh to increase speed when rescanning huge archives
 
 ### Fixes
 

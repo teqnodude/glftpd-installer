@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.2
+VER=1.3
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -9,10 +9,12 @@ VER=1.2
 # creates an .imdb file and tag file in each release with it.
 # 
 # Changelog
+# 2021-03-03 : v1.3 Added option for maximum width for plot summary
+#                   and added skip option for releases that already have a .imdb file
 # 2021-03-02 : v1.2 Now you can scan up to 3 dirs in depth and
-# I've also included a check to only scan TV releases that match 
-# set regex. Made some cosmetic changes too and included a check
-# to prevent double instances of script.
+#                   I've also included a check to only scan TV releases that match 
+#                   set regex. Made some cosmetic changes too and included a check
+#                   to prevent double instances of script.
 # 2021-03-01 : v1.1 Fixed releases with year and country code
 # 2021-02-28 : v1.0 Teqno original creator
 #
@@ -47,6 +49,12 @@ exclude="no-nfo|incomplete|NUKED"
 # Do you want to preserve date & time on scanned releases
 preserve=1
 
+# Maximum width for text written to .imdb
+width=77
+
+# Do you want to skip releases that already got a .imdb file
+skip=0
+
 #--[ Script Start ]---------------------------------------------#
 
 if [ -e "$glroot$tmp/tvmaze-rescan.lock" ]
@@ -72,7 +80,11 @@ function rescan {
 	if [ -z `echo $rls_name | egrep -o ".*.S[0-9][0-9]E[0-9][0-9].|.*.E[0-9][0-9].|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].|.*.Part.[0-9]."` ]
 	then
 	    continue
-	fi 
+	fi
+	if [ "$skip" -eq 1 ] && [ -e "$1/$rls_name/.imdb" ]
+	then
+	    continue
+	fi
 	SHOW=`echo $rls_name | egrep -o ".*.S[0-9][0-9]E[0-9][0-9].|.*.E[0-9][0-9].|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].|.*.Part.[0-9]." | sed -e 's|.S[0-9][0-9].*||' -e 's|.Part.*||' -e 's|[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].*||' -e 's|.[0-9][0-9][0-9][0-9].*||' -e 's|.AU.*||' -e 's|.CA.*||' -e 's|.NZ.*||' -e 's|.UK.*||' -e 's|.US.*||' | tr '.' ' '`
 	lynx --dump "https://api.tvmaze.com/singlesearch/shows?q=$SHOW" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
 	SHOW_ID=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'id":' | head -1 | cut -d':' -f2 | tr -d '"'`
@@ -174,7 +186,7 @@ function rescan {
 	    echo "Premiered....: $SHOW_PREMIERED" >> $1/$rls_name/.imdb
 	    echo "Airdate......: $SHOW_EP_AIR_DATE" >> $1/$rls_name/.imdb
 	    echo "-" >> $1/$rls_name/.imdb
-	    echo "Plot.........: $SHOW_SUMMARY" >> $1/$rls_name/.imdb
+	    echo "Plot.........: $SHOW_SUMMARY" | fold -s -w $width >> $1/$rls_name/.imdb
 	    echo "" >> $1/$rls_name/.imdb
 	    echo "============================ TVMAZE INFO v`cat $glroot/bin/tvmaze.sh | grep 'VER=' | cut -d'=' -f2` ================================" >> $1/$rls_name/.imdb
 	    find $1/$rls_name/ -iname "*tvmaze*" -exec rm {} +

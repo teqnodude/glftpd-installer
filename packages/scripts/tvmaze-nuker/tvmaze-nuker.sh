@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=2.7
+VER=2.8
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -14,6 +14,7 @@ VER=2.7
 # 2021-01-05 v2.5 Fixed check for previous blocks
 # 2021-01-08 v2.6 Automatic sorting of adaptive blocklist
 # 2021-01-26 v2.7 Fixed incorrect nuke when language is null
+# 2021-03-03 v2.8 Added the ability to nuke shows based on status 
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
@@ -73,6 +74,11 @@ NUKE_SECTION_RATINGS="
 /site/TV-HD:5
 "
 
+# Show Status: Running Ended To_Be_Determined In_Development
+NUKE_SECTION_STATUS="
+/site/TV-HD:(Ended)
+"
+
 # 1 = Enable / 0 = Disable
 NUKE_SHOW_TYPE=0
 NUKE_SECTION_TYPE=0
@@ -82,6 +88,7 @@ NUKE_ORIGIN_COUNTRY=0
 NUKE_NETWORK=0
 NUKE_SECTION_LANGUAGE=0
 NUKE_SECTION_RATING=0
+NUKE_SECTION_STATS=0
 NUKE_ADAPTIVE=0
 
 # Space delimited list of TV shows to never nuke, use releasename and not show name ie use The.Flash and NOT The Flash
@@ -394,6 +401,31 @@ then
             	fi
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "Rating $SHOW_RATING is below the limit of $limit"
                 LogMsg "Nuked release: {$RLS_NAME} because its rating $SHOW_RATING is below the limit of $limit for section $section."
+                exit 0
+            fi
+        fi
+    done
+fi
+
+if [ "$NUKE_SECTION_STATS" -eq 1 ]
+then
+    for rawdata in $NUKE_SECTION_STATUS
+    do
+        section="`echo "$rawdata" | cut -d ':' -f1`"
+        denied="`echo "$rawdata" | cut -d ':' -f2`"
+        if [ "`echo "$RLS_NAME" | egrep -i "$section/"`" ]
+        then
+            if [ ! "`echo $SHOW_STATUS | egrep -i $denied`" ]
+            then
+		[ "$SHOW_STATUS" == "null" ] && exit 0
+    		if [ "$NUKE_ADAPTIVE" -eq 1 ]
+            	then
+            	    exclude=`echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*"`
+            	    block=`echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//"`
+		    [ ! `cat $BLOCKFILE | grep "$section" | grep "$block"` ] && echo "$section:^($block)[._-]" >> $BLOCKFILE && sort -o $BLOCKFILE $BLOCKFILE
+            	fi
+                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "The status of show is $SHOW_STATUS which is not allowed"
+                LogMsg "Nuked release: {$RLS_NAME} because its status is $SHOW_STATUS which is not allowed in section $section."
                 exit 0
             fi
         fi
