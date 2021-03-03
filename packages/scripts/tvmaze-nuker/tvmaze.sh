@@ -15,6 +15,8 @@ VER=1.3
 
 glroot=/glftpd
 debug=0
+# Maximum width for text written to .imdb
+width=77
 
 #--[ Script Start ]---------------------------------------------#
 
