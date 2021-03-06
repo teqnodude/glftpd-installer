@@ -206,7 +206,7 @@ then
         $glroot/bin/sed -i "/\/site\/$section:^(/ s/|)/)/gI" $predircheck
         $glroot/bin/sed -i "/\/site\/$section:^(/ s/(|/(/gI" $predircheck
         $glroot/bin/sed -i "/\/site\/$section:^(/ s/||/|/gI" $predircheck
-	$glroot/bin/sed -i "/()/d" $predircheck
+	$glroot/bin/sed -i "/\^()/d" $predircheck
 	sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\^\("
     else
 	echo "The block${COLOR1} $regexpc ${COLRST}was not found in blocklist"
@@ -225,7 +225,7 @@ then
         $glroot/bin/sed -i "/\/site\/$section:\[._-/ s/|)/)/gI" $predircheck
         $glroot/bin/sed -i "/\/site\/$section:\[._-/ s/(|/(/gI" $predircheck
         $glroot/bin/sed -i "/\/site\/$section:\[._-/ s/||/|/gI" $predircheck
-	$glroot/bin/sed -i "/()/d" $predircheck
+	$glroot/bin/sed -i "/\[._-\]()\[._-\]/d" $predircheck
 	sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[._-\]"
     else
 	echo "The block${COLOR1} $regexpc ${COLRST}was not found in blocklist"
@@ -244,7 +244,7 @@ then
         $glroot/bin/sed -i "/\/site\/$section:\[-/ s/|)/)/gI" $predircheck
         $glroot/bin/sed -i "/\/site\/$section:\[-/ s/(|/(/gI" $predircheck
         $glroot/bin/sed -i "/\/site\/$section:\[-/ s/||/|/gI" $predircheck
-	$glroot/bin/sed -i "/()/d" $predircheck
+	$glroot/bin/sed -i "/\[-\]()\[-\]/d" $predircheck
 	sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]"
     else
 	echo "The block${COLOR1} $regexpc ${COLRST}was not found in blocklist"
