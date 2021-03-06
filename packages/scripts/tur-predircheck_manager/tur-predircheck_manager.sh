@@ -58,15 +58,15 @@ then
     '$irctrigger' list sections - To list current blocklist for sections
     '$irctrigger' list groups - To list current blocklist for groups
     '$irctrigger' search <release/group> - To search for a specific release / group under DENYGROUPS and DENYDIRS
-    '$irctrigger' add release <sectionname> <releasename> - To block based on releasename
-    '$irctrigger' del release <sectionname> <releasename> - To unblock based on releasename
+    '$irctrigger' add release <sectionname> <show/movie> - To block based on showname/moviename
+    '$irctrigger' del release <sectionname> <show/movie> - To unblock based on showname/moviename
     '$irctrigger' add word <sectionname> <word> - To block based on a word in releasename
     '$irctrigger' del word <sectionname> <word> - To unblock based on a word in releasename
     '$irctrigger' add section group <sectionname> <groupname> - To block based on groupname
     '$irctrigger' del section group <sectionname> <groupname> - To unblock based on groupname
     '$irctrigger' del section rows <sectionname> - To delete all rows of a section
-    '$irctrigger' add group <groupname> - To block group site wide
-    '$irctrigger' del group <groupname> - To unblock group site wide
+    '$irctrigger' add group <groupname> - To block group sitewide
+    '$irctrigger' del group <groupname> - To unblock group sitewide
     '
 fi 
 
