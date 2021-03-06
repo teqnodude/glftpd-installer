@@ -118,7 +118,7 @@ then
 	    $glroot/bin/sed -i "/\/site\/$section:^(/a /site/$section:^($regexp)[._-]" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc"
 	else
-	    startword=`cat $predircheck | grep "$section:^(" | head -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
+	    startword=`grep "$section:^(" $predircheck | tail -2 | head -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
 	    $glroot/bin/sed -i "/\/site\/$section:^(/ s/$startword/$regexp|$startword/" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc"
 	fi
@@ -152,7 +152,7 @@ then
 	    $glroot/bin/sed -i "/\/site\/$section:\[\./a /site/$section:[._-]($regexp)[._-]" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[\." | grep --color=always -i "$regexpc"
 	else
-	    startword=`cat $predircheck | grep "$section:\[._-]" | tail -1 | sed -e 's/\[._-](//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
+	    startword=`grep "$section:\[._-]" $predircheck | tail -2 | head -1 | sed -e 's/\[._-](//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
 	    $glroot/bin/sed -i "/\/site\/$section:\[\./ s/$startword/$regexp|$startword/" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[\." | grep --color=always -i "$regexpc"
 	fi
@@ -186,7 +186,7 @@ then
             $glroot/bin/sed -i "/\/site\/$section:\[\-/a /site/$section:[-]($regexp)$" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]" | grep --color=always -i "$regexpc"
         else
-	    startword=`cat $predircheck | grep "$section:\[-" | tail -1 | sed 's/\[-](//' | tr -d ')$' | cut -d':' -f2 | cut -d'|' -f1`
+	    startword=`grep "$section:\[-" $predircheck | tail -2 | sed 's/\[-](//' | tr -d ')$' | cut -d':' -f2 | cut -d'|' -f1`
             $glroot/bin/sed -i "/\/site\/$section:\[\-/ s/$startword/$regexp|$startword/" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]" | grep --color=always -i "$regexpc"
         fi
@@ -267,20 +267,20 @@ fi
 if [[ "$ARGS" = "add group"* ]]
 then
     group=`echo $ARGS | awk -F " " '{print $3}'`
-    if [ "`cat $predircheck | grep "^DENYGROUPS" | grep "$group"`" ]
+    if [ "`grep "^DENYGROUPS" $predircheck | grep "$group"`" ]
     then
         echo "Group${COLOR1} $group ${COLRST}already added"
         exit 0
     else
         echo "Blocking group ${COLOR1}$group"
-	if [ "`cat $predircheck | grep '^DENYGROUPS=""' | wc -l`" -eq 1 ]
+	if [ "`grep '^DENYGROUPS=""' $predircheck | wc -l`" -eq 1 ]
 	then
 	    $glroot/bin/sed -i "/^DENYGROUPS=/ s/\"$/\/site:[-]($group)$\"/" $predircheck
-	    cat $predircheck | grep "^DENYGROUPS" | grep --color=always "$group"
+	    grep "^DENYGROUPS" $predircheck | grep --color=always "$group"
 	else
-            startword=`cat $predircheck | grep "^DENYGROUPS" | tail -1 | sed 's/\[-](//' | tr -d ')$' | cut -d ':' -f2 | cut -d'|' -f1 | tr -d '"'`
+            startword=`grep "^DENYGROUPS" $predircheck | sed 's/\[-](//' | tr -d ')$' | cut -d ':' -f2 | cut -d'|' -f1 | tr -d '"'`
             $glroot/bin/sed -i "/DENYGROUPS/ s/$startword/$group|$startword/" $predircheck
-	    cat $predircheck | grep "^DENYGROUPS" | grep --color=always "$group"
+	    grep "^DENYGROUPS" $predircheck | grep --color=always "$group"
 	fi
     fi
 fi
@@ -288,7 +288,7 @@ fi
 if [[ "$ARGS" = "del group"* ]]
 then
     group=`echo $ARGS | awk -F " " '{print $3}'`
-    if [ "`cat $predircheck | grep "^DENYGROUPS" | grep $group`" ]
+    if [ "`grep "^DENYGROUPS" $predircheck | grep $group`" ]
     then
         echo "Unblocking group${COLOR1} $group"
         $glroot/bin/sed -i "/\/site:/ s/\b$group\b//" $predircheck
@@ -296,7 +296,7 @@ then
         $glroot/bin/sed -i "/\/site:/ s/(|/(/gI" $predircheck
         $glroot/bin/sed -i "/\/site:/ s/||/|/gI" $predircheck
 	$glroot/bin/sed -i "/\/site:/ s/\/site:\[-]()\\$//" $predircheck
-	cat $predircheck | grep "^DENYGROUPS"
+	grep "^DENYGROUPS" $predircheck
     else
         echo "Group${COLOR1} $group ${COLRST}not found"
     fi
