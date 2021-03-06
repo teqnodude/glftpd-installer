@@ -19,6 +19,7 @@
 - Added the option for width for plot summary in tvmaze-rescan.sh and tvmaze.sh
 - Added the option to skip releases that has a .imdb file in tvmaze-rescan.sh to increase speed when rescanning huge archives
 - Made some major changes in tur-predircheck_manager that makes it more simpler to add / del various blocks. I've also added the feature of determining the max length of lines under DENYDIRS
+- Now when you add / remove blocks in tur-predircheck_manager you'll see the effects right after instead of having to manually check via !block
 
 ### Fixes
 

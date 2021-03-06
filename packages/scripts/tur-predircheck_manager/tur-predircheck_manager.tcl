@@ -1,5 +1,5 @@
 #									     #
-# Tur-Predircheck_Manager.tcl 1.7 by Teqno                                   #
+# Tur-Predircheck_Manager.tcl 1.71 by Teqno                                  #
 # Change binds below to whatever you want the trigger the script with.       #
 # pub is for public chan command & msg is for private msg.                   #
 #                                                                            #
@@ -45,4 +45,4 @@ proc pub:banned {nick output binary chan text} {
 
 }
 
-putlog "Tur-Predircheck_Manager.tcl 1.7 by Teqno loaded"
+putlog "Tur-Predircheck_Manager.tcl 1.71 by Teqno loaded"
