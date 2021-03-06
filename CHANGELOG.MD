@@ -18,6 +18,7 @@
 - Added the ability to nuke shows based on status in tvmaze-nuker.sh
 - Added the option for width for plot summary in tvmaze-rescan.sh and tvmaze.sh
 - Added the option to skip releases that has a .imdb file in tvmaze-rescan.sh to increase speed when rescanning huge archives
+- Made some major changes in tur-predircheck_manager that makes it more simpler to add / del various blocks. I've also added the feature of determining the max length of lines under DENYDIRS
 
 ### Fixes
 

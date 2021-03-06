@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.63
+VER=1.7
 #--[ Intro ]----------------------------------------------------#
 #                                                       	#
 # Tur-predircheck_manager. A script for lazy people to block  	#
@@ -43,6 +43,9 @@ glroot="/glftpd"
 predircheck="$glroot/bin/tur-predircheck.sh"
 irctrigger="!block"
 
+# How long should the block line under DENYDIRS be allowed to be before making a new line
+length=210
+
 #--[ Script start ]---------------------------------------------#
 
 ARGS=`echo "$@" | cut -d ' ' -f2- | sed 's:[]\[\^\$\.\*\/]:\\\\&:g'`
@@ -52,100 +55,20 @@ COLRST=
 if [ "$ARGS" = "" ]
 then
     echo '
-    '$irctrigger' help - To view help about regexp and blocking / unblocking releases / groups
     '$irctrigger' list sections - To list current blocklist for sections
     '$irctrigger' list groups - To list current blocklist for groups
     '$irctrigger' search <release/group> - To search for a specific release / group under DENYGROUPS and DENYDIRS
-    '$irctrigger' add release <sectionname> <regexp> - To block a release in existing section on first line that matches
-    '$irctrigger' edit section <sectionname> startword <regexp> - To edit and add to existing block of words in existing section on first line that matches
-    '$irctrigger' edit section <sectionname> startword - To edit and remove existing block of word in existing section on first line that matches
-    '$irctrigger' add newline release <sectionname> <regexp> - To block a release in an existing section on a new line
-    '$irctrigger' add newsection <oldsectionname> <newsectionname> <regexp> - To block a release in a new section on a new line with existing section as reference point
-    '$irctrigger' del release <sectionname> <regexp> - To unblock a release in specified section
-    '$irctrigger' del section <sectionname> - To delete all rows of an old section
+    '$irctrigger' add release <sectionname> <releasename> - To block based on releasename
+    '$irctrigger' del release <sectionname> <releasename> - To unblock based on releasename
+    '$irctrigger' add word <sectionname> <word> - To block based on a word in releasename
+    '$irctrigger' del word <sectionname> <word> - To unblock based on a word in releasename
+    '$irctrigger' add section group <sectionname> <groupname> - To block based on groupname
+    '$irctrigger' del section group <sectionname> <groupname> - To unblock based on groupname
+    '$irctrigger' del section rows <sectionname> - To delete all rows of a section
     '$irctrigger' add group <groupname> - To block group site wide
     '$irctrigger' del group <groupname> - To unblock group site wide
     '
 fi 
-
-if [ "$ARGS" = "help" ]
-then
-    echo '
-    This script looks after the first line of sections that       
-    matches when blocking so if you have specified the same       
-    section numerous times to give a better view in shell then    
-    you should be aware of this. This is necessary or the script  
-    would simply insert the block on all matching rows which      
-    causes redundancy.
-		
-    ---------------------------------------
-										
-    Blocking / Unblocking releases
-    	
-    It is considered good practice to use \. or \- when blocking
-    releases instead of just the word to ensure that block occurs correctly.
-		
-    Example: '$irctrigger' add release TV-HD \.MULTi\-
-    Result: /site/TV-HD:\.MULTi\-
-		
-    Example: /site/TV-HD:\.MULTi\-
-    Result: '$irctrigger' del release TV-HD \.MULTI\-
-		
-    When blocking releases that is starting or ending with something
-    then you do this. ^ = Starting - $ = Ending
-		
-    Example: '$irctrigger' add release TV-HD ^Start.Test\.
-    Result: /site/TV-HD:^Start.Test\.
-		
-    Example: '$irctrigger' add release TV-HD Test.End$
-    Result: /site/TV-HD:Test.End$
-		
-    Example: /site/TV-HD:^Start.Test
-    Result: '$irctrigger' del TV-HD ^Start.Test
-		
-    Example: /site/TV-HD:Start.End$
-    Result: '$irctrigger' del TV-HD Start.End$
-
-    When blocking words
-
-    Example: '$irctrigger' add release 0DAY [._-](word)[._-]
-    Result: /site/0DAY:[._-](word)[._-]
-
-    Adding wordblock to existing block
-
-    Example: /site/0DAY:[._-](word)[._-]
-    Do: '$irctrigger' edit section 0DAY word newword
-    Result: /site/0DAY:[._-](newword|word)[._-]
-
-    Removing wordblock from existing block
-
-    Example: /site/0DAY:[._-](newword|word)[._-]
-    Do: '$irctrigger' edit section 0DAY newword
-    Result: /site/0DAY:[._-](word)[._-]
-		
-    When blocking/unblocking a group for a specific section you do this.
-		
-    Example: '$irctrigger' add release TV-HD \-GROUPNAME$
-    Result: /site/TV-HD:\-GROUPNAME$
-		
-    Example: /site/TV-HD:\-GROUPNAME$
-    Result: '$irctrigger' del release TV-HD \-GROUPNAME$
-				
-    ---------------------------------------
-										
-    Blocking / Unblocking groups
-										
-    When blocking a group you do this.
-										
-    Example: '$irctrigger' add group GROUPNAME
-    Result: DENYGROUPS="/site:\-GROUPNAME$
-										
-    When unblocking a group you do this
-										
-    Example: DENYGROUPS="/site:\-GROUPNAME$
-    Result: '$irctrigger' del group GROUPNAME
-    '
-fi
 
 if [ "$ARGS" = "list sections" ]
 then
@@ -173,91 +96,159 @@ then
     section=`echo $ARGS | awk -F " " '{print $3}'`
     regexp=`echo $ARGS | awk -F " " '{print $4}'`
     regexpc=`echo $INPUT | awk -F " " '{print $4}'`
-    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc" | wc -l`" = 1 ]
+    if [ -z "$section" ] || [ -z "$regexp" ]
+    then
+	 echo "You need to specify section and release"
+	exit 0
+    fi
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
     then
         echo "The block${COLOR1} $regexpc ${COLRST}was found in blocklist, block not added."
         sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc"
         exit 0
     fi
-    echo "Blocking $regexpc in section $section"
-    $glroot/bin/sed -i "0,/\/site\/$section:/s/$section:/$section:$regexp|/" $predircheck
-    $glroot/bin/sed -i "/\/site\/$section:/ s/|$//gI" $predircheck
-    $glroot/bin/sed -i "/\/site\/$section:/ s/||/|/gI" $predircheck
+    echo "Blocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
+    if [ ! "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^("`" ]
+    then
+	$glroot/bin/sed -i "/INCOMPLETE/a /site/$section:^($regexp)[._-]" $predircheck
+    else
+	if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | head -1 | wc -c`" -ge "$length" ]
+	then
+	    $glroot/bin/sed -i "/\/site\/$section:^(/a /site/$section:^($regexp)[._-]" $predircheck
+	else
+	    startword=`cat $predircheck | grep "$section:^(" | head -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
+	    $glroot/bin/sed -i "/\/site\/$section:^(/ s/$startword/$regexp|$startword/" $predircheck
+	fi
+    fi
 fi
 
-if [[ "$ARGS" = "add newline release"* ]]
+if [[ "$ARGS" = "add word"* ]]
+then
+    section=`echo $ARGS | awk -F " " '{print $3}'`
+    regexp=`echo $ARGS | awk -F " " '{print $4}'`
+    regexpc=`echo $INPUT | awk -F " " '{print $4}'`
+    if [ -z "$section" ] || [ -z "$regexp" ]
+    then
+	echo "You need to specify section and word"
+	exit 0
+    fi
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[\." | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
+    then
+        echo "The block${COLOR1} $regexpc ${COLRST}was found in blocklist, block not added."
+        sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc"
+        exit 0
+    fi
+    echo "Blocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
+    if [ ! "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[\."`" ]
+    then
+	$glroot/bin/sed -i "/INCOMPLETE/a /site/$section:[._-]($regexp)[._-]" $predircheck
+    else
+	if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[\." | tail -1 | wc -c`" -ge "$length" ]
+	then
+	    $glroot/bin/sed -i "/\/site\/$section:\[\./a /site/$section:[._-]($regexp)[._-]" $predircheck
+	else
+	    startword=`cat $predircheck | grep "$section:\[._-]" | tail -1 | sed -e 's/\[._-](//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
+	    $glroot/bin/sed -i "/\/site\/$section:\[\./ s/$startword/$regexp|$startword/" $predircheck
+	fi
+    fi
+fi
+
+if [[ "$ARGS" = "add section group"* ]]
 then
     section=`echo $ARGS | awk -F " " '{print $4}'`
     regexp=`echo $ARGS | awk -F " " '{print $5}'`
     regexpc=`echo $INPUT | awk -F " " '{print $5}'`
-    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc" | wc -l`" = 1 ]
+    if [ -z "$section" ] || [ -z "$regexp" ]
+    then
+	echo "You need to specify section and group"
+	exit 0
+    fi
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-" | grep --color=always -i "\-$regexpc$" | wc -l`" -eq 1 ]
     then
         echo "The block${COLOR1} $regexpc ${COLRST}was found in blocklist, block not added."
         sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc"
         exit 0
     fi
-    echo "Blocking $regexpc in section $section on a new line"
-    $glroot/bin/sed -i "0,/.*\/site\/$section.*/s/.*\/site\/$section.*/\/site\/$section:$regexp|\n&/" $predircheck
-    $glroot/bin/sed -i "/\/site\/$section:/ s/|$//gI" $predircheck
-    $glroot/bin/sed -i "/\/site\/$section:/ s/||/|/gI" $predircheck
-fi
-
-if [[ "$ARGS" = "add newsection"* ]]
-then
-    osection=`echo $ARGS | awk -F " " '{print $3}'`
-    nsection=`echo $ARGS | awk -F " " '{print $4}'`
-    regexp=`echo $ARGS | awk -F " " '{print $5}'`
-    regexpc=`echo $INPUT | awk -F " " '{print $5}'`
-    echo "Blocking $regexpc in new section $nsection"
-    $glroot/bin/sed -i "0,/.*\/site\/$osection.*/s/.*\/site\/$osection.*/\/site\/$nsection:$regexp|\n&/" $predircheck
-    $glroot/bin/sed -i "/\/site\/$nsection:/ s/|$//gI" $predircheck
-fi
-
-if [[ "$ARGS" = "edit section"* ]]
-then
-    section=`echo $ARGS | awk -F " " '{print $3}'`
-    startword=`echo $ARGS | awk -F " " '{print $4}'`
-    startwordc=`echo $INPUT | awk -F " " '{print $4}'`
-    regexp=`echo $ARGS | awk -F " " '{print $5}'`
-    regexpc=`echo $INPUT | awk -F " " '{print $5}'`
-    if [ ! -z $regexp ]
+    echo "Blocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
+    if [ ! "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-"`" ]
     then
-        if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc" | wc -l`" = 1 ]
-        then
-            echo "The block${COLOR1} $regexpc ${COLRST}was found in blocklist, block not added."
-            sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc"
-            exit 0
-        fi
-        echo "Adding wordblock $regexpc in section $section"
-        $glroot/bin/sed -i "/\/site\/$section:/ s/$startword/$regexp|$startword/" $predircheck
-        $glroot/bin/sed -i "/\/site\/$section:/ s/\\|$//gI" $predircheck
-        $glroot/bin/sed -i "/\/site\/$section:/ s/||/|/gI" $predircheck
+        $glroot/bin/sed -i "/INCOMPLETE/a /site/$section:[-]($regexp)$" $predircheck
     else
-        echo "Removing wordblock $startwordc in section $section"
-        $glroot/bin/sed -i "/\/site\/$section:/ s/$startword//" $predircheck
-        $glroot/bin/sed -i "/\/site\/$section:/ s/|)/)/gI" $predircheck
-        $glroot/bin/sed -i "/\/site\/$section:/ s/(|/(/gI" $predircheck
-        $glroot/bin/sed -i "/\/site\/$section:/ s/||/|/gI" $predircheck
+        if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-" | tail -1 | wc -c`" -ge $length ]
+        then
+            $glroot/bin/sed -i "/\/site\/$section:\[\-/a /site/$section:[-]($regexp)$" $predircheck
+        else
+	    startword=`cat $predircheck | grep "$section:\[-" | tail -1 | sed 's/\[-](//' | tr -d ')$' | cut -d':' -f2 | cut -d'|' -f1`
+            $glroot/bin/sed -i "/\/site\/$section:\[\-/ s/$startword/$regexp|$startword/" $predircheck
+        fi
     fi
 fi
+
 
 if [[ "$ARGS" = "del release"* ]]
 then
     section=`echo $ARGS | awk -F " " '{print $3}'`
     regexp=`echo $ARGS | awk -F " " '{print $4}'`
     regexpc=`echo $INPUT | awk -F " " '{print $4}'`
-    echo "Unblocking $regexpc in section $section"
-    $glroot/bin/sed -i "/\/site\/$section:/ s/$regexp//g" $predircheck
-    $glroot/bin/sed -i "/\/site\/$section:/ s/\/site\/$section:|/\/site\/$section:/gI" $predircheck
-    $glroot/bin/sed -i "/\/site\/$section:/ s/|$//gI" $predircheck
-    $glroot/bin/sed -i "/\/site\/$section:/ s/||/|/gI" $predircheck
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | egrep "$section:\^\(" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
+    then
+        echo "Unblocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
+        $glroot/bin/sed -i "/\/site\/$section:^(/ s/$regexpc//" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:^(/ s/|)/)/gI" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:^(/ s/(|/(/gI" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:^(/ s/||/|/gI" $predircheck
+	$glroot/bin/sed -i "/()/d" $predircheck
+    else
+	echo "The block${COLOR1} $regexpc ${COLRST}was not found in blocklist"
+    fi
 fi
 
-if [[ "$ARGS" = "del section"* ]]
+if [[ "$ARGS" = "del word"* ]]
 then
     section=`echo $ARGS | awk -F " " '{print $3}'`
-    echo "Removed all rows containing section: $section"
-    $glroot/bin/sed -i "/\/site\/$section/d" $predircheck
+    regexp=`echo $ARGS | awk -F " " '{print $4}'`
+    regexpc=`echo $INPUT | awk -F " " '{print $4}'`
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | egrep "$section:\[." | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
+    then
+        echo "Unblocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
+        $glroot/bin/sed -i "/\/site\/$section:\[._-/ s/$regexpc//" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:\[._-/ s/|)/)/gI" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:\[._-/ s/(|/(/gI" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:\[._-/ s/||/|/gI" $predircheck
+	$glroot/bin/sed -i "/()/d" $predircheck
+    else
+	echo "The block${COLOR1} $regexpc ${COLRST}was not found in blocklist"
+    fi
+fi
+
+if [[ "$ARGS" = "del section group"* ]]
+then
+    section=`echo $ARGS | awk -F " " '{print $4}'`
+    regexp=`echo $ARGS | awk -F " " '{print $5}'`
+    regexpc=`echo $INPUT | awk -F " " '{print $5}'`
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | egrep "$section:\[-" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
+    then
+        echo "Unblocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
+        $glroot/bin/sed -i "/\/site\/$section:\[-/ s/$regexpc//" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:\[-/ s/|)/)/gI" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:\[-/ s/(|/(/gI" $predircheck
+        $glroot/bin/sed -i "/\/site\/$section:\[-/ s/||/|/gI" $predircheck
+	$glroot/bin/sed -i "/()/d" $predircheck
+    else
+	echo "The block${COLOR1} $regexpc ${COLRST}was not found in blocklist"
+    fi
+fi
+
+if [[ "$ARGS" = "del section rows"* ]]
+then
+    section=`echo $ARGS | awk -F " " '{print $4}'`
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | wc -l`" -eq 0 ]
+    then
+	echo "Section${COLOR1} $section ${COLRST}not found in blocklist"
+    else
+	echo "Removed all rows containing section:${COLOR1} $section"
+        $glroot/bin/sed -i "/\/site\/$section/d" $predircheck
+    fi
 fi
 
 if [[ "$ARGS" = "add group"* ]]
@@ -268,9 +259,14 @@ then
         echo "Group${COLOR1} $group ${COLRST}already added"
         exit 0
     else
-        echo "Blocking group $group"
-        $glroot/bin/sed -i "/^DENYGROUPS=/ s/\"$/|\\\-$group\\\$\"/" $predircheck
-        $glroot/bin/sed -i "/^DENYGROUPS=/ s/\/site:|/\/site:/gI" $predircheck
+        echo "Blocking group ${COLOR1}$group"
+	if [ "`cat $predircheck | grep '^DENYGROUPS=""' | wc -l`" -eq 1 ]
+	then
+	    $glroot/bin/sed -i "/^DENYGROUPS=/ s/\"$/\/site:[-]($group)$\"/" $predircheck
+	else
+            startword=`cat $predircheck | grep "^DENYGROUPS" | tail -1 | sed 's/\[-](//' | tr -d ')$' | cut -d ':' -f2 | cut -d'|' -f1 | tr -d '"'`
+            $glroot/bin/sed -i "/DENYGROUPS/ s/$startword/$group|$startword/" $predircheck
+	fi
     fi
 fi
 
@@ -279,13 +275,14 @@ then
     group=`echo $ARGS | awk -F " " '{print $3}'`
     if [ "`cat $predircheck | grep "^DENYGROUPS" | grep $group`" ]
     then
-        echo "Unblocking group $group"
-        $glroot/bin/sed -i "/^DENYGROUPS=/ s/\\\\-$group\\\$//gI" $predircheck
-        $glroot/bin/sed -i "/^DENYGROUPS=/ s/|\"/\"/gI" $predircheck
-        $glroot/bin/sed -i "/^DENYGROUPS=/ s/||/|/gI" $predircheck
-        $glroot/bin/sed -i "/^DENYGROUPS=/ s/\/site:|/\/site:/gI" $predircheck
+        echo "Unblocking group${COLOR1} $group"
+        $glroot/bin/sed -i "/\/site:/ s/$group//" $predircheck
+        $glroot/bin/sed -i "/\/site:/ s/|)/)/gI" $predircheck
+        $glroot/bin/sed -i "/\/site:/ s/(|/(/gI" $predircheck
+        $glroot/bin/sed -i "/\/site:/ s/||/|/gI" $predircheck
+	$glroot/bin/sed -i "/\/site:/ s/\/site:\[-]()\\$//" $predircheck
     else
-        "echo Group not found"
+        echo "Group${COLOR1} $group ${COLRST}not found"
     fi
 fi
 
