@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.3
+VER=1.4
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -9,6 +9,7 @@ VER=1.3
 # creates an .imdb file and tag file in each release with it.
 # 
 # Changelog
+# 2021-03-25 : v1.4 Code for airdate was not properly set
 # 2021-03-03 : v1.3 Added option for maximum width for plot summary
 #                   and added skip option for releases that already have a .imdb file
 # 2021-03-02 : v1.2 Now you can scan up to 3 dirs in depth and
@@ -107,14 +108,14 @@ function rescan {
 	    EPISODE=`echo $rls_name | egrep -o "E[0-9][0-9]" | tr -d 'E'`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
 	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
+	    EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	if [ `echo $rls_name | egrep -o "[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]"` ]
 	then
 	    DATE=`echo $rls_name | egrep -o "[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]" | tr '.' '-'`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodesbydate?date=$DATE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
 	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
+	    EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	if [ `echo $rls_name | egrep -o "Part.[0-9]"` ]
 	then
@@ -122,7 +123,7 @@ function rescan {
 	    EPISODE=`echo $rls_name | grep -o "Part.[0-9]" | grep -o "[0-9]"`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
 	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    SHOW_EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
+	    EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	[ "$SHOW_GENRES" == "null" -o -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
 	[ "$SHOW_COUNTRY" == "null" -o -z "$SHOW_COUNTRY" ] && SHOW_COUNTRY="NA"
@@ -130,7 +131,7 @@ function rescan {
 	[ "$SHOW_NETWORK" == "null" -o -z "$SHOW_NETWORK" ] && SHOW_NETWORK="NA"
 	[ "$SHOW_STATUS" == "null" -o -z "$SHOW_STATUS" ] && SHOW_STATUS="NA"
 	[ "$SHOW_TYPE" == "null" -o -z "$SHOW_TYPE" ] && SHOW_TYPE="NA"
-	[ "$SHOW_EP_AIR_DATE" == "null" -o -z "$SHOW_EP_AIR_DATE" ] && SHOW_EP_AIR_DATE="NA"
+	[ "$EP_AIR_DATE" == "null" -o -z "$EP_AIR_DATE" ] && EP_AIR_DATE="NA"
 	[ "$SHOW_RATING" == "null" -o -z "$SHOW_RATING" ] && SHOW_RATING="NA"
 	[ "$SHOW_IMDB" == "null" -o -z "$SHOW_IMDB" ] && SHOW_IMDB="NA" || SHOW_IMDB="https://imdb.com/title/$SHOW_IMDB"
 	[ "$SHOW_SUMMARY" == "null" -o -z "$SHOW_SUMMARY" ] && SHOW_SUMMARY="NA"
@@ -160,7 +161,7 @@ function rescan {
 	    echo "Network......: $SHOW_NETWORK"
 	    echo "Status.......: $SHOW_STATUS"
 	    echo "Premiered....: $SHOW_PREMIERED"
-	    echo "Airdate......: $SHOW_EP_AIR_DATE"
+	    echo "Airdate......: $EP_AIR_DATE"
 	    echo "-"
 	    echo "Plot.........: $SHOW_SUMMARY"
 	    echo ""
@@ -184,7 +185,7 @@ function rescan {
 	    echo "Network......: $SHOW_NETWORK" >> $1/$rls_name/.imdb
 	    echo "Status.......: $SHOW_STATUS" >> $1/$rls_name/.imdb
 	    echo "Premiered....: $SHOW_PREMIERED" >> $1/$rls_name/.imdb
-	    echo "Airdate......: $SHOW_EP_AIR_DATE" >> $1/$rls_name/.imdb
+	    echo "Airdate......: $EP_AIR_DATE" >> $1/$rls_name/.imdb
 	    echo "-" >> $1/$rls_name/.imdb
 	    echo "Plot.........: $SHOW_SUMMARY" | fold -s -w $width >> $1/$rls_name/.imdb
 	    echo "" >> $1/$rls_name/.imdb

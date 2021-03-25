@@ -1,11 +1,12 @@
 #!/bin/bash
-VER=1.3
+VER=1.4
 #--[ Info ]-----------------------------------------------------#
 #
 # This script enables the creation of .imdb and tag file with
 # TVMaze info. Copy this to /glftpd/bin and chmod 755.
 #
 # Changelog
+# 2021-03-25 v1.4 Code for airdate was not properly set
 # 2021-03-03 v1.3 Added option for maximum width for plot summary
 # 2021-03-02 v1.2 Cosmetic changes in code and change from premiered to show type in tag file
 # 2021-02-28 v1.1 Added TVMaze link for show and episode
@@ -43,7 +44,7 @@ EP_URL=`sed -e 's/^"//' -e 's/"$//' -e 's/-.*//g'<<<"${15}"`
 [ "$SHOW_NETWORK" == "null" -o -z "$SHOW_NETWORK" ] && SHOW_NETWORK="NA"
 [ "$SHOW_STATUS" == "null" -o -z "$SHOW_STATUS" ] && SHOW_STATUS="NA"
 [ "$SHOW_TYPE" == "null" -o -z "$SHOW_TYPE" ] && SHOW_TYPE="NA"
-[ "$SHOW_EP_AIR_DATE" == "null" -o -z "$SHOW_EP_AIR_DATE" ] && SHOW_EP_AIR_DATE="NA"
+[ "$EP_AIR_DATE" == "null" -o -z "$EP_AIR_DATE" ] && EP_AIR_DATE="NA"
 [ "$SHOW_RATING" == "null" -o -z "$SHOW_RATING" ] && SHOW_RATING="NA"
 [ "$SHOW_IMDB" == "null" -o -z "$SHOW_IMDB" ] && SHOW_IMDB="NA"
 [ "$SHOW_SUMMARY" == "null" -o -z "$SHOW_SUMMARY" ] && SHOW_SUMMARY="NA"
@@ -71,7 +72,7 @@ then
     echo "Network......: $SHOW_NETWORK"
     echo "Status.......: $SHOW_STATUS"
     echo "Premiered....: $SHOW_PREMIERED"
-    echo "Airdate......: $SHOW_EP_AIR_DATE"
+    echo "Airdate......: $EP_AIR_DATE"
     echo "-"
     echo "Plot.........: $SHOW_SUMMARY"
     echo ""
@@ -94,7 +95,7 @@ else
     echo "Network......: $SHOW_NETWORK" >> $glroot$RLS_NAME/.imdb
     echo "Status.......: $SHOW_STATUS" >> $glroot$RLS_NAME/.imdb
     echo "Premiered....: $SHOW_PREMIERED" >> $glroot$RLS_NAME/.imdb
-    echo "Airdate......: $SHOW_EP_AIR_DATE" >> $glroot$RLS_NAME/.imdb
+    echo "Airdate......: $EP_AIR_DATE" >> $glroot$RLS_NAME/.imdb
     echo "-" >> $glroot$RLS_NAME/.imdb
     echo "Plot.........: $SHOW_SUMMARY" | fold -s -w $width >> $glroot$RLS_NAME/.imdb
     echo "" >> $glroot$RLS_NAME/.imdb

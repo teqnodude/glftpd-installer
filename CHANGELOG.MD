@@ -35,6 +35,8 @@
 - Removed the enforcement of http:// to https:// for show_url in TVMaze.tcl after the update of TVMaze api
 - Fixed releases with year and country code in tvmaze-rescan.sh and did some cosmetic changes in related scripts
 - Couldn't request releases that were nuked and found in dirlog
+- Code for airdate was not properly set in tvmaze.sh and tvmaze-rescan.sh
+
 
 ## 10.1 - 2020-12-30
 
