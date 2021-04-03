@@ -1588,11 +1588,22 @@ proc_status() {
     POS=`echo $LINETOSAY | cut -d' ' -f1-2 | sed 's/] .*/]/'`
     REL=`echo $LINETOSAY | cut -d' ' -f2-3 | sed -e 's/[0-9]:] //g' -e 's/ ~.*//'`
     USR=`echo $LINETOSAY | cut -d'~' -f2 | sed -e 's/ by //g' -e 's/ (.*//g'`
-    DAT=`echo $LINETOSAY | cut -d' ' -f8- | sed 's/at //g'`
+    FOR=`echo $LINETOSAY | cut -d' ' -f8`
+    if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
+    then
+        DAT=`echo $LINETOSAY | cut -d' ' -f8- | sed 's/at //g'`
+    else
+        DAT=`echo $LINETOSAY | cut -d' ' -f10- | sed 's/at //g'`
+    fi
     #OUTPUT="$LINETOSAY"
     if [ "$mode" = "irc" ]
     then
-	OUTPUT="14 $POS4 $REL 14created by4 $USR 14at4 $DAT"
+        if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
+        then
+	    OUTPUT="14 $POS4 $REL 14created by4 $USR 14at4 $DAT"
+	else
+	    OUTPUT="14 $POS4 $REL 14created by4 $USR 14for4 $FOR 14at4 $DAT"
+	fi
     else
         OUTPUT="$POS $REL created by $USR at $DAT"
     fi
