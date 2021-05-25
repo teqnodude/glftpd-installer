@@ -441,15 +441,15 @@ if [ "$NUKE_SHOW" -eq 1 ]
 then
     if [ -n "$NUKE_SHOWS_LIST" ]
     then
-		for title in $NUKE_SHOWS_LIST
-		do
-			if [ ! -z `echo "$RLS_NAME" | grep -i "$title"` ]; then
-				$GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "show not allowed"
-				LogMsg "Nuked release: {$RLS_NAME} because show is not allowed."
-				exit 0
-			fi		
+	for title in $NUKE_SHOWS_LIST
+	do
+	    if [ ! -z `echo "$RLS_NAME" | grep -i "$title"` ]; then
+		$GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "show not allowed"
+		LogMsg "Nuked release: {$RLS_NAME} because show is not allowed."
+		exit 0
+	    fi		
 	done
-	fi
+    fi
 fi
 
 exit 0
