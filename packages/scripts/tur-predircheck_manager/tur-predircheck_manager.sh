@@ -169,7 +169,7 @@ then
 	echo "You need to specify section and group"
 	exit 0
     fi
-    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]" | grep --color=always -i "\-$regexpc" | wc -l`" -eq 1 ]
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
     then
         echo "The block${COLOR1} $regexpc ${COLRST}was found in blocklist, block not added."
         sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | grep --color=always -i "$regexpc"
