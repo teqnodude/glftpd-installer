@@ -37,6 +37,7 @@
 - Fixed releases with year and country code in tvmaze-rescan.sh and did some cosmetic changes in related scripts
 - Couldn't request releases that were nuked and found in dirlog
 - Code for airdate was not properly set in tvmaze.sh and tvmaze-rescan.sh
+- When enabling move in tur-archiver it left empty dirs at source
 
 
 ## 10.1 - 2020-12-30

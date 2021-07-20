@@ -252,7 +252,7 @@ MOVE="
 
 CASE_SENSITIVE=FALSE
 
-WHAT_TO_DO=C
+WHAT_TO_DO=c
 
 EXCLUDE="^lost\+found$|^GROUPS$|^\_PRE$"
 
@@ -347,6 +347,8 @@ proc_move() {
     fi
   else
     $HOW_TO_MOVE "$SOURCE_DIR/$releasename" "$TO_DIR"
+    rm -rf "$SOURCE_DIR/$releasename"
+    chmod 777 "$TO_DIR/$releasename"
   fi
 
   ## Make a symlink it the original location, if enabled.
