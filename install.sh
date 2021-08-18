@@ -1749,18 +1749,18 @@ function usercreation
 	fi
 
 	ipbinary=`which ip`
-	localip=`$ipbinary addr show | awk '$1 == "inet" && $3 == "brd" { sub (/\/.*/,""); print $2 }' | head | awk -F "." '{print $1"."$2"."$3.".*"}'`
+	localip=$($ipbinary addr show | awk '$1 == "inet" && $3 == "brd" { sub (/\/.*/,""); print $2 }' | head | awk -F "." '{print "*@"$1"."$2"."$3.".*"}' | xargs)
 	
 	if [[ -f "$cache" && "`cat $cache | grep -w ip | wc -l`" = 1 ]]
 	then
 		ip=`cat $cache | grep -w ip | cut -d "=" -f2 | tr -d "\""`
 	else
-		echo -n "IP for [$username] ? Minimum *@xxx.xxx.* default *@${localip} : " ; read ip
+		echo -n "IP for [$username] ? Minimum *@xxx.xxx.* default ${localip} : " ; read ip
 	fi
 	
 	if [ "$ip" = "" ] 
 	then
-		ip="*@$localip"
+		ip="$localip"
 	fi
 
 	if [ "`cat $cache | grep -w username= | wc -l`" = 0 ]
