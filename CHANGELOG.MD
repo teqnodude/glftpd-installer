@@ -21,6 +21,7 @@
 - Made some major changes in tur-predircheck_manager that makes it more simpler to add / del various blocks. I've also added the feature of determining the max length of lines under DENYDIRS
 - Now when you add / remove blocks in tur-predircheck_manager you'll see the effects right after instead of having to manually check via !block
 - Enabled PBKDF2 Hashing for eggdrop passwords and disabled blowfish
+- Clarification regarding adding ip to Admin account during setup
 
 ### Fixes
 

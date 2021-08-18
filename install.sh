@@ -1755,7 +1755,7 @@ function usercreation
 	then
 		ip=`cat $cache | grep -w ip | cut -d "=" -f2 | tr -d "\""`
 	else
-		echo -n "IP for [$username] ? Minimum *@xxx.xxx.* default *@${localip} : " ; read ip
+		echo -n "IP for [$username] ? Type without *@ or ident@. Minimum xxx.xxx.* default ${localip} : " ; read ip
 	fi
 	
 	if [ "$ip" = "" ] 
@@ -1767,7 +1767,7 @@ function usercreation
 	then
 		echo "username=\"$username\"" >> $cache
 		echo "password=\"$password\"" >> $cache
-		echo "ip=\"$ip\"" >> $cache
+		echo "ip=\"*@$ip\"" >> $cache
 	fi
 
 	if [ "$router" = "y" ] 
