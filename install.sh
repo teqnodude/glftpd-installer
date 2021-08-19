@@ -1760,7 +1760,12 @@ function usercreation
 	
 	if [ "$ip" = "" ] 
 	then
-		ip="*@$localip *@$netip"
+		if [ "$localip" = "$netip" ]
+		then
+		    ip="*@$netip"
+		else
+		    ip="*@$localip *@$netip"
+		fi
 	fi
 
 	if [ "`cat $cache | grep -w username= | wc -l`" = 0 ]
