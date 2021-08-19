@@ -22,6 +22,7 @@
 - Now when you add / remove blocks in tur-predircheck_manager you'll see the effects right after instead of having to manually check via !block
 - Enabled PBKDF2 Hashing for eggdrop passwords and disabled blowfish
 - Clarification regarding adding ip to Admin account during setup
+- Added check for public ip during adding of ip to Admin account during setup where both local and public ip are added to Admin account
 
 ### Fixes
 

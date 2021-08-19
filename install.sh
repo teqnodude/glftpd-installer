@@ -741,7 +741,7 @@ function glftpd
 	chmod u+s $glroot/bin/undupe
 	chmod u+s $glroot/bin/sed
 	chmod u+s $glroot/bin/nuker
-	cur=`pwd` && cd ../scripts/rud-filedone && make >/dev/null 2>&1 && mv rud-filedone $glroot/bin && touch $glroot/ftp-data/logs/rud-filedone.log && cd $cur && unset cur
+	cur=`pwd` && cd ../scripts/rud-filedone && make >/dev/null 2>&1 && mv rud-filedone $glroot/bin && make clean && touch $glroot/ftp-data/logs/rud-filedone.log && cd $cur && unset cur
 	if [ -f /etc/systemd/system/glftpd.socket ]
 	then
 	    sed -i 's/#MaxConnections=64/MaxConnections=300/' /etc/systemd/system/glftpd.socket
@@ -1748,19 +1748,19 @@ function usercreation
 		password="password"
 	fi
 
-	ipbinary=`which ip`
-	localip=`$ipbinary addr show | awk '$1 == "inet" && $3 == "brd" { sub (/\/.*/,""); print $2 }' | head | awk -F "." '{print $1"."$2"."$3.".*"}'`
+	localip=`ip addr show | awk '$1 == "inet" && $3 == "brd" { sub (/\/.*/,""); print $2 }' | head | awk -F "." '{print $1"."$2"."$3.".*"}'`
+	netip=`wget -qO- http://ipecho.net/plain | awk -F "." '{print $1"."$2"."$3.".*"}'`
 	
 	if [[ -f "$cache" && "`cat $cache | grep -w ip | wc -l`" = 1 ]]
 	then
 		ip=`cat $cache | grep -w ip | cut -d "=" -f2 | tr -d "\""`
 	else
-		echo -n "IP for [$username] ? Type without *@ or ident@. Minimum xxx.xxx.* default ${localip} : " ; read ip
+		echo -n "IP for [$username] ? Type without *@ or ident@. Minimum xxx.xxx.* default $localip $netip : " ; read ip
 	fi
 	
 	if [ "$ip" = "" ] 
 	then
-		ip="*@$localip"
+		ip="*@$localip *@$netip"
 	fi
 
 	if [ "`cat $cache | grep -w username= | wc -l`" = 0 ]
