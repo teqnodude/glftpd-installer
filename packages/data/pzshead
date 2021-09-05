@@ -69,3 +69,5 @@
 #define speedtest_delfile               	TRUE
 #define speedtest_dirs                  	"/site/SPEEDTEST/"
 #define strict_path_match               	TRUE
+#define extract_nfo                     	FALSE
+#define test_for_password               	FALSE
