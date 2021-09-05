@@ -71,4 +71,3 @@
 #define strict_path_match               	TRUE
 #define extract_nfo                     	FALSE
 #define test_for_password               	FALSE
-
