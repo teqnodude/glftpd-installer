@@ -20,7 +20,7 @@ then
     do
 	for branchpath in site
 	do
-    	    chmod o-w $glroot/$branchpath/$section/*
+    	    chmod 755 $glroot/$branchpath/$section/*
 	    mkdir -m 777 -p $glroot/$branchpath/$section/$today
     	    echo `date "+%a %b %e %T %Y"` TURDAY: \"$section/$today\" \"$yesterday\" \"$section\" >> $gllog
         done
