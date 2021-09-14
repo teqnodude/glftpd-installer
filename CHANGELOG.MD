@@ -41,6 +41,8 @@
 - Code for airdate was not properly set in tvmaze.sh and tvmaze-rescan.sh
 - When enabling move in tur-archiver it left empty dirs at source
 - Disabled extract_nfo and test_for_password in pzs-ng since these functions can currently be used to exploit the system
+- Fixed section XXX-PAYSITE and made it dated where it previusly wasn't
+- Fixed nuking of incompletes in dated section XXX-PAYSITE in incomplete-list-nuker
 
 
 ## 10.1 - 2020-12-30

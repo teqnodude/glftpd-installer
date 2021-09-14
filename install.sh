@@ -516,7 +516,7 @@ function section_generate
 function writ
 {
 	section=${section^^}
-	if [[ ${section^^} = 0DAY || ${section^^} = FLAC || ${section^^} = MP3 || ${section^^} = EBOOKS ]] 
+	if [[ ${section^^} = 0DAY || ${section^^} = FLAC || ${section^^} = MP3 || ${section^^} = EBOOKS || ${section^^} = XXX-PAYSITE ]] 
 	then
 	
 		mkdir -pm 777 $rootdir/.tmp/site/${section^^}
@@ -896,7 +896,7 @@ function pzshfile
 	path=`cat $rootdir/.tmp/.path`
 	echo "#define check_for_missing_nfo_dirs		\"$path\"" >> zsconfig.h
 	echo "#define cleanupdirs				\"$path\"" >> zsconfig.h
-	echo "#define cleanupdirs_dated			\"/site/0DAY/%m%d/ /site/FLAC/%m%d/ /site/MP3/%m%d/ /site/EBOOKS/%m%d/\"" >> zsconfig.h
+	echo "#define cleanupdirs_dated			\"/site/0DAY/%m%d/ /site/FLAC/%m%d/ /site/MP3/%m%d/ /site/EBOOKS/%m%d/ /site/XXX-PAYSITE/%m%d/\"" >> zsconfig.h
 	echo "#define sfv_dirs				\"$path\"" >> zsconfig.h
 	echo "#define short_sitename				\"$sitename\"" >> zsconfig.h
 	chmod 755 zsconfig.h
@@ -1863,8 +1863,13 @@ function cleanup
                 sed -i '/^sections/a '"EBOOKS" $glroot/bin/dated.sh
         fi
 
+        if [ "$(ls $glroot/site | grep -w ^XXX-PAYSITE)" = "XXX-PAYSITE" ]
+        then
+                sed -i '/^sections/a '"XXX-PAYSITE" $glroot/bin/dated.sh
+        fi
+
 	
-	if [[ "$(ls $glroot/site | grep -w ^0DAY)" = "0DAY" || "$(ls $glroot/site | grep -w ^FLAC)" = "FLAC" || "$(ls $glroot/site | grep -w ^MP3)" = "MP3" || "$(ls $glroot/site | grep -w ^EBOOKS)" = "EBOOKS" ]]
+	if [[ "$(ls $glroot/site | grep -w ^0DAY)" = "0DAY" || "$(ls $glroot/site | grep -w ^FLAC)" = "FLAC" || "$(ls $glroot/site | grep -w ^MP3)" = "MP3" || "$(ls $glroot/site | grep -w ^EBOOKS)" = "EBOOKS" || "$(ls $glroot/site | grep -w ^XXX-PAYSITE)" = "XXX-PAYSITE" ]]
 	then
 		echo "0 0 * * *         	$glroot/bin/dated.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 		#echo "0 1 * * *         	$glroot/bin/dated.sh close >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
