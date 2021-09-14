@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=10.1
+VER=10.2
 clear
 
 if [ ! -d ".tmp" ]
