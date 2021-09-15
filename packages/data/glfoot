@@ -86,8 +86,8 @@ multiplier_max		50
 calc_crc		*
 pre_dir_check   	/bin/tur-predircheck.sh 
 pre_check       	/bin/tur-precheck.sh
-#post_check      	/bin/zipscript-c	*
-post_check 		/bin/rud-filedone	*
+post_check      	/bin/zipscript-c	*
+
 cscript         	DELE                    post    /bin/postdel
 cscript         	RMD                     post    /bin/datacleaner
 cscript         	SITE[:space:]NUKE       post    /bin/cleanup
