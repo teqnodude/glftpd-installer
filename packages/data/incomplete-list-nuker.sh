@@ -125,7 +125,7 @@ else
 				then
 					echo "$secname:${lred} ${secrel}${dgry} is${lred} $percent ${dgry}complete."
 
-					if [ "$secname" = "0DAY" ] || [ "$secname" = "MP3" ] || [ "$secname" = "FLAC" ] || [ "$secname" = "EBOOKS" || [ "$secname" = "XXX-PAYSITE" ]
+					if [ "$secname" = "0DAY" ] || [ "$secname" = "MP3" ] || [ "$secname" = "FLAC" ] || [ "$secname" = "EBOOKS" ] || [ "$secname" = "XXX-PAYSITE" ]
 					then
                             			release=`echo $secrel | awk -F "/" '{print $2}'`
 		                                day=`echo $secrel | awk -F "/" '{print $1}'`
