@@ -266,7 +266,7 @@ function channel
 			channame=`cat $cache | grep -w "channame$((counta+1))" | cut -d "=" -f2 | tr -d "\"" | cut -d " " -f1`
 			echo "Channel $((counta+1))          = $channame"
 		else	
-			echo "Include # in name of channel ie #main"
+			echo "Include # in the name of channel ie #main"
 			while [[ -z $channame ]] 
 			do
 				echo -n "Channel $((counta+1)) is : " ; read channame
