@@ -3,6 +3,7 @@
 ### Fixes
 
 - Removed rud-filedone since it didn't validate sample files correctly
+- Couldn't remove block of release properly in tur-predircheck_manager
 
 
 ## 10.2 - 2021-09-14

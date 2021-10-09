@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.71
+VER=1.72
 #--[ Intro ]----------------------------------------------------#
 #                                                       	#
 # Tur-predircheck_manager. A script for lazy people to block  	#
@@ -41,7 +41,7 @@ VER=1.71
 
 glroot="/glftpd"		
 predircheck="$glroot/bin/tur-predircheck.sh"
-irctrigger="!block"
+irctrigger=`cat $glroot/sitebot/scripts/tur-predircheck_manager.tcl | grep "block" | grep "tur-predircheck" | cut -d " " -f4`
 
 # How long should the block line under DENYDIRS be allowed to be before making a new line
 length=210
@@ -199,7 +199,7 @@ then
     section=`echo $ARGS | awk -F " " '{print $3}'`
     regexp=`echo $ARGS | awk -F " " '{print $4}'`
     regexpc=`echo $INPUT | awk -F " " '{print $4}'`
-    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\^\(" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
+    if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
     then
         echo "Unblocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
         $glroot/bin/sed -i "/\/site\/$section:^(/ s/$regexpc//" $predircheck
@@ -207,7 +207,7 @@ then
         $glroot/bin/sed -i "/\/site\/$section:^(/ s/(|/(/gI" $predircheck
         $glroot/bin/sed -i "/\/site\/$section:^(/ s/||/|/gI" $predircheck
 	$glroot/bin/sed -i "/\^()/d" $predircheck
-	sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\^\("
+	sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\^("
     else
 	echo "The block${COLOR1} $regexpc ${COLRST}was not found in blocklist"
     fi
