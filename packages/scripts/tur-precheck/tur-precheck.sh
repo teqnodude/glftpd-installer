@@ -52,7 +52,7 @@ case "$1" in
         echo -e "You must upload .sfv first!\n"
         exit 2
       else
-        if [ -z "`grep -i "^$1\ " "$sfv_file"`" ]; then
+        if [ -z "`grep -i "^$1\ " "$2/$sfv_file"`" ]; then
           echo -e "File does not exist in sfv!\n"
           exit 2
         fi
@@ -67,7 +67,7 @@ case "$1" in
         echo -e "You must upload .sfv first!\n"
         exit 2
       else
-        if [ -z "`grep -i "^$1\ " "$sfv_file"`" ]; then
+        if [ -z "`grep -i "^$1\ " "$2/$sfv_file"`" ]; then
           echo -e "File does not exist in sfv!\n"
           exit 2
         fi
