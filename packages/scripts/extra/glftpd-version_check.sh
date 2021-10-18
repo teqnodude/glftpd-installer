@@ -1,8 +1,8 @@
 #!/bin/bash
 
 gllog=/glftpd/ftp-data/logs/glftpd.log
-newversion=`lynx --dump https://glftpd.io | grep "latest.*version" | cut -d ":" -f2 | sed -e 's/20[2-9][0-9].*//' -e 's/^  //' -e 's/^v//'`
-curversion=`/glftpd/bin/glftpd-full-static | grep glFTPd | sed -e 's/(.*//' -e 's/glFTPd//' -e 's/^ //'`
+newversion=`lynx --dump https://glftpd.io | grep "latest.stable.version" | cut -d ":" -f2 | sed -e 's/20[2-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr -d "[:space:]"`
+curversion=`/glftpd/bin/glftpd-full-static | grep glFTPd | sed -e 's/(.*//' -e 's/glFTPd//' -e 's/^ //' | tr -d "[:space:]"`
 
 if [ "$newversion" != "$curversion" ]
 then
