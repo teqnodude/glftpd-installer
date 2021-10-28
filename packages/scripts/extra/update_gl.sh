@@ -15,7 +15,6 @@ cd $sourcedir
 for x in `ls | grep "glftpd-LNX*"`; do rm -rf $x ; done
 wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz
 tar -xf glftpd-LNX*
-rm -rf $glroot/bin/sources
 
 for x in `ls glftpd-LNX*/bin`
 do
