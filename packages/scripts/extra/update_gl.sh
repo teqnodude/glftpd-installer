@@ -7,7 +7,7 @@ sourcedir=$glroot/backup/sources
 
 #--[ Script Start ]---------------------------------------------#
 
-latest=`lynx --dump https://glftpd.io | grep "latest stable version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr "[:space:]" "_" | sed 's/_$//'`
+latest=`lynx --dump https://glftpd.io | grep "latest stable version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' -e 's/ //'`
 version=`/glftpd/bin/glftpd-full-static | grep -o "[3-6][2-4]BiT" | sed 's/BiT//'`
 [ "$version" = "32" ] && version="86"
 [ ! -d $sourcedir ] && mkdir $sourcedir
