@@ -13,7 +13,7 @@ version=`/glftpd/bin/glftpd-full-static | grep -o "[3-6][2-4]BiT" | sed 's/BiT//
 [ ! -d $sourcedir ] && mkdir $sourcedir
 cd $sourcedir
 for x in `ls | grep "glftpd-LNX*"`; do rm -rf $x ; done
-wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz
+wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | tail -1`.tgz
 tar -xf glftpd-LNX*
 
 for x in `ls glftpd-LNX*/bin`
