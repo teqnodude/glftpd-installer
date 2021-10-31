@@ -24,6 +24,7 @@ do
     fi
 done
 
+cp -rf glftpd-LNX*/docs $glroot
 sed -i 's/MAXDIRLOGSIZE 10000/MAXDIRLOGSIZE 1000000/' $glroot/bin/sources/olddirclean2.c
 sed -i 's/echo "You/#echo "You/' $glroot/bin/sources/compile.sh
 cd $glroot/bin/sources && ./compile.sh 
