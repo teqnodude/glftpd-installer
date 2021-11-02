@@ -1,12 +1,16 @@
 ## 10.x - 
 
+
+### Updated
+
+- Disabled the log of glftpd connections to syslog, to enable it again just remove /etc/rsyslog.d/glftpd.conf and do sevice rsyslog restart
+
 ### Fixes
 
 - Removed rud-filedone since it didn't validate sample files correctly
 - Couldn't remove block of release properly in tur-predircheck_manager
 - Minor fixes in install.sh & version checker for glFTPD
 - Minor fixes in update_gl.sh
-
 
 ## 10.2 - 2021-09-14
 

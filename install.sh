@@ -1898,6 +1898,7 @@ function cleanup
         sed -i '/MY SCRIPTS/,$d' $glroot/sitebot/eggdrop.conf
         cat .tmp/myscripts >> $glroot/sitebot/eggdrop.conf
 	rm -rf .tmp >/dev/null 2>&1
+	[ -d /etc/rsyslog.d ] && echo ":msg, contains "glftpd" ~" > /etc/rsyslog.d/glftpd.conf && service rsyslog restart
 }
 start
 port
