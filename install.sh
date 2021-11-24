@@ -462,11 +462,11 @@ function section_names
 	else
 		echo
 		echo "Valid Sections are : "
-		echo "0DAY ANIME APPS DVDR EBOOKS FLAC GAMES MP3 MBLURAY MDVDR NSW PDA PS4 TV-HD TV-NL TV-SD X264 X265-2160 XVID XXX XXX-PAYSITE"
+		echo "0DAY ANIME APPS EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE"
 		echo
-		while [[ ! $sections =~ ^[0-9]+$ || $sections -gt 20 ]]
+		while [[ ! $sections =~ ^[0-9]+$ || $sections -gt 22 ]]
 		do
-			echo -n "How many sections do you require for your site (max 20)? : " ; read sections
+			echo -n "How many sections do you require for your site (max 22)? : " ; read sections
 		done
 		echo
 	fi

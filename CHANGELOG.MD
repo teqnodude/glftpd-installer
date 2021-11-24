@@ -4,6 +4,7 @@
 ### Updated
 
 - Disabled the log of glftpd connections to syslog, to enable it again just remove /etc/rsyslog.d/glftpd.conf and do sevice rsyslog restart
+- Have updated the list of allowed sections and the rules attached to those sections and removed sections that are outdated
 
 ### Fixes
 
