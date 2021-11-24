@@ -464,7 +464,7 @@ function section_names
 		echo "Valid Sections are : "
 		echo "0DAY ANIME APPS DVDR EBOOKS FLAC GAMES MP3 MBLURAY MDVDR NSW PDA PS4 TV-HD TV-NL TV-SD X264 X265-2160 XVID XXX XXX-PAYSITE"
 		echo
-		while [[ -z $sections || $sections -gt 20 ]]
+		while [[ ! $sections =~ ^[0-9]+$ || $sections -gt 20 ]]
 		do
 			echo -n "How many sections do you require for your site (max 20)? : " ; read sections
 		done
@@ -795,7 +795,7 @@ function eggdrop
 	rm -f $glroot/sitebot/scripts/weed
 	ln -s $glroot/sitebot/`ls $glroot/sitebot | grep eggdrop-` $glroot/sitebot/sitebot
 	chmod 666 $glroot/etc$glroot.conf
-	mkdir -pm 777 $glroot/site/PRE/SiteOP $glroot/site/REQUESTS $glroot/site/SPEEDTEST
+	mkdir -pm 777 $glroot/site/PRE/SiteOP $glroot/site/SPEEDTEST
 	chmod 777 $glroot/site/PRE
 	dd if=/dev/urandom of=$glroot/site/SPEEDTEST/150MB bs=1M count=150 >/dev/null 2>&1
 	dd if=/dev/urandom of=$glroot/site/SPEEDTEST/250MB bs=1M count=250 >/dev/null 2>&1
@@ -1173,6 +1173,7 @@ function request
 		cp *.tcl $glroot/sitebot/scripts
 		cp file_date $glroot/bin
 		sed "s/changeme/$sitename/" tur-request.conf > $glroot/bin/tur-request.conf
+		mkdir -m777 $glroot/site/REQUESTS
 		touch $glroot/site/REQUESTS/.requests ; chmod 666 $glroot/site/REQUESTS/.requests
 		echo "1 18 * * * 		$glroot/bin/tur-request.sh status auto >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 		echo "1 0 * * * 		$glroot/bin/tur-request.sh checkold >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
