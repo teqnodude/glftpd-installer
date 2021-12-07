@@ -287,7 +287,7 @@ fi
 if [[ "$ARGS" = "add group"* ]]
 then
     group=`echo $ARGS | awk -F " " '{print $3}'`
-    if [ -z "$section" ]
+    if [ -z "$group" ]
     then
         echo "You need to specify group"
         exit 0
@@ -313,7 +313,7 @@ fi
 if [[ "$ARGS" = "del group"* ]]
 then
     group=`echo $ARGS | awk -F " " '{print $3}'`
-    if [ -z "$section" ]
+    if [ -z "$group" ]
     then
         echo "You need to specify group"
         exit 0
