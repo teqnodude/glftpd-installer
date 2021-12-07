@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.72
+VER=1.73
 #--[ Intro ]----------------------------------------------------#
 #                                                       	#
 # Tur-predircheck_manager. A script for lazy people to block  	#
@@ -98,7 +98,7 @@ then
     regexpc=`echo $INPUT | awk -F " " '{print $4}'`
     if [ -z "$section" ] || [ -z "$regexp" ]
     then
-	 echo "You need to specify section and release"
+	echo "You need to specify section and release"
 	exit 0
     fi
     if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
@@ -199,6 +199,11 @@ then
     section=`echo $ARGS | awk -F " " '{print $3}'`
     regexp=`echo $ARGS | awk -F " " '{print $4}'`
     regexpc=`echo $INPUT | awk -F " " '{print $4}'`
+    if [ -z "$section" ] || [ -z "$regexp" ]
+    then
+        echo "You need to specify section and release"
+        exit 0
+    fi
     if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
     then
         echo "Unblocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
@@ -218,6 +223,11 @@ then
     section=`echo $ARGS | awk -F " " '{print $3}'`
     regexp=`echo $ARGS | awk -F " " '{print $4}'`
     regexpc=`echo $INPUT | awk -F " " '{print $4}'`
+    if [ -z "$section" ] || [ -z "$regexp" ]
+    then
+        echo "You need to specify section and word"
+        exit 0
+    fi
     if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[._-\]" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
     then
         echo "Unblocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
@@ -237,6 +247,11 @@ then
     section=`echo $ARGS | awk -F " " '{print $4}'`
     regexp=`echo $ARGS | awk -F " " '{print $5}'`
     regexpc=`echo $INPUT | awk -F " " '{print $5}'`
+    if [ -z "$section" ] || [ -z "$regexp" ]
+    then
+	echo "You need to specify section and group"
+        exit 0
+    fi
     if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]" | grep --color=always -i "$regexpc" | wc -l`" -eq 1 ]
     then
         echo "Unblocking${COLOR1} $regexpc ${COLRST}in section ${COLOR1}$section"
@@ -254,6 +269,11 @@ fi
 if [[ "$ARGS" = "del section rows"* ]]
 then
     section=`echo $ARGS | awk -F " " '{print $4}'`
+    if [ -z "$section" ]
+    then
+        echo "You need to specify section"
+        exit 0
+    fi
     if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section" | wc -l`" -eq 0 ]
     then
 	echo "Section${COLOR1} $section ${COLRST}not found in blocklist"
@@ -267,6 +287,11 @@ fi
 if [[ "$ARGS" = "add group"* ]]
 then
     group=`echo $ARGS | awk -F " " '{print $3}'`
+    if [ -z "$section" ]
+    then
+        echo "You need to specify group"
+        exit 0
+    fi
     if [ "`grep "^DENYGROUPS" $predircheck | grep "$group"`" ]
     then
         echo "Group${COLOR1} $group ${COLRST}already added"
@@ -288,6 +313,11 @@ fi
 if [[ "$ARGS" = "del group"* ]]
 then
     group=`echo $ARGS | awk -F " " '{print $3}'`
+    if [ -z "$section" ]
+    then
+        echo "You need to specify group"
+        exit 0
+    fi
     if [ "`grep "^DENYGROUPS" $predircheck | grep $group`" ]
     then
         echo "Unblocking group${COLOR1} $group"

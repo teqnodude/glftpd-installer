@@ -16,6 +16,7 @@
 - Minor fixes in update_gl.sh
 - Created a check for input when entering the number of sections to prevent people from making the error of using sections names instead of the number of sections
 - REQUESTS dir is no longer created if tur-request is not installed
+- Created more checks for missing input in tur-predircheck_manager to prevent the creation of a corrupt blocklist
 
 ## 10.2 - 2021-09-14
 
