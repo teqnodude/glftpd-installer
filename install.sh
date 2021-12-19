@@ -499,11 +499,11 @@ function section_generate
 		echo -n "Section $((counta+1)) is : " ; read section
 	fi
 	case ${section^^} in
-		0DAY|ANIME|APPS|DVDR|EBOOKS|FLAC|GAMES|MP3|MBLURAY|MDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE)
+		0DAY|ANIME|APPS|EBOOKS|FLAC|GAMES|MBLURAY|MP3|NSW|PS4|PS5|TV-1080|TV-720|TV-HD|TV-NL|X264|X264-1080|X264-720|X265-2160|XVID|XXX|XXX-PAYSITE)
 		writ
 		;;
 		*)
-        while [[ ${section^^} != @(0DAY|ANIME|APPS|DVDR|EBOOKS|FLAC|GAMES|MP3|MBLURAY|MDVDR|NSW|PDA|PS4|TV-HD|TV-NL|TV-SD|X264|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
+        while [[ ${section^^} != @(0DAY|ANIME|APPS|EBOOKS|FLAC|GAMES|MBLURAY|MP3|NSW|PS4|PS5|TV-1080|TV-720|TV-HD|TV-NL|X264|X264-1080|X264-720|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
         do
             echo "Section [$section] is not in the above list of available sections, please try again."
             echo -n "Section $((counta+1)) is : " ; read section
