@@ -1936,7 +1936,7 @@ section-traffic
 usercreation
 cleanup
 echo 
-echo "If you are planning to uninstall glFTPD, then run cleanup.sh"
+echo "If you are planning to uninstall glFTPD then run cleanup.sh"
 echo
 echo "To get the bot running you HAVE to do this ONCE to create the initial userfile"
 echo "su - sitebot -c \"$glroot/sitebot/sitebot -m\""
