@@ -1899,7 +1899,7 @@ function cleanup
         sed -i '/MY SCRIPTS/,$d' $glroot/sitebot/eggdrop.conf
         cat .tmp/myscripts >> $glroot/sitebot/eggdrop.conf
 	rm -rf .tmp >/dev/null 2>&1
-	[ -d /etc/rsyslog.d ] && cp packages/scripts/extra/rsyslog.conf /etc/rsyslog.d/glftpd.conf && service rsyslog restart
+	[ -d /etc/rsyslog.d ] && cp packages/scripts/extra/glftpd.conf /etc/rsyslog.d && service rsyslog restart
 }
 start
 port
