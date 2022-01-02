@@ -19,6 +19,7 @@
 - REQUESTS dir is no longer created if tur-request is not installed
 - Created more checks for missing input in tur-predircheck_manager to prevent the creation of a corrupt blocklist
 - The new list of allowed sections wasn't properly coded in installer
+- dated.sh didn't function properly when dated dirs spanned a year
 
 ## 10.2 - 2021-09-14
 
