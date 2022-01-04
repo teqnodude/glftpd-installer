@@ -20,6 +20,7 @@
 - Created more checks for missing input in tur-predircheck_manager to prevent the creation of a corrupt blocklist
 - The new list of allowed sections wasn't properly coded in installer
 - dated.sh didn't function properly when dated dirs spanned a year
+- PREBW didn't announce properly due to bad settings in ngBot.conf
 
 ## 10.2 - 2021-09-14
 
