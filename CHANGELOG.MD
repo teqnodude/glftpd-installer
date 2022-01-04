@@ -21,6 +21,10 @@
 - The new list of allowed sections wasn't properly coded in installer
 - dated.sh didn't function properly when dated dirs spanned a year
 - PREBW didn't announce properly due to bad settings in ngBot.conf
+- Installer didn't grab the latest glFTPD version
+- section-manager now add/remove sections from dated.sh and ensures that dated.sh is added/removed in crontab depending if dated sections are present
+- Fixed some minor bugs in section-manager
+- Added m2ts to sample_types in zsconfig.h since it's used sometimes in BLURAY sections
 
 ## 10.2 - 2021-09-14
 

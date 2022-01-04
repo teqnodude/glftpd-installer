@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.22
+VER=1.23
 #----------------------------------------------------------------#
 #								 #
 # Section Manager by Teqno     			 		 #
@@ -16,8 +16,12 @@ VER=1.22
 # the script will just skip it. 				 #
 #			 					 # 
 # This script only add/remove sections directly under /site and	 #
-# not under any other location	 				 #
+# not under any other location.					 #
 #								 #
+# ALERT!!!!!!!!!! 						 #					
+# The script works only with the scripts installed by the	 
+# glftpd-installer created by Teqno. Do NOT attempt to use this  #
+# on a system set up by other methods.                           #
 #								 #
 #--[ Settings ]--------------------------------------------------#
 
@@ -34,6 +38,7 @@ addaffil=$glroot/bin/addaffil.sh				 # path for customized eur0pre addaffil scri
 foopre=$glroot/etc/pre.cfg					 # path for foopre 
 turlastul=$glroot/bin/tur-lastul.sh				 # path for tur-lastul
 psxcimdb=$glroot/etc/psxc-imdb.conf				 # path for psxc-imdb
+dated=$glroot/bin/dated.sh					 # path for dated.sh
 
 #--[ Script Start ]----------------------------------------------#
 
@@ -259,8 +264,8 @@ if [[ -f "$addaffil" && -f "$foopre" ]]
 then
     case $action in
 	[Rr])
-            before=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq`
-            after=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
+            before=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq | head -1 `
+            after=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq | head -1 | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
 	    sed -i "/allow=/s/$before/$after/g" $addaffil
             before=`cat $foopre | grep "allow="| cut -d "=" -f2 | cut -d "'" -f1 | uniq`
             after=`cat $foopre | grep "allow="| cut -d "=" -f2 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
@@ -345,7 +350,27 @@ else
 fi
 }
 
-[ ! `ls /glftpd/site | egrep -i "0DAY|FLAC|MP3|EBOOK"` ] && sed -i /dated.sh/d /var/spool/cron/crontabs/root
+function dated
+{
+if [ -f "$dated" ]
+then
+    case $day in
+	[Yy])
+	    case $action in
+		[Rr])
+            	    sed -i "/$section/d" $dated
+		    ;;
+		*)
+		    sed -i '/^sections="/a '"$section" $dated
+		    ;;
+	    esac
+	    echo "$actionname dated.sh"
+	    ;;
+    esac
+else
+    echo "dated.sh file not found"
+fi
+}
 
 start
 pzsng
@@ -356,8 +381,15 @@ approve
 eur0pre
 turlastul
 psxcimdb
+dated
 echo
 echo -e "\e[31mBe sure to rehash the bot or the updated settings will not take effect\e[0m"
 echo
+
+[ `ls /glftpd/site | egrep -iv "today" | egrep -i "0DAY|EBOOKS|FLAC|MP3" | wc -l` = 0 ] && sed -i /dated.sh/d /var/spool/cron/crontabs/root
+if [ `ls /glftpd/site | egrep -iv "today" | egrep -i "0DAY|EBOOKS|FLAC|MP3" | wc -l` -ge 1 ]
+then
+    [ `grep "dated.sh" /var/spool/cron/crontabs/root | wc -l` = 0 ] && echo "0 0 * * *               $glroot/bin/dated.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+fi
 
 exit 0

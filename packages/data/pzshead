@@ -21,6 +21,7 @@
 #define audio_nocheck_dirs              	"/site/PRE/ /site/REQUESTS/"
 #define allowed_types_exemption_dirs    	"/site/PRE/ /site/MVID/"
 #define allowed_types                   	"jpg,jpeg,cue,m3u,txt,vob,png,m2ts,ts,log,mkv"
+#define sample_types				"mpg,mpeg,m2v,m2p,avi,mkv,mov,mp4,wmv,vob,ts,jpg,jpeg,png,m2ts"
     
 #define status_bar_type                 	BAR_FILE
     
