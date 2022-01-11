@@ -8,6 +8,7 @@
 - Updated update_gl.sh to support the upgrade to BETA version by beta=1 setting where the upgrade notes are highlighted at the end of upgrade
 - Updated glftpd-version_check.sh to include support for BETA versions by beta=1 setting
 - Changed from deprecated format of ~ to stop in rsyslog file to prevent it stop working in the future
+- Changed name for Tur-oneline_stats script to Top since I have radically tweaked it
 
 ### Fixes
 

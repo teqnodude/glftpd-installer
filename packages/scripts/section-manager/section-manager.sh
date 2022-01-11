@@ -19,7 +19,7 @@ VER=1.23
 # not under any other location.					 #
 #								 #
 # ALERT!!!!!!!!!! 						 #					
-# The script works only with the scripts installed by the	 
+# The script works only with the scripts installed by the	 #
 # glftpd-installer created by Teqno. Do NOT attempt to use this  #
 # on a system set up by other methods.                           #
 #								 #

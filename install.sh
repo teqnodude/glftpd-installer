@@ -1549,38 +1549,38 @@ function addip
 	esac
 }
 
-## tur-oneline_stats
-function oneline_stats
+## topstat
+function topstat
 {
-	if [[ -f "$cache" && "`cat $cache | grep -w oneline_stats | wc -l`" = 1 ]]
+	if [[ -f "$cache" && "`cat $cache | grep -w topstat | wc -l`" = 1 ]]
 	then
 		ask=`cat $cache | grep -w oneline_stats | cut -d "=" -f2 | tr -d "\""`
 	else
 		echo
-                echo -e "\e[4mDescription for Tur-Oneline_stats:\e[0m"
-                cat $rootdir/packages/scripts/tur-oneline_stats/description
+                echo -e "\e[4mDescription for Top:\e[0m"
+                cat $rootdir/packages/scripts/top/description
 		echo
-		echo -n "Install Tur-Oneline_Stats ? [Y]es [N]o, default Y : " ; read ask
+		echo -n "Install Top ? [Y]es [N]o, default Y : " ; read ask
 	fi
 	
 	case $ask in
 		[Nn])
-		if [ "`cat $cache | grep -w oneline_stats= | wc -l`" = 0 ]
+		if [ "`cat $cache | grep -w top= | wc -l`" = 0 ]
 		then
-			echo "oneline_stats=\"n\"" >> $cache
+			echo "top=\"n\"" >> $cache
 		fi
 		;;
 		[Yy]|*)
-		if [ "`cat $cache | grep -w oneline_stats= | wc -l`" = 0 ]
+		if [ "`cat $cache | grep -w top= | wc -l`" = 0 ]
 		then
-			echo "oneline_stats=\"y\"" >> $cache
+			echo "top=\"y\"" >> $cache
 		fi
 		
-		echo -n "Installing Tur-Oneline_Stats, please wait...                    "
-		cd tur-oneline_stats
+		echo -n "Installing Top, please wait...                                  "
+		cd top
 		cp *.tcl $glroot/sitebot/scripts
 		cp *.sh $glroot/bin 
-		echo "source scripts/tur-oneline_stats.tcl" >> $glroot/sitebot/eggdrop.conf
+		echo "source scripts/top.tcl" >> $glroot/sitebot/eggdrop.conf
 		cd ..
 		echo -e "[\e[32mDone\e[0m]"
 		;;
@@ -1929,7 +1929,7 @@ precheck
 autonuke
 psxcimdb
 addip
-oneline_stats
+topstat
 ircnick
 archiver
 section-traffic

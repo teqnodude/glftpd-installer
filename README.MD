@@ -26,6 +26,7 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  section_manager
 *  section-traffic
 *  slv-PreBW
+*  top
 *  tuls
 *  tur-addip
 *  tur-archiver
@@ -33,7 +34,6 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  tur-free
 *  tur-ftpwho
 *  tur-ircadmin
-*  tur-oneline_stats
 *  tur-precheck
 *  tur-predircheck
 *  tur-predircheck manager
@@ -117,7 +117,7 @@ autonuke="y" # Install Tur-Autonuke
 psxcimdb="y" # Install PSXC-IMDB
 psxcimdbchan="#main" # Trigger chan for PSXC-IMDB
 addip="y" # Install Tur-Addip
-oneline_stats="y" # Install Tur-Oneline_Stats
+top="y" # Install Top
 ircnick="y" # Install Ircnick
 archiver="y" # Install Tur-Archiver
 section_traffic="y" # Install Section-Traffic
