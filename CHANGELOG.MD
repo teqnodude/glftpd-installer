@@ -9,6 +9,7 @@
 - Updated glftpd-version_check.sh to include support for BETA versions by beta=1 setting
 - Changed from deprecated format of ~ to stop in rsyslog file to prevent it stop working in the future
 - Changed name for Tur-oneline_stats script to Top since I have radically tweaked it
+- Added the setting to choose just one group to show stats from in Top
 
 ### Fixes
 

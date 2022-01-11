@@ -1,5 +1,5 @@
 ##############################################################################
-# Top.tcl 1.0 by Teqno                    				     #
+# Top.tcl 1.1 by Teqno                    				     #
 ##############################################################################
 
 bind pub -|- !top pub:topup
@@ -53,5 +53,5 @@ proc pub:topdn {nick output binary chan text} {
     }
 }
 
-putlog "Top 1.0 by Teqno loaded"
+putlog "Top 1.1 by Teqno loaded"
 

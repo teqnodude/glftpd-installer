@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #----------------------------------------------------------------#
 #                                                                #
 # Script is based on Tur-Oneline_Stats created by Turranius but  #
@@ -60,7 +60,12 @@ VER=1.0
 #                  translated if this is FALSE.                  #
 #                                                                #
 # EXCLUDE = Put here which group you want to exclude from stats, #
-# 	    only one group is allowed.               		 #
+# 	    only one group is allowed. If this is set then	 #
+#           INCLUDE setting does not work.            		 #
+#								 #
+# INCLUDE = Put here which group you want to only show stats of, #
+#           only one group is allowed. If this is set then	 #
+#	    EXCLUDE setting does not work.  			 #
 #								 #
 #--[ Other ]-----------------------------------------------------#
 #                                                                #
@@ -98,6 +103,8 @@ ENABLE_COLORS=TRUE
 
 EXCLUDE=""
 
+INCLUDE=""
+
 #--[ Script Start ]----------------------------------------------#
 
 if [ "$FLAGS" ] && [ "$RATIO" ]
@@ -133,12 +140,16 @@ then
     exit 0
 fi
 
-if [ -z "$EXCLUDE" ]
+if [ ! -z "$EXCLUDE" ] && [ -z "$INCLUDE" ]
 then
-    $stats $args > $glroot/tmp/stats.tmp
-else
     $stats $args -g "$EXCLUDE" > $glroot/tmp/stats.tmp
+elif [ -z "$EXCLUDE" ] && [ ! -z "$INCLUDE" ]
+then
+    $stats $args -o "$INCLUDE" > $glroot/tmp/stats.tmp
+else 
+    $stats $args > $glroot/tmp/stats.tmp
 fi
+
 
 if [ ! -e "$glroot/tmp/stats.tmp" ]
 then
