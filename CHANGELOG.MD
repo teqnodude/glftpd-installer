@@ -10,6 +10,7 @@
 - Changed from deprecated format of ~ to stop in rsyslog file to prevent it stop working in the future
 - Changed name for Tur-oneline_stats script to Top since I have radically tweaked it
 - Added the setting to choose just one group to show stats from in Top
+- Added the setting to nuke releases that lack nfo in incomplete-list-nuker.sh, default setting is to not nuke them
 
 ### Fixes
 
