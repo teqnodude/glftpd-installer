@@ -56,17 +56,17 @@ then
         if [ "`grep '^DENYGROUPS=""' /bin/tur-predircheck.sh | wc -l`" -eq 1 ]
         then
             sed -i "/^DENYGROUPS=/ s/\"$/\/site:[-]($1)$\"/" /bin/tur-predircheck.sh
-	    grep "^DENYGROUPS" /bin/tur-predircheck.sh | grep "$1"
         else
             startword=`grep "^DENYGROUPS" /bin/tur-predircheck.sh | sed 's/\[-](//' | tr -d ')$' | cut -d ':' -f2 | cut -d'|' -f1 | tr -d '"'`
             sed -i "/DENYGROUPS/ s/$startword/$1|$startword/" /bin/tur-predircheck.sh
-	    grep "^DENYGROUPS" /bin/tur-predircheck.sh | grep "$1"
         fi
 
         echo "Adding affil to hiddengroups in /glftpd/bin/sitewho.conf"
 	sed -i '/^hiddengroups/a '"$1" /bin/sitewho.conf
 	if [ -e /etc/pre.cfg ]
 	then
+	    sections=`grep "set sections" /sitebot/scripts/pzs-ng/ngBot.conf | cut -d '"' -f2- | tr -d '"' | tr ' ' '|' | sed -e 's/REQUEST//' -e 's/ARCHIVE//' -e 's/|$//' -e 's/^||//' -e 's/||/|/'`
+	    echo "Adding affil to /glftpd/etc/pre.cfg"
 	    if [ `cat /etc/pre.cfg | grep "# group.dir" | wc -l` = 1 ]
 	    then
 		sed -i '/# group.dir/a group.'"$1"'.dir=/site/PRE/'"$1" /etc/pre.cfg
@@ -75,9 +75,9 @@ then
 	    fi
 	    if [ `cat /etc/pre.cfg | grep "# group.allow" | wc -l` = 1 ]
 	    then
-		sed -i '/# group.allow/a group.'"$1"'.allow=' /etc/pre.cfg
+		sed -i '/# group.allow/a group.'"$1"'.allow='"$sections" /etc/pre.cfg
 	    else
-		echo "group.$1.allow=" >> /etc/pre.cfg
+		echo "group.$1.allow=$sections" >> /etc/pre.cfg
 	    fi
 	fi
 

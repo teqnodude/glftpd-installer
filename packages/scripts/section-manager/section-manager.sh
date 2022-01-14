@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.23
+VER=1.24
 #----------------------------------------------------------------#
 #								 #
 # Section Manager by Teqno     			 		 #
@@ -34,7 +34,6 @@ incoming=/dev/sda1					 	 # path for incoming device for glftpd
 turautonuke=$glroot/bin/tur-autonuke.conf			 # path for tur-autonuke
 turspace=$glroot/bin/tur-space.conf				 # path for tur-space
 approve=$glroot/bin/approve.sh					 # path for approve
-addaffil=$glroot/bin/addaffil.sh				 # path for customized eur0pre addaffil script included in glFTPD installer
 foopre=$glroot/etc/pre.cfg					 # path for foopre 
 turlastul=$glroot/bin/tur-lastul.sh				 # path for tur-lastul
 psxcimdb=$glroot/etc/psxc-imdb.conf				 # path for psxc-imdb
@@ -260,20 +259,16 @@ fi
 
 function eur0pre
 {
-if [[ -f "$addaffil" && -f "$foopre" ]]
+if [[ -f "$foopre" ]]
 then
     case $action in
 	[Rr])
-            before=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq | head -1 `
-            after=`cat $addaffil | grep "allow=" | cut -d "=" -f2 | cut -d "'" -f1 | uniq | head -1 | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
-	    sed -i "/allow=/s/$before/$after/g" $addaffil
             before=`cat $foopre | grep "allow="| cut -d "=" -f2 | cut -d "'" -f1 | uniq`
             after=`cat $foopre | grep "allow="| cut -d "=" -f2 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
 	    sed -i "/allow=/s/$before/$after/g" $foopre
 	    sed -i "/section.$section\./d" $foopre
 	    ;;
 	*)
-	    sed -i "s/.allow=/.allow=$section\|/" $addaffil
 	    sed -i "s/.allow=/.allow=$section\|/" $foopre
 	    if [[ ${section^^} != @(0DAY|MP3|FLAC|EBOOKS) ]]
 	    then
@@ -289,15 +284,12 @@ then
 	    fi
 	    ;;
     esac
-    sed -i "/allow=/s/=|/=/" $addaffil
-    sed -i "/allow=/s/||/|/" $addaffil
-    sed -i "/allow=/s/|'/'/" $addaffil
     sed -i "/allow=/s/=|/=/" $foopre
     sed -i "/allow=/s/||/|/" $foopre
     sed -i "/allow=/s/|$//" $foopre
-    echo "$actionname addaffil + foo-pre"
+    echo "$actionname foo-pre"
 else
-    echo "Either addaffil or foopre config file not found"
+    echo "foopre config file not found"
 fi
 
 }

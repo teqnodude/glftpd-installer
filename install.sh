@@ -1012,7 +1012,7 @@ function presystem
 		rm -f $rootdir/.tmp/footools
 		sed -i '/# group.dir/a group.SiteOP.dir=/site/PRE/SiteOP' $glroot/etc/pre.cfg
 		sed -i '/# group.allow/a group.SiteOP.allow='"$sections" $glroot/etc/pre.cfg
-		sed -i "s/allow=/allow=$sections/" $glroot/bin/addaffil.sh
+		#sed -i "s/allow=/allow=$sections/" $glroot/bin/addaffil.sh
 		touch $glroot/ftp-data/logs/foo-pre.log
 		mknod $glroot/dev/full c 1 7 && chmod 666 $glroot/dev/full
 		mknod $glroot/dev/urandom c 1 9 && chmod 666 $glroot/dev/urandom
