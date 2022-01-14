@@ -1552,9 +1552,9 @@ function addip
 ## topstat
 function topstat
 {
-	if [[ -f "$cache" && "`cat $cache | grep -w topstat | wc -l`" = 1 ]]
+	if [[ -f "$cache" && "`cat $cache | grep -w top | wc -l`" = 1 ]]
 	then
-		ask=`cat $cache | grep -w oneline_stats | cut -d "=" -f2 | tr -d "\""`
+		ask=`cat $cache | grep -w top | cut -d "=" -f2 | tr -d "\""`
 	else
 		echo
                 echo -e "\e[4mDescription for Top:\e[0m"

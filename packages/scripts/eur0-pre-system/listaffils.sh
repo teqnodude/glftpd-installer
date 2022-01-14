@@ -20,7 +20,7 @@ privpaths=`cat $glftpd_conf | grep privpath | grep -v "/site/PRE/SiteOP" | awk '
 predirs=""
 for path in $privpaths
 do
-        predirs="$predirs `basename $path`"
+    predirs="$predirs `basename $path`"
 done
 
 echo $predirs

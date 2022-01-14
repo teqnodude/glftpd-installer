@@ -28,6 +28,8 @@
 - section-manager now add/remove sections from dated.sh and ensures that dated.sh is added/removed in crontab depending if dated sections are present
 - Fixed some minor bugs in section-manager
 - Added m2ts to sample_types in zsconfig.h since it's used sometimes in BLURAY sections
+- Forgot to add new style of block of groups in addaffil.sh and delaffil.sh
+
 
 ## 10.2 - 2021-09-14
 
