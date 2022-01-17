@@ -182,125 +182,138 @@ EOF
 sed -i 's/sections="/sections="\nTV-1080:^14./' packages/scripts/tur-rules/tur-rules.sh
 }
 
-function TV-HD
+function TV-2160
 {
 cat << EOF >> site.rules
-TV-HD :
+TV-2160 :
 15.1 Spoken language: English.....................................................................................[NUKE 5X]
-15.2 Encoded in: 720p,1080p only!.................................................................................[NUKE 5X]
+15.2 Encoded in: 2160p only!......................................................................................[NUKE 5X]
 15.3 Sources: HDTV/UHDTV/WEB......................................................................................[ALLOWED]
 15.4 NO MULTi.....................................................................................................[NUKE 5X]
 
 EOF
-sed -i 's/sections="/sections="\nTV-HD:^15./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nTV-2160:^15./' packages/scripts/tur-rules/tur-rules.sh
+}
+
+function TV-HD
+{
+cat << EOF >> site.rules
+TV-HD :
+16.1 Spoken language: English.....................................................................................[NUKE 5X]
+16.2 Encoded in: 720p,1080p,2160p only!...........................................................................[NUKE 5X]
+16.3 Sources: HDTV/UHDTV/WEB......................................................................................[ALLOWED]
+16.4 NO MULTi.....................................................................................................[NUKE 5X]
+
+EOF
+sed -i 's/sections="/sections="\nTV-HD:^16./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function TV-NL
 {
 cat << EOF >> site.rules
 TV-NL :
-16.1 Spoken language: Dutch ......................................................................................[NUKE 5X]
-16.2 Encoded in: 720p, 1080p only!................................................................................[NUKE 5X]
-16.3 All sources..................................................................................................[ALLOWED]
-16.4 NO iNTERNALs.................................................................................................[NUKE 5X]
-16.5 iMDB/TVmaze no limitation....................................................................................[INFO]
+17.1 Spoken language: Dutch ......................................................................................[NUKE 5X]
+17.2 Encoded in: 720p, 1080p only!................................................................................[NUKE 5X]
+17.3 All sources..................................................................................................[ALLOWED]
+17.4 NO iNTERNALs.................................................................................................[NUKE 5X]
+17.5 iMDB/TVmaze no limitation....................................................................................[INFO]
 
 EOF
-sed -i 's/sections="/sections="\nTV-NL:^16./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nTV-NL:^17./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function X264
 {
 cat << EOF >> site.rules
 X264 :
-17.1 Spoken language: English.....................................................................................[NUKE 5X]
-17.2 Releases tagged in: MULTi/DUAL/HDTV/DUBBED/3D not allowed....................................................[NUKE 5X]
-17.3 Encoded in: 720p,1080p only!.................................................................................[NUKE 5X]
+18.1 Spoken language: English.....................................................................................[NUKE 5X]
+18.2 Releases tagged in: MULTi/DUAL/HDTV/DUBBED/3D not allowed....................................................[NUKE 5X]
+18.3 Encoded in: 720p,1080p only!.................................................................................[NUKE 5X]
 
 EOF
-sed -i 's/sections="/sections="\nX264:^17./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nX264:^18./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function X264-1080
 {
 cat << EOF >> site.rules
 X264-1080 :
-18.1 Spoken language: English.....................................................................................[NUKE 5X]
-18.2 Releases tagged in: MULTi/DUAL/HDTV/DUBBED/3D not allowed....................................................[NUKE 5X]
-18.3 Encoded in: 1080p only!......................................................................................[NUKE 5X]
+19.1 Spoken language: English.....................................................................................[NUKE 5X]
+19.2 Releases tagged in: MULTi/DUAL/HDTV/DUBBED/3D not allowed....................................................[NUKE 5X]
+19.3 Encoded in: 1080p only!......................................................................................[NUKE 5X]
 
 EOF
-sed -i 's/sections="/sections="\nX264-1080:^18./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nX264-1080:^19./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function X264-720
 {
 cat << EOF >> site.rules
 X264-720 :
-19.1 Spoken language: English.....................................................................................[NUKE 5X]
-19.2 Releases tagged in: MULTi/DUAL/HDTV/DUBBED/3D not allowed....................................................[NUKE 5X]
-19.3 Encoded in: 720p only!.......................................................................................[NUKE 5X]
+20.1 Spoken language: English.....................................................................................[NUKE 5X]
+20.2 Releases tagged in: MULTi/DUAL/HDTV/DUBBED/3D not allowed....................................................[NUKE 5X]
+20.3 Encoded in: 720p only!.......................................................................................[NUKE 5X]
 
 EOF
-sed -i 's/sections="/sections="\nX264-720:^19./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nX264-720:^20./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function X265-2160
 {
 cat << EOF >> site.rules
 X265-2160 :
-20.1 Spoken language: English.....................................................................................[NUKE 5X]
-20.2 Releases tagged in: MULTi/DUAL/HDTV not allowed..............................................................[NUKE 5X]
-20.3 Encoded in: 2160p only!......................................................................................[NUKE 5X]
+21.1 Spoken language: English.....................................................................................[NUKE 5X]
+21.2 Releases tagged in: MULTi/DUAL/HDTV not allowed..............................................................[NUKE 5X]
+21.3 Encoded in: 2160p only!......................................................................................[NUKE 5X]
 
 EOF
-sed -i 's/sections="/sections="\nX265-2160:^20./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nX265-2160:^21./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function XVID
 {
 cat << EOF >> site.rules
 XVID :
-21.1 Spoken language: English.....................................................................................[NUKE 5X]
-21.2 Foreign allowed if english subs are present..................................................................[NUKE 5X]
-21.3 NO iNTERNALs.................................................................................................[NUKE 5X]
-21.4 All sources..................................................................................................[ALLOWED]
+22.1 Spoken language: English.....................................................................................[NUKE 5X]
+22.2 Foreign allowed if english subs are present..................................................................[NUKE 5X]
+22.3 NO iNTERNALs.................................................................................................[NUKE 5X]
+22.4 All sources..................................................................................................[ALLOWED]
 
 EOF
-sed -i 's/sections="/sections="\nXVID:^21./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nXVID:^22./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function XXX
 {
 cat << EOF >> site.rules
 XXX :
-22.1 Spoken language: English/Nordic..............................................................................[NUKE 5X]
-22.2 NO Animal/Gay/Trans/Child Porn (male w/ male)! Lesbian is fine...............................................[DELUSER]
-22.3 NO iNTERNALs.................................................................................................[NUKE 5X]
-22.4 All sources in SD............................................................................................[ALLOWED]
-22.5 Porn ratio no limitation.....................................................................................[INFO]
+23.1 Spoken language: English/Nordic..............................................................................[NUKE 5X]
+23.2 NO Animal/Gay/Trans/Child Porn (male w/ male)! Lesbian is fine...............................................[DELUSER]
+23.3 NO iNTERNALs.................................................................................................[NUKE 5X]
+23.4 All sources in SD............................................................................................[ALLOWED]
+23.5 Porn ratio no limitation.....................................................................................[INFO]
 
 EOF
-sed -i 's/sections="/sections="\nXXX:^22./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nXXX:^23./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function XXX-PAYSITE
 {
 cat << EOF >> site.rules
 XXX-PAYSITE :
-23.1 Spoken language: English/Nordic..............................................................................[NUKE 5X]
-23.2 NO Animal/Gay/Trans/Child Porn (male w/ male)! Lesbian is fine...............................................[DELUSER]
-23.3 All sources in HD WEB 1080/2160p.............................................................................[ALLOWED]
+24.1 Spoken language: English/Nordic..............................................................................[NUKE 5X]
+24.2 NO Animal/Gay/Trans/Child Porn (male w/ male)! Lesbian is fine...............................................[DELUSER]
+24.3 All sources in HD WEB 1080/2160p.............................................................................[ALLOWED]
 
 EOF
-sed -i 's/sections="/sections="\nXXX-PAYSITE:^23./' packages/scripts/tur-rules/tur-rules.sh
+sed -i 's/sections="/sections="\nXXX-PAYSITE:^24./' packages/scripts/tur-rules/tur-rules.sh
 }
 
 function MISC
 {
 cat << EOF >> site.rules
 Changelog :
-90.1 Rules updated 2021-11-24.....................................................................................[INFO]
+90.1 Rules updated 2022-01-17.....................................................................................[INFO]
 
 EOF
 sed -i 's/sections="/sections="\nChangelog:^90./' packages/scripts/tur-rules/tur-rules.sh

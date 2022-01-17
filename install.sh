@@ -462,11 +462,11 @@ function section_names
 	else
 		echo
 		echo "Valid Sections are : "
-		echo "0DAY ANIME APPS EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE"
+		echo "0DAY ANIME APPS EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160 TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE"
 		echo
-		while [[ ! $sections =~ ^[0-9]+$ || $sections -gt 22 ]]
+		while [[ ! $sections =~ ^[0-9]+$ || $sections -gt 23 ]]
 		do
-			echo -n "How many sections do you require for your site (max 22)? : " ; read sections
+			echo -n "How many sections do you require for your site (max 23)? : " ; read sections
 		done
 		echo
 	fi
@@ -499,11 +499,11 @@ function section_generate
 		echo -n "Section $((counta+1)) is : " ; read section
 	fi
 	case ${section^^} in
-		0DAY|ANIME|APPS|EBOOKS|FLAC|GAMES|MBLURAY|MP3|NSW|PS4|PS5|TV-1080|TV-720|TV-HD|TV-NL|X264|X264-1080|X264-720|X265-2160|XVID|XXX|XXX-PAYSITE)
+		0DAY|ANIME|APPS|EBOOKS|FLAC|GAMES|MBLURAY|MP3|NSW|PS4|PS5|TV-1080|TV-2160|TV-720|TV-HD|TV-NL|X264|X264-1080|X264-720|X265-2160|XVID|XXX|XXX-PAYSITE)
 		writ
 		;;
 		*)
-        while [[ ${section^^} != @(0DAY|ANIME|APPS|EBOOKS|FLAC|GAMES|MBLURAY|MP3|NSW|PS4|PS5|TV-1080|TV-720|TV-HD|TV-NL|X264|X264-1080|X264-720|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
+        while [[ ${section^^} != @(0DAY|ANIME|APPS|EBOOKS|FLAC|GAMES|MBLURAY|MP3|NSW|PS4|PS5|TV-1080|TV-2160|TV-720|TV-HD|TV-NL|X264|X264-1080|X264-720|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
         do
             echo "Section [$section] is not in the above list of available sections, please try again."
             echo -n "Section $((counta+1)) is : " ; read section
@@ -1012,7 +1012,6 @@ function presystem
 		rm -f $rootdir/.tmp/footools
 		sed -i '/# group.dir/a group.SiteOP.dir=/site/PRE/SiteOP' $glroot/etc/pre.cfg
 		sed -i '/# group.allow/a group.SiteOP.allow='"$sections" $glroot/etc/pre.cfg
-		#sed -i "s/allow=/allow=$sections/" $glroot/bin/addaffil.sh
 		touch $glroot/ftp-data/logs/foo-pre.log
 		mknod $glroot/dev/full c 1 7 && chmod 666 $glroot/dev/full
 		mknod $glroot/dev/urandom c 1 9 && chmod 666 $glroot/dev/urandom

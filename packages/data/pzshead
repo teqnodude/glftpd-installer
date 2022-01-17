@@ -60,6 +60,11 @@
 #define incomplete_nfo_indicator        	"../[no-nfo]-%0"
 #define incomplete_base_nfo_indicator   	"../../[no-nfo]-%1"
 
+#define create_missing_sample_link 		FALSE
+#define incomplete_sample_indicator 		"../[no-sample]-%0"
+#define incomplete_base_sample_indicator 	"../../[no-sample]-%1"
+#define check_for_missing_sample_dirs		"/site/TV-720/ /site/TV-1080/ /site/TV-2160/ /site/TV-HD/ /site/TV-NL/ /site/X264/ /site/X264-1080/ /site/X264-720/ /site/X265-2160/ /site/XVID/ /site/XXX/ /site/XXX-PAYSITE/"
+
 #define enable_nfo_script               	TRUE
 #define nfo_script                      	"/bin/psxc-imdb.sh"
 #define enable_complete_script          	FALSE

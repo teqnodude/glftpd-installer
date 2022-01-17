@@ -13,6 +13,8 @@
 - Added the setting to nuke releases that lack nfo in incomplete-list-nuker.sh, default setting is to not nuke them
 - Updated addaffil.sh where it grabs sections from ngBot.conf instead of needing constant editing when sections are added/removed
 - Updated section-manager and removed the requirement of adding/removing things in addaffil.sh due to update of addaffil.sh script
+- Have updated the list of allowed sections and the rules attached to the new section TV-2160
+- Have included the settings for sample check in pzs-ng but left it at default setting FALSE and set up the list of sections to check based on this installer
 
 ### Fixes
 
