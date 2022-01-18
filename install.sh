@@ -1872,7 +1872,6 @@ function cleanup
 	if [[ "$(ls $glroot/site | grep -w ^0DAY)" = "0DAY" || "$(ls $glroot/site | grep -w ^FLAC)" = "FLAC" || "$(ls $glroot/site | grep -w ^MP3)" = "MP3" || "$(ls $glroot/site | grep -w ^EBOOKS)" = "EBOOKS" || "$(ls $glroot/site | grep -w ^XXX-PAYSITE)" = "XXX-PAYSITE" ]]
 	then
 		echo "0 0 * * *         	$glroot/bin/dated.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		#echo "0 1 * * *         	$glroot/bin/dated.sh close >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 		$glroot/bin/dated.sh >/dev/null 2>&1
 	fi
 
