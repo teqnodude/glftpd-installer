@@ -6,6 +6,10 @@
 the command to use on irc is site lastlogin to read syntax
 - I have included rename_dated_dirs.sh that can be found scripts/extra that changes the format of dated dirs from MMDD to YYYY-MM-DD
 
+### Updated
+
+- Included the option to exclude groups in lastlogin.sh
+
 ### Fixes
 
 - Various minor fixes

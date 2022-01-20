@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.1
+VER=1.2
 #---------------------------------------------------------------#
 # Lastlogin by Teqno                                            #
 #                                                               #
@@ -17,26 +17,35 @@ VER=1.1
 #								#
 #--[ Settings ]-------------------------------------------------#
 
-USERPATH=/ftp-data/users
-EXCLUDES='default.user|glftpd|backup|disabled'
-PATH=/bin
+# Path to users dir
+USERPATH="/ftp-data/users"
+# What users to exclude, case sensitive
+EXUSERS="default.user|glftpd"
+# What groups to exclude, case sensitive
+EXGROUPS=""
+# How long until users are flagged for deletion
 DELETION="1 months ago"
+# How long until users are flagged for purge
 PURGE="3 months ago"
+# Disable colors in announce
 skipcolor="no"
-color1=4 # color 4 red
-color2=9 # color 9 green
-color3= # color code!
+# color 4 red
+color1=4
+# color 9 green
+color2=9
+ # color code!
+color3=
 
 #--[ Script Start ]---------------------------------------------#
 
-if [ ! -f $PATH/sort ]
+if [ ! -f /bin/sort ]
 then
     echo "You need to copy sort binary to the bin folder inside glftpd"
     echo "Do the command: cp `which sort` /glftpd/bin"
     exit 0
 fi
 
-if [ ! -f $PATH/xargs ]
+if [ ! -f /bin/xargs ]
 then
     echo "You need to copy xargs binary to the bin folder inside glftpd"
     echo "Do the command: cp `which xargs` /glftpd/bin"
@@ -73,6 +82,7 @@ then
         LL=`date +"%Y-%m-%d" -d @$TIME`
         FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
         group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
+	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
         addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
         case $FLAGS in
         *6*)
@@ -142,7 +152,7 @@ if [ "$1" = "inactive" ]; then
 
     echo "Listing users that been inactive for longer than $MONTHS months that should be deleted"
     echo
-    for i in `ls -A | egrep -v $EXCLUDES`
+    for i in `ls -A | egrep -v $EXUSERS`
     do
         TIME=`grep -w TIME $i | awk -F " " '{print $3}'`
         LL=`date +"%Y-%m-%d" -d @$TIME`
@@ -167,6 +177,7 @@ if [ "$1" = "inactive" ]; then
         logindate=`echo "$i" | cut -d "^" -f2`
         flags=`cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}'`
     	group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
+	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
     	addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
     	case $flags in
         *6*)
@@ -211,7 +222,7 @@ then
 
     echo "Listing users that been inactive for longer than $MONTHS months that should be purged"
     echo
-    for i in `ls -A | egrep -v $EXCLUDES`
+    for i in `ls -A | egrep -v $EXUSERS`
     do
         TIME=`grep -w TIME $i | awk -F " " '{print $3}'`
         LL=`date +"%Y-%m-%d" -d @$TIME`
@@ -237,6 +248,7 @@ then
         logindate=`echo "$i" | cut -d "^" -f2`
 	flags=`cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}'`
         group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
+	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
         addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
     	case $flags in
         *6*)
@@ -271,12 +283,13 @@ fi
 if [ "$1" = "notraffic" ]
 then
     echo "Lising users with 0 in upload & download the current month"
-    for user in `ls -A | egrep -v $EXCLUDES`
+    for user in `ls -A | egrep -v $EXUSERS`
     do
         TIME=`grep -w TIME $user | awk -F " " '{print $3}'`
         LL=`date +"%Y-%m-%d" -d @$TIME`
         FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
         group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
+	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
         addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
         monthdn=`cat "$USERPATH/$user" | grep -w MONTHDN | cut -d " " -f3` 
         #monthdn=`expr $monthdn / 1024 / 1024`
