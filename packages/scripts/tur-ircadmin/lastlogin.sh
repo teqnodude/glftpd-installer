@@ -22,7 +22,7 @@ USERPATH="/ftp-data/users"
 # What users to exclude, case sensitive
 EXUSERS="default.user|glftpd"
 # What groups to exclude, case sensitive
-EXGROUPS=""
+EXGROUPS="group1|group2"
 # How long until users are flagged for deletion
 DELETION="1 months ago"
 # How long until users are flagged for purge
@@ -82,7 +82,7 @@ then
         LL=`date +"%Y-%m-%d" -d @$TIME`
         FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
         group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
+        [ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
         addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
         case $FLAGS in
         *6*)
@@ -177,7 +177,7 @@ if [ "$1" = "inactive" ]; then
         logindate=`echo "$i" | cut -d "^" -f2`
         flags=`cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}'`
     	group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
+        [ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
     	addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
     	case $flags in
         *6*)
@@ -248,7 +248,7 @@ then
         logindate=`echo "$i" | cut -d "^" -f2`
 	flags=`cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}'`
         group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
+        [ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
         addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
     	case $flags in
         *6*)
@@ -289,7 +289,7 @@ then
         LL=`date +"%Y-%m-%d" -d @$TIME`
         FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
         group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
+        [ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
         addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
         monthdn=`cat "$USERPATH/$user" | grep -w MONTHDN | cut -d " " -f3` 
         #monthdn=`expr $monthdn / 1024 / 1024`
