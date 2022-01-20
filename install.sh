@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=10.2
+VER=10.3
 clear
 
 if [ ! -d ".tmp" ]
@@ -527,7 +527,7 @@ function writ
 		echo "set chanlist(${section^^}) 			\"$announcechannels\"" >> $rootdir/.tmp/dzschan
 		#echo "#stat_section 	${section^^}	/site/${section^^}/* no" >> $rootdir/.tmp/glstat
 		echo "section.${section^^}.name=${section^^}" >> $rootdir/.tmp/footools
-		echo "section.${section^^}.dir=/site/${section^^}/MMDD" >> $rootdir/.tmp/footools
+		echo "section.${section^^}.dir=/site/${section^^}/YYYY-MM-DD" >> $rootdir/.tmp/footools
 		echo "section.${section^^}.gl_credit_section=0" >> $rootdir/.tmp/footools
 		echo "section.${section^^}.gl_stat_section=0" >> $rootdir/.tmp/footools
 		sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/${section^^}\/\$today/" packages/scripts/tur-autonuke/tur-autonuke.conf
@@ -896,7 +896,7 @@ function pzshfile
 	path=`cat $rootdir/.tmp/.path`
 	echo "#define check_for_missing_nfo_dirs		\"$path\"" >> zsconfig.h
 	echo "#define cleanupdirs				\"$path\"" >> zsconfig.h
-	echo "#define cleanupdirs_dated			\"/site/0DAY/%m%d/ /site/FLAC/%m%d/ /site/MP3/%m%d/ /site/EBOOKS/%m%d/ /site/XXX-PAYSITE/%m%d/\"" >> zsconfig.h
+	echo "#define cleanupdirs_dated			\"/site/0DAY/%Y-%m-%d/ /site/FLAC/%Y-%m-%d/ /site/MP3/%Y-%m-%d/ /site/EBOOKS/%Y-%m-%d/ /site/XXX-PAYSITE/%Y-%m-%d/\"" >> zsconfig.h
 	echo "#define sfv_dirs				\"$path\"" >> zsconfig.h
 	echo "#define short_sitename				\"$sitename\"" >> zsconfig.h
 	chmod 755 zsconfig.h

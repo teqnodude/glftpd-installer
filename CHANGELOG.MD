@@ -1,4 +1,4 @@
-## 10.x - 
+## 10.3 - 2022-01-20
 
 
 ### Updated
@@ -15,6 +15,7 @@
 - Updated section-manager and removed the requirement of adding/removing things in addaffil.sh due to update of addaffil.sh script
 - Have updated the list of allowed sections and the rules attached to the new section TV-2160
 - Have included the settings for sample check in pzs-ng but left it at default setting FALSE and set up the list of sections to check based on this installer
+- Changed date format for all dated sections in all relevant scripts from MMDD to YYYY-MM-DD since some can span longer than 1 year
 
 ### Fixes
 

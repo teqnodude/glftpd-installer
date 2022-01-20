@@ -1,14 +1,14 @@
 #-[ Settings ]-------------------------------------------------------------------------#
 # 0,20,40 * * * * /glftpd/bin/tur-autonuke.sh
 #--[ Generics: dated dirs - See README for explanation ]--#
-today="$( date +%m%d )"                         #Today
-yesterday="$( date --date "yesterday" +%m%d )"  #Yesterday
-daysago2="$( date --date "-2 day" +%m%d )"      #2 days ago
-daysago3="$( date --date "-3 day" +%m%d )"      #3 days ago
-daysago4="$( date --date "-4 day" +%m%d )"      #4 days ago
-daysago5="$( date --date "-5 day" +%m%d )"      #5 days ago
-daysago6="$( date --date "-6 day" +%m%d )"      #6 days ago
-daysago7="$( date --date "-7 day" +%m%d )"      #1 week ago
+today="$( date +%Y-%m-%d )"                         #Today
+yesterday="$( date --date "yesterday" +%Y-%m-%d )"  #Yesterday
+daysago2="$( date --date "-2 day" +%Y-%m-%d )"      #2 days ago
+daysago3="$( date --date "-3 day" +%Y-%m-%d )"      #3 days ago
+daysago4="$( date --date "-4 day" +%Y-%m-%d )"      #4 days ago
+daysago5="$( date --date "-5 day" +%Y-%m-%d )"      #5 days ago
+daysago6="$( date --date "-6 day" +%Y-%m-%d )"      #6 days ago
+daysago7="$( date --date "-7 day" +%Y-%m-%d )"      #1 week ago
 #---------------------------------------------------------#
 
 #--[ Generics: Main settings ]--#

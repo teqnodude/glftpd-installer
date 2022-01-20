@@ -5,13 +5,13 @@
 #                                                               #
 #--[ Settings ]-------------------------------------------------#
 
-today=`date +%m%d`                      # 1231
-tomorrow=`date --date "+1 day" +%m%d`   # 0101
-yesterday=`date --date "-1 day" +%m%d`  # 1230
-glroot=/glftpd                          # path to glftpd
-gllog=$glroot/ftp-data/logs/glftpd.log  # path to glftpd.log
+today=`date +%Y-%m-%d`                          # 2021-12-31
+tomorrow=`date --date "+1 day" +%Y-%m-%d`       # 2022-01-01
+yesterday=`date --date "-1 day" +%Y-%m-%d`      # 2021-12-30
+glroot=/glftpd                                  # path to glftpd
+gllog=$glroot/ftp-data/logs/glftpd.log          # path to glftpd.log
 sections="
-"
+"                      
 
 #--[ Script start ]---------------------------------------------#
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.24
+VER=1.25
 #----------------------------------------------------------------#
 #								 #
 # Section Manager by Teqno     			 		 #
@@ -28,7 +28,7 @@ VER=1.24
 glroot=/glftpd							 # path for glftpd dir
 pzsbot=$glroot/sitebot/scripts/pzs-ng/ngBot.conf		 # path for ngBot.conf 
 pzsng=$glroot/backup/pzs-ng		 			 # path for pzs-ng
-incoming=/dev/sda1					 	 # path for incoming device for glftpd
+incoming=changeme					 	 # path for incoming device for glftpd
 
 # Leave them empty if you want to disable them
 turautonuke=$glroot/bin/tur-autonuke.conf			 # path for tur-autonuke
@@ -158,7 +158,7 @@ if [ -f "$pzsng/zipscript/conf/zsconfig.h" ]
 then
     case $action in
 	[Rr])
-            sed -i -e "s/\/site\/$section\/%m%d\///gI" -e "s/\/site\/$section\///gI" $pzsng/zipscript/conf/zsconfig.h
+            sed -i -e "s/\/site\/$section\/%Y-%m-%d\///gI" -e "s/\/site\/$section\///gI" $pzsng/zipscript/conf/zsconfig.h
             sed -i 's/ "$/"/g' $pzsng/zipscript/conf/zsconfig.h
             sed -i 's/" /"/g' $pzsng/zipscript/conf/zsconfig.h
             sed -i '/\//s/\/  \//\/ \//g' $pzsng/zipscript/conf/zsconfig.h
@@ -166,7 +166,7 @@ then
 	*)
 	    case $day in
 	        [Yy])
-		    sed -i "/\bcleanupdirs_dated\b/ s/\"$/ \/site\/$section\/%m%d\/\"/" $pzsng/zipscript/conf/zsconfig.h    
+		    sed -i "/\bcleanupdirs_dated\b/ s/\"$/ \/site\/$section\/%Y-%m-%d\/\"/" $pzsng/zipscript/conf/zsconfig.h    
 		    ;;
 		*)
 		    sed -i "/\bcleanupdirs\b/ s/\"$/ \/site\/$section\/\"/" $pzsng/zipscript/conf/zsconfig.h
@@ -278,7 +278,7 @@ then
 		echo "section.$section.gl_stat_section=0" >> $foopre
 	    else
 	        echo "section.$section.name=$section" >> $foopre
-	    	echo "section.$section.dir=/site/$section/MMDD" >> $foopre
+	    	echo "section.$section.dir=/site/$section/YYYY-MM-DD" >> $foopre
 		echo "section.$section.gl_credit_section=0" >> $foopre
 		echo "section.$section.gl_stat_section=0" >> $foopre		    
 	    fi

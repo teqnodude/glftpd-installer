@@ -243,7 +243,7 @@ VER=2.5
 GLROOT=/glftpd
 SITEROOT=/site
 
-today="`date +%m%d`"
+today="`date +%Y-%m-%d`"
 
 MOVE="
 /0DAYS~DEEP:^The\.|\-BP$:/Links/TheAndBP
