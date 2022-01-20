@@ -103,7 +103,7 @@ ALLOWHOURS="FALSE"    	# Use hours in bot and log output?
 
 #---[ Generics ]---#
 DELETENUKES="TRUE"      # Delete nuked folders after...
-TIMETODELEM="24"        # the are this many >hours< old.
+TIMETODELEM="12"        # the are this many >hours< old.
 
 USEREXCLUDE="UNKNOWN"   # Dont show in EMBARRES nuke output.
 MATCHUSER="TRUE"        # Try to find username when sending nuke warn?

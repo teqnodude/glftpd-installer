@@ -1,0 +1,2 @@
+site_cmd LASTLOGIN      EXEC            /bin/lastlogin.sh
+custom-lastlogin        1

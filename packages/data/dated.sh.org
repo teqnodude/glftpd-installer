@@ -27,9 +27,4 @@ do
     cd ..
 done
 
-for section in $sections
-do
-    [ -d "$glroot/site/$section/$tomorrow" ] && rm -rf $glroot/site/$section/$tomorrow
-done
-
 exit 0

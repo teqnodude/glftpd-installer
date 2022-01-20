@@ -1,5 +1,17 @@
-## 10.3 - 2022-01-20
+## 10.x -
 
+### Added
+
+- I have included an addon called lastlogin.sh as part of tur-ircadmin that enables you to list users who have been inactive for x number of months,
+the command to use on irc is site lastlogin to read syntax
+- I have included rename_dated_dirs.sh that can be found scripts/extra that changes the format of dated dirs from MMDD to YYYY-MM-DD
+
+### Fixes
+
+- Various minor fixes
+
+
+## 10.3 - 2022-01-20
 
 ### Updated
 

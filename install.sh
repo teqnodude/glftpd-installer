@@ -1124,14 +1124,15 @@ function ircadmin
 		
 		echo -n "Installing Tur-Ircadmin, please wait...                       	"
 		cd tur-ircadmin
-		cp tur-ircadmin.sh $glroot/bin
-		chmod 755 $glroot/bin/tur-ircadmin.sh
+		cp *.sh $glroot/bin
+		chmod 755 $glroot/bin/tur-ircadmin.sh $glroot/bin/lastlogin.sh
 		cp tur-ircadmin.tcl $glroot/sitebot/scripts
 		touch $glroot/ftp-data/logs/tur-ircadmin.log
 		chmod 666 $glroot/ftp-data/logs/tur-ircadmin.log
 		echo "source scripts/tur-ircadmin.tcl" >> $glroot/sitebot/eggdrop.conf
 		sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/tur-ircadmin.tcl
 		sed -i "s/changeme/$port/" $glroot/bin/tur-ircadmin.sh
+		cat gl >> $glroot/etc/glftpd.conf
 		cd ..
 		echo -e "[\e[32mDone\e[0m]"
 		;;
