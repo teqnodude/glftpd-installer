@@ -17,7 +17,6 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  getops
 *  eur0-pre-system(add/del/list affils part only)
 *  foo-tools(only foo-pre installed) latest github version
-*  idlebotkick
 *  imdbrating
 *  ircnick
 *  mediainfo

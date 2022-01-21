@@ -1058,44 +1058,6 @@ function slvprebw
 	esac
 }
 
-## idlebotkick
-function idlebotkick
-{
-	if [[ -f "$cache" && "`cat $cache | grep -w idlebotkick | wc -l`" = 1 ]]
-	then
-		ask=`cat $cache | grep -w idlebotkick | cut -d "=" -f2 | tr -d "\""`
-	else
-		echo
-                echo -e "\e[4mDescription for Idlebotkick:\e[0m"
-                cat $rootdir/packages/scripts/idlebotkick/description
-		echo
-		echo -n "Install Idlebotkick ? [Y]es [N]o, default Y : " ; read ask
-	fi
-	
-	case $ask in
-		[Nn])
-		if [ "`cat $cache | grep -w idlebotkick= | wc -l`" = 0 ]
-		then
-			echo "idlebotkick=\"n\"" >> $cache
-		fi
-		;;
-		[Yy]|*)
-		if [ "`cat $cache | grep -w idlebotkick= | wc -l`" = 0 ]
-		then
-			echo "idlebotkick=\"y\"" >> $cache
-		fi
-		echo -n "Installing Idlebotkick, please wait...                          "
-		cd idlebotkick
-		cp idlebotkick.sh $glroot/bin
-		sed -i "s/changeme/$port/g" $glroot/bin/idlebotkick.sh
-		cp idlebotkick.tcl $glroot/sitebot/scripts
-		echo "source scripts/idlebotkick.tcl" >> $glroot/sitebot/eggdrop.conf
-		cd ..
-		echo -e "[\e[32mDone\e[0m]"
-		;;
-	esac
-}
-
 ## tur-ircadmin
 function ircadmin
 {
@@ -1874,7 +1836,6 @@ pzsbotfile
 pzsng
 presystem
 slvprebw
-idlebotkick
 ircadmin
 request
 trial
