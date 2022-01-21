@@ -45,7 +45,7 @@ sections="
 "
 
 # What to exclude from scanner
-exclude="no-nfo|incomplete|NUKED"
+exclude="^\[NUKED\]-|^\[incomplete\]-|^\[no-nfo\]-|^\[no-sample\]-"
 
 # Do you want to preserve date & time on scanned releases
 preserve=1

@@ -732,6 +732,8 @@ function glftpd
 	chmod 777 $glroot/ftp-data/msgs
 	cp ../scripts/extra/update_perms.sh $glroot/bin
 	cp ../scripts/extra/update_gl.sh $glroot/bin
+	cp ../scripts/extra/imdb-scan.sh $glroot/bin
+	cp ../scripts/extra/imdb-rescan.sh $glroot/bin
 	cp ../scripts/extra/glftpd-version_check.sh $glroot/bin
 	echo "0 18 * * *              $glroot/bin/glftpd-version_check.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 	cp ../scripts/section-manager/section-manager.sh $glroot
@@ -1878,13 +1880,11 @@ function cleanup
 
 	if [[ "$(ls $glroot/site | grep -w ^TV-HD)" = "TV-HD" || "$(ls $glroot/site | grep -w ^TV-NL)" = "TV-NL" || "$(ls $glroot/site | grep -w ^TV-SD)" = "TV-SD" ]]
 	then
-		cp -f packages/scripts/tvmaze-nuker/TVMaze.tcl $glroot/sitebot/scripts/pzs-ng/plugins
-		cp -f packages/scripts/tvmaze-nuker/TVMaze.zpt $glroot/sitebot/scripts/pzs-ng/plugins
-		cp -f packages/scripts/tvmaze-nuker/tvmaze.sh $glroot/bin
-		cp -f packages/scripts/tvmaze-nuker/tvmaze-nuker.sh $glroot/bin
-		cp -f packages/scripts/tvmaze-nuker/tvmaze-rescan.sh $glroot/bin
+		cp -f packages/scripts/tvmaze/TVMaze.tcl $glroot/sitebot/scripts/pzs-ng/plugins
+		cp -f packages/scripts/tvmaze/TVMaze.zpt $glroot/sitebot/scripts/pzs-ng/plugins
+		cp -f packages/scripts/tvmaze/*.sh $glroot/bin
 		echo "source scripts/pzs-ng/plugins/TVMaze.tcl" >> $glroot/sitebot/eggdrop.conf
-		touch $glroot/ftp-data/logs/tvmaze-nuker.log
+		touch $glroot/ftp-data/logs/tvmaze.log
 	fi
 
 	echo "#*/5 * * * *		$glroot/bin/tur-space.sh go >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
