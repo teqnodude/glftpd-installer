@@ -41,7 +41,6 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  tur-rules
 *  tur-space
 *  tur-trial3
-*  tur-undupe
 *  tur-vacation
 *  tvmaze-nuker
 *  whereami

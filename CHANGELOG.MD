@@ -15,6 +15,10 @@ the command to use on irc is site lastlogin to read syntax
 
 - Various minor fixes
 
+### Removed
+
+- Removed tur-undupe from the installer since most if not all are not using this feature anyway
+
 
 ## 10.3 - 2022-01-20
 

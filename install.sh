@@ -1088,7 +1088,6 @@ function idlebotkick
 		cd idlebotkick
 		cp idlebotkick.sh $glroot/bin
 		sed -i "s/changeme/$port/g" $glroot/bin/idlebotkick.sh
-		chmod 755 $glroot/bin/idlebotkick.sh
 		cp idlebotkick.tcl $glroot/sitebot/scripts
 		echo "source scripts/idlebotkick.tcl" >> $glroot/sitebot/eggdrop.conf
 		cd ..
@@ -1127,7 +1126,6 @@ function ircadmin
 		echo -n "Installing Tur-Ircadmin, please wait...                       	"
 		cd tur-ircadmin
 		cp *.sh $glroot/bin
-		chmod 755 $glroot/bin/tur-ircadmin.sh $glroot/bin/lastlogin.sh
 		cp tur-ircadmin.tcl $glroot/sitebot/scripts
 		touch $glroot/ftp-data/logs/tur-ircadmin.log
 		chmod 666 $glroot/ftp-data/logs/tur-ircadmin.log
@@ -1171,7 +1169,6 @@ function request
 		echo -n "Installing Tur-Request, please wait...                       	"
 		cd tur-request
 		cp tur-request.sh $glroot/bin
-		chmod 755 $glroot/bin/tur-request.sh
 		cp *.tcl $glroot/sitebot/scripts
 		cp file_date $glroot/bin
 		sed "s/changeme/$sitename/" tur-request.conf > $glroot/bin/tur-request.conf
@@ -1327,49 +1324,9 @@ function whereami
 
 		echo -n "Installing Whereami, please wait...                             "
 		cp whereami/whereami.sh $glroot/bin
-		chmod 755 $glroot/bin/whereami.sh
 		cp whereami/whereami.tcl $glroot/sitebot/scripts
 		echo "source scripts/whereami.tcl" >> $glroot/sitebot/eggdrop.conf
 		echo -e "[\e[32mDone\e[0m]"
-	esac
-}
-
-
-## tur-undupe
-function undupe
-{
-	if [[ -f "$cache" && "`cat $cache | grep -w undupe | wc -l`" = 1 ]]
-	then
-		ask=`cat $cache | grep -w undupe | cut -d "=" -f2 | tr -d "\""`
-	else
-		echo
-                echo -e "\e[4mDescription for Tur-Undupe:\e[0m"
-                cat $rootdir/packages/scripts/tur-undupe/description
-		echo
-		echo -n "Install Tur-Undupe ? [Y]es [N]o, default Y : " ; read ask
-	fi
-	
-	case $ask in
-		[Nn])
-		if [ "`cat $cache | grep -w undupe= | wc -l`" = 0 ]
-		then
-			echo "undupe=\"n\"" >> $cache
-		fi
-		;;
-		[Yy]|*)
-		if [ "`cat $cache | grep -w undupe= | wc -l`" = 0 ]
-		then
-			echo "undupe=\"y\"" >> $cache
-		fi
-		
-		echo -n "Installing Tur-Undupe, please wait...                       	"
-		cp tur-undupe/tur-undupe.sh $glroot/bin
-		chmod 755 $glroot/bin/tur-undupe.sh
-		chmod 6755 $glroot/bin/undupe
-		cp tur-undupe/tur-undupe.tcl $glroot/sitebot/scripts
-		echo "source scripts/tur-undupe.tcl" >> $glroot/sitebot/eggdrop.conf
-		echo -e "[\e[32mDone\e[0m]"
-		;;
 	esac
 }
 
@@ -1923,7 +1880,6 @@ request
 trial
 vacation
 whereami
-undupe
 precheck
 autonuke
 psxcimdb
