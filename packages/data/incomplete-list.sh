@@ -61,10 +61,8 @@ do
     do
         results="`$cleanup $glroot 2>/dev/null | grep -e "^Incomplete" | tr '\"' '\n' | grep -e "$secpath" | tr -s '/' | sort`"
 
-        if [ -z "$results" ]
+        if [ ! -z "$results" ]
         then
-            echo "$secname: No incomplete releases found."
-        else
             for result in $results
             do
                 secrel=`echo $result | sed "s|$secpath||" | tr -s '/' | sed "s|$glroot||"`
