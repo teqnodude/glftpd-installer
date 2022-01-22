@@ -6,6 +6,7 @@
 the command to use on irc is site lastlogin to read syntax
 - I have included rename_dated_dirs.sh that can be found scripts/extra that changes the format of dated dirs from MMDD to YYYY-MM-DD
 - I added my own created imdb-scan.sh for symlinks, imdb-rescan.sh for imdb info and tvmaze-rescan.sh for TVMaze info and tvmaze-symlink-maker.sh for symlinks
+- Added incomplete-list-symlinks.sh which can be used to create symlinks of incompletes that require the manual add to crontab
 
 ### Updated
 

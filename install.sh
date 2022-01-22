@@ -727,6 +727,7 @@ function glftpd
 	mv -f ../../site.rules $glroot/ftp-data/misc
 	cp incomplete-list.sh $glroot/bin
 	cp incomplete-list-nuker.sh $glroot/bin
+	cp incomplete-list-symlinks.sh $glroot/bin
 	chmod 755 $glroot/site
 	ln -s $glroot/etc/glftpd.conf /etc/glftpd.conf
 	chmod 777 $glroot/ftp-data/msgs

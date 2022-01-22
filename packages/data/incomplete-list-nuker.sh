@@ -1,6 +1,5 @@
 #!/bin/bash
-
-
+VER=1.0
 ##############################
 # CONFIG                     #
 # ^^^^^^                     #
@@ -39,12 +38,6 @@ nonfo=0
 # path to log file
 log=$glroot/ftp-data/logs/incomplete-list-nuker.log
 
-# Today
-today="$( date +%m%d )"
-
-# Year
-year="$( date +%Y )"
-
 # enter sections in the following format:
 # <announce name of section>:<path to section, including a terminating slash ``/''
 # spaces and newline separates.
@@ -62,16 +55,9 @@ botconf=/glftpd/sitebot/scripts/pzs-ng/ngBot.conf
 # Set this to your complete line (non-dynamic part)
 releaseComplete="Complete -"
 
-# set this to 1 if you wish to announce sections where no incompletes are found.
-verbose=0
-
 # set this to one if you have sections in subdirs of one another - ie,
 # if you have defined in $sections "A:/site/DIR" and "B:/site/DIR/SUBDIR"
 no_strict=0
-
-bold=
-dgry=14
-lred=4
 
 #############################
 # END OF CONFIG             #
@@ -101,10 +87,7 @@ else
     	    results="`chroot $glroot $cleanup 2>/dev/null | grep -e "^Incomplete" | tr '\"' '\n' | grep -e "$secpath" | grep -v "\/Sample\|\/Subs" | tr -s '/' | sort`"
     	    if [ -z "$results" ]
 	    then
-		if [ $verbose -eq 1 ]
-		then
-		    echo "$secname: No incomplete releases found."
-		fi
+		echo "$secname: No incomplete releases found."
 	    else
 		for result in $results
 		do
@@ -116,7 +99,7 @@ else
 		    	percent="`echo $comp | awk -F " " '{print $3}'`"
 			if [ $no_strict ] || [ "`dirname $secrel`/" = "`echo $secpath/ | tr -s '/'`" ]
 			then
-			    echo "$secname:${lred} ${secrel}${dgry} is${lred} $percent ${dgry}complete."
+			    echo "$secname: ${secrel} is $percent complete."
     			    if [ "$secname" = "0DAY" ] || [ "$secname" = "MP3" ] || [ "$secname" = "FLAC" ] || [ "$secname" = "EBOOKS" ] || [ "$secname" = "XXX-PAYSITE" ]
 			    then
                             	release=`echo $secrel | awk -F "/" '{print $2}'`
@@ -137,7 +120,7 @@ else
 		    else
 			if [ $no_strict ] || [ "`dirname $secrel`/" = "`echo $secpath/ | tr -s '/'`" ]
 			then
-			    [ "$nonfo" = 0 ] && echo "$secname:${lred} ${secrel}${dgry} is either empty or missing a NFO."
+			    [ "$nonfo" = 0 ] && echo "$secname: ${secrel} is either empty or missing a NFO."
 			    if [ "$nonfo" = 1 ]
 			    then
     				if [ "$secname" = "0DAY" ] || [ "$secname" = "MP3" ] || [ "$secname" = "FLAC" ] || [ "$secname" = "EBOOKS" ] || [ "$secname" = "XXX-PAYSITE" ]
