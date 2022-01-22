@@ -85,10 +85,8 @@ else
 	for secpath in $secpaths
 	do
     	    results="`chroot $glroot $cleanup 2>/dev/null | grep -e "^Incomplete" | tr '\"' '\n' | grep -e "$secpath" | grep -v "\/Sample\|\/Subs" | tr -s '/' | sort`"
-    	    if [ -z "$results" ]
+    	    if [ ! -z "$results" ]
 	    then
-		echo "$secname: No incomplete releases found."
-	    else
 		for result in $results
 		do
 		    secrel=`echo $result | sed "s|$secpath||" | tr -s '/'`
