@@ -62,21 +62,24 @@ curdir=`pwd`
 case $1 in 
     backup)
 	echo
-	echo "Backing up please wait..."
+	echo "Backing up please wait...                     "
 	echo
-	mysqldump -u trial -p$pass --databases $db1 > $db1.sql
-	mysqldump -u transfer -p$pass --databases $db2 > $db2.sql
-	tar -czf $db1.tar.gz $db1.sql >/dev/null 2>&1
-	tar -czf $db2.tar.gz $db2.sql >/dev/null 2>&1
-	paths="$paths
-	$db1.tar.gz
-	$db2.tar.gz
-	"
+	if [ -f "/usr/sbin/mariadbd" ]
+	then
+	    mysqldump -u trial -p$pass --databases $db1 > $db1.sql
+    	    mysqldump -u transfer -p$pass --databases $db2 > $db2.sql
+    	    tar -czf $db1.tar.gz $db1.sql >/dev/null 2>&1
+    	    tar -czf $db2.tar.gz $db2.sql >/dev/null 2>&1
+	    paths="$paths
+    	    $db1.tar.gz
+    	    $db2.tar.gz
+	    "
+	fi
 	[ ! -d "$dstdir" ] && mkdir $dstdir
 	[ -f $dstdir/$filename ] && rm -f $dstdir/$filename
 	tar -czf $dstdir/$filename --exclude ftp-data/logs --exclude ftp-data/pzs-ng --exclude ftp-data/backup $paths >/dev/null 2>&1
-	rm $db1.tar.gz $db2.tar.gz $db1.sql $db2.sql
-	echo "Done"
+	[ -f "/usr/sbin/mariadbd" ] && rm $db1.tar.gz $db2.tar.gz $db1.sql $db2.sql
+	echo -e "[\e[32mDone\e[0m]"
 	;;
     restore)
 	if [ `ls | grep gz | grep backup | wc -l` -eq 0 ]
@@ -103,7 +106,7 @@ case $1 in
 		
 	fi
 	restore="$dstdir/restore"
-	echo "Downloading glFTPD, please wait...                   "
+	echo -n "Downloading glFTPD, please wait...         "
 	[ ! -d "$restore" ] && mkdir -p $restore
         latest=`lynx --dump https://glftpd.io | grep "latest stable version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr -d "[:space:]"`
 	version=`lscpu | grep Architecture | tr -s ' ' | cut -d ' ' -f2`
@@ -124,8 +127,9 @@ case $1 in
         	;;
         esac
 
+	echo -e "[\e[32mDone\e[0m]"
 	echo
-	echo "Setting up glFTPD"
+	echo -n "Setting up glFTPD, please wait...          "
         CHKGR=`cat /etc/group | grep -w "glftpd" | cut -d ":" -f1`
 	CHKUS=`cat /etc/passwd | grep -w "sitebot" | cut -d ":" -f1`
 	if [ "$CHKGR" != "glftpd" ]
@@ -144,8 +148,9 @@ case $1 in
 	cp -fr $restore/$PKDIR/ftp-data $glroot
 	cp -fr $restore/$PKDIR/gcp $glroot
 
+	echo -e "[\e[32mDone\e[0m]"
 	echo
-	echo "Restoring backup"
+	echo -n "Restoring backup, please wait...           "
 	mkdir $restore/bup
 	mkdir $glroot/site
 	tar -xf *.gz -C $restore/bup
@@ -200,6 +205,7 @@ case $1 in
 	systemctl daemon-reload && systemctl restart glftpd.socket
 	service cron restart
 	rm -rf $restore
+	echo -e "[\e[32mDone\e[0m]"
 	echo
 	echo "Backup restored, enjoy!"
 	;;
@@ -209,7 +215,7 @@ case $1 in
 	    echo "You have mounted dirs in the path of /glftpd, unmount all including /glftpd and try again."
 	    exit 1
 	fi
-	echo -n "Starting cleanup, please wait..."
+	echo -n "Starting cleanup, please wait...           "
 	rm -rf /glftpd
 	rm -f /etc/glftpd.conf
 	rm -rf /var/spool/mail/sitebot
@@ -237,7 +243,7 @@ case $1 in
     	    systemctl daemon-reload
     	    systemctl reset-failed
 	fi
-	echo "Done"
+	echo -e "[\e[32mDone\e[0m]"
 	;;
     *)
 	echo "./backup.sh backup - To create a backup of glFTPD settings, users and sitebot including system settings"

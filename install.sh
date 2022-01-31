@@ -839,9 +839,9 @@ function pzshfile
 {
     cd ../../
     cat packages/data/pzshead > zsconfig.h
-    paths="`cat $rootdir/.tmp/.path`"
+    [ -f "$rootdir/.tmp/.path" ] && paths="`cat $rootdir/.tmp/.path`"
     nodatepaths="`cat $rootdir/.tmp/.nodatepath`"
-    allsections=`echo "$paths $nodatepaths" | sed 's/ /\n/g' | sort | xargs`
+    allsections=`echo "$paths $nodatepaths" | sed 's/ /\n/g' | sort | xargs | sed 's/^ //'`
     cleanup_dated=`cat $rootdir/.tmp/.cleanup_dated | sed 's/ /\n/g' | sort | xargs`
     echo "#define check_for_missing_nfo_dirs		\"$allsections\"" >> zsconfig.h
     echo "#define cleanupdirs				\"$nodatepaths\"" >> zsconfig.h
