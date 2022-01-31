@@ -5,16 +5,23 @@
 - I have included an addon called lastlogin.sh as part of tur-ircadmin that enables you to list users who have been inactive for x number of months,
 the command to use on irc is site lastlogin to read syntax
 - I have included rename_dated_dirs.sh that can be found scripts/extra that changes the format of dated dirs from MMDD to YYYY-MM-DD
-- I added my own created imdb-scan.sh for symlinks, imdb-rescan.sh for imdb info and tvmaze-rescan.sh for TVMaze info and tvmaze-symlink-maker.sh for symlinks
+- Added my own created imdb-scan.sh for symlinks, imdb-rescan.sh for imdb info and tvmaze-rescan.sh for TVMaze info and tvmaze-symlink-maker.sh for symlinks
 - Added incomplete-list-symlinks.sh which can be used to create symlinks of incompletes that require the manual add to crontab
+- Added a backup/restore script that can be run in crontab or run manually that makes it take less than 10 seconds to restore glFTPD
+- Added rescan_fix.sh that is run in cron by default that I created years ago that can resolves rare lock issues in pzs-ng
 
 ### Updated
 
 - Included the option to exclude groups in lastlogin.sh
+- Did a major overhaul in regards to the style of the code in installer.sh and tweaked the code a bit that reduced a few dozen lines
+- Moved some files from packages/data into packages/extra for a better overview of files used during installation
+- Removed the manual input for 32/64 bit version of glFTPD, instead I made the installer detect what version of OS
 
 ### Fixes
 
 - Various minor fixes
+- It wasn't possible to add dated sections like EBOOKS and XXX-PAYSITE before during install because of bad coding
+- tur-trial was installed with the wrong password in tur-trial3.conf
 
 ### Removed
 
