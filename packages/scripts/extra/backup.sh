@@ -23,7 +23,7 @@ VER=1.0
 # ./backup.sh restore						#
 #								#
 # If for any reason it crashes during restoration, run 		#
-# ./backup cleanup and try to restore the backup once again.	#
+# ./backup.sh cleanup and try to restore the backup once again.	#
 #								#	
 #----[ Settings ]------------------------------------------------
 
