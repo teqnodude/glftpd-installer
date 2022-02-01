@@ -28,7 +28,7 @@ VER=1.0
 #----[ Settings ]------------------------------------------------
 
 glroot=/glftpd
-site=sitename
+site=changeme
 dstdir=$glroot/backup/glftpd
 today=`date +%d`
 filename="backup-$site-$today.tar.gz"

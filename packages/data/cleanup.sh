@@ -10,7 +10,7 @@ rm -f /etc/glftpd.conf
 rm -f site.rules
 rm -rf /var/spool/mail/sitebot
 rm -rf .tmp
-rm /etc/rsyslog.d/glftpd.conf
+rm -f /etc/rsyslog.d/glftpd.conf
 killall sitebot > /dev/null 2>&1
 sleep 3
 userdel sitebot > /dev/null 2>&1
@@ -26,7 +26,7 @@ fi
 sed -i /glftpd/Id /var/spool/cron/crontabs/root
 rm -f /var/spool/cron/crontabs/sitebot
 
-if [ -f "/bin/systemctl" ]
+if [ -f "/etc/systemd/system/glftpd.socket" ]
 then
     systemctl stop glftpd.socket
     systemctl disable glftpd.socket >/dev/null 2>&1
