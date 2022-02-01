@@ -62,7 +62,7 @@ curdir=`pwd`
 case $1 in 
     backup)
 	echo
-	echo "Backing up please wait...                     "
+	echo -n "Backing up please wait...                  "
 	echo
 	if [ -f "/usr/sbin/mariadbd" ]
 	then
@@ -76,7 +76,7 @@ case $1 in
 	    "
 	fi
 	[ ! -d "$dstdir" ] && mkdir $dstdir
-	[ -f $dstdir/$filename ] && rm -f $dstdir/$filename
+	[ -f "$dstdir/$filename" ] && rm -f $dstdir/$filename
 	tar -czf $dstdir/$filename --exclude ftp-data/logs --exclude ftp-data/pzs-ng --exclude ftp-data/backup $paths >/dev/null 2>&1
 	[ -f "/usr/sbin/mariadbd" ] && rm $db1.tar.gz $db2.tar.gz $db1.sql $db2.sql
 	echo -e "[\e[32mDone\e[0m]"
