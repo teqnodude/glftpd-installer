@@ -62,8 +62,7 @@ curdir=`pwd`
 case $1 in 
     backup)
 	echo
-	echo -n "Backing up please wait...                  "
-	echo
+	echo -n "Backing up, please wait...                 "
 	if [ -f "/usr/sbin/mariadbd" ]
 	then
 	    mysqldump -u trial -p$pass --databases $db1 > $db1.sql
