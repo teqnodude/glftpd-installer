@@ -235,7 +235,7 @@ case $1 in
 	sed -i /glftpd/Id /var/spool/cron/crontabs/root
 	rm -f /var/spool/cron/crontabs/sitebot
 
-	if [ -f "/bin/systemctl" ]
+	if [ -f "/etc/systemd/system/glftpd.socket" ]
 	then
     	    systemctl stop glftpd.socket >/dev/null 2>&1
     	    systemctl disable glftpd.socket >/dev/null 2>&1
