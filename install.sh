@@ -416,12 +416,6 @@ function ircnickname
 ## how many sections
 function section_names
 {
-
-#    if [ ! -d ".tmp" ] 
-#    then
-#	mkdir .tmp
-#    fi
-
     if [[ -f "$cache" && "`cat $cache | grep -w "sections" | wc -l`" = 1 ]]
     then
 	sections=`cat $cache | grep -w "sections" | cut -d "=" -f2 | tr -d "\""`
