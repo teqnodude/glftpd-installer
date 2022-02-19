@@ -159,6 +159,7 @@ case $1 in
         cp -fr $restore/bup/glftpd/etc $glroot
         cp -fr $restore/bup/glftpd/ftp-data $glroot
         cp -fr $restore/bup/glftpd/sitebot $glroot
+	chroot -R sitebot:glftpd $glroot/sitebot
 	cp -fr $restore/bup/glftpd/usr $glroot
 	cp $restore/bup/glftpd/libcopy.sh $glroot && $glroot/libcopy.sh >/dev/null 2>&1
 	mkdir $glroot/dev
