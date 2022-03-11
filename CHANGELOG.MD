@@ -16,12 +16,14 @@ the command to use on irc is site lastlogin to read syntax
 - Did a major overhaul in regards to the style of the code in installer.sh and tweaked the code a bit that reduced a few dozen lines
 - Moved some files from packages/data into packages/extra for a better overview of files used during installation
 - Removed the manual input for 32/64 bit version of glFTPD, instead I made the installer detect what version of OS
+- Disabled the module uptime in eggdrop because the bot could apparently show up on the webpage of eggdrop
 
 ### Fixes
 
 - Various minor fixes
 - It wasn't possible to add dated sections like EBOOKS and XXX-PAYSITE before during install because of bad coding
 - tur-trial was installed with the wrong password in tur-trial3.conf
+
 
 ### Removed
 

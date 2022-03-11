@@ -15,7 +15,7 @@ loadmodule ctcp
 loadmodule irc
 loadmodule notes
 loadmodule console
-loadmodule uptime
+#loadmodule uptime
 #loadmodule blowfish
 loadmodule pbkdf2
 loadmodule transfer
