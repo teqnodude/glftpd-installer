@@ -1,9 +1,3 @@
-#! .
-# ^- set that to the directory eggdrop is in ie "#! /glftpd/sitebot"
-#
-# $Id: eggdrop.simple.conf,v 1.8 2000/11/06 04:06:40 guppy Exp $
-#
-# don't edit those 9 lines now!!
 set mod-path    "modules/"
 set help-path   "help/"
 set use-ssl     1
