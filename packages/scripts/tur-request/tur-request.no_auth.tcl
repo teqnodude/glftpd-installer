@@ -12,8 +12,8 @@
 
 set turrequestscript {/glftpd/bin/tur-request.sh}
 
-bind pub o !request pub:turrequests
-bind msg o !request msg:turrequests
+bind pub - !request pub:turrequests
+bind msg - !request msg:turrequests
 
 bind pub - !reqfilled pub:turreqfilled
 bind msg - !reqfilled msg:turreqfilled
@@ -24,8 +24,8 @@ bind msg - !requests msg:turrequeststatus
 bind pub - !reqdel pub:turrequestdel
 bind msg - !reqdel msg:turrequestdel
 
-bind pub o !reqwipe pub:turrequestwipe
-bind msg o !reqwipe msg:turrequestwipe
+bind pub - !reqwipe pub:turrequestwipe
+bind msg - !reqwipe msg:turrequestwipe
 
 
 ##############################################################################
