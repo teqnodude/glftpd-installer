@@ -1076,7 +1076,7 @@ function request
 	    echo "1 0 * * * 		$glroot/bin/tur-request.sh checkold >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 	    touch $glroot/ftp-data/logs/tur-request.log
 	    chmod 666 $glroot/ftp-data/logs/tur-request.log
-	    echo "source scripts/tur-request.auth.tcl" >> $glroot/sitebot/eggdrop.conf
+	    echo "source scripts/tur-request.no_auth.tcl" >> $glroot/sitebot/eggdrop.conf
 	    cat gl >> $glroot/etc/glftpd.conf
 	    cd ..
 	    echo -e "[\e[32mDone\e[0m]"
