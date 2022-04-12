@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.2
+VER=1.1
 
 ## Set where tur-space.conf is located here.
 config=/glftpd/bin/tur-space.conf
@@ -15,7 +15,7 @@ if [ -z "$config" ]; then
 fi
 
 if [ ! -e "$config" ]; then
-  echo "Error. The configuration can not be read from $config - Quitting." 
+  echo "Error. The configuration can not be read from $config - Quitting."
   echo "Make sure you specify its location in tur-space.sh"
   exit 1
 fi
@@ -127,7 +127,7 @@ proc_find_oldest_dir() {
       proc_debug "Warning: Did not find any dir to move/delete in $source_dir ($source_name). Skipping."
       proc_log "Warning: Did not find any dir to move/delete in $source_dir ($source_name). Skipping."
       if [ "$last_source_dir" = "$source_dir" ]; then
-        ## If no other incoming sections went ok, quit here or we'll get an endless loop.        
+        ## If no other incoming sections went ok, quit here or we'll get an endless loop.
         proc_debug "Error. No dirs found at all to process in any incoming section. Quitting."
         proc_log "Error. No dirs found at all to process in any incoming section. Quitting."
         exit 1
@@ -219,7 +219,7 @@ proc_find_destination_old() {
 
       while [ "$source_release_size" -ge "$free_space" ]; do
 
-proc_log "Starting loop. source_release_size: $source_release_size - free_space: $free_space - $destinations" 
+proc_log "Starting loop. source_release_size: $source_release_size - free_space: $free_space - $destinations"
 
         ## Make sure we dont del more then $MAX_LOOP things.
         loop_count=$[$loop_count+1]
@@ -237,7 +237,7 @@ proc_log "Starting loop. source_release_size: $source_release_size - free_space:
 
         if [ "$DEBUG" = "TRUE" ]; then IGNORES="$IGNORES|::$source_release::"; fi
 
-        MODE="ARCHIVE"        
+        MODE="ARCHIVE"
 proc_log  "Running proc_find_oldest_dir $source_release_path $source_name $source_device"
         proc_find_oldest_dir $source_release_path $source_name $source_device
 proc_log "proc_find_oldest_dir returned $oldest_dir_raw"
@@ -361,21 +361,33 @@ proc_move() {
       rm -rf "${dest_release_path}/${source_release}"
     fi
 
-    cp $COPY_OPTIONS "${source_release_path}/${source_release}" "${dest_release_path}"
+    rsync_retries=0
+    while true; do
+        rsync $RSYNC_OPTIONS "${source_release_path}/${source_release}" "${dest_release_path}" && break
+        if [[ $rsync_retries -eq $MAX_RSYNC_RETRIES ]]; then
+            proc_log "Error: Rsync retries exceeded while copying $source_release from $source_release_path into $dest_release_path."
+            proc_debug "Error: Rsync retries exceeded while copying $source_release from $source_release_path into $dest_release_path."
+            proc_debug "Quitting and you should check why this happened on a simple copy."
+            sleep 5
+            proc_exit
+        fi
+        rsync_retries=$((rsync_retries + 1))
+    done
 
-    num_files_source="`ls -1 "$source_release_path/$source_release" | wc -l | tr -d ' '`"
-    num_files_dest="`ls -1 "$dest_release_path/$source_release" | wc -l | tr -d ' '`"
-    if [ "$num_files_source" != "$num_files_dest" ]; then
-      sleep 5
-      num_files_source="`ls -1 "$source_release_path/$source_release" | wc -l | tr -d ' '`"
-      num_files_dest="`ls -1 "$dest_release_path/$source_release" | wc -l | tr -d ' '`"
-      if [ "$num_files_source" != "$num_files_dest" ]; then
-        proc_log "Error: After copying $source_release from $source_release_path into $dest_release_path, the number of files does not match up. Source:$num_files_source Dest:$num_files_dest"
-        proc_debug "Error. After copying $source_release from $source_release_path into $dest_release_path, the number of files does not match up. Source:$num_files_source Dest:$num_files_dest"
-        proc_debug "Quitting and you should check why this happened on a simple copy."
-        proc_exit
-      fi
-    else
+    ## Verification no longer required when using rsync
+    #num_files_source="`ls -1 "$source_release_path/$source_release" | wc -l | tr -d ' '`"
+    #num_files_dest="`ls -1 "$dest_release_path/$source_release" | wc -l | tr -d ' '`"
+    #if [ "$num_files_source" != "$num_files_dest" ]; then
+    #  sleep 5
+    #  num_files_source="`ls -1 "$source_release_path/$source_release" | wc -l | tr -d ' '`"
+    #  num_files_dest="`ls -1 "$dest_release_path/$source_release" | wc -l | tr -d ' '`"
+    #  if [ "$num_files_source" != "$num_files_dest" ]; then
+    #    proc_log "Error: After copying $source_release from $source_release_path into $dest_release_path, the number of files does not match up. Source:$num_files_source Dest:$num_files_dest"
+    #    proc_debug "Error. After copying $source_release from $source_release_path into $dest_release_path, the number of files does not match up. Source:$num_files_source Dest:$num_files_dest"
+    #    proc_debug "Quitting and you should check why this happened on a simple copy."
+    #    proc_exit
+    #  fi
+    #else
 
       ## Copy verified. Remove releases from original location.
       rm -rf "$source_release_path/$source_release"
@@ -386,7 +398,7 @@ proc_move() {
         chmod $CHMOD_OPTIONS "$dest_release_path/$source_release"
       fi
 
-    fi
+    #fi
   fi
 
   if [ "$DEBUG" = "TRUE" ]; then IGNORES="$IGNORES|::$source_release::"; fi
@@ -480,7 +492,7 @@ proc_find_destination() {
     proc_find_most_space_free $destinations
   fi
 }
-  
+
 proc_find_sourcedirs() {
   # trigger_device_check="$1"
 
@@ -512,7 +524,7 @@ proc_find_sourcedirs() {
     proc_debug "Oldest dir on $trigger_device_check is $source_name -> $source_release_path/$source_release."
 
     proc_find_destination $source_release_path $source_release $source_name
-  fi    
+  fi
 }
 
 
@@ -536,11 +548,16 @@ if [ -z "$TULS" ]; then
   TULS="tuls"
 fi
 
-COPY_OPTIONS="`grep "^COPY_OPTIONS=" $config | cut -d '=' -f2- | tr -d '"'`"
-if [ -z "$COPY_OPTIONS" ]; then
-  proc_log "Warning: COPY_OPTIONS not defined. Forcing '-rf'."
-  proc_debug "Warning: COPY_OPTIONS not defined. Forcing '-rf'."
-  COPY_OPTIONS="-rf"
+RSYNC_OPTIONS="`grep "^RSYNC_OPTIONS=" $config | cut -d '=' -f2- | tr -d '"'`"
+if [ -z "$RSYNC_OPTIONS" ]; then
+  proc_log "Warning: RSYNC_OPTIONS not defined. Forcing '-ra'."
+  proc_debug "Warning: RSYNC_OPTIONS not defined. Forcing '-ra'."
+  RSYNC_OPTIONS="-ra"
+fi
+
+MAX_RSYNC_RETRIES="`grep "^MAX_RSYNC_RETRIES=" $config | cut -d '=' -f2 | tr -d '"'`"
+if [ -z "$MAX_RSYNC_RETRIES" ]; then
+  MAX_RSYNC_RETRIES="10"
 fi
 
 CHOWN_OPTIONS="`grep "^CHOWN_OPTIONS=" $config | cut -d '=' -f2 | tr -d '"'`"
@@ -616,9 +633,10 @@ proc_sanity_check() {
 
   echo "Configuration file used: $config"
 
-  if [ "$COPY_OPTIONS" ]; then
-    echo "Copy mode used: cp $COPY_OPTIONS"
+  if [ "$RSYNC_OPTIONS" ]; then
+    echo "Rsync mode used: rsync $RSYNC_OPTIONS"
   fi
+  echo "A maximum of $MAX_RSYNC_RETRIES rsync retries will be attempted."
 
   if [ "$CHOWN_OPTIONS" ]; then
     echo "Moved releases owner will be set to $CHOWN_OPTIONS"
@@ -761,7 +779,7 @@ proc_sanity_check() {
   done
 
   proc_exit
-} 
+}
 
 proc_help() {
   echo ""
@@ -776,28 +794,11 @@ proc_help() {
   proc_exit
 }
 
-proc_translate_by_id(){
-  trigger_deviceid_check="$1"
-  depth_full_path="`echo "$trigger_deviceid_check" | awk -F'/' '{print NF-1}'`"
-  device_relative_location="`ls -l "$trigger_deviceid_check" | tr -s ' '  | cut -d ' ' -f11`"
-  depth_retour="`echo "$device_relative_location" | awk -F'../' '{print NF-1}'`"
-  device_root="`echo "$trigger_deviceid_check" | cut -d '/' -f$(expr $depth_full_path - $depth_retour)`"
-  device_name="`echo "$device_relative_location" | cut -d '/' -f $(expr $depth_retour + 1)`"
-  trigger_device="`echo "/$device_root/$device_name"`"
-}
-
 proc_go() {
   for triggers in `grep "^TRIGGER=" $config`; do
     unset mount_error; unset no_delete; unset mount_errors; unset did_something
 
     trigger_device="`echo "$triggers" | cut -d '=' -f2 | cut -d ':' -f1`"
-	
-	if [ -z "${trigger_device##*/disk/by-*}" ] ;then
-	  org_trigger_device="`echo "$trigger_device"`"
-	  proc_translate_by_id $trigger_device
-	  proc_debug "Translated $org_trigger_device to actual device $trigger_device"
-	fi
-	
     trigger_free="`echo "$triggers" | cut -d ':' -f2`"
     trigger_clean="`echo "$triggers" | cut -d ':' -f3`"
 
@@ -866,7 +867,7 @@ case $2 in
 esac
 
 if [ -e "$TMP/tur-space.lock" ]; then
-  if [ "$1" = "sanity" ]; then  
+  if [ "$1" = "sanity" ]; then
     DEBUG="TRUE"
   fi
 
