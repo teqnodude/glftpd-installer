@@ -18,6 +18,7 @@ the command to use on irc is site lastlogin to read syntax
 - Removed the manual input for 32/64 bit version of glFTPD, instead I made the installer detect what version of OS
 - Disabled the module uptime in eggdrop because the bot could apparently show up on the webpage of eggdrop
 - Disabled the module DNS in eggdrop due to changes of DNS in the release of 1.9.2
+- Inserted the cleanup of dead symlinks at the end as part of incomplete-list-nuker.sh
 
 ### Fixes
 

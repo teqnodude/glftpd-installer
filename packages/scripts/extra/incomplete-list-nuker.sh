@@ -146,6 +146,7 @@ else
     done
     echo "No more incompletes found."
     IFS="$IFSORIG"
+    chroot $glroot /bin/cleanup
     rm -f $glroot/tmp/incomplete-list-nuker.lock
 fi
 
