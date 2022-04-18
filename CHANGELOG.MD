@@ -20,6 +20,7 @@ the command to use on irc is site lastlogin to read syntax
 - Disabled the module DNS in eggdrop due to changes of DNS in the release of 1.9.2
 - Inserted the cleanup of dead symlinks at the end as part of incomplete-list-nuker.sh
 - Updated adaptive block function for tvmaze-nuker to put blocks in wide rows instead of one block per row for optimized speed and added date for each new row
+- Optimized code in install.sh
 
 ### Fixes
 

@@ -1700,44 +1700,24 @@ function cleanup
     cp packages/scripts/extra/syscheck.sh $glroot/bin
     mv -f $rootdir/.tmp/dated.sh $glroot/bin
 	
-    if [ "`ls $glroot/site | grep -w "^0DAY"`" = "0DAY" ]
-    then 
-	sed -i '/^sections/a '"0DAY" $glroot/bin/dated.sh
-    fi
+    for dated in `ls $glroot/site | egrep "^(0DAY|FLAC|MP3|EBOOKS|XXX-PAYSITE)$"`
+    do
+	sed -i '/^sections/a '"$dated" $glroot/bin/dated.sh
+    done
 	
-    if [ "`ls $glroot/site | grep -w "^FLAC"`" = "FLAC" ] 
-    then 
-	sed -i '/^sections/a '"FLAC" $glroot/bin/dated.sh
-    fi
-	
-    if [ "`ls $glroot/site | grep -w "^MP3"`" = "MP3" ] 
-    then 
-        sed -i '/^sections/a '"MP3" $glroot/bin/dated.sh
-    fi
-
-    if [ "`ls $glroot/site | grep -w "^EBOOKS"`" = "EBOOKS" ]
-    then
-        sed -i '/^sections/a '"EBOOKS" $glroot/bin/dated.sh
-    fi
-
-    if [ "`ls $glroot/site | grep -w "^XXX-PAYSITE"`" = "XXX-PAYSITE" ]
-    then
-        sed -i '/^sections/a '"XXX-PAYSITE" $glroot/bin/dated.sh
-    fi
-	
-    if [[ "`ls $glroot/site | grep -w "^0DAY"`" = "0DAY" || "`ls $glroot/site | grep -w "^FLAC"`" = "FLAC" || "`ls $glroot/site | grep -w "^MP3"`" = "MP3" || "`ls $glroot/site | grep -w "^EBOOKS"`" = "EBOOKS" || "`ls $glroot/site | grep -w "^XXX-PAYSITE"`" = "XXX-PAYSITE" ]]
+    if [ "`ls $glroot/site | egrep "0DAY|FLAC|MP3|EBOOKS|XXX-PAYSITE" | wc -l`" -ge 1 ]
     then
         echo "0 0 * * *         	$glroot/bin/dated.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
         $glroot/bin/dated.sh >/dev/null 2>&1
     fi
 
-    if [[ "`ls $glroot/site | grep -w "^TV-HD"`" = "TV-HD" || "`ls $glroot/site | grep -w "^TV-NL"`" = "TV-NL" || "`ls $glroot/site | grep -w "^TV-SD"`" = "TV-SD" ]]
+    if [ "`ls $glroot/site | egrep "TV-HD|TV-NL|TV-SD|TV-1080|TV-2160|TV-720" | wc -l`" -ge 1 ]
     then
         cp -f packages/scripts/tvmaze/TVMaze.tcl $glroot/sitebot/scripts/pzs-ng/plugins
         cp -f packages/scripts/tvmaze/TVMaze.zpt $glroot/sitebot/scripts/pzs-ng/plugins
         cp packages/scripts/tvmaze/*.sh $glroot/bin
         echo "source scripts/pzs-ng/plugins/TVMaze.tcl" >> $glroot/sitebot/eggdrop.conf
-        touch $glroot/ftp-data/logs/tvmaze.log
+	$glroot/bin/tvmaze-nuker.sh sanity >/dev/null 2>&1
     fi
 
     echo "#*/5 * * * *		$glroot/bin/tur-space.sh go >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
