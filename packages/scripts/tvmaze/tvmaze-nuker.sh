@@ -10,7 +10,7 @@ VER=3.0
 # 2020-10-23 v2.1 Changed the way languages are handled by Teqno
 # 2020-10-24 v2.2 Added the ability to nuke shows based on rating by Teqno
 # 2020-12-26 v2.3 Added the creation of blockfile for adaptive blocking in tur-predircheck by Teqno
-# 2021-01-03 v2.4 Fixed format of adapative blocking
+# 2021-01-03 v2.4 Fixed format of adaptive blocking
 # 2021-01-05 v2.5 Fixed check for previous blocks
 # 2021-01-08 v2.6 Automatic sorting of adaptive blocklist
 # 2021-01-26 v2.7 Fixed incorrect nuke when language is null
@@ -128,8 +128,9 @@ function LogMsg()
 if [ "$1" = "sanity" ]
 then
     echo
-    echo "Creating log file $LOG_FILE and setting permission 666"
-    touch $LOG_FILE ; chmod 666 $LOG_FILE
+    echo "Creating log and blockfile and setting permission 666"
+    touch $LOG_FILE && chmod 666 $LOG_FILE
+    touch $BLOCKFILE && chmod 666 $BLOCKFILE
     exit 0
 fi
 
@@ -137,6 +138,14 @@ if [ ! -f $LOG_FILE ]
 then
     echo
     echo "Log file $LOG_FILE do not exist, create it by running ./tvmaze-nuker.sh sanity"
+    echo
+    exit 1
+fi
+
+if [ ! -f $BLOCKFILE ]
+then
+    echo
+    echo "Blockfile $BLOCKFILE do not exist, create it by running ./tvmaze-nuker.sh sanity"
     echo
     exit 1
 fi
