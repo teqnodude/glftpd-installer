@@ -409,7 +409,7 @@ else
 
 # Nuke of languages not specified
  LAN_NUKE_REASON=""
- if [ ! -z "$IMDBLANGUAGE" ]; then
+ if [[ ! -z "$IMDBLANGUAGE" && "$IMDBLANGUAGE" != "None" ]]; then
    if [ ! -z "$NUKE_LANGUAGES" ]; then
     for NUKE_LANUAGE in $NUKE_LANGUAGES
     do
