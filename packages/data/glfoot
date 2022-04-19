@@ -96,10 +96,10 @@ cscript         	SITE[:space:]WIPE       post    /bin/cleanup
 cscript         	RETR                    post    /bin/dl_speedtest
 
 site_cmd RULES          TEXT	/ftp-data/misc/site.rules
-custom-rules            !8 *
+custom-rules            *
 
 site_cmd RESCAN         EXEC	/bin/rescan
-custom-rescan           1
+custom-rescan           *
 
 site_cmd INVITE         EXEC	/bin/invite.sh
 custom-invite           *
