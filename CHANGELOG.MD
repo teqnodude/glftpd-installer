@@ -28,7 +28,7 @@ the command to use on irc is site lastlogin to read syntax
 - Various minor fixes
 - It wasn't possible to add dated sections like EBOOKS and XXX-PAYSITE before during install because of bad coding
 - tur-trial was installed with the wrong password in tur-trial3.conf
-
+- When nukes happened on TV sections :UNKNOWN: was listed among the users so fixed it by doing chown on TVMaze files
 
 ### Removed
 

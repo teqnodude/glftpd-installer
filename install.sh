@@ -921,7 +921,7 @@ function presystem
 	    cp *.sh $glroot/bin
 	    cp *.tcl $glroot/sitebot/scripts
 	    echo "source scripts/affils.tcl" >> $glroot/sitebot/eggdrop.conf
-	    bins="bc du expr echo sed touch chmod pwd grep basename date mv bash find sort"
+	    bins="bc du expr echo sed touch chmod chown pwd grep basename date mv bash find sort"
 		
 	    for file in $bins
 	    do

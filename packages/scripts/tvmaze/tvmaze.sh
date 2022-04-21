@@ -1,11 +1,12 @@
 #!/bin/bash
-VER=1.4
+VER=1.5
 #--[ Info ]-----------------------------------------------------#
 #
 # This script enables the creation of .imdb and tag file with
 # TVMaze info. Copy this to /glftpd/bin and chmod 755.
 #
 # Changelog
+# 2022-04-21 v1.5 Added ability to set user/group for tvmaze files in rls dir
 # 2021-03-25 v1.4 Code for airdate was not properly set
 # 2021-03-03 v1.3 Added option for maximum width for plot summary
 # 2021-03-02 v1.2 Cosmetic changes in code and change from premiered to show type in tag file
@@ -18,8 +19,14 @@ glroot=/glftpd
 debug=0
 # Maximum width for text written to .imdb
 width=77
+# What user/group to set for tmaze files in rls dir, requires chown +s /glftpd/bin/chown
+setuser=glftpd
+setgroup=NoGroup
 
 #--[ Script Start ]---------------------------------------------#
+
+user=`cat $glroot/etc/passwd | grep $setuser | cut -d ':' -f3`
+group=`cat $glroot/etc/group | grep $setgroup | cut -d ':' -f3`
 
 # Process args and remove unwanted chars..
 RLS_NAME=`sed -e 's/^"//' -e 's/"$//' <<<"$1"`
@@ -102,8 +109,8 @@ else
     echo "============================ TVMAZE INFO v$VER ================================" >> $glroot$RLS_NAME/.imdb
     SHOW_GENRES=`echo $SHOW_GENRES | sed -e 's/ /_/g' -e 's|/|-|g'`
     touch "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
-    chmod 666 "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
-    chmod 666 $glroot$RLS_NAME/.imdb
+    chmod 666 "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]" $glroot$RLS_NAME/.imdb
+    $glroot/bin/chown $user:$group "$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]" $glroot$RLS_NAME/.imdb
 fi
 
 exit 0

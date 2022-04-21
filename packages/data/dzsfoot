@@ -212,3 +212,4 @@ set trigger(free)			""
 set redirect(PREBW)                     $mainchan
 set disable(PREBW)                      0
 set chanlist(PREBW)                     $mainchan
+set hidenuke				"UNKNOWN glftpd"
