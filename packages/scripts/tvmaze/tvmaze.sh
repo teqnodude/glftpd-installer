@@ -19,7 +19,7 @@ glroot=/glftpd
 debug=0
 # Maximum width for text written to .imdb
 width=77
-# What user/group to set for tmaze files in rls dir, requires chown +s /glftpd/bin/chown
+# What user/group to set for tmaze files in rls dir, requires chmod u+s /glftpd/bin/chown
 setuser=glftpd
 setgroup=NoGroup
 
