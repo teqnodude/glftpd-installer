@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=3.0
+VER=3.1
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -16,8 +16,8 @@ VER=3.0
 # 2021-01-26 v2.7 Fixed incorrect nuke when language is null
 # 2021-03-03 v2.8 Added the ability to nuke shows based on status
 # 2021-05-25 v2.9 Added the ability to nuke shows based on title 
-# 2022-04-16 v3.0 Updated adaptive blocklist function to put blocks in wide rows instead of one block
-#                 per row to prevent problems of speed when creating new dirs
+# 2022-04-16 v3.0 Updated adaptive blocklist to put blocks in wide rows instead of one block per row to prevent problems of speed when creating new dirs
+# 2022-04-21 v3.1 Added a cleanup option of adaptive blocklist based on the number of days for those sites that have a lot of blocks but that doesn't want them to slow down the creation of new dirs
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
@@ -97,6 +97,7 @@ NUKE_SECTION_RATING=0
 NUKE_SECTION_STATS=0
 NUKE_SHOW=0
 NUKE_ADAPTIVE=0
+NUKE_CLEAN_BLOCKLIST=0
 
 # Space delimited list of TV shows to never nuke, use releasename and not show name ie use The.Flash and NOT The Flash
 ALLOWED_SHOWS=""
@@ -112,6 +113,9 @@ EXCLUDED_GROUPS=""
 
 # Blockfile for adaptive blocking that needs to be created and chmod 666
 BLOCKFILE=$GLROOT/bin/tur-predircheck.block
+
+# How many days should a row of blocks remain in BLOCKFILE before being cleaned out by the setting NUKE_CLEAN_BLOCKLIST
+BLOCKDAYS=180 # 180 days = 6 months
 
 # Length of rows in chars in BLOCKFILE. Its relevance is to the number of rows and blocks before losing speed when creating new dirs.
 # WARNING: If you change this number you have to empty the file BLOCKFILE to avoid problems.
@@ -483,6 +487,19 @@ then
 	    fi		
 	done
     fi
+fi
+
+if [ "$NUKE_CLEAN_BLOCKLIST" -eq 1 ]
+then
+    for row in `cat $BLOCKFILE`
+    do
+        blockdate=`echo $row | cut -d ':' -f3`
+        days=$((($(date +%s)-$(date +%s --date $blockdate))/(3600*24)))
+        if [ "$days" -ge "$BLOCKDAYS" ]
+        then
+            sed -i "/$blockdate/d" $BLOCKFILE
+        fi
+    done
 fi
 
 exit 0
