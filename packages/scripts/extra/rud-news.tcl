@@ -127,6 +127,10 @@ proc rud:pub:news { nick uhost handle chan arg } {
 
 	set fp [open $news(file) r]
 	set data [split [read $fp] "\n"]
+        set size [file size $news(file)]
+        if { $size eq 0 } {
+        putserv "NOTICE $nick :No news added."
+        }
 	close $fp
 
   if { $arg eq "help" } {
