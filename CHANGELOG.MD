@@ -1,4 +1,4 @@
-## 10.x -
+## 10.4 - 2022-04-22
 
 ### Added
 
@@ -23,6 +23,8 @@ the command to use on irc is site lastlogin to read syntax
 - Optimized code in install.sh
 - Updated psxc-imdb-nuker to allow release if language of movie return as None.
 - Added a cleanup option of adaptive blocklist based on the number of days for those sites that have a lot of blocks but that doesn't want them to slow down the creation of new dirs
+- Made a major change when it comes to sections where people are now free to use any name for a section during install but where the user will still be presented
+with a list of recommendations for section names. As a result site.rules is generated for each section with a basic line on each section to use as guide.
 
 ### Fixes
 

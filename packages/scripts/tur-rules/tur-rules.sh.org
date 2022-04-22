@@ -1,15 +1,17 @@
 #!/bin/bash
 VER=1.0
-##CONFIG PART#########################
+#---------------------------------------------------------------#
+#                                                               #
+# Tur-Rules. A script to display rules in irc chan.             #
+# Made by request from ApocT. Thanks for the idea =)            #
+#                                                               #
+#--[ Settings ]-------------------------------------------------#
 rules=/glftpd/ftp-data/misc/site.rules
 compress=" "
 sections="
 "
 
-######################################################
-# No changes below here. Can change the "echo" parts #
-# if you like though.                                #
-######################################################
+#--[ Script Start ]----------------------------------------------#
 
 ## Can we read the rules file ?
 if [ ! -r $rules ]; then

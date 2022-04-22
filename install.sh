@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=10.x
+VER=10.4
 clear
 
 if [ ! `whoami` = "root" ] 
@@ -421,12 +421,9 @@ function section_names
 	sections=`cat $cache | grep -w "sections" | cut -d "=" -f2 | tr -d "\""`
     else
 	echo
-	echo "Valid Sections are : "
-	echo "0DAY ANIME APPS EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160 TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE"
-	echo
-	while [[ ! $sections =~ ^[0-9]+$ || $sections -gt 23 ]]
+	while [[ ! $sections =~ ^[0-9]+$ ]]
 	do
-	    echo -n "How many sections do you require for your site (max 23)? : " ; read sections
+	    echo -n "How many sections do you require for your site? : " ; read sections
 	done
 	echo
     fi
@@ -436,7 +433,7 @@ function section_names
     cp packages/scripts/tur-autonuke/tur-autonuke.conf.org packages/scripts/tur-autonuke/tur-autonuke.conf
     cp packages/data/dated.sh.org $rootdir/.tmp/dated.sh
     counta=0
-	
+    rulecount=2	
     if [ "`cat $cache | grep -w "sections=" | wc -l`" = 0 ]
     then
 	echo sections=\"$sections\" >> $cache
@@ -456,81 +453,107 @@ function section_generate
     then
 	section=`cat $cache | grep -w "section$((counta+1))" | cut -d "=" -f2 | tr -d "\""`
     else
-	echo -n "Section $((counta+1)) is : " ; read section
+	echo "Recommended section names:"
+	echo "0DAY ANIME APPS DOX EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160"
+	echo "TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE"
+        echo -n "Section $((counta+1)) is : " ; read section
     fi
-    case ${section^^} in
-    	0DAY|ANIME|APPS|EBOOKS|FLAC|GAMES|MBLURAY|MP3|NSW|PS4|PS5|TV-1080|TV-2160|TV-720|TV-HD|TV-NL|X264|X264-1080|X264-720|X265-2160|XVID|XXX|XXX-PAYSITE)
-	    writ
-	    ;;
-	*)
-    	    while [[ ${section^^} != @(0DAY|ANIME|APPS|EBOOKS|FLAC|GAMES|MBLURAY|MP3|NSW|PS4|PS5|TV-1080|TV-2160|TV-720|TV-HD|TV-NL|X264|X264-1080|X264-720|X265-2160|XVID|XXX|XXX-PAYSITE) ]]
-    	    do
-        	echo "Section [$section] is not in the above list of available sections, please try again."
-        	echo -n "Section $((counta+1)) is : " ; read section
-    	    done
-	    ;;
-    esac
+
+    while [[ -z "$section" ]]
+    do
+        echo -n "Section $((counta+1)) is : " ; read section
+    done
+
+    if [[ -f "$cache" && "`cat $cache | grep -w "section$((counta+1))dated" | wc -l`" = 1 ]]
+    then
+	sectiondated=`cat $cache | grep -w "section$((counta+1))dated" | cut -d "=" -f2 | tr -d "\""`
+    else
+        echo -n "Is section ${section^^} a dated section, [Y]es [N]o, default N : " ; read sectiondated
+    fi
+    writ
 }
 
 ## TMP_dZSbot.tcl_Config
 function writ
 {
     section=${section^^}
-    if [[ ${section^^} = 0DAY || ${section^^} = FLAC || ${section^^} = MP3 || ${section^^} = EBOOKS || ${section^^} = XXX-PAYSITE ]] 
+    if [ "$sectiondated" = "y" ]
     then
-	mkdir -pm 777 $rootdir/.tmp/site/${section^^}
-	echo "${section^^} " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.sections
+	mkdir -pm 777 $rootdir/.tmp/site/$section
+	echo "$section " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.sections
 	cat $rootdir/.tmp/.sections | awk -F '[" "]+' '{printf $0}' > $rootdir/.tmp/.validsections
-	#echo "set statsection($counta) \"${section^^}\"" >> $rootdir/.tmp/dzsstats
-	echo "set paths(${section^^})				\"/site/${section^^}/*/*\"" >> $rootdir/.tmp/dzsrace
-	echo "set chanlist(${section^^}) 			\"$announcechannels\"" >> $rootdir/.tmp/dzschan
-	#echo "#stat_section 	${section^^}	/site/${section^^}/* no" >> $rootdir/.tmp/glstat
-	echo "section.${section^^}.name=${section^^}" >> $rootdir/.tmp/footools
-	echo "section.${section^^}.dir=/site/${section^^}/YYYY-MM-DD" >> $rootdir/.tmp/footools
-	echo "section.${section^^}.gl_credit_section=0" >> $rootdir/.tmp/footools
-	echo "section.${section^^}.gl_stat_section=0" >> $rootdir/.tmp/footools
-	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/${section^^}\/\$today/" packages/scripts/tur-autonuke/tur-autonuke.conf
-	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/${section^^}\/\$yesterday/" packages/scripts/tur-autonuke/tur-autonuke.conf
-	echo "INC${section^^}=$device:$glroot/site/${section^^}:DATED" >> packages/scripts/tur-space/tur-space.conf.new
-	echo "$glroot/site/${section^^}" >> $rootdir/.tmp/.fullpath
-	echo "/site/${section^^}/%Y-%m-%d/ " >> $rootdir/.tmp/.cleanup_dated
-	if [[ ${section^^} = FLAC || ${section^^} = MP3 || ${section^^} = EBOOKS || ${section^^} = XXX-PAYSITE ]] 
+	#echo "set statsection($counta) \"$section\"" >> $rootdir/.tmp/dzsstats
+	echo "set paths($section)				\"/site/$section/*/*\"" >> $rootdir/.tmp/dzsrace
+	echo "set chanlist($section) 			\"$announcechannels\"" >> $rootdir/.tmp/dzschan
+	#echo "#stat_section 	$section	/site/$section/* no" >> $rootdir/.tmp/glstat
+	echo "section.$section.name=$section" >> $rootdir/.tmp/footools
+	echo "section.$section.dir=/site/$section/YYYY-MM-DD" >> $rootdir/.tmp/footools
+	echo "section.$section.gl_credit_section=0" >> $rootdir/.tmp/footools
+	echo "section.$section.gl_stat_section=0" >> $rootdir/.tmp/footools
+	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$today/" packages/scripts/tur-autonuke/tur-autonuke.conf
+	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$yesterday/" packages/scripts/tur-autonuke/tur-autonuke.conf
+	echo "INC$section=$device:$glroot/site/$section:DATED" >> packages/scripts/tur-space/tur-space.conf.new
+	echo "$glroot/site/$section" >> $rootdir/.tmp/.fullpath
+	echo "/site/$section/%Y-%m-%d/ " >> $rootdir/.tmp/.cleanup_dated
+	if [ "$section" != "0DAY" ] 
 	then
-	    echo "/site/${section^^}/ " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.tempdated
+	    echo "/site/$section/ " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.tempdated
 	    cat $rootdir/.tmp/.tempdated | awk -F '[" "]+' '{printf $0}' > $rootdir/.tmp/.path
 	fi
-		
+
 	if [ "`cat $cache | grep -w "section$((counta+1))=" | wc -l`" = 0 ]
 	then
 	    echo "section$((counta+1))=\"$section\"" >> $cache
 	fi
+
+        if [ "`cat $cache | grep -w "section$((counta+1))dated=" | wc -l`" = 0 ]
+        then
+            echo "section$((counta+1))dated=\"y\"" >> $cache
+        fi
+
 	
     else
 	
-	mkdir -pm 777 $rootdir/.tmp/site/${section^^}
-	echo "${section^^} " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.sections
+	mkdir -pm 777 $rootdir/.tmp/site/$section
+	echo "$section " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.sections
 	cat $rootdir/.tmp/.sections | awk -F '[" "]+' '{printf $0}' > $rootdir/.tmp/.validsections
-	#echo "set statsection($counta) \"${section^^}\"" >> $rootdir/.tmp/dzsstats
-	echo "set paths(${section^^}) 			\"/site/${section^^}/*\"" >> $rootdir/.tmp/dzsrace
-	echo "set chanlist(${section^^}) 			\"$announcechannels\"" >> $rootdir/.tmp/dzschan
-	echo "/site/${section^^}/ " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.temp
+	#echo "set statsection($counta) \"$section\"" >> $rootdir/.tmp/dzsstats
+	echo "set paths($section) 			\"/site/$section/*\"" >> $rootdir/.tmp/dzsrace
+	echo "set chanlist($section) 			\"$announcechannels\"" >> $rootdir/.tmp/dzschan
+	echo "/site/$section/ " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.temp
 	cat $rootdir/.tmp/.temp | awk -F '[" "]+' '{printf $0}' > $rootdir/.tmp/.nodatepath
-	#echo "#stat_section 	${section^^} /site/${section^^}/* no" >> $rootdir/.tmp/glstat
-	echo "section.${section^^}.name=${section^^}" >> $rootdir/.tmp/footools
-	echo "section.${section^^}.dir=/site/${section^^}" >> $rootdir/.tmp/footools
-	echo "section.${section^^}.gl_credit_section=0" >> $rootdir/.tmp/footools
-	echo "section.${section^^}.gl_stat_section=0" >> $rootdir/.tmp/footools
-	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/${section^^}/" packages/scripts/tur-autonuke/tur-autonuke.conf
-	echo "INC${section^^}=$device:$glroot/site/${section^^}:" >> packages/scripts/tur-space/tur-space.conf.new
-	echo "$glroot/site/${section^^}" >> $rootdir/.tmp/.fullpath
+	#echo "#stat_section 	$section /site/$section/* no" >> $rootdir/.tmp/glstat
+	echo "section.$section.name=$section" >> $rootdir/.tmp/footools
+	echo "section.$section.dir=/site/$section" >> $rootdir/.tmp/footools
+	echo "section.$section.gl_credit_section=0" >> $rootdir/.tmp/footools
+	echo "section.$section.gl_stat_section=0" >> $rootdir/.tmp/footools
+	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section/" packages/scripts/tur-autonuke/tur-autonuke.conf
+	echo "INC$section=$device:$glroot/site/$section:" >> packages/scripts/tur-space/tur-space.conf.new
+	echo "$glroot/site/$section" >> $rootdir/.tmp/.fullpath
 		
 	if [ "`cat $cache | grep -w "section$((counta+1))=" | wc -l`" = 0 ]
 	then
 	    echo "section$((counta+1))=\"$section\"" >> $cache
 	fi
+
+        if [ "`cat $cache | grep -w "section$((counta+1))dated=" | wc -l`" = 0 ]
+        then
+            echo "section$((counta+1))dated=\"n\"" >> $cache
+        fi
 	
     fi
-    packages/scripts/tur-rules/rulesgen.sh ${section^^}
+    echo "$section :" >> site.rules
+    if [ "$rulecount" -ge 10 ]
+    then
+	echo "$rulecount.1 Main language: English/Nordic................................................................................[NUKE 5X]" >> site.rules
+	echo >> site.rules
+	sed -i "s/sections=\"/sections=\"\n$section:^$rulecount./" packages/scripts/tur-rules/tur-rules.sh
+    else
+	echo "0$rulecount.1 Main language: English/Nordic................................................................................[NUKE 5X]" >> site.rules
+	echo >> site.rules
+	sed -i "s/sections=\"/sections=\"\n$section:^0$rulecount./" packages/scripts/tur-rules/tur-rules.sh
+    fi
+    rulecount=$((rulecount+1))
     echo "/site/REQUESTS/" >> $rootdir/.tmp/.nodatepath
 }
 
@@ -686,8 +709,11 @@ function glftpd
     cp ../scripts/section-manager/section-manager.sh $glroot
     sed -i "s|changeme|$device|" $glroot/section-manager.sh
     cp ../scripts/imdbrating/imdbrating.sh $glroot/bin
-    chown -R root:root $glroot/bin
-	
+    bins="bc du expr echo sed touch chmod chown pwd grep basename date mv bash find sort"
+    for file in $bins
+    do
+        cp `which $file` $glroot/bin
+    done
     if [ -f /etc/systemd/system/glftpd.socket ]
     then
         sed -i 's/#MaxConnections=64/MaxConnections=300/' /etc/systemd/system/glftpd.socket
@@ -727,7 +753,6 @@ function eggdrop
     touch /var/spool/cron/crontabs/$BOTU
     echo "*/10 * * * *	$glroot/sitebot/botchk >/dev/null 2>&1" >> /var/spool/cron/crontabs/$BOTU
     chmod 777 $glroot/sitebot/logs
-    chown -R sitebot:glftpd $glroot/sitebot/
     rm -f $glroot/sitebot/BOT.INSTALL
     rm -f $glroot/sitebot/README
     rm -f $glroot/sitebot/eggdrop1.8
@@ -830,9 +855,9 @@ function pzshfile
     cd ../../
     cat packages/data/pzshead > zsconfig.h
     [ -f "$rootdir/.tmp/.path" ] && paths="`cat $rootdir/.tmp/.path`"
+    [ -f "$rootdir/.tmp/.cleanup_dated" ] && cleanup_dated=`cat $rootdir/.tmp/.cleanup_dated | sed 's/ /\n/g' | sort | xargs`
     nodatepaths="`cat $rootdir/.tmp/.nodatepath`"
     allsections=`echo "$paths $nodatepaths" | sed 's/ /\n/g' | sort | xargs | sed 's/^ //'`
-    cleanup_dated=`cat $rootdir/.tmp/.cleanup_dated | sed 's/ /\n/g' | sort | xargs`
     echo "#define check_for_missing_nfo_dirs		\"$allsections\"" >> zsconfig.h
     echo "#define cleanupdirs				\"$nodatepaths\"" >> zsconfig.h
     echo "#define cleanupdirs_dated			\"$cleanup_dated\"" >> zsconfig.h
@@ -921,13 +946,6 @@ function presystem
 	    cp *.sh $glroot/bin
 	    cp *.tcl $glroot/sitebot/scripts
 	    echo "source scripts/affils.tcl" >> $glroot/sitebot/eggdrop.conf
-	    bins="bc du expr echo sed touch chmod chown pwd grep basename date mv bash find sort"
-		
-	    for file in $bins
-	    do
-		cp `which $file` $glroot/bin
-	    done
-		
 	    cat gl >> $glroot/etc/glftpd.conf
 	
 	    if [ -d foo-tools ]
@@ -1026,7 +1044,6 @@ function ircadmin
 	    cp *.sh $glroot/bin
 	    cp tur-ircadmin.tcl $glroot/sitebot/scripts
 	    touch $glroot/ftp-data/logs/tur-ircadmin.log
-	    chmod 666 $glroot/ftp-data/logs/tur-ircadmin.log
 	    echo "source scripts/tur-ircadmin.tcl" >> $glroot/sitebot/eggdrop.conf
 	    sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/tur-ircadmin.tcl
 	    sed -i "s/changeme/$port/" $glroot/bin/tur-ircadmin.sh
@@ -1075,7 +1092,6 @@ function request
 	    echo "1 18 * * * 		$glroot/bin/tur-request.sh status auto >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 	    echo "1 0 * * * 		$glroot/bin/tur-request.sh checkold >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 	    touch $glroot/ftp-data/logs/tur-request.log
-	    chmod 666 $glroot/ftp-data/logs/tur-request.log
 	    echo "source scripts/tur-request.no_auth.tcl" >> $glroot/sitebot/eggdrop.conf
 	    cat gl >> $glroot/etc/glftpd.conf
 	    cd ..
@@ -1348,7 +1364,7 @@ function psxcimdb
 	    cp ./main/psxc-imdb.tcl $glroot/sitebot/scripts/pzs-ng/plugins
 	    cp ./main/psxc-imdb.zpt $glroot/sitebot/scripts/pzs-ng/plugins
 	    $glroot/bin/psxc-imdb-sanity.sh >/dev/null 2>&1
-	    touch $glroot/ftp-data/logs/psxc-moviedata.log ; chmod 666 $glroot/ftp-data/logs/psxc-moviedata.log
+	    touch $glroot/ftp-data/logs/psxc-moviedata.log
 	    echo "source scripts/pzs-ng/plugins/psxc-imdb.tcl" >> $glroot/sitebot/eggdrop.conf
 	    cat gl >> $glroot/etc/glftpd.conf
 	    echo -e "[\e[32mDone\e[0m]"
@@ -1395,7 +1411,7 @@ function addip
 	    cp *.tcl $glroot/sitebot/scripts
 	    cp *.sh $glroot/bin
 	    echo "source scripts/tur-addip.tcl" >> $glroot/sitebot/eggdrop.conf
-	    touch $glroot/ftp-data/logs/tur-addip.log ; chmod 666 $glroot/ftp-data/logs/tur-addip.log
+	    touch $glroot/ftp-data/logs/tur-addip.log
 	    sed -i "s/changeme/$port/" $glroot/bin/tur-addip.sh
 	    sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/tur-addip.tcl
 	    cd ..
@@ -1699,24 +1715,29 @@ function cleanup
     cp $glroot/backup/pzs-ng/sitebot/extra/invite.sh $glroot/bin
     cp packages/scripts/extra/syscheck.sh $glroot/bin
     mv -f $rootdir/.tmp/dated.sh $glroot/bin
-	
-    for dated in `ls $glroot/site | egrep "^(0DAY|FLAC|MP3|EBOOKS|XXX-PAYSITE)$"`
+    
+    for sec in `cat $cache | grep section.*dated=\"y\" | sed -e 's/section//' -e 's/dated//' | cut -d '=' -f1`
     do
+	dated=`cat $cache | grep "section$sec=" | cut -d '=' -f2 | tr -d '"'`
 	sed -i '/^sections/a '"$dated" $glroot/bin/dated.sh
     done
 	
-    if [ "`ls $glroot/site | egrep "0DAY|FLAC|MP3|EBOOKS|XXX-PAYSITE" | wc -l`" -ge 1 ]
+    if [ `cat $cache | grep 'section.*dated="y"' | wc -l` -ge 1 ]
     then
         echo "0 0 * * *         	$glroot/bin/dated.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
         $glroot/bin/dated.sh >/dev/null 2>&1
     fi
 
-    if [ "`ls $glroot/site | egrep "TV-HD|TV-NL|TV-SD|TV-1080|TV-2160|TV-720" | wc -l`" -ge 1 ]
+    if [ "`ls $glroot/site | grep "^TV*" | wc -l`" -ge 1 ]
     then
         cp -f packages/scripts/tvmaze/TVMaze.tcl $glroot/sitebot/scripts/pzs-ng/plugins
         cp -f packages/scripts/tvmaze/TVMaze.zpt $glroot/sitebot/scripts/pzs-ng/plugins
         cp packages/scripts/tvmaze/*.sh $glroot/bin
         echo "source scripts/pzs-ng/plugins/TVMaze.tcl" >> $glroot/sitebot/eggdrop.conf
+	for tv in `ls $glroot/site | grep "^TV*"`
+	do
+	    sed -i "s|set tvmaze(sections) {|set tvmaze(sections) { \"/site/$tv/\" |" $glroot/sitebot/scripts/pzs-ng/plugins/TVMaze.tcl
+	done 
 	$glroot/bin/tvmaze-nuker.sh sanity >/dev/null 2>&1
     fi
 

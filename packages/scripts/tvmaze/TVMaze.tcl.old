@@ -64,7 +64,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 	set tvmaze(proxyuser) "username"
 	set tvmaze(proxypass) "password"
 	##
-	set tvmaze(sections) {}
+	set tvmaze(sections) { "/site/TV-720/" "/site/TV-1080/" "/site/TV-2160/" "/site/TV-HD/" "/site/TV-NL/" }
 	##
 	## Timeout in milliseconds. (default: 3000)
 	set tvmaze(timeout)  3000

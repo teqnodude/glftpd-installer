@@ -89,12 +89,15 @@ announcechannels="#main #flood" # Announce channels
 channelops="#main" # Ops channel 
 ircnickname="l337" # Irc nickname of bot owner
 sections="3" # How many sections will be created, max 22 sections allowed
-# Allowed section names: 
-# 0DAY ANIME APPS EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160 
+# Recommended section names: 
+# 0DAY ANIME APPS DOX EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160 
 # TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE
 section1="0DAY" # Name of section 1
+section1dated="y" # Dated section?
 section2="MP3" # Name of section 2
+section2dated="n" # Dated section?
 section3="DVDR" # Name of section 3 
+section3dated="n" # Dated section?
 router="y" # If site is behind router
 pasv_addr="123.123.123.123" # IP or DNS to use as passive address for glFTPD
 pasv_ports="6000-7000" # Port range to use for passive mode for glFTPD
