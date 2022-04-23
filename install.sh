@@ -72,7 +72,6 @@ function start
 	return
     fi
 	
-    echo
     while [[ -z $sitename ]]
     do
 	echo -n "Please enter the name of the site, without space : " ; read sitename
@@ -99,7 +98,7 @@ function port
 	    port="2010"
 	fi
 		
-	if [ "`cat $cache | grep -w "port=" | wc -l`" = 0 ]
+	if [[ -f "$cache" && "`cat $cache | grep -w "port=" | wc -l`" = 0 ]]
 	then
 	    echo port=\"$port\" >> $cache
 	fi
@@ -157,7 +156,7 @@ function version
     cp -R scripts source
     cd ..
     
-    if [ "`cat $cache | grep -w "version=" | wc -l`" = 0 ]
+    if [[ -f "$cache" && "`cat $cache | grep -w "version=" | wc -l`" = 0 ]]
     then
     	echo version=\"$version\" >> $cache
     fi
@@ -194,7 +193,7 @@ function device_name
     echo "" >> packages/scripts/tur-space/tur-space.conf.new
     echo "[INCOMING]" >> packages/scripts/tur-space/tur-space.conf.new
     
-    if [ "`cat $cache | grep -w "device=" | wc -l`" = 0 ]
+    if [[ -f "$cache" && "`cat $cache | grep -w "device=" | wc -l`" = 0 ]]
     then
     	echo device=\"$device\" >> $cache
     fi
@@ -221,7 +220,7 @@ function channel
 	
     counta=0
 	
-    if [ "`cat $cache | grep -w "channelnr=" | wc -l`" = 0 ]
+    if [[ -f "$cache" && "`cat $cache | grep -w "channelnr=" | wc -l`" = 0 ]]
     then
 	echo channelnr=\"$channelnr\" >> $cache
     fi
@@ -282,7 +281,7 @@ function channel
 		echo "" >> $rootdir/.tmp/eggchan
 		echo $channame >> $rootdir/.tmp/channels
 		
-		if [ "`cat $cache | grep -w "channame$((counta+1))=" | wc -l`" = 0 ]
+		if [[ -f "$cache" && "`cat $cache | grep -w "channame$((counta+1))=" | wc -l`" = 0 ]]
 		then
 		    echo "channame$((counta+1))=\"$channame $chanpasswd $chanpassword\"" >> $cache
 		fi
@@ -304,7 +303,7 @@ function channel
 		echo "" >> $rootdir/.tmp/eggchan
 		echo $channame >> $rootdir/.tmp/channels
 			
-		if [ "`cat $cache | grep -w "channame$((counta+1))=" | wc -l`" = 0 ]
+		if [[ -f "$cache" && "`cat $cache | grep -w "channame$((counta+1))=" | wc -l`" = 0 ]]
 		then
 		    echo "channame$((counta+1))=\"$channame n nopass\"" $cache
 		fi
@@ -325,7 +324,7 @@ function channel
 		echo "" >> $rootdir/.tmp/eggchan
 		echo $channame >> $rootdir/.tmp/channels
 			
-		if [ "`cat $cache | grep -w "channame$((counta+1))=" | wc -l`" = 0 ]
+		if [[ -f "$cache" && "`cat $cache | grep -w "channame$((counta+1))=" | wc -l`" = 0 ]]
 		then
 		    echo "channame$((counta+1))=\"$channame n nopass\"" >> $cache
 		fi
@@ -354,7 +353,7 @@ function announce
     	announcechannels=`cat $rootdir/.tmp/channels`
 	cat $rootdir/.tmp/channels > $rootdir/.tmp/dzchan
 
-	if [ "`cat $cache | grep -w "announcechannels=" | wc -l`" = 0 ]
+	if [[ -f "$cache" && "`cat $cache | grep -w "announcechannels=" | wc -l`" = 0 ]]
 	then
 	    echo "announcechannels=\"`cat $rootdir/.tmp/channels`\"" >> $cache
 	fi
@@ -362,7 +361,7 @@ function announce
     else 
     	echo "$announcechannels" > $rootdir/.tmp/dzchan
 	
-	if [ "`cat $cache | grep -w "announcechannels=" | wc -l`" = 0 ]
+	if [[ -f "$cache" && "`cat $cache | grep -w "announcechannels=" | wc -l`" = 0 ]]
 	then
 	    echo "announcechannels=\"$announcechannels\"" >> $cache
 	fi
@@ -386,7 +385,7 @@ function opschan
 	
     echo "$channelops" > $rootdir/.tmp/dzochan
 	
-    if [ "`cat $cache | grep -w "channelops=" | wc -l`" = 0 ]
+    if [[ -f "$cache" && "`cat $cache | grep -w "channelops=" | wc -l`" = 0 ]]
     then
 	echo "channelops=\"$channelops\"" >> $cache
     fi
@@ -407,7 +406,7 @@ function ircnickname
 	done
     fi
 	
-    if [ "`cat $cache | grep -w "ircnickname=" | wc -l`" = 0 ]
+    if [[ -f "$cache" && "`cat $cache | grep -w "ircnickname=" | wc -l`" = 0 ]]
     then
 	echo "ircnickname=\"$ircnickname\"" >> $cache
     fi
@@ -434,7 +433,7 @@ function section_names
     cp packages/data/dated.sh.org $rootdir/.tmp/dated.sh
     counta=0
     rulecount=2	
-    if [ "`cat $cache | grep -w "sections=" | wc -l`" = 0 ]
+    if [[ -f "$cache" && "`cat $cache | grep -w "sections=" | wc -l`" = 0 ]]
     then
 	echo sections=\"$sections\" >> $cache
     fi
@@ -453,9 +452,13 @@ function section_generate
     then
 	section=`cat $cache | grep -w "section$((counta+1))" | cut -d "=" -f2 | tr -d "\""`
     else
-	echo "Recommended section names:"
-	echo "0DAY ANIME APPS DOX EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160"
-	echo "TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE"
+	if [ `echo $((counta+1))` = 1 ]
+	then
+	    echo "Recommended section names:"
+	    echo "0DAY ANIME APPS DOX EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160"
+	    echo "TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE"
+	    echo
+	fi
         echo -n "Section $((counta+1)) is : " ; read section
     fi
 
@@ -501,12 +504,12 @@ function writ
 	    cat $rootdir/.tmp/.tempdated | awk -F '[" "]+' '{printf $0}' > $rootdir/.tmp/.path
 	fi
 
-	if [ "`cat $cache | grep -w "section$((counta+1))=" | wc -l`" = 0 ]
+	if [[ -f "$cache" && "`cat $cache | grep -w "section$((counta+1))=" | wc -l`" = 0 ]]
 	then
 	    echo "section$((counta+1))=\"$section\"" >> $cache
 	fi
 
-        if [ "`cat $cache | grep -w "section$((counta+1))dated=" | wc -l`" = 0 ]
+        if [[ -f "$cache" && "`cat $cache | grep -w "section$((counta+1))dated=" | wc -l`" = 0 ]]
         then
             echo "section$((counta+1))dated=\"y\"" >> $cache
         fi
@@ -531,12 +534,12 @@ function writ
 	echo "INC$section=$device:$glroot/site/$section:" >> packages/scripts/tur-space/tur-space.conf.new
 	echo "$glroot/site/$section" >> $rootdir/.tmp/.fullpath
 		
-	if [ "`cat $cache | grep -w "section$((counta+1))=" | wc -l`" = 0 ]
+	if [[ -f "$cache" && "`cat $cache | grep -w "section$((counta+1))=" | wc -l`" = 0 ]]
 	then
 	    echo "section$((counta+1))=\"$section\"" >> $cache
 	fi
 
-        if [ "`cat $cache | grep -w "section$((counta+1))dated=" | wc -l`" = 0 ]
+        if [[ -f "$cache" && "`cat $cache | grep -w "section$((counta+1))dated=" | wc -l`" = 0 ]]
         then
             echo "section$((counta+1))dated=\"n\"" >> $cache
         fi
@@ -646,17 +649,17 @@ function glftpd
 	*) router=n ;;
     esac
 	
-    if [ "`cat $cache | grep -w "router=" | wc -l`" = 0 ]
+    if [[ -f "$cache" && "`cat $cache | grep -w "router=" | wc -l`" = 0 ]]
     then
 	echo "router=\"$router\"" >> $cache
     fi
 	
-    if [[ "`cat $cache | grep -w "pasv_addr=" | wc -l`" = 0 && "$pasv_addr" != "" ]]
+    if [[ -f "$cache" && "`cat $cache | grep -w "pasv_addr=" | wc -l`" = 0 && "$pasv_addr" != "" ]]
     then
     	echo "pasv_addr=\"$pasv_addr\"" >> $cache
     fi
 	
-    if [[ "`cat $cache | grep -w "pasv_ports=" | wc -l`" = 0 && "$pasv_addr" != "" ]]
+    if [[ -f "$cache" && "`cat $cache | grep -w "pasv_ports=" | wc -l`" = 0 && "$pasv_addr" != "" ]]
     then
     	echo "pasv_ports=\"$pasv_ports\"" >> $cache
     fi
@@ -832,7 +835,7 @@ function irc
 	    1)
 		sed -i "s/servername/${servername} +${serverport} ${password}/" $glroot/sitebot/eggdrop.conf
 		
-		if [ "`cat $cache | grep -w "ircserver=" | wc -l`" = 0 ]
+		if [[ -f "$cache" && "`cat $cache | grep -w "ircserver=" | wc -l`" = 0 ]]
 		then
 		    echo "ircserver=\"${servername} +${serverport} ${password}\"" >> $cache
 		fi
@@ -840,7 +843,7 @@ function irc
 	    0)
 		sed -i "s/servername/${servername} ${serverport} ${password}/" $glroot/sitebot/eggdrop.conf
 		
-		if [ "`cat $cache | grep -w "ircserver=" | wc -l`" = 0 ]
+		if [[ -f "$cache" && "`cat $cache | grep -w "ircserver=" | wc -l`" = 0 ]]
 		then
 		    echo "ircserver=\"${servername} ${serverport} ${password}\"" >> $cache
 		fi
@@ -927,13 +930,13 @@ function presystem
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "eur0presystem=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "eur0presystem=" | wc -l`" = 0 ]]
 	    then
 		echo "eur0presystem=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "eur0presystem=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "eur0presystem=" | wc -l`" = 0 ]]
 	    then
 	    	echo "eur0presystem=\"y\"" >> $cache
 	    fi
@@ -992,13 +995,13 @@ function slvprebw
 	
     case $ask in
 	[Nn])
-    	    if [ "`cat $cache | grep -w "slvprebw=" | wc -l`" = 0 ]
+    	    if [[ -f "$cache" && "`cat $cache | grep -w "slvprebw=" | wc -l`" = 0 ]]
 	    then
 		echo "slvprebw=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "slvprebw=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "slvprebw=" | wc -l`" = 0 ]]
 	    then
 		echo "slvprebw=\"y\"" >> $cache
 	    fi
@@ -1028,13 +1031,13 @@ function ircadmin
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "ircadmin=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "ircadmin=" | wc -l`" = 0 ]]
 	    then
 		echo "ircadmin=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "ircadmin=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "ircadmin=" | wc -l`" = 0 ]]
 	    then
 	    	echo "ircadmin=\"y\"" >> $cache
 	    fi
@@ -1070,13 +1073,13 @@ function request
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "request=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "request=" | wc -l`" = 0 ]]
 	    then
 	    	echo "request=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "request=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "request=" | wc -l`" = 0 ]]
 	    then
 	    	echo "request=\"y\"" >> $cache
 	    fi
@@ -1116,13 +1119,13 @@ function trial
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "trial=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "trial=" | wc -l`" = 0 ]]
 	    then
 		echo "trial=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "trial=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "trial=" | wc -l`" = 0 ]]
 	    then
 		echo "trial=\"y\"" >> $cache
 	    fi
@@ -1188,13 +1191,13 @@ function vacation
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "vacation=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "vacation=" | wc -l`" = 0 ]]
 	    then
 		echo "vacation=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "vacation=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "vacation=" | wc -l`" = 0 ]]
 	    then
 		echo "vacation=\"y\"" >> $cache
 	    fi
@@ -1225,13 +1228,13 @@ function whereami
 	
     case $ask in
     	[Nn])
-	    if [ "`cat $cache | grep -w "whereami=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "whereami=" | wc -l`" = 0 ]]
 	    then
 		echo "whereami=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "whereami=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "whereami=" | wc -l`" = 0 ]]
 	    then
 	    	echo "whereami=\"y\"" >> $cache
 	    fi
@@ -1260,13 +1263,13 @@ function precheck
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "precheck=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "precheck=" | wc -l`" = 0 ]]
 	    then
 	    	echo "precheck=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "precheck=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "precheck=" | wc -l`" = 0 ]]
 	    then
 		echo "precheck=\"y\"" >> $cache
 	    fi
@@ -1297,13 +1300,13 @@ function autonuke
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "autonuke=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "autonuke=" | wc -l`" = 0 ]]
 	    then
 		echo "autonuke=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "autonuke=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "autonuke=" | wc -l`" = 0 ]]
 	    then
 		echo "autonuke=\"y\"" >> $cache
 	    fi
@@ -1334,13 +1337,13 @@ function psxcimdb
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "psxcimdb=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "psxcimdb=" | wc -l`" = 0 ]]
 	    then
 		echo "psxcimdb=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "psxcimdb=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "psxcimdb=" | wc -l`" = 0 ]]
 	    then
 	    	echo "psxcimdb=\"y\"" >> $cache
 	    fi
@@ -1371,7 +1374,7 @@ function psxcimdb
 	    sed -i "s/#changethis/$imdbchan/" $glroot/sitebot/scripts/pzs-ng/plugins/psxc-imdb.tcl
 	    cd ..
 		
-	    if [ "`cat $cache | grep -w "psxcimdbchan=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "psxcimdbchan=" | wc -l`" = 0 ]]
 	    then
 		echo "psxcimdbchan=\"$imdbchan\"" >> $cache
 	    fi
@@ -1395,13 +1398,13 @@ function addip
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "addip=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "addip=" | wc -l`" = 0 ]]
 	    then
 		echo "addip=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "addip=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "addip=" | wc -l`" = 0 ]]
 	    then
 		echo "addip=\"y\"" >> $cache
 	    fi
@@ -1436,13 +1439,13 @@ function topstat
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "top=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "top=" | wc -l`" = 0 ]]
 	    then
 		echo "top=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "top=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "top=" | wc -l`" = 0 ]]
 	    then
 		echo "top=\"y\"" >> $cache
 	    fi
@@ -1474,13 +1477,13 @@ function ircnick
 	
     case $ask in
 	[Nn])
-	    if [ "`cat $cache | grep -w "ircnick=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "ircnick=" | wc -l`" = 0 ]]
 	    then
 		echo "ircnick=\"n\"" >> $cache
 	    fi
 	    ;;
 	[Yy]|*)
-	    if [ "`cat $cache | grep -w "ircnick=" | wc -l`" = 0 ]
+	    if [[ -f "$cache" && "`cat $cache | grep -w "ircnick=" | wc -l`" = 0 ]]
 	    then
 		echo "ircnick=\"y\"" >> $cache
 	    fi
@@ -1511,13 +1514,13 @@ function archiver
 
     case $ask in
         [Nn])
-            if [ "`cat $cache | grep -w "archiver=" | wc -l`" = 0 ]
+            if [[ -f "$cache" && "`cat $cache | grep -w "archiver=" | wc -l`" = 0 ]]
             then
                 echo "archiver=\"n\"" >> $cache
             fi
             ;;
         [Yy]|*)
-            if [ "`cat $cache | grep -w "archiver=" | wc -l`" = 0 ]
+            if [[ -f "$cache" && "`cat $cache | grep -w "archiver=" | wc -l`" = 0 ]]
             then
                 echo "archiver=\"y\"" >> $cache
             fi
@@ -1547,13 +1550,13 @@ function section-traffic
 
     case $ask in
         [Nn])
-            if [ "`cat $cache | grep -w "section_traffic=" | wc -l`" = 0 ]
+            if [[ -f "$cache" && "`cat $cache | grep -w "section_traffic=" | wc -l`" = 0 ]]
             then
                 echo "section_traffic=\"n\"" >> $cache
             fi
             ;;
         [Yy]|*)
-    	    if [ "`cat $cache | grep -w "section_traffic=" | wc -l`" = 0 ]
+    	    if [[ -f "$cache" && "`cat $cache | grep -w "section_traffic=" | wc -l`" = 0 ]]
     	    then
                 echo "section_traffic=\"y\"" >> $cache
     	    fi
@@ -1600,6 +1603,8 @@ function usercreation
 	username=`cat $cache | grep -w "username" | cut -d "=" -f2 | tr -d "\""`
     else
 	echo
+	echo "--------[ FTP user configuration ]------------------------------------"
+	echo
 	echo -n "Please enter the username of admin, default admin : " ; read username
     fi
 	
@@ -1640,7 +1645,7 @@ function usercreation
 	fi
     fi
 
-    if [ "`cat $cache | grep -w "username=" | wc -l`" = 0 ]
+    if [[ -f "$cache" && "`cat $cache | grep -w "username=" | wc -l`" = 0 ]]
     then
 	echo "username=\"$username\"" >> $cache
 	echo "password=\"$password\"" >> $cache
@@ -1660,7 +1665,7 @@ quote USER glftpd
 quote PASS glftpd
 quit
 EOF`
-    if [ "$(echo $status | grep -c "$success")" -eq 0 ]
+    if [ "`echo $status | grep -c "$success"`" -eq 0 ]
     then
 	if [ -e /etc/systemd/system/glftpd.socket ]
 	then
@@ -1671,7 +1676,7 @@ EOF`
 	    /etc/rc.d/rc.inetd stop >/dev/null && /etc/rc.d/rc.inetd start >/dev/null
 	fi
     fi
-    if [ "$(echo $status | grep -c "$success")" -eq 1 ]
+    if [ "`echo $status | grep -c "$success"`" -eq 1 ]
     then
 	ncftpls -u glftpd -p glftpd -P $port -Y "site change glftpd flags +347ABCDEFGH" $connection > /dev/null
 	ncftpls -u glftpd -p glftpd -P $port -Y "site grpadd SiteOP SiteOP" $connection > /dev/null
@@ -1756,9 +1761,9 @@ function cleanup
     cp packages/scripts/extra/rescan_fix.sh $glroot/bin
     echo "*/2 * * * *             $glroot/bin/rescan_fix.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 }
+version
 start
 port
-version
 device_name
 channel
 announce
