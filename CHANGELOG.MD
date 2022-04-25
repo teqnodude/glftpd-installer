@@ -1,3 +1,13 @@
+## 10.x - 
+
+### Added
+
+### Updated
+
+### Fixes
+
+- Adaptive block function in tvmaze-nuker did not work properly where all blocks ended up on the same row
+
 ## 10.4 - 2022-04-22
 
 ### Added

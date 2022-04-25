@@ -186,7 +186,7 @@ else
     then
         $GLROOT/bin/sed -i "/\/site\/$section/a \/site\/$section:^($2)[._-]:$today" $BLOCKFILE
     else
-        startword=`grep "$1:^(" $BLOCKFILE | tail -2 | head -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
+        startword=`grep "$1:^(" $BLOCKFILE | tail -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
         $GLROOT/bin/sed -i "/\/site\/$section:^(/ s/$startword/$2|$startword/" $BLOCKFILE
     fi
 fi
