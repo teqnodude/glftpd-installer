@@ -45,4 +45,4 @@ proc pub:banned {nick output binary chan text} {
 
 }
 
-putlog "Tur-Predircheck_Manager.tcl 1.74 by Teqno loaded"
+putlog "Tur-Predircheck_Manager.tcl 1.75 by Teqno loaded"

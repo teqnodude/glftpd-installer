@@ -184,7 +184,7 @@ then
 else
     if [ "`cat $BLOCKFILE | grep "$1" | tail -1 | wc -c`" -ge "$LENGTH" ]
     then
-        $GLROOT/bin/sed -i "/\/site\/$section/a \/site\/$section:^($2)[._-]:$today" $BLOCKFILE
+        $GLROOT/bin/sed -i -e "$(grep -n "/site/$section:^" $BLOCKFILE | tail -1 | cut -f1 -d':')a /site/$section:^($2)[._-]:$today" $BLOCKFILE
     else
         startword=`grep "$1:^(" $BLOCKFILE | tail -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
         $GLROOT/bin/sed -i "/\/site\/$section:^(/ s/$startword/$2|$startword/" $BLOCKFILE

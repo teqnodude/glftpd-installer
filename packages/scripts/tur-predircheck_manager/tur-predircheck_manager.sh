@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.74
+VER=1.75
 #--[ Intro ]----------------------------------------------------#
 #                                                       	#
 # Tur-predircheck_manager. A script for lazy people to block  	#
@@ -44,7 +44,7 @@ predircheck="$glroot/bin/tur-predircheck.sh"
 irctrigger=`cat $glroot/sitebot/scripts/tur-predircheck_manager.tcl | grep "block" | grep "tur-predircheck" | cut -d " " -f4`
 
 # How long should the block line under DENYDIRS be allowed to be before making a new line
-length=210
+length=40
 
 #--[ Script start ]---------------------------------------------#
 
@@ -113,12 +113,12 @@ then
 	$glroot/bin/sed -i "/INCOMPLETE/a /site/$section:^($regexp)[._-]" $predircheck
 	sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc"
     else
-	if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | head -1 | wc -c`" -ge "$length" ]
+	if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | tail -1 | wc -c`" -ge "$length" ]
 	then
-	    $glroot/bin/sed -i "/\/site\/$section:^(/a /site/$section:^($regexp)[._-]" $predircheck
+	    $glroot/bin/sed -i -e "$(grep -n "/site/$section:^" $predircheck | tail -1 | cut -f1 -d':')a /site/$section:^($regexp)[._-]" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc"
 	else
-	    startword=`grep "$section:^(" $predircheck | tail -2 | head -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
+	    startword=`grep "$section:^(" $predircheck | tail -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
 	    $glroot/bin/sed -i "/\/site\/$section:^(/ s/$startword/$regexp|$startword/" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:^(" | grep --color=always -i "$regexpc"
 	fi
@@ -149,10 +149,10 @@ then
     else
 	if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[\." | tail -1 | wc -c`" -ge "$length" ]
 	then
-	    $glroot/bin/sed -i "/\/site\/$section:\[\./a /site/$section:[._-]($regexp)[._-]" $predircheck
+	    $glroot/bin/sed -i -e "$(grep -n "/site/$section:\[._-\]" $predircheck | tail -1 | cut -f1 -d':')a /site/$section:[._-]($regexp)[._-]" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[\." | grep --color=always -i "$regexpc"
 	else
-	    startword=`grep "$section:\[._-]" $predircheck | tail -2 | head -1 | sed -e 's/\[._-](//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
+	    startword=`grep "$section:\[._-]" $predircheck | tail -1 | sed -e 's/\[._-](//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1`
 	    $glroot/bin/sed -i "/\/site\/$section:\[\./ s/$startword/$regexp|$startword/" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[\." | grep --color=always -i "$regexpc"
 	fi
@@ -181,12 +181,12 @@ then
         $glroot/bin/sed -i "/INCOMPLETE/a /site/$section:[-]($regexp)$" $predircheck
 	sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]" | grep --color=always -i "$regexpc"
     else
-        if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-" | tail -1 | wc -c`" -ge $length ]
+        if [ "`sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-" | tail -1 | wc -c`" -ge "$length" ]
         then
-            $glroot/bin/sed -i "/\/site\/$section:\[\-/a /site/$section:[-]($regexp)$" $predircheck
+	    $glroot/bin/sed -i -e "$(grep -n "/site/$section:\[-\]" $predircheck | tail -1 | cut -f1 -d':')a /site/$section:[-]($regexp)$" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]" | grep --color=always -i "$regexpc"
         else
-	    startword=`grep "$section:\[-" $predircheck | tail -2 | sed 's/\[-](//' | tr -d ')$' | cut -d':' -f2 | cut -d'|' -f1`
+	    startword=`grep "$section:\[-" $predircheck | tail -1 | sed 's/\[-](//' | tr -d ')$' | cut -d':' -f2 | cut -d'|' -f1`
             $glroot/bin/sed -i "/\/site\/$section:\[\-/ s/$startword/$regexp|$startword/" $predircheck
 	    sed -n "/DENYGROUPS/,/ALLOWDIRS/p" $predircheck | grep "$section:\[-\]" | grep --color=always -i "$regexpc"
         fi
