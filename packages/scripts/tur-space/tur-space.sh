@@ -28,7 +28,7 @@ proc_debug() {
 
 proc_log() {
   if [ "$LOGFILE" ]; then
-    echo `$DATE_BINARY "+%a %b %e %T %Y"` SPACE: \"$*\" >> $LOGFILE
+    echo `$DATE_BINARY "+%Y-%m-%d %T"` SPACE: \"$*\" >> $LOGFILE
   fi
 }
 
