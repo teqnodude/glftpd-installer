@@ -4,6 +4,8 @@
 
 ### Updated
 
+- Tweaked some settings in tur-space to reflect faster and larger sites to prevent sites from getting full
+
 ### Fixes
 
 - Adaptive block function in tvmaze-nuker did not work properly where all blocks ended up on the same row

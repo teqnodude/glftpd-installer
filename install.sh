@@ -189,7 +189,7 @@ function device_name
     fi
     cp packages/scripts/tur-space/tur-space.conf packages/scripts/tur-space/tur-space.conf.new
     echo "[TRIGGER]\n" >> packages/scripts/tur-space/tur-space.conf.new
-    echo "TRIGGER=$device:25000:50000" >> packages/scripts/tur-space/tur-space.conf.new
+    echo "TRIGGER=$device:100000:200000" >> packages/scripts/tur-space/tur-space.conf.new
     echo "" >> packages/scripts/tur-space/tur-space.conf.new
     echo "[INCOMING]" >> packages/scripts/tur-space/tur-space.conf.new
     

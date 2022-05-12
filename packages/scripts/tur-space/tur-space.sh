@@ -853,8 +853,8 @@ if [ -e "$TMP/tur-space.lock" ]; then
     DEBUG="TRUE"
   fi
 
-  if [ "`find \"$TMP/tur-space.lock\" -type f -mmin -1440`" ]; then
-    proc_debug "Lockfile $TMP/tur-space.lock exists and is not 24 hours old yet. Quitting."
+  if [ "`find \"$TMP/tur-space.lock\" -type f -mmin -120`" ]; then
+    proc_debug "Lockfile $TMP/tur-space.lock exists and is not 2 hours old yet. Quitting."
     if [ "$DEBUG" = "TRUE" ]; then
       LAST_ERROR="`egrep "Error|Warning" $LOGFILE | tail -n1`"
       if [ "$LAST_ERROR" ]; then
@@ -864,7 +864,7 @@ if [ -e "$TMP/tur-space.lock" ]; then
     fi
     exit 0
   else
-    proc_debug "Lockfile exists, but its older then 24 hours. Removing lockfile."
+    proc_debug "Lockfile exists, but its older then 2 hours. Removing lockfile."
     touch "$TMP/tur-space.lock"
   fi
 else
