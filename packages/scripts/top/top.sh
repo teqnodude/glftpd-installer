@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.1
+VER=1.0
 #----------------------------------------------------------------#
 #                                                                #
 # Script is based on Tur-Oneline_Stats created by Turranius but  #
@@ -97,7 +97,7 @@ stats="/bin/stats -r /glftpd/etc/glftpd.conf"
 
 GO_TO_GIG="10000"
 
-MESSAGE="%BOLD%%POS%%BOLD%.%C4% %USER%%C4% %C14%(%C4% %MB% %C14%%NAME% %C14%)"
+MESSAGE="%POS%.%C4% %USER%%C4% %C14%(%C4% %MB% %C14%%NAME% %C14%)"
 
 ENABLE_COLORS=TRUE
 
