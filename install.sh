@@ -712,7 +712,7 @@ function glftpd
     cp ../scripts/section-manager/section-manager.sh $glroot
     sed -i "s|changeme|$device|" $glroot/section-manager.sh
     cp ../scripts/imdbrating/imdbrating.sh $glroot/bin
-    bins="bc du expr echo sed touch chmod chown pwd grep basename date mv bash find sort"
+    bins="bc du expr echo sed touch chmod chown pwd grep basename date mv bash find sort which xargs"
     for file in $bins
     do
         cp `which $file` $glroot/bin
