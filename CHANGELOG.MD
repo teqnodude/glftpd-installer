@@ -2,6 +2,8 @@
 
 ### Added
 
+- Added lastlogin.sh that allows SiteOP's to track inactivity on by doing !site lastlogin in ops channel
+
 ### Updated
 
 - Tweaked some settings in tur-space to reflect faster and larger sites to prevent sites from getting full

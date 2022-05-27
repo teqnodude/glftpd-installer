@@ -104,6 +104,9 @@ custom-rescan           *
 site_cmd INVITE         EXEC	/bin/invite.sh
 custom-invite           *
 
+site_cmd LASTLOGIN	EXEC	/bin/lastlogin.sh
+custom-lastlogin	1
+
 -addip           	1 2 7
 -adduser         	1 2 7
 -change          	1 7

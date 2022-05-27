@@ -700,6 +700,7 @@ function glftpd
     cp ../scripts/extra/incomplete-list.sh $glroot/bin
     cp ../scripts/extra/incomplete-list-nuker.sh $glroot/bin
     cp ../scripts/extra/incomplete-list-symlinks.sh $glroot/bin
+    cp ../scripts/extra/lastlogin.sh $glroot/bin
     chmod 755 $glroot/site
     ln -s $glroot/etc/glftpd.conf /etc/glftpd.conf
     chmod 777 $glroot/ftp-data/msgs
