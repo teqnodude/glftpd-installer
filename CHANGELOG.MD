@@ -13,6 +13,7 @@
 - Adaptive block function in tvmaze-nuker did not work properly where all blocks ended up on the same row
 - tur-predircheck_manager did not work properly where blocks ended up at the wrong place
 - There were some missing sys bínaries in /glftpd/bin for lastlogin.sh to work properly
+- incomplete-list-nuker.sh did not work properly under crontab on some boxes
 
 ## 10.4 - 2022-04-22
 

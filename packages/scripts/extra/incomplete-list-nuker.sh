@@ -8,8 +8,8 @@ VER=1.0
 # enter path glftpd is installed in.
 glroot=/glftpd
 
-# enter path to the cleanup binary relative to glroot.
-cleanup=/bin/cleanup
+# enter path to the cleanup binary.
+cleanup=$glroot/bin/cleanup
 
 # enter path to the nuker binary
 nukeprog=$glroot/bin/nuker
@@ -84,12 +84,12 @@ else
 	secpaths="`echo "$section" | cut -d ':' -f 2- | tr ' ' '\n'`"
 	for secpath in $secpaths
 	do
-    	    results="`chroot $glroot $cleanup 2>/dev/null | grep -e "^Incomplete" | tr '\"' '\n' | grep -e "$secpath" | grep -v "\/Sample\|\/Subs" | tr -s '/' | sort`"
+    	    results="`$cleanup $glroot 2>/dev/null | grep -e "^Incomplete" | tr '\"' '\n' | grep -e "$secpath" | egrep -v "/Sample|/Subs" | tr -s '/' | sort`"
     	    if [ ! -z "$results" ]
 	    then
 		for result in $results
 		do
-		    secrel=`echo $result | sed "s|$secpath||" | tr -s '/'`
+		    secrel=`echo $result | sed "s|$secpath||" | tr -s '/' | sed "s|$glroot||"`
 		    comp="`ls -1 $glroot$result/ | grep "$releaseComplete"`"
 		    percent="`echo $comp | awk -F " " '{print $3}'` complete"
 		    if [ "$percent" != " complete" ]
@@ -146,7 +146,6 @@ else
     done
     echo "No more incompletes found."
     IFS="$IFSORIG"
-    chroot $glroot /bin/cleanup
     rm -f $glroot/tmp/incomplete-list-nuker.lock
 fi
 
