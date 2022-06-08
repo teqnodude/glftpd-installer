@@ -90,7 +90,7 @@ else
 		for result in $results
 		do
 		    secrel=`echo $result | sed "s|$secpath||" | tr -s '/' | sed "s|$glroot||"`
-		    comp="`ls -1 $glroot$result/ | grep "$releaseComplete"`"
+		    comp="`ls -1 $result/ | grep "$releaseComplete"`"
 		    percent="`echo $comp | awk -F " " '{print $3}'` complete"
 		    if [ "$percent" != " complete" ]
 		    then
