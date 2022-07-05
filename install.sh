@@ -148,7 +148,7 @@ function version
     cd packages
     #echo -n "Extracting the Source files, please wait...                     "
     $UP $PK1 && rm $PK1
-    git clone https://github.com/pzs-ng/pzs-ng >/dev/null 2>&1
+    git clone https://github.com/glftpd/pzs-ng >/dev/null 2>&1
     git clone https://github.com/eggheads/eggdrop >/dev/null 2>&1
     echo -e "[\e[32mDone\e[0m]"
     echo
