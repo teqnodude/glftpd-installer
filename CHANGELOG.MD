@@ -14,6 +14,7 @@
 - tur-predircheck_manager did not work properly where blocks ended up at the wrong place
 - There were some missing sys bínaries in /glftpd/bin for lastlogin.sh to work properly
 - incomplete-list-nuker.sh did not work properly under crontab on some boxes
+- If requests were marked filled late the filled request could be deleted within hours instead of set number of days so now they are instead updated in date and time when marked filled
 
 ## 10.4 - 2022-04-22
 

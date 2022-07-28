@@ -1167,11 +1167,13 @@ proc_reqfilled() {
               done
               if [ "$NOMOVE" != "TRUE" ]; then
                 mv -f "$requests/$requesthead$RELEASE" "$requests/${filled_dir}$filledhead$RELEASE$NUMBER"
+		touch "$requests/${filled_dir}$filledhead$RELEASE$NUMBER"
                 COMPLETE_REQUEST="$requests/${filled_dir}$filledhead$RELEASE$NUMBER"
               fi
             else
               ## All ok, just move the dir.
               mv -f "$requests/$requesthead$RELEASE" "$requests/${filled_dir}$filledhead$RELEASE"
+	      touch "$requests/${filled_dir}$filledhead$RELEASE"
               COMPLETE_REQUEST="$requests/${filled_dir}$filledhead$RELEASE"
             fi
 
