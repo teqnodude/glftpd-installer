@@ -495,7 +495,7 @@ function writ
 	echo "section.$section.gl_stat_section=0" >> $rootdir/.tmp/footools
 	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$today/" packages/scripts/tur-autonuke/tur-autonuke.conf
 	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$yesterday/" packages/scripts/tur-autonuke/tur-autonuke.conf
-	echo "INC$section=$device:$glroot/site/$section:DATED" >> packages/scripts/tur-space/tur-space.conf.new
+	echo "INC$section=$device:$glroot/site/$section:" >> packages/scripts/tur-space/tur-space.conf.new
 	echo "$glroot/site/$section" >> $rootdir/.tmp/.fullpath
 	echo "/site/$section/%Y-%m-%d/ " >> $rootdir/.tmp/.cleanup_dated
 	if [ "$section" != "0DAY" ] 

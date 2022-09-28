@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.25
+VER=1.26
 #----------------------------------------------------------------#
 #								 #
 # Section Manager by Teqno     			 		 #
@@ -138,7 +138,7 @@ then
 	*)
 	    case $day in
 	        [Yy])
-		    sed -i '/^\[INCOMING\]/a '"INC$section=$incoming:$glroot/site/$section:DATED" $turspace
+		    sed -i '/^\[INCOMING\]/a '"INC$section=$incoming:$glroot/site/$section:" $turspace
 		    ;;
 		*)
 		    sed -i '/^\[INCOMING\]/a '"INC$section=$incoming:$glroot/site/$section:" $turspace

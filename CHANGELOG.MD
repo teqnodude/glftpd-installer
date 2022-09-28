@@ -15,6 +15,8 @@
 - There were some missing sys bínaries in /glftpd/bin for lastlogin.sh to work properly
 - incomplete-list-nuker.sh did not work properly under crontab on some boxes
 - If requests were marked filled late the filled request could be deleted within hours instead of set number of days so now they are instead updated in date and time when marked filled
+- tur-space didn't wipe dated sections properly because of the new format of 2000-01-01 instead of 0101, dated sections should not use :DATED in tur-space.conf with new date format
+- because of the error with new date format in tur-space then section-manager needed to be fixed as well to reflect the changes
 
 ## 10.4 - 2022-04-22
 
