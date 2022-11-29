@@ -17,6 +17,7 @@
 - If requests were marked filled late the filled request could be deleted within hours instead of set number of days so now they are instead updated in date and time when marked filled
 - tur-space didn't wipe dated sections properly because of the new format of 2000-01-01 instead of 0101, dated sections should not use :DATED in tur-space.conf with new date format
 - because of the error with new date format in tur-space then section-manager needed to be fixed as well to reflect the changes
+- imdb-scan didn't create proper symlinks if sections were not in root site folder
 
 ## 10.4 - 2022-04-22
 

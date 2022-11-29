@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #--[ Info ]-----------------------------------------------------#
 # 
 # A script that create genre symlinks for a section of movies out 
@@ -55,7 +55,25 @@ then
 		if [ ! -L "$glroot$symlink/$sort_by_genre/$genre/$dir" ]
 		then
 		    echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_genre/$genre/$dir" >> $log
-		    ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                    depth=`echo $section | grep -o '/' | wc -l`
+                    case $depth in
+                        3)
+                        ln -s "../../../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                        rm -f "../../../../../../$section/$dir/$dir"
+                        ;;
+                        2)
+                        ln -s "../../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                        rm -f "../../../../../$section/$dir/$dir"
+                        ;;
+                        1)
+                        ln -s "../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                        rm -f "../../../../$section/$dir/$dir"
+                        ;;
+                        0)
+                        ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                        rm -f "../../../$section/$dir/$dir"
+                        ;;
+                    esac
 		fi
 	    fi
 	done
