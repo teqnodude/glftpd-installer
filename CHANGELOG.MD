@@ -18,6 +18,7 @@
 - tur-space didn't wipe dated sections properly because of the new format of 2000-01-01 instead of 0101, dated sections should not use :DATED in tur-space.conf with new date format
 - because of the error with new date format in tur-space then section-manager needed to be fixed as well to reflect the changes
 - imdb-scan didn't create proper symlinks if sections were not in root site folder
+- lastlogin.sh had an error in code where it couldn't list all users
 
 ## 10.4 - 2022-04-22
 

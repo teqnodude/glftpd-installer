@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.2
+VER=1.21
 #---------------------------------------------------------------#
 # Lastlogin by Teqno                                            #
 #                                                               #
@@ -76,7 +76,7 @@ if [ "$1" = "all" ]
 then
     echo "Listing last login for all users"
     echo
-    for user in `ls -A | egrep -v $EXCLUDES`
+    for user in `ls -A | egrep -v $EXUSERS`
     do
         TIME=`grep -w TIME $user | awk -F " " '{print $3}'`
         LL=`date +"%Y-%m-%d" -d @$TIME`
