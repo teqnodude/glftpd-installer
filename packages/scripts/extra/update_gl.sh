@@ -16,7 +16,7 @@ else
     latest=`lynx --dump https://glftpd.io | grep "latest version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' -e 's/ BETA/.*BETA/' -e 's/ //'`
     changelog=https://glftpd.io/files/docs/UPGRADING-beta
 fi
-version=`/glftpd/bin/glftpd-full-static | grep -o "[3-6][2-4]BiT" | sed 's/BiT//'`
+version=`$glroot/bin/glftpd-full-static | grep -o "[3-6][2-4]BiT" | sed 's/BiT//'`
 [ "$version" = "32" ] && version="86"
 [ ! -d $sourcedir ] && mkdir $sourcedir
 cd $sourcedir
