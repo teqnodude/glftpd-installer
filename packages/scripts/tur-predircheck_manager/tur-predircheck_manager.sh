@@ -1,27 +1,22 @@
 #!/bin/bash
-VER=1.75
+VER=1.76
 #--[ Intro ]----------------------------------------------------#
 #                                                       	#
 # Tur-predircheck_manager. A script for lazy people to block  	#
-# and unblock groups and releases in sections from within irc   #
-#                                                       	#
-# Who do I recomend to run this? Well, nobody since if  	#
-# you accidently allow someone access to this who       	#
-# shouldnt, he/she can do anything basically.           	#
+# and unblock groups and releases in sections from within irc.  #
 #                                                       	#
 # The tcl is locked to a single chan that the executor  	#
-# must be in and it is also locked by default so the    	#
-# user must be added to THIS bot with flag o (just      	#
-# being an @ is not enough).                            	#
-# By THIS bot, I mean the one that the tcl is loaded on 	#
+# must be in and it is also locked to ops only by default so	#
+# the user must be added to the bot with flag o (just      	#
+# being an @ in channel is not enough).				#
 #                                                       	#
 #-[ Install ]---------------------------------------------------#
 #                                                       	#
 # Copy tur-predircheck_manager.sh to /glftpd/bin and chmod 755. #
 # Copy sed to /glftpd/bin and chmod u+s.                        #
 # Copy tur-predircheck_manager.tcl to your eggdrop scripts dir. #
-# Edit it and check the settings in it. When done, load         #
-# it in the bots config file and rehash the bot.                #
+# Edit it and check the settings. When done, load the script   	#
+# in the bots config file and rehash the bot.                	#
 #								#
 #--[ Info ]-----------------------------------------------------#
 #								#		
@@ -32,8 +27,10 @@ VER=1.75
 # would simply insert the block on all matching rows which 	#
 # causes redunancy.						#
 # 								#
-# Sections needs to be added to the tur-predircheck.sh before	#
-# a block with this script works				#
+# Sections need to be added to the tur-predircheck.sh before	#
+# a block with this script works as intended. No need to know	#
+# any regex since the script automatically makes the proper one #
+# based on the command.						#
 #								#
 # Addon created by Teqno					#
 #								#	
