@@ -7,6 +7,7 @@
 ### Updated
 
 - Tweaked some settings in tur-space to reflect faster and larger sites to prevent sites from getting full
+- Increased the number of max allowed genres in IMDB tag to enable more accurate sorting of movies 
 
 ### Fixes
 
