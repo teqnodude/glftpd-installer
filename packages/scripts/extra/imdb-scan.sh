@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.1
+VER=1.2
 #--[ Info ]-----------------------------------------------------#
 # 
 # A script that create genre symlinks for a section of movies out 
@@ -44,38 +44,41 @@ then
 	do
 	    rating="`ls $glroot/site/$section/$dir | grep -o "Score_.*" | cut -d "_" -f2`"
 	    year="`ls $glroot/site/$section/$dir | grep -o "(.*)" | grep -v COMPLETE | grep -o "[0-9][0-9][0-9][0-9]"`"
-	    genre="`ls $glroot/site/$section/$dir | grep -o "Score_.*" | cut -d "_" -f4`"
-	    if [ ! -z "$rating" ]
-	    then
-		if [ ! -d "$glroot$symlink/$sort_by_genre/$genre" ]
+	    genres="`ls $glroot/site/$section/$dir | grep -o "Score_.*" | cut -d "_" -f4 | sed -e 's/-/ /g' -e 's/Sci Fi/Sci-Fi/' -e 's/Sci/Sci-Fi/' -e 's/Sci-Fi-Fi/Sci-Fi/'`"
+	    for genre in $genres
+	    do
+		if [ ! -z "$rating" ]
 		then
-		    echo "`date "+%Y-%m-%d %T"` - Creating genre dir $glroot$symlink/$sort_by_genre/$genre" >> $log
-		    mkdir -pm777 $glroot$symlink/$sort_by_genre/$genre
+		    if [ ! -d "$glroot$symlink/$sort_by_genre/$genre" ]
+		    then
+			echo "`date "+%Y-%m-%d %T"` - Creating genre dir $glroot$symlink/$sort_by_genre/$genre" >> $log
+			mkdir -pm777 $glroot$symlink/$sort_by_genre/$genre
+		    fi
+		    if [ ! -L "$glroot$symlink/$sort_by_genre/$genre/$dir" ]
+		    then
+			echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_genre/$genre/$dir" >> $log
+                	depth=`echo $section | grep -o '/' | wc -l`
+                	case $depth in
+                    	    3)
+                    	    ln -s "../../../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                    	    rm -f "../../../../../../$section/$dir/$dir"
+                    	    ;;
+                    	    2)
+                    	    ln -s "../../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                    	    rm -f "../../../../../$section/$dir/$dir"
+                    	    ;;
+                    	    1)
+                    	    ln -s "../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                    	    rm -f "../../../../$section/$dir/$dir"
+                    	    ;;
+                    	    0)
+                    	    ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
+                    	    rm -f "../../../$section/$dir/$dir"
+                    	    ;;
+                	esac
+		    fi
 		fi
-		if [ ! -L "$glroot$symlink/$sort_by_genre/$genre/$dir" ]
-		then
-		    echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_genre/$genre/$dir" >> $log
-                    depth=`echo $section | grep -o '/' | wc -l`
-                    case $depth in
-                        3)
-                        ln -s "../../../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
-                        rm -f "../../../../../../$section/$dir/$dir"
-                        ;;
-                        2)
-                        ln -s "../../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
-                        rm -f "../../../../../$section/$dir/$dir"
-                        ;;
-                        1)
-                        ln -s "../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
-                        rm -f "../../../../$section/$dir/$dir"
-                        ;;
-                        0)
-                        ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
-                        rm -f "../../../$section/$dir/$dir"
-                        ;;
-                    esac
-		fi
-	    fi
+	    done
 	done
 	echo "`date "+%Y-%m-%d %T"` - Doing cleanup of broken links in section $section" >> $log
 	find $glroot$symlink -xtype l -exec rm -f {} +

@@ -1368,6 +1368,7 @@ function psxcimdb
 	    cp ./main/psxc-imdb.tcl $glroot/sitebot/scripts/pzs-ng/plugins
 	    cp ./main/psxc-imdb.zpt $glroot/sitebot/scripts/pzs-ng/plugins
 	    $glroot/bin/psxc-imdb-sanity.sh >/dev/null 2>&1
+	    touch $glroot/ftp-data/logs/psxc-imdb-rescan.tmp
 	    touch $glroot/ftp-data/logs/psxc-moviedata.log
 	    echo "source scripts/pzs-ng/plugins/psxc-imdb.tcl" >> $glroot/sitebot/eggdrop.conf
 	    cat gl >> $glroot/etc/glftpd.conf

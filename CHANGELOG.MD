@@ -9,6 +9,7 @@
 - Tweaked some settings in tur-space to reflect faster and larger sites to prevent sites from getting full
 - Increased the number of max allowed genres in IMDB tag to enable more accurate sorting of movies 
 - Removed screens from IMDB tag since most ended up with UNKNOWN Screens
+- Updated imdb-scan.sh to create proper symlinks
 
 ### Fixes
 
