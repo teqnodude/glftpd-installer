@@ -179,7 +179,7 @@ announce.COMPLETE_STAT_RACE_ZIP                 = "%b{COMPLETE%c1{:}} %c1{-}%c2{
 announce.INCOMPLETE				= "%b{INCOMPLETE%c1{:}} %c1{-}%c2{%section}%c1{-} %c3{%b{%releasename}} %c1{is now incomplete thanks to} %c3{%b{%u_name}} %c1{/} %c3{%g_name}%c1{.}"
 
 ## Third party scripts
-announce.IMDB                                   = "%b{INFO%c1{:}} %c1{Genre:} %c3{%imdbgenre} %c1{- Language:} %c3{%imdblanguage} %c1{- Rating:} %c3{%imdbscore} %c1{(}%c3{%imdbvotes}%c1{)} %c1{- Year:} %c3{%imdbyear} %c1{- Link:} %c3{%imdburl}"
+announce.IMDB                                   = "%b{INFO%c1{:}} %c1{Genre:} %c3{%imdbgenre} %c1{- Language:} %c3{%imdblanguage} %c1{- Rating:} %c3{%imdbscore} %c1{(}%c3{%imdbvotes}%c1{)} %c1{- Year:} %c3{%imdbyear} %c1{- Link:} %c3{%imdburl}\n "
 announce.IMDBFIND                               = "%c1{Genre:} %c3{%imdbgenre} %c1{- Language:} %c3{%imdblanguage} %c1{- Rating:} %c3{%imdbscore} %c1{(}%c3{%imdbvotes}%c1{)} %c1{- Year:} %c3{%imdbyear} %c1{- Link:} %c3{%imdburl}\n%c1{Plot:} %c3{%imdbplot}"
 announce.IMDBVAR				= "%b{IMDB%c1{:}} %c1{-}%c2{%section}%c1{-} %c3{%b{%imdbname}} %c1{ ( }%c3{%u{%imdburl}}%c1{ ), a }%c3{%imdbdirector} %c1{movie which scored} %c3{%b{%imdbscore}} %c1{of} %c3{10} %c1{(}%c3{%imdbvotes} %c1{people voted). It premiered in} %c3{%imdbpremiereinfo}%c1{, with} %c3{%b{%imdbnumscreens}} %c1{screens on the opening weekend.}\n%c1{[}%c2{%b{%sitename}}%c1{]} %b{iMDB%c1{:}} %c1{-}%c2{%section}%c1{-} %c3{%b{%imdbname}} %c1{has the following plot summary: '}%c3{%imdbplot}%c1{'. Rating: [}%c2{%imdbbar}%c1{].}"
 #announce.PRE					= "%b{PRE%c1{:}} %c1{-}%c2{%section}%c1{-} %c1{We have a new cool pre!} %c9{%b{%reldir}} %c1{has just been released by} %c9{%b{%pregroup}}" # eur0pre
