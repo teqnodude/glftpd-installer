@@ -1,0 +1,3 @@
+This is a modified version of TVMaze script to work in combination with a shell script that nukes and exempts 
+TV releases based on various criteria like language, network, country, type, genre etc. It also include
+scripts that can rescan dirs for the TVMaze info and create symlinks.

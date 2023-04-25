@@ -1,22 +1,15 @@
-#! .
-# ^- set that to the directory eggdrop is in ie "#! /glftpd/sitebot"
-#
-# $Id: eggdrop.simple.conf,v 1.8 2000/11/06 04:06:40 guppy Exp $
-#
-# don't edit those 9 lines now!!
 set mod-path    "modules/"
 set help-path   "help/"
 set use-ssl     1
 set net-type    Other
-loadmodule dns
 loadmodule channels
 loadmodule server
 loadmodule ctcp
 loadmodule irc
 loadmodule notes
 loadmodule console
-loadmodule uptime
-loadmodule blowfish
+#loadmodule blowfish
+loadmodule pbkdf2
 loadmodule transfer
 loadmodule share
 
@@ -28,5 +21,5 @@ proc evnt:init-server {type} {
     #putquick "PRIVMSG NickServ :identify password"
 }
 
-addserver servername
+server add servername
 

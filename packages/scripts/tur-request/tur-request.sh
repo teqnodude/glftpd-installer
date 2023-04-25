@@ -851,11 +851,11 @@ proc_request() {
     fi
   fi
 
-  if [ "`$dirloglist_gl | grep -iv "STATUS: 3" | grep "/$WHAT$"`" ]; then
+  if [ "`$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$"`" ]; then
     if [ "$mode" = "gl" ]; then
-	echo "Release already exist on site: `$dirloglist_gl | grep -iv "STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
+	echo "Release already exist on site: `$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
     else
-	echo "14Release already exist on site: 4`$dirloglist_gl | grep -iv "STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
+	echo "14Release already exist on site: 4`$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
     fi
     exit 0
   fi
@@ -1167,11 +1167,13 @@ proc_reqfilled() {
               done
               if [ "$NOMOVE" != "TRUE" ]; then
                 mv -f "$requests/$requesthead$RELEASE" "$requests/${filled_dir}$filledhead$RELEASE$NUMBER"
+		touch "$requests/${filled_dir}$filledhead$RELEASE$NUMBER"
                 COMPLETE_REQUEST="$requests/${filled_dir}$filledhead$RELEASE$NUMBER"
               fi
             else
               ## All ok, just move the dir.
               mv -f "$requests/$requesthead$RELEASE" "$requests/${filled_dir}$filledhead$RELEASE"
+	      touch "$requests/${filled_dir}$filledhead$RELEASE"
               COMPLETE_REQUEST="$requests/${filled_dir}$filledhead$RELEASE"
             fi
 
@@ -1588,11 +1590,22 @@ proc_status() {
     POS=`echo $LINETOSAY | cut -d' ' -f1-2 | sed 's/] .*/]/'`
     REL=`echo $LINETOSAY | cut -d' ' -f2-3 | sed -e 's/[0-9]:] //g' -e 's/ ~.*//'`
     USR=`echo $LINETOSAY | cut -d'~' -f2 | sed -e 's/ by //g' -e 's/ (.*//g'`
-    DAT=`echo $LINETOSAY | cut -d' ' -f8- | sed 's/at //g'`
+    FOR=`echo $LINETOSAY | cut -d' ' -f8`
+    if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
+    then
+        DAT=`echo $LINETOSAY | cut -d' ' -f8- | sed 's/at //g'`
+    else
+        DAT=`echo $LINETOSAY | cut -d' ' -f10- | sed 's/at //g'`
+    fi
     #OUTPUT="$LINETOSAY"
     if [ "$mode" = "irc" ]
     then
-	OUTPUT="14 $POS4 $REL 14created by4 $USR 14at4 $DAT"
+        if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
+        then
+	    OUTPUT="14 $POS4 $REL 14created by4 $USR 14at4 $DAT"
+	else
+	    OUTPUT="14 $POS4 $REL 14created by4 $USR 14for4 $FOR 14at4 $DAT"
+	fi
     else
         OUTPUT="$POS $REL created by $USR at $DAT"
     fi

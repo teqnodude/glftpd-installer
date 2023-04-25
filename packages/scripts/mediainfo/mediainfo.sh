@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.7
+VER=1.8
 #---------------------------------------------------------------#
 #                                                               #
 # Mediainfo by Teqno                                       	#
@@ -109,7 +109,7 @@ else
         else
             cd $GLROOT/bin
             if [ ! -d $TMP ]; then mkdir -m777 $GLROOT/tmp ; fi
-            for info in `ls $GLROOT/site/$section | grep -iv "\[NUKED\]\|\[INCOMPLETE\]\|DIRFIX\|SAMPLEFIX" | grep "$release"`
+            for info in `ls $GLROOT/site/$section | egrep -iv "\[NUKED\]|\[INCOMPLETE\]|DIRFIX|SAMPLEFIX|NFOFIX" | grep "$release"`
             do
                 if [ $(find $GLROOT/site/$section/$info -type f -name "* Complete -*" | wc -l ) = "0" ]
                 then

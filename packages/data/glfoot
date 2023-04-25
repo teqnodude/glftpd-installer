@@ -85,9 +85,9 @@ multiplier_max		50
 
 calc_crc		*
 pre_dir_check   	/bin/tur-predircheck.sh 
-pre_check       	/bin/tur-precheck.sh    
-#post_check      	/bin/zipscript-c        *
-post_check 		/bin/mkv_check.sh *
+pre_check       	/bin/tur-precheck.sh
+post_check      	/bin/zipscript-c	*
+
 cscript         	DELE                    post    /bin/postdel
 cscript         	RMD                     post    /bin/datacleaner
 cscript         	SITE[:space:]NUKE       post    /bin/cleanup
@@ -96,13 +96,16 @@ cscript         	SITE[:space:]WIPE       post    /bin/cleanup
 cscript         	RETR                    post    /bin/dl_speedtest
 
 site_cmd RULES          TEXT	/ftp-data/misc/site.rules
-custom-rules            !8 *
+custom-rules            *
 
 site_cmd RESCAN         EXEC	/bin/rescan
-custom-rescan           1
+custom-rescan           *
 
 site_cmd INVITE         EXEC	/bin/invite.sh
 custom-invite           *
+
+site_cmd LASTLOGIN	EXEC	/bin/lastlogin.sh
+custom-lastlogin	1
 
 -addip           	1 2 7
 -adduser         	1 2 7

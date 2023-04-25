@@ -2,13 +2,151 @@
 
 ### Added
 
+- Added lastlogin.sh that allows SiteOP's to track inactivity on by doing !site lastlogin in ops channel
+
+### Updated
+
+- Tweaked some settings in tur-space to reflect faster and larger sites to prevent sites from getting full
+- Increased the number of max allowed genres in IMDB tag to enable more accurate sorting of movies 
+- Removed screens from IMDB tag since most ended up with UNKNOWN Screens
+- Updated imdb-scan.sh to create proper symlinks
+
+### Fixes
+
+- Adaptive block function in tvmaze-nuker did not work properly where all blocks ended up on the same row
+- tur-predircheck_manager did not work properly where blocks ended up at the wrong place
+- There were some missing sys bínaries in /glftpd/bin for lastlogin.sh to work properly
+- incomplete-list-nuker.sh did not work properly under crontab on some boxes
+- If requests were marked filled late the filled request could be deleted within hours instead of set number of days so now they are instead updated in date and time when marked filled
+- tur-space didn't wipe dated sections properly because of the new format of 2000-01-01 instead of 0101, dated sections should not use :DATED in tur-space.conf with new date format
+- because of the error with new date format in tur-space then section-manager needed to be fixed as well to reflect the changes
+- imdb-scan didn't create proper symlinks if sections were not in root site folder
+- lastlogin.sh had an error in code where it couldn't list all users
+
+## 10.4 - 2022-04-22
+
+### Added
+
+- I have included an addon called lastlogin.sh as part of tur-ircadmin that enables you to list users who have been inactive for x number of months,
+the command to use on irc is site lastlogin to read syntax
+- I have included rename_dated_dirs.sh that can be found scripts/extra that changes the format of dated dirs from MMDD to YYYY-MM-DD
+- Added my own created imdb-scan.sh for symlinks, imdb-rescan.sh for imdb info and tvmaze-rescan.sh for TVMaze info and tvmaze-symlink-maker.sh for symlinks
+- Added incomplete-list-symlinks.sh which can be used to create symlinks of incompletes that require the manual add to crontab
+- Added a backup/restore script that can be run in crontab or run manually that makes it take less than 10 seconds to restore glFTPD
+- Added rescan_fix.sh that is run in cron by default that I created years ago that can resolves rare lock issues in pzs-ng
+
+### Updated
+
+- Included the option to exclude groups in lastlogin.sh
+- Did a major overhaul in regards to the style of the code in installer.sh and tweaked the code a bit that reduced a few dozen lines
+- Moved some files from packages/data into packages/extra for a better overview of files used during installation
+- Removed the manual input for 32/64 bit version of glFTPD, instead I made the installer detect what version of OS
+- Disabled the module uptime in eggdrop because the bot could apparently show up on the webpage of eggdrop
+- Disabled the module DNS in eggdrop due to changes of DNS in the release of 1.9.2
+- Inserted the cleanup of dead symlinks at the end as part of incomplete-list-nuker.sh
+- Updated adaptive block function for tvmaze-nuker to put blocks in wide rows instead of one block per row for optimized speed and added date for each new row
+- Optimized code in install.sh
+- Updated psxc-imdb-nuker to allow release if language of movie return as None.
+- Added a cleanup option of adaptive blocklist based on the number of days for those sites that have a lot of blocks but that doesn't want them to slow down the creation of new dirs
+- Made a major change when it comes to sections where people are now free to use any name for a section during install but where the user will still be presented
+with a list of recommendations for section names. As a result site.rules is generated for each section with a basic line on each section to use as guide.
+
+### Fixes
+
+- Various minor fixes
+- It wasn't possible to add dated sections like EBOOKS and XXX-PAYSITE before during install because of bad coding
+- tur-trial was installed with the wrong password in tur-trial3.conf
+- When nukes happened on TV sections :UNKNOWN: was listed among the users so fixed it by doing chown on TVMaze files
+
+### Removed
+
+- Removed tur-undupe from the installer since most if not all are not using this feature anyway
+- Removed idlebotkick from the installer since most if not all are not using this feature anyway
+
+
+## 10.3 - 2022-01-20
+
+### Updated
+
+- Disabled the log of glftpd connections to syslog, to enable it again just remove /etc/rsyslog.d/glftpd.conf and do sevice rsyslog restart
+- Have updated the list of allowed sections and the rules attached to those sections and removed sections that are outdated
+- Updated update_gl.sh to support the upgrade to BETA version by beta=1 setting where the upgrade notes are highlighted at the end of upgrade
+- Updated glftpd-version_check.sh to include support for BETA versions by beta=1 setting
+- Changed from deprecated format of ~ to stop in rsyslog file to prevent it stop working in the future
+- Changed name for Tur-oneline_stats script to Top since I have radically tweaked it
+- Added the setting to choose just one group to show stats from in Top
+- Added the setting to nuke releases that lack nfo in incomplete-list-nuker.sh, default setting is to not nuke them
+- Updated addaffil.sh where it grabs sections from ngBot.conf instead of needing constant editing when sections are added/removed
+- Updated section-manager and removed the requirement of adding/removing things in addaffil.sh due to update of addaffil.sh script
+- Have updated the list of allowed sections and the rules attached to the new section TV-2160
+- Have included the settings for sample check in pzs-ng but left it at default setting FALSE and set up the list of sections to check based on this installer
+- Changed date format for all dated sections in all relevant scripts from MMDD to YYYY-MM-DD since some can span longer than 1 year
+
+### Fixes
+
+- Removed rud-filedone since it didn't validate sample files correctly
+- Couldn't remove block of release properly in tur-predircheck_manager
+- Minor fixes in install.sh & version checker for glFTPD
+- Minor fixes in update_gl.sh
+- Created a check for input when entering the number of sections to prevent people from making the error of using sections names instead of the number of sections
+- REQUESTS dir is no longer created if tur-request is not installed
+- Created more checks for missing input in tur-predircheck_manager to prevent the creation of a corrupt blocklist
+- The new list of allowed sections wasn't properly coded in installer
+- dated.sh didn't function properly when dated dirs spanned a year
+- PREBW didn't announce properly due to bad settings in ngBot.conf
+- Installer didn't grab the latest glFTPD version
+- section-manager now add/remove sections from dated.sh and ensures that dated.sh is added/removed in crontab depending if dated sections are present
+- Fixed some minor bugs in section-manager
+- Added m2ts to sample_types in zsconfig.h since it's used sometimes in BLURAY sections
+- Forgot to add new style of block of groups in addaffil.sh and delaffil.sh
+
+
+## 10.2 - 2021-09-14
+
+### Added
+
 - Added a script for easy update of glFTPd
+- Added tvmaze.sh that enables the creation of .imdb and tag file with TVMaze info for TV releases
+- Added tvmaze-rescan.sh that enables the user to rescan sections for the creation of .imdb and tag file with TVMaze info
+
+### Updated
+
+- Added support for the use of /dev/disk/by- instead of /dev/sdX in tur-space(thanks to Mystery-X)
+- Sorting of adaptive blocklist is now done automatically by tvmaze-nuker to easier spot find relevant show if one wants to remove it from blocklist
+- Replaced mkv_check with rud-filedone because of the added support of mp4
+- Updated TVMaze.tcl to pass on information to the new script tvmaze.sh that enable the creation of .imdb and tag file with TVMaze info for TV releases
+- Added TVMaze link for show and episode in tvmaze.sh
+- Cosmetic changes for tvmaze.sh and tvmaze-rescan.sh and change from premiered to show type in tag file
+- In tvmaze-rescan.sh you can now scan up to 3 dirs in depth and I've also included a check to only scan TV releases that match set regex. I've also included a check to prevent double instances of script.
+- Added the ability to nuke shows based on status in tvmaze-nuker.sh
+- Added the option for width for plot summary in tvmaze-rescan.sh and tvmaze.sh
+- Added the option to skip releases that has a .imdb file in tvmaze-rescan.sh to increase speed when rescanning huge archives
+- Made some major changes in tur-predircheck_manager that makes it more simpler to add / del various blocks. I've also added the feature of determining the max length of lines under DENYDIRS
+- Now when you add / remove blocks in tur-predircheck_manager you'll see the effects right after instead of having to manually check via !block
+- Enabled PBKDF2 Hashing for eggdrop passwords and disabled blowfish
+- Clarification regarding adding ip to Admin account during setup
+- Added check for public ip during adding of ip to Admin account during setup where both local and public ip are added to Admin account
 
 ### Fixes
 
 - Releases with 2020+ in releasename couldn't be found due to incorrect regex in TVMaze.tcl
 - Fixed format of adaptive blocking in tvmaze-nuker
 - Fixed check for previous blocks in tvmaze-nuker
+- Fixed incorrect nuke when language is null in tvmaze-nuker
+- Fixed mediainfo where it exclude NFOFIX
+- Added support for Sxx / Dxx / SxxDxx / Exx in TVMaze.tcl(thanks to TeRRaNoVA)
+- Releases wasn't properly imported into SQL by xferlog-import_3.3.sh
+- Eggdrop changed format for adding servers in conf
+- Forgot to remove the copying of mkv_check since it's no longer used
+- Removed the enforcement of http:// to https:// for show_url in TVMaze.tcl after the update of TVMaze api
+- Fixed releases with year and country code in tvmaze-rescan.sh and did some cosmetic changes in related scripts
+- Couldn't request releases that were nuked and found in dirlog
+- Code for airdate was not properly set in tvmaze.sh and tvmaze-rescan.sh
+- When enabling move in tur-archiver it left empty dirs at source
+- Disabled extract_nfo and test_for_password in pzs-ng since these functions can currently be used to exploit the system
+- Fixed section XXX-PAYSITE and made it dated where it previusly wasn't
+- Fixed nuking of incompletes in dated section XXX-PAYSITE in incomplete-list-nuker
+- Fixed nuking of incompletes in dated section EBOOKS in incomplete-list-nuker
 
 
 ## 10.1 - 2020-12-30

@@ -82,7 +82,7 @@ set news(firstrun) 0
 set news(header) "\00313\002NEWS:\002 - !news for a longer list\003"
 
 ## dateformat (default is: 06 Nov 03:20) http://www.tcl.tk/man/tcl8.4/TclCmd/clock.htm#M6 for help
-set news(dateformat) "%d %b %H:%M"
+set news(dateformat) "%Y-%m-%d %H:%M"
 
 ## linestyle, %time %user and %news are valid cookies
 set news(line) "\[%time\] %user - %news"
@@ -127,6 +127,10 @@ proc rud:pub:news { nick uhost handle chan arg } {
 
 	set fp [open $news(file) r]
 	set data [split [read $fp] "\n"]
+        set size [file size $news(file)]
+        if { $size eq 0 } {
+        putserv "NOTICE $nick :No news added."
+        }
 	close $fp
 
   if { $arg eq "help" } {

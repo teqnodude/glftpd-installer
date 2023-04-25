@@ -17,7 +17,6 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  getops
 *  eur0-pre-system(add/del/list affils part only)
 *  foo-tools(only foo-pre installed) latest github version
-*  idlebotkick
 *  imdbrating
 *  ircnick
 *  mediainfo
@@ -26,6 +25,7 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  section_manager
 *  section-traffic
 *  slv-PreBW
+*  top
 *  tuls
 *  tur-addip
 *  tur-archiver
@@ -33,7 +33,6 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  tur-free
 *  tur-ftpwho
 *  tur-ircadmin
-*  tur-oneline_stats
 *  tur-precheck
 *  tur-predircheck
 *  tur-predircheck manager
@@ -41,7 +40,6 @@ git clone https://github.com/teqnodude/glftpd-installer
 *  tur-rules
 *  tur-space
 *  tur-trial3
-*  tur-undupe
 *  tur-vacation
 *  tvmaze-nuker
 *  whereami
@@ -56,7 +54,7 @@ List of required packages for every script to work
 
 **Debian**
 ``` 
-apt-get install autoconf bc curl diffutils ftp git libflac-dev libssl-dev lm-sensors lynx make mariadb-server mkvtoolnix ncftp passwd rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip
+apt-get install cron gcc systemd autoconf bc curl diffutils ftp git libflac-dev libssl-dev lm-sensors lynx make mariadb-server ncftp passwd rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip bsdmainutils
 ``` 
 **BASH** needs to be the default shell. To change from default DASH to BASH in Debian do 
 ``` 
@@ -83,7 +81,6 @@ After a regular installation you are left with a file called install.cache locat
 ```
 sitename="Test" # Name of the site. Don't use space in sitename. 
 port="2010" # Port for the FTP
-version="64" # Bit version of glFTPD 32/64
 device="/dev/sda1" # What device to use for /site
 channelnr="2" # How many channels the bot will be in
 channame1="#main n nopass" # Channelname of 1st chan with no password requirement
@@ -91,13 +88,16 @@ channame2="#flood y testing" # Channelname of 2nd chan with password requirement
 announcechannels="#main #flood" # Announce channels
 channelops="#main" # Ops channel 
 ircnickname="l337" # Irc nickname of bot owner
-sections="3" # How many sections will be created
-# Allowed section names: 
-# 0DAY ANIME APPS DVDR FLAC GAMES MP3 MBLURAY MDVDR NSW PDA 
-# PS4 TV-HD TV-NL TV-SD X264 X265-2160 XVID XXX XXX-PAYSITE
+sections="3" # How many sections will be created, max 22 sections allowed
+# Recommended section names: 
+# 0DAY ANIME APPS DOX EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160 
+# TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE
 section1="0DAY" # Name of section 1
+section1dated="y" # Dated section?
 section2="MP3" # Name of section 2
+section2dated="n" # Dated section?
 section3="DVDR" # Name of section 3 
+section3dated="n" # Dated section?
 router="y" # If site is behind router
 pasv_addr="123.123.123.123" # IP or DNS to use as passive address for glFTPD
 pasv_ports="6000-7000" # Port range to use for passive mode for glFTPD
@@ -105,19 +105,17 @@ pasv_ports="6000-7000" # Port range to use for passive mode for glFTPD
 ircserver="irc.example.org +7000 ircpassword" 
 eur0presystem="y" # Install Eur0-pre-system with foo-pre
 slvprebw="y" # Install Slv-PreBW
-idlebotkick="y" # Install Idlebotkick
 ircadmin="y" # Install Tur-Ircadmin
 request="y" # Install Tur-Request
 trial="y" # Install Tur-Trial
 vacation="y" # Install Tur-Vacation
 whereami="y" # Install Whereami
-undupe="y" # Install Tur-Undupe
 precheck="y" # Install Precheck
 autonuke="y" # Install Tur-Autonuke
 psxcimdb="y" # Install PSXC-IMDB
 psxcimdbchan="#main" # Trigger chan for PSXC-IMDB
 addip="y" # Install Tur-Addip
-oneline_stats="y" # Install Tur-Oneline_Stats
+top="y" # Install Top
 ircnick="y" # Install Ircnick
 archiver="y" # Install Tur-Archiver
 section_traffic="y" # Install Section-Traffic

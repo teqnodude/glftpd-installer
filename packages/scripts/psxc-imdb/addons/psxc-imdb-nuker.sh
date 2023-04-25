@@ -142,8 +142,8 @@ GLFTPD_CONF=/glftpd/etc/glftpd.conf
 # Also check NUKE_WARN below.
 # The syntax of the logfile is as follows:
 # <date> <dir relative to $GLROOT> <multiplier> <message>
-NUKE_LOGFILE="$GLROOT/ftp-data/logs/imdb-nukes.log"
-#NUKE_LOGFILE=""
+#NUKE_LOGFILE="$GLROOT/ftp-data/logs/imdb-nukes.log"
+NUKE_LOGFILE=""
 
 # Putting the following variables non-empty will stop nuke on the fly - instead, a
 # msg will be put in a logfile, using standard glftpd.log format.
@@ -154,8 +154,8 @@ NUKE_LOGFILE="$GLROOT/ftp-data/logs/imdb-nukes.log"
 # REASON    - the reason why the release will be nuked. See nuke msg's above.
 # MOVIENAME - Name of the movie.
 # BOLD      - Bold characters on/off.
-NUKE_WARN_FILE=$GLROOT/ftp-data/logs/glftpd.log
-#NUKE_WARN_FILE=""
+#NUKE_WARN_FILE=$GLROOT/ftp-data/logs/glftpd.log
+NUKE_WARN_FILE=""
 
 #NUKE_WARN_MSG="[ BOLDIMDB NUKEWARNINGBOLD ] : [ BOLDRELNAMEBOLD ] is a nukee - REASON"
 NUKE_WARN_MSG="RELNAME violate the rules - REASON"
@@ -409,7 +409,7 @@ else
 
 # Nuke of languages not specified
  LAN_NUKE_REASON=""
- if [ ! -z "$IMDBLANGUAGE" ]; then
+ if [[ ! -z "$IMDBLANGUAGE" && "$IMDBLANGUAGE" != "None" ]]; then
    if [ ! -z "$NUKE_LANGUAGES" ]; then
     for NUKE_LANUAGE in $NUKE_LANGUAGES
     do
