@@ -10,6 +10,7 @@
 - Increased the number of max allowed genres in IMDB tag to enable more accurate sorting of movies 
 - Removed screens from IMDB tag since most ended up with UNKNOWN Screens
 - Updated imdb-scan.sh to create proper symlinks
+- Updated tur-space.sh to support the use of /dev/disk/by-uuid
 
 ### Fixes
 
