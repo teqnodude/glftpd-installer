@@ -28,7 +28,7 @@ proc_debug() {
 
 proc_log() {
   if [ "$LOGFILE" ]; then
-    echo `$DATE_BINARY "+%a %b %e %T %Y"` SPACE: \"$*\" >> $LOGFILE
+    echo `$DATE_BINARY "+%Y-%m-%d %T"` SPACE: \"$*\" >> $LOGFILE
   fi
 }
 
@@ -44,6 +44,16 @@ proc_announce() {
   fi
 }
 
+proc_translate_by_id() {
+  trigger_deviceid_check="$1"
+  depth_full_path="`echo "$trigger_deviceid_check" | awk -F'/' '{print NF-1}'`"
+  device_relative_location="`ls -l "$trigger_deviceid_check" | tr -s ' '  | cut -d ' ' -f11`"
+  depth_retour="`echo "$device_relative_location" | awk -F'../' '{print NF-1}'`"
+  device_root="`echo "$trigger_deviceid_check" | cut -d '/' -f$(expr $depth_full_path - $depth_retour)`"
+  device_name="`echo "$device_relative_location" | cut -d '/' -f $(expr $depth_retour + 1)`"
+  trigger_device_check="`echo "/$device_root/$device_name"`"
+}
+
 proc_get_free_space() {
   trigger_device_check="$1"
   unset free_space
@@ -54,6 +64,13 @@ proc_get_free_space() {
     proc_debug "Error. Did not get a device to check free space from ($1)."
     proc_log "Error. Did not get a device to check free space from ($1)."
     exit 1
+  fi
+  
+  org_trigger_device=""
+  if [ -z "${trigger_device_check##*/disk/by-*}" ] ;then
+    org_trigger_device="`echo "$trigger_device_check"`"
+    proc_translate_by_id $trigger_device_check
+    proc_debug "Translated $org_trigger_device to actual device $trigger_device_check"
   fi
 
   free_space="`df -Pm | grep "$trigger_device_check" | tr -s ' ' | cut -d ' ' -f4`"
@@ -487,7 +504,9 @@ proc_find_sourcedirs() {
   if [ -e "$TMP/oldest_dir.tmp" ]; then
     rm -f "$TMP/oldest_dir.tmp"
   fi
-  for incoming_sections in `grep "^INC" $config | grep "=$trigger_device:"`; do
+
+  for incoming_sections in `grep "^INC" $config | grep -E -i "=$trigger_device:"`; do
+proc_debug "SECTION : $incoming_sections"
     source_name="`echo "$incoming_sections" | cut -d '=' -f1 | cut -c4-`"
     source_device="`echo "$incoming_sections" | cut -d '=' -f2- | cut -d ':' -f1`"
     source_dir="`echo "$incoming_sections" | cut -d ':' -f2`"
@@ -661,7 +680,7 @@ proc_sanity_check() {
     fi
 
     echo "Source dirs for device $trigger_device are:"
-    for incoming_sections in `grep "^INC" $config | grep "=$trigger_device:"`; do
+    for incoming_sections in `grep "^INC" $config | grep -E -i "=$trigger_device:"`; do
       source_name="`echo "$incoming_sections" | cut -d '=' -f1 | cut -c4-`"
       source_device="`echo "$incoming_sections" | cut -d ':' -f1 | cut -d '=' -f2`"
       source_dir="`echo "$incoming_sections" | cut -d ':' -f2`"
@@ -776,28 +795,11 @@ proc_help() {
   proc_exit
 }
 
-proc_translate_by_id(){
-  trigger_deviceid_check="$1"
-  depth_full_path="`echo "$trigger_deviceid_check" | awk -F'/' '{print NF-1}'`"
-  device_relative_location="`ls -l "$trigger_deviceid_check" | tr -s ' '  | cut -d ' ' -f11`"
-  depth_retour="`echo "$device_relative_location" | awk -F'../' '{print NF-1}'`"
-  device_root="`echo "$trigger_deviceid_check" | cut -d '/' -f$(expr $depth_full_path - $depth_retour)`"
-  device_name="`echo "$device_relative_location" | cut -d '/' -f $(expr $depth_retour + 1)`"
-  trigger_device="`echo "/$device_root/$device_name"`"
-}
-
 proc_go() {
   for triggers in `grep "^TRIGGER=" $config`; do
     unset mount_error; unset no_delete; unset mount_errors; unset did_something
 
     trigger_device="`echo "$triggers" | cut -d '=' -f2 | cut -d ':' -f1`"
-	
-	if [ -z "${trigger_device##*/disk/by-*}" ] ;then
-	  org_trigger_device="`echo "$trigger_device"`"
-	  proc_translate_by_id $trigger_device
-	  proc_debug "Translated $org_trigger_device to actual device $trigger_device"
-	fi
-	
     trigger_free="`echo "$triggers" | cut -d ':' -f2`"
     trigger_clean="`echo "$triggers" | cut -d ':' -f3`"
 
@@ -870,8 +872,8 @@ if [ -e "$TMP/tur-space.lock" ]; then
     DEBUG="TRUE"
   fi
 
-  if [ "`find \"$TMP/tur-space.lock\" -type f -mmin -1440`" ]; then
-    proc_debug "Lockfile $TMP/tur-space.lock exists and is not 24 hours old yet. Quitting."
+  if [ "`find \"$TMP/tur-space.lock\" -type f -mmin -120`" ]; then
+    proc_debug "Lockfile $TMP/tur-space.lock exists and is not 2 hours old yet. Quitting."
     if [ "$DEBUG" = "TRUE" ]; then
       LAST_ERROR="`egrep "Error|Warning" $LOGFILE | tail -n1`"
       if [ "$LAST_ERROR" ]; then
@@ -881,7 +883,7 @@ if [ -e "$TMP/tur-space.lock" ]; then
     fi
     exit 0
   else
-    proc_debug "Lockfile exists, but its older then 24 hours. Removing lockfile."
+    proc_debug "Lockfile exists, but its older then 2 hours. Removing lockfile."
     touch "$TMP/tur-space.lock"
   fi
 else
