@@ -148,7 +148,7 @@ if [ "$NODOUBLESFV" = "TRUE" ]; then
 fi
 
 if [ "$DENY_SFV_IN_SAMPLE_DIRS" = "TRUE" ]; then
-  if [ "`echo "$PWD" | grep -i "\/sample$\|\/covers$\|\/proof$"`" ]; then
+  if [ "`echo "$PWD" | egrep -i "/sample$|/covers$|/proof$"`" ]; then
     if [ "`echo "$1" | grep "\.[sS][fF][vV]$\|\.[nN][fF][oO]"`" ]; then
       echo -e "$ERROR7\n"
       exit 2
