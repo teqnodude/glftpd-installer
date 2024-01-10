@@ -105,62 +105,87 @@ function port
     fi
 }
 
-function version
-{
-    echo -n "Downloading relevant packages, please wait...                   "
-    latest=`lynx --dump https://glftpd.io | grep "latest stable version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr -d "[:space:]"`
-    version=`lscpu | grep Architecture | tr -s ' ' | cut -d ' ' -f2`
-    case $version in
-	i686)
-	    version="86"
-	    cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep -v "BETA" | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz && cd ..
-	    PK1="`ls packages| grep glftpd-LNX | grep x$version`"
-	    PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
-	    ;;
-	x86_64)
-	    version="64"
-	    cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep -v "BETA" | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz && cd ..
-	    PK1="`ls packages | grep glftpd-LNX | grep x$version`"
-	    PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
-	    ;;
+function version {
+    echo "Downloading relevant packages, please wait..."    
+    glweb_url="https://glftpd.io/"
+    architecture=$(lscpu | grep Architecture | awk '{print $2}')
+    
+    case $architecture in
+        i686)
+            numbers=(4 17 30 43 56 69 82)
+            arch="86"
+            ;;
+        x86_64)
+            numbers=(2 15 28 41 54 67 80)
+            arch="64"
+            ;;
+        *)
+            echo "Unsupported architecture: $architecture"
+            exit 1
+            ;;
     esac
-	
+
+	content=$(curl -s "${glweb_url}")
+	declare -A choices
+	counter=1
+
+	echo "Available versions:"
+
+	for number in "${numbers[@]}"; do
+		href=$(echo "$content" | xmllint --html --xpath "string(/html/body/table[3]/tr[$number]/td/a/@href)" - 2>/dev/null)
+		text=$(echo "$content" | xmllint --html --xpath "string(/html/body/table[3]/tr[$number]/td/a)" - 2>/dev/null)
+
+		choices[${counter}-text]="$text"
+		choices[${counter}-url]="$href"
+		echo "[$counter] $text"
+		((counter++))
+	done
+
+	read -r -p "Please enter the number of your choice: " user_choice
+
+	if [[ -z "${choices[$user_choice]-url}" ]]; then
+		echo "Invalid choice. Exiting."
+		exit 1
+	fi
+
+	echo "You selected: ${choices[${user_choice}-text]}"
+	rm -rf packages/glftpd-*
+	cd packages && wget -q "${glweb_url}${choices[${user_choice}-url]}" && cd ..
+	PK1="$(ls packages | grep glftpd-LNX | grep x$version)"
+	PK1DIR="$(ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||')"
     PK2DIR="pzs-ng"
     PK3DIR="eggdrop"
     UP="tar xf"
     BOTU="sitebot"
-    CHKGR=`grep -w "glftpd" /etc/group | cut -d ":" -f1`
-    CHKUS=`grep -w "sitebot" /etc/passwd | cut -d ":" -f1`
+    CHKGR=$(grep -w "glftpd" /etc/group | cut -d ":" -f1)
+    CHKUS=$(grep -w "sitebot" /etc/passwd | cut -d ":" -f1)
 	
     if [ "$CHKGR" != "glftpd" ] 
     then
-        #echo "Group glftpd added"
         groupadd glftpd -g 199
     fi
 	
     if [ "$CHKUS" != "sitebot" ] 
     then
-    	#echo "User $BOTU added"
 	useradd -d $glroot/sitebot -m -g glftpd -s /bin/bash $BOTU
 	chfn -f 0 -r 0 -w 0 -h 0 $BOTU
     fi 
 	
-    cd packages
-    #echo -n "Extracting the Source files, please wait...                     "
-    $UP $PK1 && rm $PK1
+    cd packages || exit
+    $UP "$PK1" && rm "$PK1"
     git clone https://github.com/glftpd/pzs-ng >/dev/null 2>&1
     git clone https://github.com/eggheads/eggdrop >/dev/null 2>&1
     echo -e "[\e[32mDone\e[0m]"
     echo
-    mkdir source
+    mkdir -p source
     cp -R scripts source
     cd ..
     
-    if [[ -f "$cache" && "`grep -w "version=" $cache | wc -l`" = 0 ]]
+    if [[ -f "$cache" && "$(grep -w "version=" "$cache" | wc -l)" = 0 ]]
     then
-    	echo version=\"$version\" >> $cache
+    	echo version="$version" >> $cache
     fi
-    cp -f $rootdir/packages/data/cleanup.sh $rootdir
+    cp -f "$rootdir"/packages/data/cleanup.sh "$rootdir"
 }
 
 function device_name
