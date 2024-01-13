@@ -108,23 +108,21 @@ function port
 function version
 {
     echo -n "Downloading relevant packages, please wait...                   "
-    latest=`lynx --dump https://glftpd.io | grep "latest version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr -d "[:space:]"`
-    version=`lscpu | grep Architecture | tr -s ' ' | cut -d ' ' -f2`
+    latest=`curl -s https://glftpd.io | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1`
+    version=`lscpu | grep Architecture | awk '{print $2}'`
     case $version in
 	i686)
-	    version="86"
-	    cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep -v "BETA" | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz && cd ..
-	    PK1="`ls packages| grep glftpd-LNX | grep x$version`"
-	    PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
+	    version="32"
+	    latest=`echo $latest | sed 's/x64/x86/'`
+	    cd packages && wget -q https://glftpd.io/files/$latest && cd ..
 	    ;;
 	x86_64)
 	    version="64"
-	    cd packages && wget -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep -v "BETA" | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz && cd ..
-	    PK1="`ls packages | grep glftpd-LNX | grep x$version`"
-	    PK1DIR="`ls packages | grep glftpd-LNX | grep x$version | sed 's|.tgz||'`"
+	    cd packages && wget -q https://glftpd.io/files/$latest && cd ..
 	    ;;
     esac
-	
+    PK1=`echo $latest`
+    PK1DIR=`echo $latest | sed 's|.tgz||'`
     PK2DIR="pzs-ng"
     PK3DIR="eggdrop"
     UP="tar xf"
@@ -134,13 +132,11 @@ function version
 	
     if [ "$CHKGR" != "glftpd" ] 
     then
-        #echo "Group glftpd added"
         groupadd glftpd -g 199
     fi
 	
     if [ "$CHKUS" != "sitebot" ] 
     then
-    	#echo "User $BOTU added"
 	useradd -d $glroot/sitebot -m -g glftpd -s /bin/bash $BOTU
 	chfn -f 0 -r 0 -w 0 -h 0 $BOTU
     fi 
@@ -156,10 +152,6 @@ function version
     cp -R scripts source
     cd ..
     
-    if [[ -f "$cache" && "`grep -w "version=" $cache | wc -l`" = 0 ]]
-    then
-    	echo version=\"$version\" >> $cache
-    fi
     cp -f $rootdir/packages/data/cleanup.sh $rootdir
 }
 
@@ -170,7 +162,7 @@ function device_name
     	device=`grep -w "device" $cache | cut -d "=" -f2 | tr -d "\""`
     	echo "Sitename           = $sitename"
     	echo "Port               = $port"
-    	echo "glFTPD version     = $version" 
+    	echo "glFTPD version     = $version bit" 
     	echo "Device             = $device"
     else
     	echo "Please enter which device you will use for the $glroot/site folder"
@@ -1759,6 +1751,8 @@ function cleanup
     sed -i '/MY SCRIPTS/,$d' $glroot/sitebot/eggdrop.conf
     cat .tmp/myscripts >> $glroot/sitebot/eggdrop.conf
     rm -rf .tmp >/dev/null 2>&1
+    rm -rf $glroot/glftpd-LNX_current
+    rm -f packages/scripts/tur-autonuke/tur-autonuke.conf
     [ -d /etc/rsyslog.d ] && cp packages/scripts/extra/glftpd.conf /etc/rsyslog.d && service rsyslog restart
     cp packages/scripts/extra/rescan_fix.sh $glroot/bin
     echo "*/2 * * * *             $glroot/bin/rescan_fix.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root

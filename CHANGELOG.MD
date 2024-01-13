@@ -25,6 +25,8 @@
 - lastlogin.sh had an error in code where it couldn't list all users
 - glftpd-version_check.sh didn't work properly due to a change on the website it's pulling information from
 - install.sh didn't grab the latest version of glftpd due to a change on the website it's pulling information from
+- Tweaked some of the code to prevent future problems of grabbing the latest glftpd version excluding BETA versions 
+- 32 bit version did not get installed properly
 
 ## 10.4 - 2022-04-22
 

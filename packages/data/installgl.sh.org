@@ -1288,7 +1288,7 @@ fi
 if [ "$netd" = "i" ]; then
     echo -n "Configuring inetd for glftpd . . . "
     { grep -v ^${servicename} /etc/inetd.conf
-        echo "$servicename stream tcp nowait root $tcpd $jaildir$glroot/bin/glftpd-full-static $dummyflag -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf" | tr -s ' '
+        echo "$servicename stream tcp nowait root $tcpd $jaildir$glroot/bin/glftpd $dummyflag -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf" | tr -s ' '
     } > /etc/inetd.conf.new
     mv -f /etc/inetd.conf.new /etc/inetd.conf
     echo "Done."
@@ -1332,8 +1332,8 @@ service $servicename
     protocol        = tcp
     wait            = no
     user            = root
-    server          = ${tcpd:-$jaildir$glroot/bin/glftpd-full-static}
-    server_args     = ${tcpd:+$jaildir$glroot/bin/glftpd-full-static} -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf
+    server          = ${tcpd:-$jaildir$glroot/bin/glftpd}
+    server_args     = ${tcpd:+$jaildir$glroot/bin/glftpd} -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf
 }
 EOF
     echo "Done."
@@ -1365,8 +1365,8 @@ service "$servicename"
 	family ipv6;
 	port "$servicename";
 	user "root";
-	exec "${tcpd:+$jaildir$glroot/bin/glftpd-full-static} $dummyflag -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf";
-	server "${tcpd:-$jaildir$glroot/bin/glftpd-full-static}";
+	exec "${tcpd:+$jaildir$glroot/bin/glftpd} $dummyflag -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf";
+	server "${tcpd:-$jaildir$glroot/bin/glftpd}";
 }
 EOF
     echo "Done."
@@ -1383,7 +1383,7 @@ cat <<EOF > "/etc/systemd/system/$servicename@.service"
 [Unit]
 Description=$servicename per connection server
 [Service]
-ExecStart=-$jaildir$glroot/bin/glftpd-full-static -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf
+ExecStart=-$jaildir$glroot/bin/glftpd -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf
 StandardInput=socket
 SyslogFacility=ftp
 EOF
