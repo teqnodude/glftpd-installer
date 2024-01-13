@@ -108,7 +108,7 @@ function port
 function version
 {
     echo -n "Downloading relevant packages, please wait...                   "
-    latest=`lynx --dump https://glftpd.io | grep "latest stable version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr -d "[:space:]"`
+    latest=`lynx --dump https://glftpd.io | grep "latest version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr -d "[:space:]"`
     version=`lscpu | grep Architecture | tr -s ' ' | cut -d ' ' -f2`
     case $version in
 	i686)

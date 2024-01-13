@@ -24,6 +24,7 @@
 - imdb-scan didn't create proper symlinks if sections were not in root site folder
 - lastlogin.sh had an error in code where it couldn't list all users
 - glftpd-version_check.sh didn't work properly due to a change on the website it's pulling information from
+- install.sh didn't grab the latest version of glftpd due to a change on the website it's pulling information from
 
 ## 10.4 - 2022-04-22
 
