@@ -1,11 +1,14 @@
 #!/bin/sh
 # jehsom's and dn's glftpd installer script
-  VERSION="2.0.6"
+  VERSION="2.0.12"
 
 # REPORT ANY BUGS TO: #glftpd@efnet
 
 # CHANGELOG
 #
+# v2.0.9
+# fixed:   Fix ipv6 and ipv4 support on macos
+# fixed:   FreeBSD version detection
 # v2.0.6
 # new:     Now works with rlinetd
 # v2.0.3
@@ -244,10 +247,11 @@ case $(uname -s) in
     *[Dd][Aa][Rr][Ww][Ii][Nn]*) os=darwin ;;
     *[Nn][Ee][Tt][Bb][Ss][Dd]*) os=netbsd ;;
     *[fF][rR][eE][eE][bB][sS][dD]*)
-        bsdversion=`uname -r | cut -d'-' -f1 | tr -cd '0-9'`
-        if [ $bsdversion -ge 60 ]; then
+        bsdversionmaj=`uname -r | cut -d'.' -f1`
+        bsdversionmin=`uname -r | cut -d'-' -f1 | cut -d'.' -f2 | tr -cd '0-9'`
+        if [ $bsdversionmaj -ge 6 ]; then
            os=freebsd6
-        elif [ $bsdversion -ge 52 ]; then
+        elif [ $bsdversionmaj -eq 5 ] && [ $bsdversionmin -ge 2 ]; then
            os=freebsd5
         else
            os=freebsd4
@@ -401,52 +405,7 @@ echo ""
 
 until [ -n "$jail" ]; do
     echo -n "Use a jailed environment? [Y]es [N]o: "
-#    read jail
-#    case $jail in
-#        [Nn])
-            jail="n"
-#        ;;
-#        [Yy])
-#            jail="y"
-#            echo ""
-#            echo "Creating the jailed environment."
-#            echo ""
-#            unset jaildir
-#            until [ -n "$jaildir" ]; do
-#                echo -n "Please enter the private directory to install glftpd inside [/jail]: "
-#                read jaildir
-#                case $jaildir in
-#                    /)
-#                        echo "You can't have / as your private dir!  Try again."
-#                        echo ""
-#                        unset jaildir
-#                        continue
-#                    ;;
-#                    /*|"")
-#                        [ -z "$jaildir" ] && jaildir="/jail"
-#                        [ -d "$jaildir" ] && {
-#                            echo -n "Path already exists. [D]elete it, [A]bort, [T]ry again, [I]gnore? "
-#                            read reply
-#                            case $reply in
-#                                [dD]*) rm -rf "$jaildir" ;;
-#                                [tT]*) unset jaildir; continue ;;
-#                                [iI]*) ;;
-#                                *) echo "Aborting."; exit 1 ;;
-#                            esac
-#                        }
-#                        mkdir -p "$jaildir"
-#                        continue
-#                    ;;
-#                    *)
-#                        echo "The private directory must start with a \"/\".  Try again."
-#                        echo ""
-#                        unset jaildir
-#                        continue
-#                    ;;
-#                esac
-#            done
-#        ;;
-#    esac
+    jail="n"
 done
 
 [ "$jail" = "y" ] && {
@@ -579,42 +538,6 @@ echo -e "\n\n\033[1m3. GLFTPD BASE SETUP:\033[0m\n\033[1m---------------------\0
 
 # Get a valid installation path
 glroot="/glftpd"
-#until [ -n "$glroot" ]; do
-#    if [ "$jail" = "y" ]; then
-#        echo -n "Please enter the directory inside $jaildir to install glftpd to [/glftpd]: "
-#    else
-#        echo -n "Please enter the directory to install glftpd to [/glftpd]: "
-#    fi
-#    read glroot
-#    case $glroot in
-#        /)
-#            echo "You can't have / as your private dir!  Try again."
-#            echo ""
-#            unset glroot
-#            continue
-#        ;;
-#        /*|"")
-#            [ -z "$glroot" ] && glroot="/glftpd"
-#            [ -d "$jaildir$glroot" ] && {
-#                echo -n "Path already exists. [D]elete it, [A]bort, [T]ry again, [I]gnore? "
-#                read reply
-#                case $reply in
-#                    [dD]*) rm -rf "$jaildir$glroot" ;;
-#                    [tT]*) unset glroot; continue ;;
-#                    [iI]*) ;;
-#                    *) echo "Aborting."; exit 1 ;;
-#                esac
-#            }
-#            mkdir -p "$jaildir$glroot" || unset glroot; continue
-#        ;;
-#        *)
-#            echo "The private directory must start with a \"/\".  Try again."
-#            echo ""
-#            unset glroot
-#            continue
-#        ;;
-#    esac
-#done
 
 echo -n "Copying glftpd files to $jaildir$glroot . . . "
 
@@ -626,7 +549,11 @@ echo "Done."
 if [ "$jail" = "y" ]; then
     confdir="$jaildir"
 else
-    confdir="/etc"
+     if [[ $os = freebsd* ]]; then
+         confdir="/usr/local/etc"
+     else
+         confdir="/etc"
+     fi
 fi
 
 echo -e "\nCopying required binaries to $jaildir$glroot/bin:"
@@ -657,8 +584,12 @@ echo -ne "\nMaking glftpd's /dev/null , /dev/full , /dev/zero & /dev/urandom . .
 mkdir $glroot/dev
 mknod -m666 "$glroot/dev/null" c 1 3
 mknod -m666 "$glroot/dev/zero" c 1 5
+mknod -m666 "$glroot/dev/full" c 1 7
+mknod -m666 "$glroot/dev/urandom" c 1 9
+
 echo "Done."
-echo "" 
+echo ""
+
 
 echo -e "\n\033[1m4. SERVICE SETUP & MULTI-INSTALL:\033[0m\n\033[1m---------------------------------\033[0m\n"
 
@@ -898,9 +829,9 @@ echo "Done."
 echo -e "\n\n\033[1m6. PORT AND SYSTEM SETUP:\033[0m\n\033[1m-------------------------\033[0m\n"
 
 until echo "$port" | grep -E "^[0-9]+$" > /dev/null && [ "$port" -lt 65535 ]; do
+    port="changeme"
     #echo -en "Enter the port you would like glftpd to listen on [1337]: "
     #read port
-    port="changeme"
     #[ -z "$port" ] && port=1337
 done
 
@@ -983,8 +914,7 @@ else
             printf "[\033[1m${superserver:0:1}\033[0m]${superserver:1}\n"
         done
         echo -n "choose superserver: "
-        #read whichnetd
-	whichnetd=s
+        read whichnetd
         whichnetd=$(echo ${whichnetd}|tr '[:upper:]' '[:lower:]')
         case "${s_options}" in
             *${whichnetd}*) netd=${whichnetd} ;;
@@ -1006,10 +936,10 @@ fi
 ## Ask if european week is used
 unset keystroke
 #until [ -n "$keystroke" ]; do
-   echo "Do you wish to use European weeks? European weeks starts with a Monday."
-   echo -n "This is for glftpd's 'reset' binary (see docs for more info) [Y/N]: "
-    euroweek="-e "
-#   read keystroke
+#   echo "Do you wish to use European weeks? European weeks starts with a Monday."
+#   echo -n "This is for glftpd's 'reset' binary (see docs for more info) [Y/N]: "
+   euroweek="-e " 
+#  read keystroke
 #   case $keystroke in
 #       [Yy]) euroweek="-e " ;;
 #       [Nn]) euroweek="" ;;
@@ -1080,25 +1010,12 @@ proc_createcert() {
   echo "Please wait while creating certificate... (will take time!)"
   echo ""
 
-  # Some OpenSSL Installations lack ecc support. Fallback to dsa then.
   type=ecdsa
-  $opensslbin no-ecparam 1>/dev/null && type=dsa
 
   servbase=$tlsname
   base=ftpd-$type
 
-  if [ $type = "dsa" ]; then
-    echo "Openssl doesnt seem to support ECDSA so creating DSA cert instead..."
-    $opensslbin rand -out gunk 2048 2>&1
-    $opensslbin dsaparam -rand gunk -out $base.dsaparam 2048 2>&1
-    $opensslbin dhparam -rand gunk -out $base.dh 2048 2>&1
-    option=$base.dsaparam
-    rm -f gunk
-
-    $opensslbin gen$type -out $base.key $option 2>&1
-  else
-    $opensslbin ecparam -out $base.key -name secp384r1 -genkey 2>&1
-  fi
+  $opensslbin ecparam -out $base.key -name secp384r1 -genkey 2>&1
 
   $opensslbin req -new -x509 -days 9000 -key $base.key -out $base.crt << EOF
 .
@@ -1193,11 +1110,11 @@ else
   until [ -n "$tls" ]; do
     echo " "
     echo "Please specify location, inside $jaildir$glroot,"
-    echo -n "to install the cert (ftpd-dsa.pem) [/etc]: "
-    #read tls
+    echo -n "to install the cert (ftpd-ecdsa.pem) [/etc]: "
+#    read tls
     case $tls in
       /)
-        echo "ftpd-dsa.pem should not reside in / - Try again."
+        echo "ftpd-ecdsa.pem should not reside in / - Try again."
         echo ""
         unset tls
         continue
@@ -1225,7 +1142,7 @@ else
   echo "-> included in this package!"
   echo ""
   echo "Press <ENTER> to continue"
-  #read line
+#  read line
 fi
 unset opensslbin
 
@@ -1287,8 +1204,9 @@ fi
 
 if [ "$netd" = "i" ]; then
     echo -n "Configuring inetd for glftpd . . . "
+    # inetutils-inetd works fine with just the tcp6 line, but openbsd-inetd needs the tcp4 as well for dualstack
     { grep -v ^${servicename} /etc/inetd.conf
-        echo "$servicename stream tcp nowait root $tcpd $jaildir$glroot/bin/glftpd $dummyflag -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf" | tr -s ' '
+	echo "$servicename stream tcp nowait root $tcpd $jaildir$glroot/bin/glftpd-full-static $dummyflag -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf" | tr -s ' '
     } > /etc/inetd.conf.new
     mv -f /etc/inetd.conf.new /etc/inetd.conf
     echo "Done."
@@ -1332,8 +1250,8 @@ service $servicename
     protocol        = tcp
     wait            = no
     user            = root
-    server          = ${tcpd:-$jaildir$glroot/bin/glftpd}
-    server_args     = ${tcpd:+$jaildir$glroot/bin/glftpd} -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf
+    server          = ${tcpd:-$jaildir$glroot/bin/glftpd-full-static}
+    server_args     = ${tcpd:+$jaildir$glroot/bin/glftpd-full-static} -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf
 }
 EOF
     echo "Done."
@@ -1365,8 +1283,8 @@ service "$servicename"
 	family ipv6;
 	port "$servicename";
 	user "root";
-	exec "${tcpd:+$jaildir$glroot/bin/glftpd} $dummyflag -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf";
-	server "${tcpd:-$jaildir$glroot/bin/glftpd}";
+        exec "${tcpd:+$jaildir$glroot/bin/glftpd-full-static} $dummyflag -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf";
+        server "${tcpd:-$jaildir$glroot/bin/glftpd-full-static}";
 }
 EOF
     echo "Done."
@@ -1383,7 +1301,7 @@ cat <<EOF > "/etc/systemd/system/$servicename@.service"
 [Unit]
 Description=$servicename per connection server
 [Service]
-ExecStart=-$jaildir$glroot/bin/glftpd -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf
+ExecStart=-$jaildir$glroot/bin/glftpd-full-static -l -o -i -e -I -n 0 -b -x -r /glftpd/etc/glftpd.conf
 StandardInput=socket
 SyslogFacility=ftp
 EOF
@@ -1440,8 +1358,6 @@ elif [ "$netd" = "l" ]; then
         <dict>
             <key>SockServiceName</key>
             <string>$servicename</string>
-            <key>SockFamily</key>
-            <string>IPv4</string>
             <key>SockType</key>
             <string>stream</string>
         </dict>
@@ -1459,7 +1375,7 @@ fi
 echo -ne "\nAdding crontab entry to tabulate site stats nightly . . . "
 
 { crontab -l | grep -v "$jaildir$glroot/bin/reset"
-  echo "0 0 * * *		$jaildir$glroot/bin/reset ${euroweek}${confpath}"
+  echo "0  0 * * *      $jaildir$glroot/bin/reset ${euroweek}${confpath}"
 } | crontab - > /dev/null
 
 echo "Done."
