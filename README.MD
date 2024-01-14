@@ -6,7 +6,7 @@ git clone https://github.com/teqnodude/glftpd-installer
 
 ## Software
 
-*  latest stable glFTPD for Linux both 32/64 bit version
+*  latest stable glFTPd for Linux both 32/64 bit version
 *  eggdrop latest github version
 
 ## Scripts
@@ -99,8 +99,8 @@ section2dated="n" # Dated section?
 section3="DVDR" # Name of section 3 
 section3dated="n" # Dated section?
 router="y" # If site is behind router
-pasv_addr="123.123.123.123" # IP or DNS to use as passive address for glFTPD
-pasv_ports="6000-7000" # Port range to use for passive mode for glFTPD
+pasv_addr="123.123.123.123" # IP or DNS to use as passive address for glFTPd
+pasv_ports="6000-7000" # Port range to use for passive mode for glFTPd
 # What ircserver should the bot connect to. + = SSL port. Remove :ircpassword if no password is required
 ircserver="irc.example.org +7000 ircpassword" 
 eur0presystem="y" # Install Eur0-pre-system with foo-pre
@@ -126,9 +126,9 @@ ip="*@192.168.1.*" # IP for Administrator account
 
 ## FAQ
 
-Q. Is there anything I need to know before I install glFTPD using this installer?
+Q. Is there anything I need to know before I install glFTPd using this installer?
 
-A. You have to run this script as root and glFTPD gets installed to /glftpd and the eggdrop to /glftpd/sitebot. Please
+A. You have to run this script as root and glFTPd gets installed to /glftpd and the eggdrop to /glftpd/sitebot. Please
    ensure that the things that are listed under Requirements in this file are installed before running this script.
    Also, this script has only been tested in Debian and Slackware systems.
 
@@ -141,7 +141,7 @@ A. Not really, just run the install.sh and answer the questions that come up as 
 
 -------------------------------------------------------------------------------
 
-Q. OK so I have installed glFTPD now what?
+Q. OK so I have installed glFTPd now what?
 
 A. After the installation you have to create the initial userfile for sitebot or it will not start up.
    Do that by doing:
@@ -162,7 +162,7 @@ A. After the installation you have to create the initial userfile for sitebot or
 
 -------------------------------------------------------------------------------
 
-Q. Where can I find more scripts that may be useful for glFTPD?
+Q. Where can I find more scripts that may be useful for glFTPd?
 
 A. Take a look at https://algorhythm.cc/
 

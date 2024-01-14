@@ -28,7 +28,7 @@ then
 fi
 clear
 
-echo "Welcome to the glFTPD installer v$VER"
+echo "Welcome to the glFTPd installer v$VER"
 echo
 echo "Disclaimer:" 
 echo "This software is used at your own risk!"
@@ -162,7 +162,7 @@ function device_name
     	device=`grep -w "device" $cache | cut -d "=" -f2 | tr -d "\""`
     	echo "Sitename           = $sitename"
     	echo "Port               = $port"
-    	echo "glFTPD version     = $version bit" 
+    	echo "glFTPd version     = $version bit" 
     	echo "Device             = $device"
     else
     	echo "Please enter which device you will use for the $glroot/site folder"
@@ -582,7 +582,7 @@ function glftpd
     cd packages
     echo
     echo -n "Installing glftpd, please wait...                               "
-    echo "####### Here starts glFTPD scripts #######" >> /var/spool/cron/crontabs/root
+    echo "####### Here starts glFTPd scripts #######" >> /var/spool/cron/crontabs/root
     #cd $PK1DIR ; mv -f ../data/installgl.sh ./ ; ./installgl.sh >/dev/null 2>&1
     cd $PK1DIR && sed "s/changeme/$port/" ../data/installgl.sh.org > installgl.sh && chmod +x installgl.sh && ./installgl.sh >/dev/null 2>&1
     >$glroot/ftp-data/misc/welcome.msg
@@ -1788,14 +1788,14 @@ section-traffic
 usercreation
 cleanup
 echo 
-echo "If you are planning to uninstall glFTPD then run cleanup.sh"
+echo "If you are planning to uninstall glFTPd then run cleanup.sh"
 echo
 echo "To get the bot running you HAVE to do this ONCE to create the initial userfile"
 echo "su - sitebot -c \"$glroot/sitebot/sitebot -m\""
 echo
 echo "If you want automatic cleanup of site then please review the settings in $glroot/bin/tur-space.conf and enable the line in crontab"
 echo 
-echo "All good to go and I recommend people to check the different settings for the different scripts including glFTPD itself."
+echo "All good to go and I recommend people to check the different settings for the different scripts including glFTPd itself."
 echo
 echo "Enjoy!"
 echo 

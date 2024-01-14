@@ -7,8 +7,10 @@ sourcedir=$glroot/backup/sources
 
 #--[ Script Start ]---------------------------------------------#
 
-curversion=`/glftpd/bin/glftpd | grep glFTPd | sed -e 's/(.*//' -e 's/glFTPd//' -e 's/^ //' -e 's/ //'`
-newversion=`lynx --dump https://glftpd.io | grep "latest version" | cut -d ":" -f2 | sed -e 's/20[2-9][0-9].*//' -e 's/^  //' -e 's/^v//' -e 's/ //'`
+[ ! -d $glroot ] && echo "glFTPd doesn't seem to be installed in $glroot" && exit 0
+
+curversion=`/glftpd/bin/glftpd | grep glFTPd | cut -d ' ' -f2`
+newversion=`lynx --dump https://glftpd.io | grep "latest version" | cut -d ":" -f2 | cut -d ' ' -f3 | sed 's/v//'`
 
 [ "$curversion" = "$newversion" ] && echo "You already got the latest non BETA version" && exit 0
 

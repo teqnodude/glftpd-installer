@@ -38,7 +38,7 @@ the command to use on irc is site lastlogin to read syntax
 - I have included rename_dated_dirs.sh that can be found scripts/extra that changes the format of dated dirs from MMDD to YYYY-MM-DD
 - Added my own created imdb-scan.sh for symlinks, imdb-rescan.sh for imdb info and tvmaze-rescan.sh for TVMaze info and tvmaze-symlink-maker.sh for symlinks
 - Added incomplete-list-symlinks.sh which can be used to create symlinks of incompletes that require the manual add to crontab
-- Added a backup/restore script that can be run in crontab or run manually that makes it take less than 10 seconds to restore glFTPD
+- Added a backup/restore script that can be run in crontab or run manually that makes it take less than 10 seconds to restore glFTPd
 - Added rescan_fix.sh that is run in cron by default that I created years ago that can resolves rare lock issues in pzs-ng
 
 ### Updated
@@ -46,7 +46,7 @@ the command to use on irc is site lastlogin to read syntax
 - Included the option to exclude groups in lastlogin.sh
 - Did a major overhaul in regards to the style of the code in installer.sh and tweaked the code a bit that reduced a few dozen lines
 - Moved some files from packages/data into packages/extra for a better overview of files used during installation
-- Removed the manual input for 32/64 bit version of glFTPD, instead I made the installer detect what version of OS
+- Removed the manual input for 32/64 bit version of glFTPd, instead I made the installer detect what version of OS
 - Disabled the module uptime in eggdrop because the bot could apparently show up on the webpage of eggdrop
 - Disabled the module DNS in eggdrop due to changes of DNS in the release of 1.9.2
 - Inserted the cleanup of dead symlinks at the end as part of incomplete-list-nuker.sh
@@ -92,7 +92,7 @@ with a list of recommendations for section names. As a result site.rules is gene
 
 - Removed rud-filedone since it didn't validate sample files correctly
 - Couldn't remove block of release properly in tur-predircheck_manager
-- Minor fixes in install.sh & version checker for glFTPD
+- Minor fixes in install.sh & version checker for glFTPd
 - Minor fixes in update_gl.sh
 - Created a check for input when entering the number of sections to prevent people from making the error of using sections names instead of the number of sections
 - REQUESTS dir is no longer created if tur-request is not installed
@@ -100,7 +100,7 @@ with a list of recommendations for section names. As a result site.rules is gene
 - The new list of allowed sections wasn't properly coded in installer
 - dated.sh didn't function properly when dated dirs spanned a year
 - PREBW didn't announce properly due to bad settings in ngBot.conf
-- Installer didn't grab the latest glFTPD version
+- Installer didn't grab the latest glFTPd version
 - section-manager now add/remove sections from dated.sh and ensures that dated.sh is added/removed in crontab depending if dated sections are present
 - Fixed some minor bugs in section-manager
 - Added m2ts to sample_types in zsconfig.h since it's used sometimes in BLURAY sections
