@@ -11,6 +11,7 @@
 - Removed screens from IMDB tag since most ended up with UNKNOWN Screens
 - Updated imdb-scan.sh to create proper symlinks
 - Updated tur-space.sh to support the use of /dev/disk/by-uuid
+- Removed the BETA option from update_gl.sh and glftpd-version_check.sh and tweaked the code a bit
 
 ### Fixes
 
