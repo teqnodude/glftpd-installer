@@ -700,8 +700,8 @@ function glftpd
     cp ../scripts/extra/update_gl.sh $glroot/bin
     cp ../scripts/extra/imdb-scan.sh $glroot/bin
     cp ../scripts/extra/imdb-rescan.sh $glroot/bin
-    cp ../scripts/extra/glftpd-version_check.sh $glroot/bin
-    echo "0 18 * * *              $glroot/bin/glftpd-version_check.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+    cp ../scripts/extra/glftpd-version-check.sh $glroot/bin
+    echo "0 18 * * *              $glroot/bin/glftpd-version-check.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
     cp ../scripts/section-manager/section-manager.sh $glroot
     sed -i "s|changeme|$device|" $glroot/section-manager.sh
     cp ../scripts/imdbrating/imdbrating.sh $glroot/bin
