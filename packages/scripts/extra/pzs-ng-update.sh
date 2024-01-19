@@ -10,7 +10,7 @@ VER=1.0
 
 cp pzs-ng/zipscript/conf/zsconfig.h .
 rm -r pzs-ng
-git clone https://github.com/pzs-ng/pzs-ng.git
+git clone https://github.com/glftpd/pzs-ng.git
 cp zsconfig.h pzs-ng/zipscript/conf && rm zsconfig.h
 cd pzs-ng && ./configure -q && make -s && make -s install
 chmod u+s /glftpd/bin/cleanup
