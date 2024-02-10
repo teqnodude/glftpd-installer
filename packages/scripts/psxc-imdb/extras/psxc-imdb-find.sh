@@ -174,7 +174,7 @@ fi
 
 MYLYNXFLAGS=`echo $LYNXFLAGS | sed "s| -nolist||"`
 if [ -z "$URLTOUSE" ]; then
- CONTENT=`lynx $MYLYNXFLAGS "https://www.imdb.com/find?s=tt&q=$IMDBSEARCHTITLE" 2>/dev/null`
+ CONTENT=`lynx $MYLYNXFLAGS "https://www.imdb.com/find/?s=tt&q=$IMDBSEARCHTITLE" 2>/dev/null`
  if [ $? -gt 0 ]; then
   echo "$PREWORD Internal Error. www.imdb.com may be down, or not answering. Try again later."
   exit 0

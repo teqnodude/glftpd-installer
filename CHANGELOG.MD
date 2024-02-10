@@ -28,6 +28,9 @@
 - install.sh didn't grab the latest version of glftpd due to a change on the website it's pulling information from
 - Tweaked some of the code to prevent future problems of grabbing the latest glftpd version excluding BETA versions 
 - 32 bit version did not get installed properly
+- psxc-imdb-find didn't work properly due to wrong search string
+- added some missing settings into psxc-imdb.conf
+
 
 ## 10.4 - 2022-04-22
 
