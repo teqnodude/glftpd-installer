@@ -30,6 +30,7 @@
 - 32 bit version did not get installed properly
 - psxc-imdb-find didn't work properly due to wrong search string
 - added some missing settings into psxc-imdb.conf
+- Forgot to add XXX-PAYSITE to the list of sections that require dated.sh in section-manager
 
 
 ## 10.4 - 2022-04-22

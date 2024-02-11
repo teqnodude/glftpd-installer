@@ -378,8 +378,8 @@ echo
 echo -e "\e[31mBe sure to rehash the bot or the updated settings will not take effect\e[0m"
 echo
 
-[ `ls /glftpd/site | egrep -iv "today" | egrep -i "0DAY|EBOOKS|FLAC|MP3" | wc -l` = 0 ] && sed -i /dated.sh/d /var/spool/cron/crontabs/root
-if [ `ls /glftpd/site | egrep -iv "today" | egrep -i "0DAY|EBOOKS|FLAC|MP3" | wc -l` -ge 1 ]
+[ `ls /glftpd/site | egrep -iv "today" | egrep -i "0DAY|EBOOKS|FLAC|MP3|XXX-PAYSITE" | wc -l` = 0 ] && sed -i /dated.sh/d /var/spool/cron/crontabs/root
+if [ `ls /glftpd/site | egrep -iv "today" | egrep -i "0DAY|EBOOKS|FLAC|MP3|XXX-PAYSITE" | wc -l` -ge 1 ]
 then
     [ `grep "dated.sh" /var/spool/cron/crontabs/root | wc -l` = 0 ] && echo "0 0 * * *               $glroot/bin/dated.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 fi
