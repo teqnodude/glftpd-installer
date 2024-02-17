@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=10.4
+VER=10.5
 clear
 
 if [ ! `whoami` = "root" ] 

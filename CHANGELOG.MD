@@ -1,4 +1,4 @@
-## 10.x - 
+## 10.5 - 2024-02-17
 
 ### Added
 
@@ -31,7 +31,7 @@
 - psxc-imdb-find didn't work properly due to wrong search string
 - added some missing settings into psxc-imdb.conf
 - Forgot to add XXX-PAYSITE to the list of sections that require dated.sh in section-manager
-
+- Fixed the cleanup function of adapative blocklist in tvmaze-nuker and added logging of cleanup to logfile
 
 ## 10.4 - 2022-04-22
 

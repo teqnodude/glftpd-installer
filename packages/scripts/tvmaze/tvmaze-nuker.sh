@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=3.1
+VER=3.2
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -17,7 +17,9 @@ VER=3.1
 # 2021-03-03 v2.8 Added the ability to nuke shows based on status
 # 2021-05-25 v2.9 Added the ability to nuke shows based on title 
 # 2022-04-16 v3.0 Updated adaptive blocklist to put blocks in wide rows instead of one block per row to prevent problems of speed when creating new dirs
-# 2022-04-21 v3.1 Added a cleanup option of adaptive blocklist based on the number of days for those sites that have a lot of blocks but that doesn't want them to slow down the creation of new dirs
+# 2022-04-21 v3.1 Added a cleanup option of adaptive blocklist based on the number of days for those sites that have a lot of blocks but that doesn't want them to 
+#		  slow down the creation of new dirs
+# 2024-02-17 v3.2 Fixed the cleanup function of adapative blocklist and added logging of cleanup to logfile  
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
@@ -497,7 +499,8 @@ then
         days=$((($(date +%s)-$(date +%s --date $blockdate))/(3600*24)))
         if [ "$days" -ge "$BLOCKDAYS" ]
         then
-            sed -i "/$blockdate/d" $BLOCKFILE
+            LogMsg "Automatic removal of blocks with date $blockdate"
+            $GLROOT/bin/sed -i "/$blockdate/d" $BLOCKFILE
         fi
     done
 fi
