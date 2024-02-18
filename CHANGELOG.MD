@@ -1,3 +1,9 @@
+## 10.x - 
+
+### Fixes
+
+- tvmaze.sh gave unnecessary errors if .imdb did not exist in release dir
+
 ## 10.5 - 2024-02-17
 
 ### Added
