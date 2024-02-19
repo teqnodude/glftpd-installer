@@ -66,7 +66,7 @@ then
 	    [[ 1 -lt "$(echo "$nfo" | wc -l)" ]] && echo "$glroot$x" >> $tmp/$doublenfo
 	    if [ ! -z $nfo ]
 	    then
-		if [ `cat $x/$nfo | grep -i "*imdb.com*" | wc -l` = 0 ]
+		if [ `grep -i "*imdb.com*" $x/$nfo | wc -l` = 0 ]
 		then
 		    echo "1" > $glroot/ftp-data/logs/psxc-imdb-rescan.tmp
 		    /bin/psxc-imdb.sh $x/$nfo

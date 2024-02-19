@@ -88,42 +88,42 @@ function rescan {
 	fi
 	SHOW=`echo $rls_name | egrep -o ".*.S[0-9][0-9]E[0-9][0-9].|.*.E[0-9][0-9].|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].|.*.Part.[0-9]." | sed -e 's|.S[0-9][0-9].*||' -e 's|.Part.*||' -e 's|[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].*||' -e 's|.[0-9][0-9][0-9][0-9].*||' -e 's|.AU.*||' -e 's|.CA.*||' -e 's|.NZ.*||' -e 's|.UK.*||' -e 's|.US.*||' | tr '.' ' '`
 	lynx --dump "https://api.tvmaze.com/singlesearch/shows?q=$SHOW" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
-	SHOW_ID=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'id":' | head -1 | cut -d':' -f2 | tr -d '"'`
-	SHOW_NAME=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'name":' | head -1 | cut -d':' -f2 | tr -d '"'`
-	SHOW_GENRES=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'genres":' | sed -n '/"genres"/,/]/p' | tr '\n' ' ' | tr -d '[' | tr -d ']' | sed 's/"genres"://' | tr -d '"'`
-	SHOW_COUNTRY=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'country":' | head -1 | cut -d':' -f3 | tr -d '"'`
-	SHOW_LANGUAGE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'language":' | head -1 | cut -d':' -f2 | tr -d '"'`
-	SHOW_NETWORK=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'name":' | head -2 | tail -1 | cut -d':' -f2 | tr -d '"'`
-	SHOW_PREMIERED=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'premiered":' | head -1 | cut -d':' -f2 | tr -d '"' | sed 's/-.*//g'`
-	SHOW_STATUS=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'status":' | head -1 | cut -d':' -f2 | tr -d '"'`
-	SHOW_TYPE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'type":' | head -1 | cut -d':' -f2 | tr -d '"'`
-	SHOW_RATING=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'rating":' | head -1 | cut -d':' -f3 | tr -d '"' | tr -d '}'`
-	SHOW_IMDB=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'imdb":' | head -1 | cut -d':' -f2 | tr -d '"' | tr -d '}'`
-	SHOW_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	SHOW_SUMMARY=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'summary":' | head -1 | cut -d':' -f2 | tr -d '"' | tr -d '\\\' | sed 's|<*.[b|i|p]>||g'`
+	SHOW_ID=`grep 'id":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"'`
+	SHOW_NAME=`grep 'name":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"'`
+	SHOW_GENRES=`grep 'genres":' $glroot$tmp/tvmaze-rescan.tmp | sed -n '/"genres"/,/]/p' | tr '\n' ' ' | tr -d '[' | tr -d ']' | sed 's/"genres"://' | tr -d '"'`
+	SHOW_COUNTRY=`grep 'country":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f3 | tr -d '"'`
+	SHOW_LANGUAGE=`grep 'language":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"'`
+	SHOW_NETWORK=`grep 'name":' $glroot$tmp/tvmaze-rescan.tmp | head -2 | tail -1 | cut -d':' -f2 | tr -d '"'`
+	SHOW_PREMIERED=`grep 'premiered":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"' | sed 's/-.*//g'`
+	SHOW_STATUS=`grep 'status":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"'`
+	SHOW_TYPE=`grep 'type":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"'`
+	SHOW_RATING=`grep 'rating":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f3 | tr -d '"' | tr -d '}'`
+	SHOW_IMDB=`grep 'imdb":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"' | tr -d '}'`
+	SHOW_URL=`grep 'url":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
+	SHOW_SUMMARY=`grep 'summary":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"' | tr -d '\\\' | sed 's|<*.[b|i|p]>||g'`
 
 	if [ `echo $rls_name | egrep -o "S[0-9][0-9]E[0-9][0-9]"` ]
 	then
 	    SEASON=`echo $rls_name | egrep -o "S[0-9][0-9]" | tr -d 'S'`
 	    EPISODE=`echo $rls_name | egrep -o "E[0-9][0-9]" | tr -d 'E'`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
-	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
+	    EP_URL=`grep 'url":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
+	    EP_AIR_DATE=`grep 'airdate":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	if [ `echo $rls_name | egrep -o "[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]"` ]
 	then
 	    DATE=`echo $rls_name | egrep -o "[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9]" | tr '.' '-'`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodesbydate?date=$DATE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
-	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
+	    EP_URL=`grep 'url":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
+	    EP_AIR_DATE=`grep 'airdate":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	if [ `echo $rls_name | egrep -o "Part.[0-9]"` ]
 	then
 	    SEASON=1
 	    EPISODE=`echo $rls_name | grep -o "Part.[0-9]" | grep -o "[0-9]"`
 	    lynx --dump "https://api.tvmaze.com/shows/$SHOW_ID/episodebynumber?season=$SEASON&number=$EPISODE" | sed -e 's|","|"#"|g' -e 's|],"|]#"|g' -e 's|},"|}#"|g' -e 's|",|"#|g' -e 's|,"|#"|g' | tr '#' '\n' > $glroot$tmp/tvmaze-rescan.tmp
-	    EP_URL=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'url":' | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
-	    EP_AIR_DATE=`cat $glroot$tmp/tvmaze-rescan.tmp | grep 'airdate":' | head -1 | cut -d':' -f2 | tr -d '"'`
+	    EP_URL=`grep 'url":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2- | tr -d '"' | tr -d '}'`
+	    EP_AIR_DATE=`grep 'airdate":' $glroot$tmp/tvmaze-rescan.tmp | head -1 | cut -d':' -f2 | tr -d '"'`
 	fi
 	[ "$SHOW_GENRES" == "null" -o -z "$SHOW_GENRES" ] && SHOW_GENRES="NA"
 	[ "$SHOW_COUNTRY" == "null" -o -z "$SHOW_COUNTRY" ] && SHOW_COUNTRY="NA"
@@ -142,7 +142,7 @@ function rescan {
 	if [ "$debug" -eq 1 ]
 	then
 	    echo "Scanning dir $i : $1/$rls_name"
-	    echo "============================ TVMAZE INFO v`cat $glroot/bin/tvmaze.sh | grep 'VER=' | cut -d'=' -f2` ================================"
+	    echo "============================ TVMAZE INFO v`grep 'VER=' $glroot/bin/tvmaze.sh | cut -d'=' -f2` ================================"
 	    echo ""
 	    echo "Location.....: $1"
 	    echo "Show id......: $SHOW_ID"
@@ -165,11 +165,11 @@ function rescan {
 	    echo "-"
 	    echo "Plot.........: $SHOW_SUMMARY"
 	    echo ""
-	    echo "============================ TVMAZE INFO v`cat $glroot/bin/tvmaze.sh | grep 'VER=' | cut -d'=' -f2` ================================"
+	    echo "============================ TVMAZE INFO v`grep 'VER=' $glroot/bin/tvmaze.sh | cut -d'=' -f2` ================================"
 	    i=$(($i + 1))
 	else
 	    echo "Scanning dir $i : $1/$rls_name"
-	    echo "============================ TVMAZE INFO v`cat $glroot/bin/tvmaze.sh | grep 'VER=' | cut -d'=' -f2` ================================" > $1/$rls_name/.imdb
+	    echo "============================ TVMAZE INFO v`grep 'VER=' $glroot/bin/tvmaze.sh | cut -d'=' -f2` ================================" > $1/$rls_name/.imdb
 	    echo "" >> $1/$rls_name/.imdb
 	    echo "Title........: $SHOW_NAME" >> $1/$rls_name/.imdb
 	    echo "-" >> $1/$rls_name/.imdb
@@ -189,7 +189,7 @@ function rescan {
 	    echo "-" >> $1/$rls_name/.imdb
 	    echo "Plot.........: $SHOW_SUMMARY" | fold -s -w $width >> $1/$rls_name/.imdb
 	    echo "" >> $1/$rls_name/.imdb
-	    echo "============================ TVMAZE INFO v`cat $glroot/bin/tvmaze.sh | grep 'VER=' | cut -d'=' -f2` ================================" >> $1/$rls_name/.imdb
+	    echo "============================ TVMAZE INFO v`grep 'VER=' $glroot/bin/tvmaze.sh | cut -d'=' -f2` ================================" >> $1/$rls_name/.imdb
 	    find $1/$rls_name/ -iname "*tvmaze*" -exec rm {} +
 	    touch "$1/$rls_name/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
 	    chmod 666 "$1/$rls_name/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"

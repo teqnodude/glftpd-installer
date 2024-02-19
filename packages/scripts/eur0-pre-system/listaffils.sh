@@ -15,7 +15,7 @@ glftpd_conf="/etc/glftpd.conf"
 
 ### CODE ###
 
-privpaths=`cat $glftpd_conf | grep privpath | grep -v "/site/PRE/SiteOP" | awk '{print $2}' | sort`
+privpaths=`grep privpath $glftpd_conf | grep -v "/site/PRE/SiteOP" | awk '{print $2}' | sort`
 
 predirs=""
 for path in $privpaths

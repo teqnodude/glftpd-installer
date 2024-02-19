@@ -47,7 +47,7 @@ rootdir=`pwd`
 
 function start
 {
-echo "Already configured sections: "`cat $pzsbot | grep "set sections" | sed 's/REQUEST//g' | cut -d "\"" -f2`
+echo "Already configured sections: "`grep "set sections" $pzsbot | sed 's/REQUEST//g' | cut -d "\"" -f2`
 while [[ -z $section ]]
 do
     echo -n "What section do you want to manage, if not listed just type it in : "; read section
@@ -60,7 +60,7 @@ echo -n "Is this a movie section ? [Y]es [N]o, default N : " ; read movie
 
 case $action in
     [Rr])
-        if [ `cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep "$section$" | wc -l` = "0" ]
+        if [ `grep "set sections" $pzsbot | cut -d "\"" -f2 | sed 's/ /\n/g' | grep "$section$" | wc -l` = "0" ]
         then
 	    echo "Section does not exist, please try again."
 	    exit 2
@@ -80,7 +80,7 @@ case $action in
 	fi
 	;;	
     *)
-        if [ `cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep "$section$" | wc -l` = "1" ]
+        if [ `grep "set sections" $pzsbot | cut -d "\"" -f2 | sed 's/ /\n/g' | grep "$section$" | wc -l` = "1" ]
         then
     	    echo "Section already exist, please try again."
 	    exit 2
@@ -200,8 +200,8 @@ if [ -f "$pzsbot" ]
 then
     case $action in
 	[Rr])
-	    before=`cat $pzsbot | grep "set sections" | cut -d "\"" -f2`
-	    after=`cat $pzsbot | grep "set sections" | cut -d "\"" -f2 | sed 's/ /\n/g' | grep -vw "$section$" | sort | xargs`
+	    before=`grep "set sections" $pzsbot | cut -d "\"" -f2`
+	    after=`grep "set sections" $pzsbot | cut -d "\"" -f2 | sed 's/ /\n/g' | grep -vw "$section$" | sort | xargs`
 	    sed -i "/set sections/s/$before/$after/gI" $pzsbot
 	    sed -i "/set paths("$section")/d" $pzsbot
 	    sed -i "/set chanlist("$section")/d" $pzsbot
@@ -245,10 +245,10 @@ then
 	    fi
 	    ;;
     esac
-    sections=`cat $approve | sed -n '/^SECTIONS="/,/"/p' | grep -v DAYSECTIONS | grep -v NUMDAYFOLDERS | grep -v SECTIONS | grep -v "\"" | wc -l`
-    daysections=`cat $approve | sed -n '/^DAYSECTIONS="/,/"/p' | grep -v DAYSECTIONS | grep -v NUMDAYFOLDERS | grep -v SECTIONS | grep -v "\"" | wc -l`
-    current=`cat $approve | grep -i ^numfolders= | cut -d "\"" -f2`
-    ncurrent=`cat $approve | grep -i ^numdayfolders= | cut -d "\"" -f2`
+    sections=`sed -n '/^SECTIONS="/,/"/p' $approve | grep -v DAYSECTIONS | grep -v NUMDAYFOLDERS | grep -v SECTIONS | grep -v "\"" | wc -l`
+    daysections=`sed -n '/^DAYSECTIONS="/,/"/p' $approve | grep -v DAYSECTIONS | grep -v NUMDAYFOLDERS | grep -v SECTIONS | grep -v "\"" | wc -l`
+    current=`grep -i ^numfolders= $approve | cut -d "\"" -f2`
+    ncurrent=`grep -i ^numdayfolders= $approve | cut -d "\"" -f2`
     sed -i -e "s/^NUMFOLDERS=\".*\"/NUMFOLDERS=\"$sections\"/" $approve
     sed -i -e "s/^NUMDAYFOLDERS=\".*\"/NUMDAYFOLDERS=\"$daysections\"/" $approve
     echo "$actionname Approve"
@@ -263,8 +263,8 @@ if [[ -f "$foopre" ]]
 then
     case $action in
 	[Rr])
-            before=`cat $foopre | grep "allow="| cut -d "=" -f2 | cut -d "'" -f1 | uniq`
-            after=`cat $foopre | grep "allow="| cut -d "=" -f2 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
+            before=`grep "allow=" $foopre | cut -d "=" -f2 | cut -d "'" -f1 | uniq`
+            after=`grep "allow=" $foopre | cut -d "=" -f2 | uniq | sed 's/|/\n/g' | sort | grep -vw "$section$" | xargs | sed 's/ /|/g'`
 	    sed -i "/allow=/s/$before/$after/g" $foopre
 	    sed -i "/section.$section\./d" $foopre
 	    ;;
@@ -300,8 +300,8 @@ if [ -f "$turlastul" ]
 then
     case $action in
 	[Rr])
-            before=`cat $turlastul | grep "sections="| cut -d "=" -f2 | tr -d "\""`
-            after=`cat $turlastul | grep "sections="| cut -d "=" -f2  | tr -d "\"" | sed 's/ /\n/g' | sort | grep -vw "$section$" | xargs`
+            before=`grep "sections=" $turlastul | cut -d "=" -f2 | tr -d "\""`
+            after=`grep "sections=" $turlastul | cut -d "=" -f2  | tr -d "\"" | sed 's/ /\n/g' | sort | grep -vw "$section$" | xargs`
             sed -i "/sections=/s/$before/$after/g" $turlastul
 	    ;;
 	*)

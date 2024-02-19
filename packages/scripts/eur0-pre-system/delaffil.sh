@@ -41,7 +41,7 @@ then
 
     echo "Removing $1 ..."
     echo "Trying to remove $pre_path/$1 from the $glftpd_conf file ..."
-    lines_num=`cat $glftpd_conf | wc -l`
+    lines_num=`wc -l < $glftpd_conf`
     /bin/delaffil $glftpd_conf $1 $pre_path $lines_num
 
     if [ -d "$pre_path/$1" ]

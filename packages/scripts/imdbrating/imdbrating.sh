@@ -84,7 +84,7 @@ then
     fi
     if [ "$2" = "genre" ]
     then
-        cat $tmp/imdbrating.txt | grep -i "$3"
+        grep -i "$3" $tmp/imdbrating.txt
     fi
 fi
 

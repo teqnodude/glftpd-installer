@@ -25,8 +25,8 @@ setgroup=NoGroup
 
 #--[ Script Start ]---------------------------------------------#
 
-user=`cat $glroot/etc/passwd | grep $setuser | cut -d ':' -f3`
-group=`cat $glroot/etc/group | grep $setgroup | cut -d ':' -f3`
+user=`grep $setuser $glroot/etc/passwd | cut -d ':' -f3`
+group=`grep $setgroup $glroot/etc/group | cut -d ':' -f3`
 
 # Process args and remove unwanted chars..
 RLS_NAME=`sed -e 's/^"//' -e 's/"$//' <<<"$1"`

@@ -129,8 +129,8 @@ case $1 in
 	echo -e "[\e[32mDone\e[0m]"
 	echo
 	echo -n "Setting up glFTPD, please wait...          "
-        CHKGR=`cat /etc/group | grep -w "glftpd" | cut -d ":" -f1`
-	CHKUS=`cat /etc/passwd | grep -w "sitebot" | cut -d ":" -f1`
+        CHKGR=`grep -w "glftpd" /etc/group | cut -d ":" -f1`
+	CHKUS=`grep -w "sitebot" /etc/passwd | cut -d ":" -f1`
 	if [ "$CHKGR" != "glftpd" ]
         then
 	    groupadd glftpd -g 199
@@ -187,13 +187,13 @@ case $1 in
 	    mysql -uroot -D $db1 < $restore/bup/trial.sql
 	    mysql -uroot -D $db2 < $restore/bup/transfers.sql
 	fi
-	services=`cat $restore/bup/etc/services | grep glftpd`
+	services=`grep glftpd $restore/bup/etc/services`
 	echo "$services" >> /etc/services
 	cp -f $restore/bup/etc/systemd/system/glftpd.socket /etc/systemd/system
 	cp -f $restore/bup/etc/systemd/system/glftpd@.service /etc/systemd/system
 	if [ -f "/etc/inetd.conf" ]
 	then
-	    inetd=`cat $restore/bup/etc/inetd | grep glftpd`
+	    inetd=`grep glftpd $restore/bup/etc/inetd`
 	    echo "$inetd" >> /etc/inetd.conf
 	    kill -HUP inetd
 	fi

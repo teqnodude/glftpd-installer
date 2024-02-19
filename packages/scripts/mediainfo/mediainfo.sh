@@ -117,34 +117,34 @@ else
                     do
                 	if [[ `./mediainfo-rar $GLROOT/site/$section/$info/$media | grep failed | wc -l` = "1" ]] ; then echo "Couldn't extract information" ; exit 0 ; fi
                 	./mediainfo-rar $GLROOT/site/$section/$info/$media > $TMPFILE
-                        release=`cat $TMPFILE | grep "^Filename" | cut -d ":" -f2 | sed -e "s|$GLROOT/site/$section/||" -e 's|/.*||' -e 's/ //'`
+                        release=`grep "^Filename" $TMPFILE | cut -d ":" -f2 | sed -e "s|$GLROOT/site/$section/||" -e 's|/.*||' -e 's/ //'`
                         echo -en "${COLOR1} $release${COLOR2}"
-                        filesize=`cat $TMPFILE | grep "File size*" | grep "MiB\|GiB" | cut -d ":" -f2 | sed 's/ //'`
+                        filesize=`grep "File size*" $TMPFILE | grep "MiB\|GiB" | cut -d ":" -f2 | sed 's/ //'`
                         echo -en " |${COLOR1} $filesize${COLOR2}"
-			duration=`cat $TMPFILE | sed -n '/General/,/Video/p' | grep "^Duration" | uniq | cut -d ":" -f2 | sed 's/ //'`
+			duration=`sed -n '/General/,/Video/p' $TMPFILE | grep "^Duration" | uniq | cut -d ":" -f2 | sed 's/ //'`
                         echo -en " |${COLOR1} $duration${COLOR2}"
-                        obitrate=`cat $TMPFILE | sed -n '/General/,/Video/p' | grep -v "Overall bit rate mode" | grep "Overall bit rate" | cut -d ":" -f2 | sed 's/ //'`
+                        obitrate=`sed -n '/General/,/Video/p' $TMPFILE | grep -v "Overall bit rate mode" | grep "Overall bit rate" | cut -d ":" -f2 | sed 's/ //'`
                         if [ "$obitrate" ]; then echo -en " | Overall:${COLOR1} $obitrate${COLOR2}" ; fi
-                        vbitrate=`cat $TMPFILE | sed -n '/Video/,/Audio/p' | grep "^Bit rate  " | cut -d ":" -f2 | sed 's/ //'`
+                        vbitrate=`sed -n '/Video/,/Audio/p' $TMPFILE | grep "^Bit rate  " | cut -d ":" -f2 | sed 's/ //'`
                         if [ "$vbitrate" ]; then echo -en " | Video:${COLOR1} $vbitrate${COLOR2}" ; fi
-                        nbitrate=`cat $TMPFILE | sed -n '/Video/,/Forced/p' | grep "^Nominal bit rate  " | cut -d ":" -f2 | sed 's/ //'`
+                        nbitrate=`sed -n '/Video/,/Forced/p' $TMPFILE | grep "^Nominal bit rate  " | cut -d ":" -f2 | sed 's/ //'`
                         if [ "$nbitrate" ]; then  echo -en " | Video Nominal:${COLOR1} $nbitrate${COLOR2}" ; fi
-                        if [ -z "`cat $TMPFILE | sed -n '/Audio #1/,/Forced/p'`" ]; then audio="Audio" ;  else audio="Audio #1" ; fi
-                        abitrate=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Bit rate  " | cut -d ":" -f2 | sed 's/ //'`
+                        if [ -z "`sed -n '/Audio #1/,/Forced/p' $TMPFILE`" ]; then audio="Audio" ;  else audio="Audio #1" ; fi
+                        abitrate=`sed -n "/$audio/,/Forced/p" $TMPFILE | grep "^Bit rate  " | cut -d ":" -f2 | sed 's/ //'`
                         if [ "$abitrate" ]; then echo -en " | Audio:${COLOR1} $abitrate${COLOR2}" ; fi
-                        mabitrate=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Maximum bit rate  " | cut -d ":" -f2 | sed 's/ //'`
+                        mabitrate=`sed -n "/$audio/,/Forced/p" $TMPFILE | grep "^Maximum bit rate  " | cut -d ":" -f2 | sed 's/ //'`
                         if [ "$mabitrate" ]; then echo -en " | Max Audio:${COLOR1} $mabitrate${COLOR2}" ; fi
-                        formtitle=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Title  " | cut -d ":" -f2 | sed 's/ //'`
+                        formtitle=`sed -n "/$audio/,/Forced/p" $TMPFILE | grep "^Title  " | cut -d ":" -f2 | sed 's/ //'`
                         if [[ "$formtitle" =~ "DTS-HD" ]]
                     	then
                     	    echo -en " |${COLOR1} $formtitle${COLOR2}"
                     	else
-                    	    format=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Format  " | cut -d ":" -f2 | sed -e 's/ //' -e 's/UTF\-8//'`
+                    	    format=`sed -n "/$audio/,/Forced/p" $TMPFILE | grep "^Format  " | cut -d ":" -f2 | sed -e 's/ //' -e 's/UTF\-8//'`
                             if [ "$format" ]; then echo -en " |${COLOR1} $format${COLOR2}" ; fi
-                            channels=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Channel(s)" | cut -d ":" -f2 | sed 's/ //'`
+                            channels=`sed -n "/$audio/,/Forced/p" $TMPFILE | grep "^Channel(s)" | cut -d ":" -f2 | sed 's/ //'`
                             if [ "$channels" ]; then echo -en "${COLOR1} $channels${COLOR2}" ; fi
                         fi
-                        language=`cat $TMPFILE | sed -n "/$audio/,/Forced/p" | grep "^Language  " | cut -d ":" -f2 | sed 's/ //' | head -1`
+                        language=`sed -n "/$audio/,/Forced/p" $TMPFILE | grep "^Language  " | cut -d ":" -f2 | sed 's/ //' | head -1`
                         if [ "$language" ]; then echo -en "${COLOR1} $language${COLOR2}" ; fi
                         echo
                     done

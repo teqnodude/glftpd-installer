@@ -67,13 +67,13 @@ then
 	then
 	    sections=`grep "set sections" /sitebot/scripts/pzs-ng/ngBot.conf | cut -d '"' -f2- | tr -d '"' | tr ' ' '|' | sed -e 's/REQUEST//' -e 's/ARCHIVE//' -e 's/|$//' -e 's/^||//' -e 's/||/|/'`
 	    echo "Adding affil to /glftpd/etc/pre.cfg"
-	    if [ `cat /etc/pre.cfg | grep "# group.dir" | wc -l` = 1 ]
+	    if [ `grep "# group.dir" /etc/pre.cfg | wc -l` = 1 ]
 	    then
 		sed -i '/# group.dir/a group.'"$1"'.dir=/site/PRE/'"$1" /etc/pre.cfg
 	    else
 		echo "group.$1.dir=/site/PRE/$1" >> /etc/pre.cfg
 	    fi
-	    if [ `cat /etc/pre.cfg | grep "# group.allow" | wc -l` = 1 ]
+	    if [ `grep "# group.allow" /etc/pre.cfg | wc -l` = 1 ]
 	    then
 		sed -i '/# group.allow/a group.'"$1"'.allow='"$sections" /etc/pre.cfg
 	    else
@@ -96,7 +96,7 @@ then
 	then
 	    echo "Error! Couldn't create $pre_path/$1."
 	    echo "Removing the $pre_path/$1 dir from $glftpd_conf ..."
-	    lines_num=`cat $glftpd_conf | wc -l`
+	    lines_num=`wc -l < $glftpd_conf`
 	    /bin/delaffil $glftpd_conf $1 $pre_path $lines_num
 	    echo "Group $1 wasn't set as an affil and it can't pre."
 	else

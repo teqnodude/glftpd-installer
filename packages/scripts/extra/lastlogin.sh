@@ -81,9 +81,9 @@ then
         TIME=`grep -w TIME $user | awk -F " " '{print $3}'`
         LL=`date +"%Y-%m-%d" -d @$TIME`
         FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
-        group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
+        group=`grep -w GROUP "$USERPATH/$user" | awk -F " " '{print $2}' | xargs`
 	[ ! -z "$EXGROUPS" ] &&	[ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
-        addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
+        addedby=`grep -w USER "$USERPATH/$user" | sed 's|^USER ||'`
         case $FLAGS in
         *6*)
 	    if [ "$skipcolor" = "no" ]
@@ -104,7 +104,7 @@ then
 	esac
         echo "$LL - $user - $deleted - Groups: $group - $addedby" >> /tmp/lastlogin.txt
     done
-    cat /tmp/lastlogin.txt | sort -nk1 && rm -f /tmp/lastlogin.txt
+    sort -nk1 /tmp/lastlogin.txt && rm -f /tmp/lastlogin.txt
 fi
 
 if [ "$1" = "user" ]
@@ -116,8 +116,8 @@ then
         TIME=`grep -w TIME $user | awk -F " " '{print $3}'`
         LL=`date +"%Y-%m-%d" -d @$TIME`
         FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
-        group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-        addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
+        group=`grep -w GROUP "$USERPATH/$user" | awk -F " " '{print $2}' | xargs`
+        addedby=`grep -w USER "$USERPATH/$user" | sed 's|^USER ||'`
         case $FLAGS in
         *6*)
             if [ "$skipcolor" = "no" ]
@@ -138,7 +138,7 @@ then
 	esac
         echo "$LL - $user - $deleted - Groups: $group - $addedby" >> /tmp/lastlogin.txt
     done
-    cat /tmp/lastlogin.txt | sort -nk1 && rm -f /tmp/lastlogin.txt
+    sort -nk1 /tmp/lastlogin.txt && rm -f /tmp/lastlogin.txt
 fi
 
 if [ "$1" = "inactive" ]; then
@@ -159,7 +159,7 @@ if [ "$1" = "inactive" ]; then
         echo "$i $LL" >> /tmp/lastlogin.txt
     done
 
-    cat /tmp/lastlogin.txt | sort -k5 > /tmp/lastlogin2.txt
+    sort -k5 /tmp/lastlogin.txt > /tmp/lastlogin2.txt
     period=$(date +%s --date="$DELETION")
     while IFS= read -r line
     do
@@ -175,10 +175,10 @@ if [ "$1" = "inactive" ]; then
     do
 	user=`echo "$i" | cut -d "^" -f1`
         logindate=`echo "$i" | cut -d "^" -f2`
-        flags=`cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}'`
-    	group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
+        flags=`grep -w FLAGS "$USERPATH/$user" | awk -F " " '{print $2}'`
+    	group=`grep -w GROUP "$USERPATH/$user" | awk -F " " '{print $2}' | xargs`
 	[ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
-    	addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
+    	addedby=`grep -w USER "$USERPATH/$user" | sed 's|^USER ||'`
     	case $flags in
         *6*)
             if [ "$skipcolor" = "no" ]
@@ -205,7 +205,7 @@ if [ "$1" = "inactive" ]; then
 	echo "No users marked for deletion"
         rm -f /tmp/lastlogin*
     else
-	cat /tmp/lastlogin4.txt | sort -nk1 && rm -f /tmp/lastlogin*
+	sort -nk1 /tmp/lastlogin4.txt && rm -f /tmp/lastlogin*
     fi
 fi
 
@@ -229,7 +229,7 @@ then
         echo "$i $LL" >> /tmp/lastlogin.txt
     done
 
-    cat /tmp/lastlogin.txt | sort -k5 > /tmp/lastlogin2.txt
+    sort -k5 /tmp/lastlogin.txt > /tmp/lastlogin2.txt
     period=$(date +%s --date="$PURGE")
     while IFS= read -r line
     do
@@ -246,10 +246,10 @@ then
     do
 	user=`echo "$i" | cut -d "^" -f1`
         logindate=`echo "$i" | cut -d "^" -f2`
-	flags=`cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}'`
-        group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
+	flags=`grep -w FLAGS "$USERPATH/$user" | awk -F " " '{print $2}'`
+        group=`grep -w GROUP "$USERPATH/$user" | awk -F " " '{print $2}' | xargs`
 	[ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
-        addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
+        addedby=`grep -w USER "$USERPATH/$user" | sed 's|^USER ||'`
     	case $flags in
         *6*)
             if [ "$skipcolor" = "no" ]
@@ -276,7 +276,7 @@ then
 	echo "No users marked for purge"
 	rm -f /tmp/lastlogin*
     else
-        cat /tmp/lastlogin4.txt | sort -nk1 && rm -f /tmp/lastlogin*
+        sort -nk1 /tmp/lastlogin4.txt && rm -f /tmp/lastlogin*
     fi
 fi
 
@@ -288,11 +288,11 @@ then
         TIME=`grep -w TIME $user | awk -F " " '{print $3}'`
         LL=`date +"%Y-%m-%d" -d @$TIME`
         FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
-        group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
+        group=`grep -w GROUP "$USERPATH/$user" | awk -F " " '{print $2}' | xargs`
 	[ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
-        addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
-        monthdn=`cat "$USERPATH/$user" | grep -w MONTHDN | cut -d " " -f3` 
-        monthup=`cat "$USERPATH/$user" | grep -w MONTHUP | cut -d " " -f3` 
+        addedby=`grep -w USER "$USERPATH/$user" | sed 's|^USER ||'`
+        monthdn=`grep -w MONTHDN "$USERPATH/$user" | cut -d " " -f3` 
+        monthup=`grep -w MONTHUP "$USERPATH/$user" | cut -d " " -f3` 
         case $FLAGS in
         *6*)
             if [ "$skipcolor" = "no" ]
@@ -316,7 +316,7 @@ then
     	    echo "$LL - $user - $deleted - Groups: $group - $addedby" >> /tmp/lastlogin.txt
     	fi
     done
-    cat /tmp/lastlogin.txt | sort -nk1 && rm -f /tmp/lastlogin.txt
+    sort -nk1 /tmp/lastlogin.txt && rm -f /tmp/lastlogin.txt
 fi
 
 exit 0

@@ -1,5 +1,9 @@
 ## 10.x - 
 
+### Updated
+
+- Optimized code a bit in various scripts
+
 ### Fixes
 
 - tvmaze.sh gave unnecessary errors if .imdb did not exist in release dir
