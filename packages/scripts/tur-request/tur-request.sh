@@ -1598,15 +1598,7 @@ proc_status() {
         DAT=`echo $LINETOSAY | cut -d' ' -f10- | sed 's/at //g'`
     fi
     #OUTPUT="$LINETOSAY"
-    if [ "$mode" = "irc" ]
-    then
-        if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
-        then
-	    OUTPUT="14${POS}4 $REL 14created by4 $USR 14at4 $DAT"
-	else
-	    OUTPUT="14${POS}4 $REL 14created by4 $USR 14for4 $FOR 14at4 $DAT"
-	fi
-    elif [ "$mode" = "gl" ] || [ "$3" = "shell" ]
+    if [ "$mode" = "irc" ] || [ "$mode" = "gl" ]
     then
         if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
         then

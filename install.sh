@@ -1083,7 +1083,7 @@ function request
 	    sed "s/changeme/$sitename/" tur-request.conf > $glroot/bin/tur-request.conf
 	    mkdir -m777 $glroot/site/REQUESTS
 	    touch $glroot/site/REQUESTS/.requests ; chmod 666 $glroot/site/REQUESTS/.requests
-	    echo "1 18 * * * 		$glroot/bin/tur-request.sh status auto shell >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+	    echo "1 18 * * * 		$glroot/bin/tur-request.sh status auto >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 	    echo "1 0 * * * 		$glroot/bin/tur-request.sh checkold >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 	    touch $glroot/ftp-data/logs/tur-request.log
 	    echo "source scripts/tur-request.no_auth.tcl" >> $glroot/sitebot/eggdrop.conf
