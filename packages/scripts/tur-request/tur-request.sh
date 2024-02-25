@@ -1606,6 +1606,14 @@ proc_status() {
 	else
 	    OUTPUT="14${POS}4 $REL 14created by4 $USR 14for4 $FOR 14at4 $DAT"
 	fi
+    elif [ "$mode" = "gl" ] || [ "$3" = "shell" ]
+    then
+        if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
+        then
+	    OUTPUT="14${POS}4 $REL 14created by4 $USR 14at4 $DAT"
+	else
+	    OUTPUT="14${POS}4 $REL 14created by4 $USR 14for4 $FOR 14at4 $DAT"
+	fi
     else
         OUTPUT="$POS $REL created by $USR at $DAT"
     fi
