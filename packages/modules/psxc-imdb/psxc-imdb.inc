@@ -26,10 +26,7 @@ case $ask in
         then
             imdbchan=`grep -w "psxcimdbchan" $cache | cut -d "=" -f2 | tr -d "\""`
         else
-            while [[ -z $imdbchan ]]
-            do
-                echo -n "IMDB announce channels, default $announcechannels : " ; read imdbchan
-            done
+            echo -n "IMDB announce channels, default $announcechannels : " ; read imdbchan
         fi
 
         echo -n "Installing PSXC-IMDB, please wait...                            "
@@ -45,7 +42,7 @@ case $ask in
         echo "source scripts/pzs-ng/plugins/psxc-imdb.tcl" >> $glroot/sitebot/eggdrop.conf
         cat $rootdir/packages/modules/psxc-imdb/gl >> $glroot/etc/glftpd.conf
         echo -e "[\e[32mDone\e[0m]"
-        [ -z $imdbchan ] && imdbchan=$announcechannels
+        [ -z "$imdbchan" ] && imdbchan=$announcechannels
         sed -i "s/#changethis/$imdbchan/" $glroot/sitebot/scripts/pzs-ng/plugins/psxc-imdb.tcl
 
         if [[ -f "$cache" && "`grep -w "psxcimdbchan=" $cache | wc -l`" = 0 ]]

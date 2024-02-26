@@ -25,7 +25,6 @@ case $ask in
         echo -n "Installing Tur-Addip, please wait...                            "
         cp $rootdir/packages/modules/tur-addip/tur-addip.tcl $glroot/sitebot/scripts
         cp $rootdir/packages/modules/tur-addip/tur-addip.sh $glroot/bin
-	[ ! -f $glroot/bin/passchk ] && gcc -o $glroot/bin/passchk $rootdir/packages/modules/tur-addip/passchk.c
         echo "source scripts/tur-addip.tcl" >> $glroot/sitebot/eggdrop.conf
         touch $glroot/ftp-data/logs/tur-addip.log
         sed -i "s/changeme/$port/" $glroot/bin/tur-addip.sh
