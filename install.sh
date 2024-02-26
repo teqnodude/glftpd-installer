@@ -573,7 +573,7 @@ function glftpd
     fi
     if [[ -f "$cache" && "`grep -w "psxcimdbchan" $cache | wc -l`" = 1 ]]
     then
-        echo "IMDB trigger chan  = "`grep -w "psxcimdbchan" $cache | cut -d "=" -f2 | tr -d "\""`
+        echo "IMDB channels      = "`grep -w "psxcimdbchan" $cache | cut -d "=" -f2 | tr -d "\""`
     fi
 
     echo

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo -e "This will remove everything under \e[31m/glftpd\e[0m including \e[31m/glftpd/site\e[0m and undo system changes made by the installer"
+echo
 echo -n "Are you sure you want to proceed? [Y]es [N]o, default N : " ; read cleanup
 
 case $cleanup in
