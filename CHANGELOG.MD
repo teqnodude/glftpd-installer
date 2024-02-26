@@ -1,3 +1,13 @@
+## 11.x -
+
+### Updated
+
+- Added a warning message in cleanup script and the option to abort to prevent people from wiping their sites by mistake
+
+### Fixes
+
+- Various errors that sadly wasn't showing up in the test environment before the 11.0 push to github
+
 ## 11.0 - 2024-02-26
 
 ### Updated
