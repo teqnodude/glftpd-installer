@@ -64,15 +64,15 @@ dpkg-reconfigure dash
 
 ### Normal installation
 
-![Screenshot_1](https://user-images.githubusercontent.com/36924638/97006923-de80b800-1540-11eb-9659-47d74d52d86f.png)
-![Screenshot_2](https://user-images.githubusercontent.com/36924638/97006924-dfb1e500-1540-11eb-9829-f9ec441847a9.png)
-![Screenshot_3](https://user-images.githubusercontent.com/36924638/97006927-dfb1e500-1540-11eb-8b16-2908683c3220.png)
-![Screenshot_4](https://user-images.githubusercontent.com/36924638/97006929-e04a7b80-1540-11eb-8ed7-35be067b03c4.png)
+![Screenshot_1](https://github.com/teqnodude/glftpd-installer/assets/36924638/af283a70-7445-47f0-92fb-91b87aea06c1)
+![Screenshot_2](https://github.com/teqnodude/glftpd-installer/assets/36924638/ffcf7274-1de5-4e82-8c69-ba9f55450a3d)
+![Screenshot_3](https://github.com/teqnodude/glftpd-installer/assets/36924638/a13f4665-5ade-4c75-8f9d-41861e91b898)
+![Screenshot_4](https://github.com/teqnodude/glftpd-installer/assets/36924638/014d40b3-9353-40bf-974d-6af3ade9265f)
 
 ### Unattended installation
 
-![Screenshot_5](https://user-images.githubusercontent.com/36924638/97006907-d6287d00-1540-11eb-983d-a5ce4a4f058e.png)
-![Screenshot_6](https://user-images.githubusercontent.com/36924638/97005571-ea6b7a80-153e-11eb-91d0-902ceff6e7be.png)
+![Screenshot_5](https://github.com/teqnodude/glftpd-installer/assets/36924638/50330ffb-c88e-47e9-8e09-facea6c019a7)
+![Screenshot_6](https://github.com/teqnodude/glftpd-installer/assets/36924638/0db1bb75-cdbd-43ea-9586-afceb517e2b3)
 
 ## How to do an Unattended installation
 
