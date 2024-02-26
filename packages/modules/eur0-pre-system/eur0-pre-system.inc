@@ -38,7 +38,7 @@ case $ask in
         fi
 
         git clone https://github.com/silv3rr/foo-tools >/dev/null 2>&1
-        cp -f ../../data/pre.cfg $glroot/etc
+        cp -f $rootdir/packages/core/pre.cfg $glroot/etc
         cd foo-tools
         git checkout cdb77c1 >/dev/null 2>&1
         cd src
