@@ -41,7 +41,7 @@ BOLD=
 
 EXCLUDED="PRE|SPEEDTEST|lost\+found|Search_Links|ARCHIVE.EXP|INCOMING|INCOMPLETES|MUSIC.BY.ARTIST|MUSIC.BY.GENRE|!Today_0DAY|!Today_FLAC|!Today_MP3|MOVIES_SORTED"
 
-TRIGGER="!st"
+TRIGGER=`grep "bind pub" $glroot/sitebot/scripts/section-traffic.tcl | cut -d " " -f4`
 
 #--[ Script start ]---------------------------------------------#
 

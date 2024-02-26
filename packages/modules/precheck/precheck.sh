@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #---------------------------------------------------------------#
 # Precheck by Teqno                                             #
 #                                                               #
@@ -22,9 +22,11 @@ log=/glftpd/ftp-data/logs/precheck.log
 #--[ Script Start ]---------------------------------------------#
 # Don't change anything below this line
 
+trigger=`grep "bind pub" $glroot/sitebot/scripts/precheck.tcl | cut -d " " -f4`
+
 if [ "$1" = "" ]
 then
-    echo "You need to specify a group"
+    echo "Syntax: $trigger groupname"
 else
     if [ ! -e "$log" ]
     then

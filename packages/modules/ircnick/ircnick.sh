@@ -14,9 +14,11 @@ logfile=/glftpd/ftp-data/logs/glftpd.log
 
 #--[ Script Start ]---------------------------------------------#
 
+trigger=`grep "bind pub" $glroot/sitebot/scripts/ircnick.tcl | cut -d " " -f4`
+
 if [ -z "$1" ]
 then
-    echo "Syntax: !ircnick username"
+    echo "Syntax: $trigger username"
 else
     if [ -z "`tac $logfile | grep -i "invite:" | grep -i $1`" ]
     then

@@ -129,7 +129,6 @@ STATSBIN="/glftpd/bin/stats -r /etc/glftpd.conf"
 MBLIMIT="10000"
 USERDIR="/glftpd/ftp-data/users"
 TMP=/tmp
-
 #################################################################
 # No changes needed below here unless you want to change output #
 #################################################################

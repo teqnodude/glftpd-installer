@@ -1,8 +1,10 @@
-## 10.x - 
+## 11.0 - 2024-02-26
 
 ### Updated
 
-- Optimized code a bit in various scripts
+- Optimized the code a bit in various scripts and places
+- Made a major change in the way scripts are being installed and separated core data, extra, scripts & modules making the installer modular in the future. This 
+  will make it extremly easy to add / remove modules since they are loaded completely dynamically.
 
 ### Fixes
 

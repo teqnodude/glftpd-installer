@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=10.5
+VER=11.0
 clear
 
 if [ ! `whoami` = "root" ] 
@@ -152,7 +152,7 @@ function version
     cp -R scripts source
     cd ..
     
-    cp -f $rootdir/packages/data/cleanup.sh $rootdir
+    cp -f $rootdir/packages/core/cleanup.sh $rootdir
 }
 
 function device_name
@@ -421,8 +421,8 @@ function section_names
 	
     cp packages/scripts/tur-rules/tur-rules.sh.org packages/scripts/tur-rules/tur-rules.sh
     packages/scripts/tur-rules/rulesgen.sh GENERAL
-    cp packages/scripts/tur-autonuke/tur-autonuke.conf.org packages/scripts/tur-autonuke/tur-autonuke.conf
-    cp packages/data/dated.sh.org $rootdir/.tmp/dated.sh
+    cp packages/modules/tur-autonuke/tur-autonuke.conf.org packages/modules/tur-autonuke/tur-autonuke.conf
+    cp packages/core/dated.sh.org $rootdir/.tmp/dated.sh
     counta=0
     rulecount=2	
     if [[ -f "$cache" && "`grep -w "sections=" $cache | wc -l`" = 0 ]]
@@ -485,8 +485,8 @@ function writ
 	echo "section.$section.dir=/site/$section/YYYY-MM-DD" >> $rootdir/.tmp/footools
 	echo "section.$section.gl_credit_section=0" >> $rootdir/.tmp/footools
 	echo "section.$section.gl_stat_section=0" >> $rootdir/.tmp/footools
-	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$today/" packages/scripts/tur-autonuke/tur-autonuke.conf
-	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$yesterday/" packages/scripts/tur-autonuke/tur-autonuke.conf
+	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$today/" packages/modules/tur-autonuke/tur-autonuke.conf
+	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$yesterday/" packages/modules/tur-autonuke/tur-autonuke.conf
 	echo "INC$section=$device:$glroot/site/$section:" >> packages/scripts/tur-space/tur-space.conf.new
 	echo "$glroot/site/$section" >> $rootdir/.tmp/.fullpath
 	echo "/site/$section/%Y-%m-%d/ " >> $rootdir/.tmp/.cleanup_dated
@@ -522,7 +522,7 @@ function writ
 	echo "section.$section.dir=/site/$section" >> $rootdir/.tmp/footools
 	echo "section.$section.gl_credit_section=0" >> $rootdir/.tmp/footools
 	echo "section.$section.gl_stat_section=0" >> $rootdir/.tmp/footools
-	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section/" packages/scripts/tur-autonuke/tur-autonuke.conf
+	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section/" packages/modules/tur-autonuke/tur-autonuke.conf
 	echo "INC$section=$device:$glroot/site/$section:" >> packages/scripts/tur-space/tur-space.conf.new
 	echo "$glroot/site/$section" >> $rootdir/.tmp/.fullpath
 		
@@ -583,11 +583,10 @@ function glftpd
     echo
     echo -n "Installing glftpd, please wait...                               "
     echo "####### Here starts glFTPd scripts #######" >> /var/spool/cron/crontabs/root
-    #cd $PK1DIR ; mv -f ../data/installgl.sh ./ ; ./installgl.sh >/dev/null 2>&1
-    cd $PK1DIR && sed "s/changeme/$port/" ../data/installgl.sh.org > installgl.sh && chmod +x installgl.sh && ./installgl.sh >/dev/null 2>&1
+    cd $PK1DIR && sed "s/changeme/$port/" ../core/installgl.sh.org > installgl.sh && chmod +x installgl.sh && ./installgl.sh >/dev/null 2>&1
     >$glroot/ftp-data/misc/welcome.msg
     echo -e "[\e[32mDone\e[0m]"
-    cd ../data
+    cd ../core
     echo "##########################################################################" > glftpd.conf
     echo "# Server shutdown: 0=server open, 1=deny all but siteops, !*=deny all, etc" >> glftpd.conf
     echo "shutdown 1" >> glftpd.conf
@@ -673,8 +672,8 @@ function glftpd
     sed -i '/^SECTIONS/a '"TOTAL:$device" $glroot/bin/tur-free.sh
     sed -i "s/changeme/$sitename/" $glroot/bin/tur-free.sh
     gcc ../scripts/tur-predircheck/glftpd2/dirloglist_gl.c -o $glroot/bin/dirloglist_gl
-    gcc -O2 ../scripts/tur-ftpwho/tur-ftpwho.c -o $glroot/bin/tur-ftpwho
-    gcc ../scripts/tuls/tuls.c -o $glroot/bin/tuls
+    gcc -O2 ../extra/tur-ftpwho/tur-ftpwho.c -o $glroot/bin/tur-ftpwho
+    gcc ../extra/tuls/tuls.c -o $glroot/bin/tuls
     rm -f $glroot/README
     rm -f $glroot/README.ALPHA
     rm -f $glroot/UPGRADING
@@ -689,18 +688,18 @@ function glftpd
     rm -f /etc/glftpd.conf
     mv -f $glroot/create_server_key.sh $glroot/etc
     mv -f ../../site.rules $glroot/ftp-data/misc
-    cp ../scripts/extra/incomplete-list.sh $glroot/bin
-    cp ../scripts/extra/incomplete-list-nuker.sh $glroot/bin
-    cp ../scripts/extra/incomplete-list-symlinks.sh $glroot/bin
-    cp ../scripts/extra/lastlogin.sh $glroot/bin
+    cp ../extra/incomplete-list.sh $glroot/bin
+    cp ../extra/incomplete-list-nuker.sh $glroot/bin
+    cp ../extra/incomplete-list-symlinks.sh $glroot/bin
+    cp ../extra/lastlogin.sh $glroot/bin
     chmod 755 $glroot/site
     ln -s $glroot/etc/glftpd.conf /etc/glftpd.conf
     chmod 777 $glroot/ftp-data/msgs
-    cp ../scripts/extra/update_perms.sh $glroot/bin
-    cp ../scripts/extra/update_gl.sh $glroot/bin
-    cp ../scripts/extra/imdb-scan.sh $glroot/bin
-    cp ../scripts/extra/imdb-rescan.sh $glroot/bin
-    cp ../scripts/extra/glftpd-version-check.sh $glroot/bin
+    cp ../extra/update_perms.sh $glroot/bin
+    cp ../extra/update_gl.sh $glroot/bin
+    cp ../extra/imdb-scan.sh $glroot/bin
+    cp ../extra/imdb-rescan.sh $glroot/bin
+    cp ../extra/glftpd-version-check.sh $glroot/bin
     echo "0 18 * * *              $glroot/bin/glftpd-version-check.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
     cp ../scripts/section-manager/section-manager.sh $glroot
     sed -i "s|changeme|$device|" $glroot/section-manager.sh
@@ -726,7 +725,7 @@ function eggdrop
     fi
     echo -n "Installing eggdrop, please wait...                              "
     cd ../$PK3DIR ; ./configure --prefix="$glroot/sitebot" >/dev/null 2>&1 && make config >/dev/null 2>&1  && make >/dev/null 2>&1 && make install >/dev/null 2>&1
-    cd ../data
+    cd ../core
     cat egghead > eggdrop.conf
     cat $rootdir/.tmp/eggchan >> eggdrop.conf
     cat bot.chan | sed "s/changeme/$sitename/" > $glroot/sitebot/logs/bot.chan
@@ -768,7 +767,7 @@ function eggdrop
     dd if=/dev/urandom of=$glroot/site/SPEEDTEST/250MB bs=1M count=250 >/dev/null 2>&1
     dd if=/dev/urandom of=$glroot/site/SPEEDTEST/500MB bs=1M count=500 >/dev/null 2>&1
     rm -f $glroot/sitebot/scripts/*.tcl
-    cp ../scripts/extra/*.tcl $glroot/sitebot/scripts
+    cp ../extra/*.tcl $glroot/sitebot/scripts
     sed -i "s/#changeme/$announcechannels/" $glroot/sitebot/scripts/rud-news.tcl
     sed -i "s/#personal/$channelops/" $glroot/sitebot/scripts/rud-news.tcl
     mv -f ../scripts/tur-rules/tur-rules.sh $glroot/bin
@@ -776,7 +775,7 @@ function eggdrop
     cp ../scripts/tur-free/*.tcl $glroot/sitebot/scripts
     cp ../scripts/tur-predircheck_manager/tur-predircheck_manager.tcl $glroot/sitebot/scripts
     sed -i "s/changeme/$channelops/g" $glroot/sitebot/scripts/tur-predircheck_manager.tcl
-    cp ../scripts/extra/kill.sh $glroot/sitebot
+    cp ../extra/kill.sh $glroot/sitebot
     sed -i "s/changeme/$sitename/g" $glroot/sitebot/kill.sh
     echo "source scripts/tur-free.tcl" >> $glroot/sitebot/eggdrop.conf
     echo -e "[\e[32mDone\e[0m]"
@@ -849,7 +848,7 @@ function irc
 function pzshfile
 {
     cd ../../
-    cat packages/data/pzshead > zsconfig.h
+    cat packages/core/pzshead > zsconfig.h
     [ -f "$rootdir/.tmp/.path" ] && paths="`cat $rootdir/.tmp/.path`"
     [ -f "$rootdir/.tmp/.cleanup_dated" ] && cleanup_dated=`cat $rootdir/.tmp/.cleanup_dated | sed 's/ /\n/g' | sort | xargs`
     nodatepaths="`cat $rootdir/.tmp/.nodatepath`"
@@ -866,19 +865,19 @@ function pzshfile
 ## dZSbot.tcl
 function pzsbotfile
 {
-    cat packages/data/dzshead > ngBot.conf
+    cat packages/core/dzshead > ngBot.conf
     echo "set device(0)"				'"'$device SITE'"' >> ngBot.conf
-    cat packages/data/dzsbnc >> ngBot.conf
+    cat packages/core/dzsbnc >> ngBot.conf
     echo "REQUEST" >> $rootdir/.tmp/.validsections
     echo "set paths(REQUEST)			\"/site/REQUESTS/*/*\"" >> $rootdir/.tmp/dzsrace
     echo "set chanlist(REQUEST)			\"$announcechannels\"" >> $rootdir/.tmp/dzschan
-    cat packages/data/dzsmidl  >> ngBot.conf
+    cat packages/core/dzsmidl  >> ngBot.conf
     echo "set sections				\"`cat $rootdir/.tmp/.validsections`\"" >> ngBot.conf
     echo "" >> ngBot.conf
     #cat $rootdir/.tmp/dzsstats >> ngBot.conf
     cat $rootdir/.tmp/dzsrace >> ngBot.conf && rm $rootdir/.tmp/dzsrace
     cat $rootdir/.tmp/dzschan >> ngBot.conf && rm $rootdir/.tmp/dzschan
-    cat packages/data/dzsfoot >> ngBot.conf
+    cat packages/core/dzsfoot >> ngBot.conf
     chmod 644 ngBot.conf
     mkdir -p $glroot/sitebot/scripts/pzs-ng/themes
     mv ngBot.conf $glroot/sitebot/scripts/pzs-ng/ngBot.conf
@@ -900,692 +899,20 @@ function pzsng
     cp -r sitebot/modules $glroot/sitebot/scripts/pzs-ng/
     cp -r sitebot/plugins $glroot/sitebot/scripts/pzs-ng/
     cp -r sitebot/themes $glroot/sitebot/scripts/pzs-ng/
-    cp ../data/glftpd.installer.theme $glroot/sitebot/scripts/pzs-ng/themes
-    cp ../data/ngBot.vars $glroot/sitebot/scripts/pzs-ng
-    cp -f ../data/sitewho.conf $glroot/bin
-    cd ../scripts
+    cp ../core/glftpd.installer.theme $glroot/sitebot/scripts/pzs-ng/themes
+    cp ../core/ngBot.vars $glroot/sitebot/scripts/pzs-ng
+    cp -f ../core/sitewho.conf $glroot/bin
     rm -f $glroot/sitebot/scripts/pzs-ng/ngBot.conf.dist
 }
 
-## eur0-pre-system
-function presystem
+function modules
 {
-    if [[ -f "$cache" && "`grep -w "eur0presystem" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "eur0presystem" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-	echo
-	echo -e "\e[4mDescription for Eur0-pre-system + foo-pre:\e[0m"
-	cat $rootdir/packages/scripts/eur0-pre-system/description
-	echo
-	echo -n "Install Eur0-pre-system + foo-pre ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "eur0presystem=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "eur0presystem=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "eur0presystem=" $cache | wc -l`" = 0 ]]
-	    then
-	    	echo "eur0presystem=\"y\"" >> $cache
-	    fi
-
-	    echo -n "Installing Eur0-pre-system + foo-pre, please wait...            "
-	    cd eur0-pre-system
-	    make  >/dev/null 2>&1
-	    make install  >/dev/null 2>&1
-	    make clean >/dev/null 2>&1
-	    cp *.sh $glroot/bin
-	    cp *.tcl $glroot/sitebot/scripts
-	    echo "source scripts/affils.tcl" >> $glroot/sitebot/eggdrop.conf
-	    cat gl >> $glroot/etc/glftpd.conf
-	
-	    if [ -d foo-tools ]
-	    then
-	    	rm -rf foo-tools >/dev/null 2>&1
-	    fi
-	
-	    git clone https://github.com/silv3rr/foo-tools >/dev/null 2>&1
-	    cp -f ../../data/pre.cfg $glroot/etc
-	    cd foo-tools
-	    git checkout cdb77c1 >/dev/null 2>&1
-	    cd src
-	    ./configure -q && make build >/dev/null 2>&1
-	    cp pre/foo-pre $glroot/bin
-	    make -s distclean
-	    echo -e "[\e[32mDone\e[0m]"
-	    cd ../../
-	    sections=`cat $rootdir/.tmp/.validsections | sed "s/REQUEST//g" | sed "s/ /|/g" | sed "s/|$//g"`
-	    cat $rootdir/.tmp/footools >> $glroot/etc/pre.cfg
-	    rm -f $rootdir/.tmp/footools
-	    sed -i '/# group.dir/a group.SiteOP.dir=/site/PRE/SiteOP' $glroot/etc/pre.cfg
-	    sed -i '/# group.allow/a group.SiteOP.allow='"$sections" $glroot/etc/pre.cfg
-	    touch $glroot/ftp-data/logs/foo-pre.log
-	    cd ..
-	    ;;
-    esac
+    cd $rootdir
+    for module in `ls ./packages/modules`
+    do
+	. packages/modules/$module/$module.inc
+    done
 }
-
-## slv-prebw
-function slvprebw
-{
-    if [[ -f "$cache" && "`grep -w "slvprebw" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "slvprebw" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-	echo
-        echo -e "\e[4mDescription for slv-PreBW:\e[0m"
-        cat $rootdir/packages/scripts/slv-prebw/description
-	echo
-	echo -n "Install slv-PreBW ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-    	    if [[ -f "$cache" && "`grep -w "slvprebw=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "slvprebw=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "slvprebw=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "slvprebw=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing slv-PreBW, please wait...                            "
-	    cp slv-prebw/*.sh $glroot/bin 
-	    cp slv-prebw/*.tcl $glroot/sitebot/scripts/pzs-ng/plugins
-	    echo "source scripts/pzs-ng/plugins/PreBW.tcl" >> $glroot/sitebot/eggdrop.conf
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## tur-ircadmin
-function ircadmin
-{
-    if [[ -f "$cache" && "`grep -w "ircadmin" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "ircadmin" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-    	echo
-	echo -e "\e[4mDescription for Tur-Ircadmin:\e[0m"
-        cat $rootdir/packages/scripts/tur-ircadmin/description
-	echo
-	echo -n "Install Tur-Ircadmin ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "ircadmin=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "ircadmin=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "ircadmin=" $cache | wc -l`" = 0 ]]
-	    then
-	    	echo "ircadmin=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Tur-Ircadmin, please wait...                       	"
-	    cd tur-ircadmin
-	    cp *.sh $glroot/bin
-	    cp tur-ircadmin.tcl $glroot/sitebot/scripts
-	    touch $glroot/ftp-data/logs/tur-ircadmin.log
-	    echo "source scripts/tur-ircadmin.tcl" >> $glroot/sitebot/eggdrop.conf
-	    sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/tur-ircadmin.tcl
-	    sed -i "s/changeme/$port/" $glroot/bin/tur-ircadmin.sh
-	    cat gl >> $glroot/etc/glftpd.conf
-	    cd ..
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## tur-request
-function request
-{
-    if [[ -f "$cache" && "`grep -w "request" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "request" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-    	echo
-	echo -e "\e[4mDescription for Tur-Request:\e[0m"
-        cat $rootdir/packages/scripts/tur-request/description
-	echo
-	echo -n "Install Tur-Request ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "request=" $cache | wc -l`" = 0 ]]
-	    then
-	    	echo "request=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "request=" $cache | wc -l`" = 0 ]]
-	    then
-	    	echo "request=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Tur-Request, please wait...                       	"
-	    cd tur-request
-	    cp tur-request.sh $glroot/bin
-	    cp *.tcl $glroot/sitebot/scripts
-	    cp file_date $glroot/bin
-	    sed "s/changeme/$sitename/" tur-request.conf > $glroot/bin/tur-request.conf
-	    mkdir -m777 $glroot/site/REQUESTS
-	    touch $glroot/site/REQUESTS/.requests ; chmod 666 $glroot/site/REQUESTS/.requests
-	    echo "1 18 * * * 		$glroot/bin/tur-request.sh status auto >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-	    echo "1 0 * * * 		$glroot/bin/tur-request.sh checkold >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-	    touch $glroot/ftp-data/logs/tur-request.log
-	    echo "source scripts/tur-request.no_auth.tcl" >> $glroot/sitebot/eggdrop.conf
-	    cat gl >> $glroot/etc/glftpd.conf
-	    cd ..
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## tur-trial
-function trial
-{
-    if [[ -f "$cache" && "`grep -w "trial" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "trial" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-    	echo
-	echo -e "\e[4mDescription for Tur-Trial3:\e[0m"
-        cat $rootdir/packages/scripts/tur-trial3/description
-	echo
-	echo -n "Install Tur-Trial3 ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "trial=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "trial=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "trial=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "trial=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Tur-Trial3, please wait...                       	"
-            if [ ! -f "/usr/sbin/mariadbd" ]
-            then
-                echo "No MySQL installed, can't install script. Install MySQL and run ./cleanup.sh and this installer again."
-            else
-	    	cd tur-trial3 
-		cp tur-trial3.sh $glroot/bin
-		cp midnight.sh $glroot/bin
-		cp tur-trial3.conf $glroot/bin
-		cp tur-trial3.theme $glroot/bin
-		cp tur-trial3.tcl $glroot/sitebot/scripts
-		cp import.sql import.sql.new
-        	current=`shasum /etc/mysql/mariadb.conf.d/50-server.cnf | cut -d' ' -f1`
-            	new=`shasum 50-server.cnf | cut -d' ' -f1`
-	        if [ "$current" != "$new" ]
-    		then
-            	    mv  /etc/mysql/mariadb.conf.d/50-server.cnf  /etc/mysql/mariadb.conf.d/50-server.cnf.bak
-            	    cp -f 50-server.cnf /etc/mysql/mariadb.conf.d/
-	        fi
-    		if [ ! -d $glroot/backup/mysql ]
-            	then
-            	    service mysql stop && mysql_install_db >/dev/null 2>&1 && service mysql start
-	        fi
-    		./setup-tur-trial3.sh create && rm import.sql.new
-
-		echo "source scripts/tur-trial3.tcl" >> $glroot/sitebot/eggdrop.conf
-	    	echo "*/31 * * * * 		$glroot/bin/tur-trial3.sh update >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		echo "*/30 * * * * 		$glroot/bin/tur-trial3.sh tcron >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-	    	echo "45 23 * * * 		$glroot/bin/tur-trial3.sh qcron >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		echo "0 0 * * * 		$glroot/bin/midnight.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		sed -i 's/0 0 * * *.*reset -e/#0 0 * * *              \/glftpd\/bin\/reset -e/' /var/spool/cron/crontabs/root
-	    	if [ -f "`which mysql`" ]
-		then
-		    cp `which mysql` $glroot/bin
-		fi
-		
-		cat gl >> $glroot/etc/glftpd.conf
-		cd ..
-		touch $glroot/ftp-data/logs/tur-trial3.log
-		echo -e "[\e[32mDone\e[0m]"
-	    fi
-	    ;;
-    esac
-}
-
-## tur-vacation
-function vacation
-{
-    if [[ -f "$cache" && "`grep -w "vacation" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "vacation" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-    	echo
-        echo -e "\e[4mDescription for Tur-Vacation:\e[0m"
-        cat $rootdir/packages/scripts/tur-vacation/description
-	echo
-	echo -n "Install Tur-Vacation ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "vacation=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "vacation=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "vacation=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "vacation=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Tur-Vacation, please wait...                       	"
-	    cp tur-vacation/tur-vacation.sh $glroot/bin
-	    touch $glroot/etc/vacation.index ; chmod 666 $glroot/etc/vacation.index
-	    touch $glroot/etc/quota_vacation.db ; chmod 666 $glroot/etc/quota_vacation.db
-	    cat tur-vacation/gl >> $glroot/etc/glftpd.conf
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## whereami
-function whereami
-{
-    if [[ -f "$cache" && "`grep -w "whereami" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "whereami" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-    	echo
-	echo -e "\e[4mDescription for Whereami:\e[0m"
-        cat $rootdir/packages/scripts/whereami/description
-	echo
-	echo -n "Install Whereami ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-    	[Nn])
-	    if [[ -f "$cache" && "`grep -w "whereami=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "whereami=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "whereami=" $cache | wc -l`" = 0 ]]
-	    then
-	    	echo "whereami=\"y\"" >> $cache
-	    fi
-
-	    echo -n "Installing Whereami, please wait...                             "
-	    cp whereami/whereami.sh $glroot/bin
-	    cp whereami/whereami.tcl $glroot/sitebot/scripts
-	    echo "source scripts/whereami.tcl" >> $glroot/sitebot/eggdrop.conf
-	    echo -e "[\e[32mDone\e[0m]"
-    esac
-}
-
-## precheck
-function precheck
-{
-    if [[ -f "$cache" && "`grep -w "precheck" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "precheck" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-	echo
-	echo -e "\e[4mDescription for Precheck:\e[0m"
-	cat $rootdir/packages/scripts/precheck/description
-	echo
-	echo -n "Install Precheck ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "precheck=" $cache | wc -l`" = 0 ]]
-	    then
-	    	echo "precheck=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "precheck=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "precheck=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Precheck, please wait...                             "
-	    cp precheck/precheck*.sh $glroot/bin
-	    cp precheck/precheck.tcl $glroot/sitebot/scripts
-	    echo "source scripts/precheck.tcl" >> $glroot/sitebot/eggdrop.conf
-	    touch $glroot/ftp-data/logs/precheck.log
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## tur-autonuke
-function autonuke
-{
-    if [[ -f "$cache" && "`grep -w "autonuke" $cache | wc -l`" = 1 ]]
-    then
-	ask=`grep -w "autonuke" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-	echo
-        echo -e "\e[4mDescription for Tur-Autonuke:\e[0m"
-        cat $rootdir/packages/scripts/tur-autonuke/description
-	echo
-	echo -n "Install Tur-Autonuke ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "autonuke=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "autonuke=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "autonuke=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "autonuke=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Tur-Autonuke, please wait...                       	"
-    	    mv tur-autonuke/tur-autonuke.conf $glroot/bin
-	    cp tur-autonuke/tur-autonuke.sh $glroot/bin
-	    echo "*/10 * * * *		$glroot/bin/tur-autonuke.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-	    touch $glroot/ftp-data/logs/tur-autonuke.log
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## psxc-imdb
-function psxcimdb
-{
-    if [[ -f "$cache" && "`grep -w "psxcimdb" $cache | wc -l`" = 1 ]]
-    then
-	ask=`grep -w "psxcimdb" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-	echo
-        echo -e "\e[4mDescription for PSXC-IMDB:\e[0m"
-        cat $rootdir/packages/scripts/psxc-imdb/description
-	echo
-    	echo -n "Install PSXC-IMDB ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "psxcimdb=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "psxcimdb=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "psxcimdb=" $cache | wc -l`" = 0 ]]
-	    then
-	    	echo "psxcimdb=\"y\"" >> $cache
-	    fi
-		
-	    if [[ -f "$cache" && "`grep -w "psxcimdbchan" $cache | wc -l`" = 1 ]]
-	    then
-		imdbchan=`grep -w "psxcimdbchan" $cache | cut -d "=" -f2 | tr -d "\""`
-	    else
-		while [[ -z $imdbchan ]] 
-		do
-		    echo -n "IMDB trigger chan for !imdb requests : " ; read imdbchan
-		done
-	    fi
-		
-	    echo -n "Installing PSXC-IMDB, please wait...                            "
-	    cd psxc-imdb
-	    cp ./extras/* $glroot/bin
-	    cp ./addons/* $glroot/bin
-	    cp ./main/psxc-imdb.sh $glroot/bin
-	    cp ./main/psxc-imdb.conf $glroot/etc
-	    cp ./main/psxc-imdb.tcl $glroot/sitebot/scripts/pzs-ng/plugins
-	    cp ./main/psxc-imdb.zpt $glroot/sitebot/scripts/pzs-ng/plugins
-	    $glroot/bin/psxc-imdb-sanity.sh >/dev/null 2>&1
-	    touch $glroot/ftp-data/logs/psxc-imdb-rescan.tmp
-	    touch $glroot/ftp-data/logs/psxc-moviedata.log
-	    echo "source scripts/pzs-ng/plugins/psxc-imdb.tcl" >> $glroot/sitebot/eggdrop.conf
-	    cat gl >> $glroot/etc/glftpd.conf
-	    echo -e "[\e[32mDone\e[0m]"
-	    sed -i "s/#changethis/$imdbchan/" $glroot/sitebot/scripts/pzs-ng/plugins/psxc-imdb.tcl
-	    cd ..
-		
-	    if [[ -f "$cache" && "`grep -w "psxcimdbchan=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "psxcimdbchan=\"$imdbchan\"" >> $cache
-	    fi
-	    ;;
-    esac
-}
-
-## tur-addip
-function addip
-{
-    if [[ -f "$cache" && "`grep -w "addip" $cache | wc -l`" = 1 ]]
-    then
-	ask=`grep -w "addip" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-        echo
-	echo -e "\e[4mDescription for Tur-Addip:\e[0m"
-        cat $rootdir/packages/scripts/tur-addip/description
-	echo
-	echo -n "Install Tur-Addip ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "addip=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "addip=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "addip=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "addip=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Tur-Addip, please wait...                            "
-	    cd tur-addip
-	    cp *.tcl $glroot/sitebot/scripts
-	    cp *.sh $glroot/bin
-	    echo "source scripts/tur-addip.tcl" >> $glroot/sitebot/eggdrop.conf
-	    touch $glroot/ftp-data/logs/tur-addip.log
-	    sed -i "s/changeme/$port/" $glroot/bin/tur-addip.sh
-	    sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/tur-addip.tcl
-	    cd ..
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## topstat
-function topstat
-{
-    if [[ -f "$cache" && "`grep -w "top" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "top" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-	echo
-        echo -e "\e[4mDescription for Top:\e[0m"
-        cat $rootdir/packages/scripts/top/description
-	echo
-	echo -n "Install Top ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "top=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "top=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "top=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "top=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Top, please wait...                                  "
-	    cd top
-	    cp *.tcl $glroot/sitebot/scripts
-	    cp *.sh $glroot/bin 
-	    echo "source scripts/top.tcl" >> $glroot/sitebot/eggdrop.conf
-	    cd ..
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## ircnick
-function ircnick
-{
-    if [[ -f "$cache" && "`grep -w "ircnick" $cache | wc -l`" = 1 ]]
-    then
-    	ask=`grep -w "ircnick" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-	echo
-        echo -e "\e[4mDescription for Ircnick:\e[0m"
-        cat $rootdir/packages/scripts/ircnick/description
-	echo
-	echo -n "Install Ircnick ? [Y]es [N]o, default Y : " ; read ask
-    fi
-	
-    case $ask in
-	[Nn])
-	    if [[ -f "$cache" && "`grep -w "ircnick=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "ircnick=\"n\"" >> $cache
-	    fi
-	    ;;
-	[Yy]|*)
-	    if [[ -f "$cache" && "`grep -w "ircnick=" $cache | wc -l`" = 0 ]]
-	    then
-		echo "ircnick=\"y\"" >> $cache
-	    fi
-		
-	    echo -n "Installing Ircnick, please wait...                              "
-	    cp ircnick/*.sh $glroot/bin
-	    cp ircnick/*.tcl $glroot/sitebot/scripts
-	    sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/ircnick.tcl
-	    echo "source scripts/ircnick.tcl" >> $glroot/sitebot/eggdrop.conf
-	    echo -e "[\e[32mDone\e[0m]"
-	    ;;
-    esac
-}
-
-## tur-archiver
-function archiver
-{
-    if [[ -f "$cache" && "`grep -w "archiver" $cache | wc -l`" = 1 ]]
-    then
-        ask=`grep -w "archiver" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-        echo
-        echo -e "\e[4mDescription for Tur-Archiver:\e[0m"
-        cat $rootdir/packages/scripts/tur-archiver/description
-        echo
-        echo -n "Install Tur-Archiver ? [Y]es [N]o, default Y : " ; read ask
-    fi
-
-    case $ask in
-        [Nn])
-            if [[ -f "$cache" && "`grep -w "archiver=" $cache | wc -l`" = 0 ]]
-            then
-                echo "archiver=\"n\"" >> $cache
-            fi
-            ;;
-        [Yy]|*)
-            if [[ -f "$cache" && "`grep -w "archiver=" $cache | wc -l`" = 0 ]]
-            then
-                echo "archiver=\"y\"" >> $cache
-            fi
-
-            echo -n "Installing Tur-Archiver, please wait...                         "
-            cp tur-archiver/*.sh $glroot/bin
-	    gcc -o $glroot/bin/file_date tur-archiver/file_date.c
-	    echo "0 0 * * *               $glroot/bin/tur-archiver.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-            echo -e "[\e[32mDone\e[0m]"
-            ;;
-    esac
-}
-
-## section-traffic
-function section-traffic
-{
-    if [[ -f "$cache" && "`grep -w "section_traffic" $cache | wc -l`" = 1 ]]
-    then
-	ask=`grep -w "section_traffic" $cache | cut -d "=" -f2 | tr -d "\""`
-    else
-        echo
-        echo -e "\e[4mDescription for Section-Traffic:\e[0m"
-        cat $rootdir/packages/scripts/section-traffic/description
-        echo
-        echo -n "Install Section-Traffic ? [Y]es [N]o, default Y : " ; read ask
-    fi
-
-    case $ask in
-        [Nn])
-            if [[ -f "$cache" && "`grep -w "section_traffic=" $cache | wc -l`" = 0 ]]
-            then
-                echo "section_traffic=\"n\"" >> $cache
-            fi
-            ;;
-        [Yy]|*)
-    	    if [[ -f "$cache" && "`grep -w "section_traffic=" $cache | wc -l`" = 0 ]]
-    	    then
-                echo "section_traffic=\"y\"" >> $cache
-    	    fi
-
-    	    echo -n "Installing Section-Traffic, please wait...                      "
-	    if [ ! -f "/usr/sbin/mariadbd" ]
-	    then
-	        echo "No MySQL installed, can't install script. Install MySQL and run ./cleanup.sh and this installer again."
-	    else
-		current=`shasum /etc/mysql/mariadb.conf.d/50-server.cnf | cut -d' ' -f1`
-		new=`shasum section-traffic/50-server.cnf | cut -d' ' -f1`
-		if [ "$current" != "$new" ]
-		then
-		    mv  /etc/mysql/mariadb.conf.d/50-server.cnf  /etc/mysql/mariadb.conf.d/50-server.cnf.bak
-		    cp -f section-traffic/50-server.cnf /etc/mysql/mariadb.conf.d/
-		fi
-		if [ ! -d $glroot/backup/mysql ]
-		then
-		    service mysql stop && mysql_install_db >/dev/null 2>&1 && service mysql start
-		fi
-		cd section-traffic
-		cp xferlog-import_3.3.sh $glroot/bin && sed -i "s/changeme/$sitename/" $glroot/bin/xferlog-import_3.3.sh
-		cp section-traffic.sh $glroot/bin && sed -i "s/changeme/$sitename/" $glroot/bin/section-traffic.sh
-		cp section-traffic.tcl $glroot/sitebot/scripts
-		echo "source scripts/section-traffic.tcl" >> $glroot/sitebot/eggdrop.conf
-		sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/section-traffic.tcl
-		cp import.sql import.sql.new && sed -i "s/changeme/$sitename/" import.sql.new
-		./setup-section-traffic.sh create && rm import.sql.new
-		echo "*/30 * * * *            $glroot/bin/xferlog-import_3.3.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		echo "30 0 * * *              $glroot/bin/section-traffic.sh cleanup >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-		cd ..
-            	echo -e "[\e[32mDone\e[0m]"
-	    fi
-            ;;
-    esac
-}
-
 
 ## usercreation
 function usercreation
@@ -1699,18 +1026,18 @@ EOF`
 ## CleanUp / Config
 function cleanup
 {
-    cd ../../
+    cd $rootdir
     if [ ! -d $glroot/backup ]; then mkdir $glroot/backup ; fi
     mv packages/$PK1DIR packages/source/
     mv packages/$PK2DIR packages/source/
     mv packages/$PK3DIR packages/source/
-    if [ "$(cat install.cache | grep eur0presystem | cut -d "=" -f2 | tr -d "\"")" = "y" ]; then mv packages/scripts/eur0-pre-system/foo-tools packages/source/ ; fi
+    if [ "$(cat install.cache | grep eur0presystem | cut -d "=" -f2 | tr -d "\"")" = "y" ]; then mv packages/modules/eur0-pre-system/foo-tools packages/source/ ; fi
     mv $rootdir/.tmp/site/* $glroot/site/
     cp -r packages/source/pzs-ng $glroot/backup
-    cp packages/scripts/extra/pzs-ng-update.sh $glroot/backup 
-    cp packages/scripts/extra/backup.sh $glroot/backup && sed -i "s/changeme/$sitename/" $glroot/backup/backup.sh
+    cp packages/extra/pzs-ng-update.sh $glroot/backup 
+    cp packages/extra/backup.sh $glroot/backup && sed -i "s/changeme/$sitename/" $glroot/backup/backup.sh
     cp $glroot/backup/pzs-ng/sitebot/extra/invite.sh $glroot/bin
-    cp packages/scripts/extra/syscheck.sh $glroot/bin
+    cp packages/extra/syscheck.sh $glroot/bin
     mv -f $rootdir/.tmp/dated.sh $glroot/bin
     
     for sec in `grep section.*dated=\"y\" $cache | sed -e 's/section//' -e 's/dated//' | cut -d '=' -f1`
@@ -1750,9 +1077,9 @@ function cleanup
     cat .tmp/myscripts >> $glroot/sitebot/eggdrop.conf
     rm -rf .tmp >/dev/null 2>&1
     rm -rf $glroot/glftpd-LNX_current
-    rm -f packages/scripts/tur-autonuke/tur-autonuke.conf
-    [ -d /etc/rsyslog.d ] && cp packages/scripts/extra/glftpd.conf /etc/rsyslog.d && service rsyslog restart
-    cp packages/scripts/extra/rescan_fix.sh $glroot/bin
+    rm -f packages/modules/tur-autonuke/tur-autonuke.conf
+    [ -d /etc/rsyslog.d ] && cp packages/extra/glftpd.conf /etc/rsyslog.d && service rsyslog restart
+    cp packages/extra/rescan_fix.sh $glroot/bin
     echo "*/2 * * * *             $glroot/bin/rescan_fix.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
 }
 version
@@ -1770,21 +1097,7 @@ irc
 pzshfile
 pzsbotfile
 pzsng
-presystem
-slvprebw
-ircadmin
-request
-trial
-vacation
-whereami
-precheck
-autonuke
-psxcimdb
-addip
-topstat
-ircnick
-archiver
-section-traffic
+modules
 usercreation
 cleanup
 echo 
