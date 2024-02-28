@@ -71,7 +71,7 @@ dpkg-reconfigure dash
 
 ### Unattended installation
 
-![Screenshot_5](https://github.com/teqnodude/glftpd-installer/assets/36924638/50330ffb-c88e-47e9-8e09-facea6c019a7)
+![Screenshot_5](https://github.com/teqnodude/glftpd-installer/assets/36924638/784c4698-ac20-4210-8581-0f89dac0cbd4)
 ![Screenshot_6](https://github.com/teqnodude/glftpd-installer/assets/36924638/0db1bb75-cdbd-43ea-9586-afceb517e2b3)
 
 ## How to do an Unattended installation
