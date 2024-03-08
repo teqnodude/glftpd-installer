@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #--[ Intro ]----------------------------------------------------#
 # 								#
 # A script that scans releases for the imdb tag created by 	#
@@ -17,8 +17,7 @@ VER=1.0
 #--[ Settings ]-------------------------------------------------#
 
 sections="
-X264-1080
-ARCHIVE/MOVIES/X264-1080
+X264
 "
 
 glroot=/glftpd 			# location of glftpd
@@ -40,11 +39,11 @@ then
 	echo -n "Creating index of missing imdb tags, please wait...                 "
 	for x in `ls /site/$section`
 	do
-	    if [ `ls /site/$section/$x | grep "*IMDB*" | wc -l` = 0 ]
+	    if [ `ls /site/$section/$x | grep "\[IMDB\]=" | wc -l` = 0 ]
 	    then
-		if [ `ls /site/$section/$x | grep "*.nfo" | wc -l` = 1 ]
+		if [ `ls /site/$section/$x | grep ".nfo" | wc -l` = 1 ]
 		then
-		    if [ `cat /site/$section/$x/*.nfo | grep -i "*imdb.com*" | wc -l` = 1 ]
+		    if [ `grep -i "imdb.com" /site/$section/$x/*.nfo | wc -l` = 1 ]
 		    then
 			echo "$x lack an imdb tag, added to index"
 			echo "/site/$section/$x" >> $tmp/$noimdbtag
@@ -62,13 +61,13 @@ then
 	for x in `cat $tmp/$noimdbtag`
 	do
 	    cd $x
-	    nfo=`ls -1 | grep *.nfo`
+	    nfo=`ls -1 | grep .nfo`
 	    [[ 1 -lt "$(echo "$nfo" | wc -l)" ]] && echo "$glroot$x" >> $tmp/$doublenfo
 	    if [ ! -z $nfo ]
 	    then
-		if [ `grep -i "*imdb.com*" $x/$nfo | wc -l` = 0 ]
+		if [ `grep -i "imdb.com" $x/$nfo | wc -l` = 1 ]
 		then
-		    echo "1" > $glroot/ftp-data/logs/psxc-imdb-rescan.tmp
+		    echo "1" > /ftp-data/logs/psxc-imdb-rescan.tmp
 		    /bin/psxc-imdb.sh $x/$nfo
 		fi
 	    fi
