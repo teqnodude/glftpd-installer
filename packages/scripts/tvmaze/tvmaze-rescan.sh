@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.4
+VER=1.5
 #--[ Info ]-----------------------------------------------------#
 #
 # This script comes without any warranty, use it at your own risk.
@@ -9,6 +9,7 @@ VER=1.4
 # creates an .imdb file and tag file in each release with it.
 # 
 # Changelog
+# 2024-03-15 : v1.5 Optimized scanning time when preserving date and time of release
 # 2021-03-25 : v1.4 Code for airdate was not properly set
 # 2021-03-03 : v1.3 Added option for maximum width for plot summary
 #                   and added skip option for releases that already have a .imdb file
@@ -195,7 +196,7 @@ function rescan {
 	    chmod 666 "$1/$rls_name/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
 	    if [ "$preserve" -eq 1 ]
 	    then
-		find $1 -type d -name "$rls_name" -print0 | while read -r -d '' dir; do file="$(find "$dir" -maxdepth 1 -type f  -printf '%T+ %p\n' | sort -r | head -3 | tail -1 | cut -d' ' -f2-)";if [ -n "$file" ]; then touch "$dir" -mr "$file"; fi; done
+		find $1/$rls_name -type d -name "$rls_name" -print0 | while read -r -d '' dir; do file="$(find "$dir" -maxdepth 1 -type f  -printf '%T+ %p\n' | sort -r | head -3 | tail -1 | cut -d' ' -f2-)";if [ -n "$file" ]; then touch "$dir" -mr "$file"; fi; done
 	    fi
 	    i=$(($i + 1))
 	fi
