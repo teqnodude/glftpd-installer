@@ -8,6 +8,7 @@
 
 - Various errors that sadly wasn't showing up in the test environment before the 11.0 push to github
 - imdb-rescan didn't work 
+- Optimized scanning time when preserving date and time of release
 
 ## 11.0 - 2024-02-26
 
