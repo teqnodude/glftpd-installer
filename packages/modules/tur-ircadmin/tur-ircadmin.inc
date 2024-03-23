@@ -22,7 +22,7 @@ case $ask in
             echo 'ircadmin="y"' >> $cache
         fi
 
-        echo -n "Installing Tur-Ircadmin, please wait...                         "
+        echo -n "Installing Tur-Ircadmin, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/tur-ircadmin/tur-ircadmin.sh $glroot/bin
         cp $rootdir/packages/modules/tur-ircadmin/tur-ircadmin.tcl $glroot/sitebot/scripts
         touch $glroot/ftp-data/logs/tur-ircadmin.log

@@ -3,6 +3,7 @@
 ### Updated
 
 - Added a warning message in cleanup script and the option to abort to prevent people from wiping their sites by mistake
+- Optimization of code in installer
 
 ### Fixes
 

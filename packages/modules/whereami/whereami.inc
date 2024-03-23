@@ -22,7 +22,7 @@ case $ask in
             echo 'whereami="y"' >> $cache
         fi
 
-        echo -n "Installing Whereami, please wait...                             "
+        echo -n "Installing Whereami, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/whereami/whereami.sh $glroot/bin
         cp $rootdir/packages/modules/whereami/whereami.tcl $glroot/sitebot/scripts
         echo "source scripts/whereami.tcl" >> $glroot/sitebot/eggdrop.conf

@@ -22,7 +22,7 @@ case $ask in
             echo 'precheck="y"' >> $cache
         fi
 
-        echo -n "Installing Precheck, please wait...                             "
+        echo -n "Installing Precheck, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/precheck/precheck*.sh $glroot/bin
         cp $rootdir/packages/modules/precheck/precheck.tcl $glroot/sitebot/scripts
         echo "source scripts/precheck.tcl" >> $glroot/sitebot/eggdrop.conf

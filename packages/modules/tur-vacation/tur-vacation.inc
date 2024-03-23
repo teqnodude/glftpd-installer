@@ -22,7 +22,7 @@ case $ask in
             echo 'vacation="y"' >> $cache
         fi
 
-        echo -n "Installing Tur-Vacation, please wait...                         "
+        echo -n "Installing Tur-Vacation, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/tur-vacation/tur-vacation.sh $glroot/bin
         touch $glroot/etc/vacation.index ; chmod 666 $glroot/etc/vacation.index
         touch $glroot/etc/quota_vacation.db ; chmod 666 $glroot/etc/quota_vacation.db

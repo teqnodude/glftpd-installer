@@ -22,7 +22,7 @@ case $ask in
             echo 'ircnick="y"' >> $cache
         fi
 
-        echo -n "Installing Ircnick, please wait...                              "
+        echo -n "Installing Ircnick, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/ircnick/*.sh $glroot/bin
         cp $rootdir/packages/modules/ircnick/*.tcl $glroot/sitebot/scripts
         sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/ircnick.tcl

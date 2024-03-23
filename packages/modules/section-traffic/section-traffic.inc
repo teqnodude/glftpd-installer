@@ -22,7 +22,7 @@ case $ask in
             echo 'section_traffic="y"' >> $cache
         fi
 
-        echo -n "Installing Section-Traffic, please wait...                      "
+        echo -n "Installing Section-Traffic, please wait..." | awk '{printf("%-64s",$0)}'
         if [ ! -f "/usr/sbin/mariadbd" ]
         then
             echo "No MySQL installed, can't install script. Install MySQL and run ./cleanup.sh and this installer again."

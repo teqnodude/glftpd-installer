@@ -22,7 +22,7 @@ case $ask in
             echo 'top="y"' >> $cache
         fi
 
-        echo -n "Installing Top, please wait...                                  "
+        echo -n "Installing Top, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/top/top.tcl $glroot/sitebot/scripts
         cp $rootdir/packages/modules/top/top.sh $glroot/bin
         echo "source scripts/top.tcl" >> $glroot/sitebot/eggdrop.conf

@@ -22,7 +22,7 @@ case $ask in
             echo 'trial="y"' >> $cache
         fi
 
-        echo -n "Installing Tur-Trial3, please wait...                           "
+        echo -n "Installing Tur-Trial3, please wait..." | awk '{printf("%-64s",$0)}'
         if [ ! -f "/usr/sbin/mariadbd" ]
         then
             echo "No MySQL installed, can't install script. Install MySQL and run ./cleanup.sh and this installer again."

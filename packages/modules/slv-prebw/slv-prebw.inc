@@ -22,7 +22,7 @@ case $ask in
             echo 'slvprebw="y"' >> $cache
         fi
 
-        echo -n "Installing slv-PreBW, please wait...                            "
+        echo -n "Installing slv-PreBW, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/slv-prebw/slv-prebw.sh $glroot/bin
         cp $rootdir/packages/modules/slv-prebw/PreBW.tcl $glroot/sitebot/scripts/pzs-ng/plugins
         echo "source scripts/pzs-ng/plugins/PreBW.tcl" >> $glroot/sitebot/eggdrop.conf

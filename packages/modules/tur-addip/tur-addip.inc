@@ -22,7 +22,7 @@ case $ask in
             echo 'addip="y"' >> $cache
         fi
 
-        echo -n "Installing Tur-Addip, please wait...                            "
+        echo -n "Installing Tur-Addip, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/tur-addip/tur-addip.tcl $glroot/sitebot/scripts
         cp $rootdir/packages/modules/tur-addip/tur-addip.sh $glroot/bin
         echo "source scripts/tur-addip.tcl" >> $glroot/sitebot/eggdrop.conf

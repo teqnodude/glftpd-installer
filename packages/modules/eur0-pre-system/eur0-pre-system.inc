@@ -22,7 +22,7 @@ case $ask in
             echo 'eur0presystem="y"' >> $cache
         fi
 
-        echo -n "Installing Eur0-pre-system + foo-pre, please wait...            "
+        echo -n "Installing Eur0-pre-system + foo-pre, please wait..." | awk '{printf("%-64s",$0)}'
         cd packages/modules/eur0-pre-system
         make  >/dev/null 2>&1
         make install  >/dev/null 2>&1

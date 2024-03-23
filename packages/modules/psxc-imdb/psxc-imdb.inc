@@ -29,7 +29,7 @@ case $ask in
             echo -n "IMDB announce channels, default $announcechannels : " ; read imdbchan
         fi
 
-        echo -n "Installing PSXC-IMDB, please wait...                            "
+        echo -n "Installing PSXC-IMDB, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/psxc-imdb/extras/* $glroot/bin
         cp $rootdir/packages/modules/psxc-imdb/addons/* $glroot/bin
         cp $rootdir/packages/modules/psxc-imdb/main/psxc-imdb.sh $glroot/bin

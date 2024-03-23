@@ -22,7 +22,7 @@ case $ask in
             echo 'archiver="y"' >> $cache
         fi
 
-        echo -n "Installing Tur-Archiver, please wait...                         "
+        echo -n "Installing Tur-Archiver, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/tur-archiver/tur-archiver.sh $glroot/bin
         [ ! -f $glroot/bin/file_date ] && gcc -o $glroot/bin/file_date $rootdir/packages/modules/tur-archiver/file_date.c
         echo "0 0 * * *               $glroot/bin/tur-archiver.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root

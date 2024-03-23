@@ -107,7 +107,7 @@ function port
 
 function version
 {
-    echo -n "Downloading relevant packages, please wait...                   "
+    echo -n "Downloading relevant packages, please wait..." | awk '{printf("%-64s",$0)}'
     latest=`curl -s https://glftpd.io | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1`
     version=`lscpu | grep Architecture | awk '{print $2}'`
     case $version in
@@ -581,7 +581,7 @@ function glftpd
     packages/scripts/tur-rules/rulesgen.sh MISC
     cd packages
     echo
-    echo -n "Installing glftpd, please wait...                               "
+    echo -n "Installing glftpd, please wait..." | awk '{printf("%-64s",$0)}'
     echo "####### Here starts glFTPd scripts #######" >> /var/spool/cron/crontabs/root
     cd $PK1DIR && sed "s/changeme/$port/" ../core/installgl.sh.org > installgl.sh && chmod +x installgl.sh && ./installgl.sh >/dev/null 2>&1
     >$glroot/ftp-data/misc/welcome.msg
@@ -723,7 +723,7 @@ function eggdrop
     then
     	echo
     fi
-    echo -n "Installing eggdrop, please wait...                              "
+    echo -n "Installing eggdrop, please wait..." | awk '{printf("%-64s",$0)}'
     cd ../$PK3DIR ; ./configure --prefix="$glroot/sitebot" >/dev/null 2>&1 && make config >/dev/null 2>&1  && make >/dev/null 2>&1 && make install >/dev/null 2>&1
     cd ../core
     cat egghead > eggdrop.conf
@@ -890,7 +890,7 @@ function pzsng
     then
     	echo
     fi
-    echo -n "Installing pzs-ng, please wait...                               "
+    echo -n "Installing pzs-ng, please wait..." | awk '{printf("%-64s",$0)}'
     cd packages/pzs-ng
     ./configure >/dev/null 2>&1 ; make >/dev/null 2>&1 ; make install >/dev/null 2>&1
     $glroot/libcopy.sh >/dev/null 2>&1

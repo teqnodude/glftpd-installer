@@ -22,7 +22,7 @@ case $ask in
             echo 'autonuke="y"' >> $cache
         fi
 
-        echo -n "Installing Tur-Autonuke, please wait...                         "
+        echo -n "Installing Tur-Autonuke, please wait..." | awk '{printf("%-64s",$0)}'
         mv $rootdir/packages/modules/tur-autonuke/tur-autonuke.conf $glroot/bin
         cp $rootdir/packages/modules/tur-autonuke/tur-autonuke.sh $glroot/bin
         echo "*/10 * * * *          $glroot/bin/tur-autonuke.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root

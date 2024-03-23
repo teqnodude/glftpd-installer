@@ -22,7 +22,7 @@ case $ask in
             echo 'request="y"' >> $cache
         fi
 
-        echo -n "Installing Tur-Request, please wait...                          "
+        echo -n "Installing Tur-Request, please wait..." | awk '{printf("%-64s",$0)}'
         cp $rootdir/packages/modules/tur-request/tur-request.sh $glroot/bin
         cp $rootdir/packages/modules/tur-request/*.tcl $glroot/sitebot/scripts
 	[ ! -f $glroot/bin/file_date ] && gcc -o $glroot/bin/file_date $rootdir/packages/modules/tur-request/file_date.c
