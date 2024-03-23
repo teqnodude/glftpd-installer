@@ -101,6 +101,9 @@ custom-rules            *
 site_cmd RESCAN         EXEC	/bin/rescan
 custom-rescan           *
 
+site_cmd AUDIOSORT      EXEC    /bin/audiosort
+custom-audiosort        *
+
 site_cmd INVITE         EXEC	/bin/invite.sh
 custom-invite           *
 
