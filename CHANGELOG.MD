@@ -10,6 +10,7 @@
 - Various errors that sadly wasn't showing up in the test environment before the 11.0 push to github
 - imdb-rescan didn't work 
 - Optimized scanning time when preserving date and time of release in tvmaze-rescan
+- pzs-ng didn't compile properly due to bad coding in installer
 
 ## 11.0 - 2024-02-26
 

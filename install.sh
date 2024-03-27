@@ -549,7 +549,6 @@ function writ
 	sed -i "s/sections=\"/sections=\"\n$section:^0$rulecount./" packages/scripts/tur-rules/tur-rules.sh
     fi
     rulecount=$((rulecount+1))
-    echo "/site/REQUESTS/" >> $rootdir/.tmp/.nodatepath
 }
 
 ## GLFTPD
@@ -849,6 +848,7 @@ function pzshfile
 {
     cd ../../
     cat packages/core/pzshead > zsconfig.h
+    echo "/site/REQUESTS/" >> $rootdir/.tmp/.nodatepath
     [ -f "$rootdir/.tmp/.path" ] && paths="`cat $rootdir/.tmp/.path`"
     [ -f "$rootdir/.tmp/.cleanup_dated" ] && cleanup_dated=`cat $rootdir/.tmp/.cleanup_dated | sed 's/ /\n/g' | sort | xargs`
     nodatepaths="`cat $rootdir/.tmp/.nodatepath`"
