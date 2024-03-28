@@ -8,7 +8,7 @@ set mainchan                		"channame"
 set invitechan              		"channame"
 set staffchan               		"ochan"
 set glroot                  		"/glftpd"
-set announce(THEMEFILE)     		"themes/glftpd.installer.theme"
+set announce(THEMEFILE)     		"themes/glftpd-installer.theme"
 
 ######################
 # Bins, Logs & Paths #
