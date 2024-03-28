@@ -899,7 +899,7 @@ function pzsng
     cp -r sitebot/modules $glroot/sitebot/scripts/pzs-ng/
     cp -r sitebot/plugins $glroot/sitebot/scripts/pzs-ng/
     cp -r sitebot/themes $glroot/sitebot/scripts/pzs-ng/
-    cp ../core/glftpd.installer.theme $glroot/sitebot/scripts/pzs-ng/themes
+    cp ../core/glftpd-installer.theme $glroot/sitebot/scripts/pzs-ng/themes
     cp ../core/ngBot.vars $glroot/sitebot/scripts/pzs-ng
     cp -f ../core/sitewho.conf $glroot/bin
     rm -f $glroot/sitebot/scripts/pzs-ng/ngBot.conf.dist
