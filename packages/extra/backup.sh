@@ -13,7 +13,7 @@ VER=1.1
 # This script automatically downloads the appropiate 32/64 bit 	#
 # version of glftpd so there is no need to manually install 	#
 # glftpd before running this script. 				#
-								#
+#								#
 #--[ Instructions ]---------------------------------------------#
 #								#
 # Put this in crontab: 						#
