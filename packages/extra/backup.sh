@@ -16,14 +16,16 @@ VER=1.1
 								#
 #--[ Instructions ]---------------------------------------------#
 #								#
-# Put this in crontab: 57 23 * * * /glftpd/backup/backup.sh if	#
-# you want an automatic backup. This generates backups that	# 
-# stretches back one month. To restore a backup you need to put #	
-# the backup file in the same dir as this script and then run 	#
+# Put this in crontab: 						#
+# 57 23 * * * /glftpd/backup/backup.sh backup			#
+# if you want an automatic backup. To restore a backup you 	#
+# need to put the backup file in the same dir as this script 	#
+# and then run:							#
 # ./backup.sh restore						#
 #								#
-# If for any reason it crashes during restoration, run 		#
-# ./backup.sh cleanup and try to restore the backup once again.	#
+# If for any reason it crashes during restoration, run:		#
+# ./backup.sh cleanup						#
+# and try to restore the backup once again.			#
 #								#	
 #----[ Settings ]------------------------------------------------
 
