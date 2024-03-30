@@ -81,15 +81,15 @@ case $1 in
 	echo -e "[\e[32mDone\e[0m]"
 	;;
     restore)
-	if [ `ls | backup*.gz | wc -l` -eq 0 ]
+	if [ `ls backup-*.gz | wc -l` -eq 0 ]
 	then
 	    echo "No backup file found in current dir, please move it to current dir and try again."
 	    exit 0
 	fi
-	if [ `ls backup*.gz | wc -l` -gt 1 ]
+	if [ `ls backup-*.gz | wc -l` -gt 1 ]
 	then
 	    echo "More than one backup file present, ensure that only the relevant backup is present in current dir."
-	    ls backup*.gz
+	    ls backup-*.gz
 	    exit 0 
 	fi
 	if [ ! -f "/usr/sbin/mariadbd" ]
