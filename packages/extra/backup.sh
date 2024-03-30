@@ -26,7 +26,7 @@ VER=1.1
 # If for any reason it crashes during restoration, run:		#
 # ./backup.sh cleanup						#
 # and try to restore the backup once again.			#
-#								#	
+#								#
 #----[ Settings ]------------------------------------------------
 
 glroot=/glftpd
