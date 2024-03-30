@@ -5,6 +5,7 @@
 - Added a warning message in cleanup script and the option to abort to prevent people from wiping their sites by mistake
 - Optimization of code in installer
 - Renamed glftpd.installer.theme to glftpd-installer.theme
+- Optimized code in backup.sh and introduced a warning message before doing a cleanup to prevent the wiping of wanted data
 
 ### Fixes
 
@@ -12,6 +13,7 @@
 - imdb-rescan didn't work 
 - Optimized scanning time when preserving date and time of release in tvmaze-rescan
 - pzs-ng didn't compile properly due to bad coding in installer
+- the restore function didn't work properly in backup.sh
 
 ## 11.0 - 2024-02-26
 

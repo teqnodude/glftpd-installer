@@ -62,7 +62,7 @@ curdir=`pwd`
 case $1 in 
     backup)
 	echo
-	echo -n "Backing up, please wait...                 "
+	echo "Backing up, please wait..." | awk '{printf("%-50s",$0)}'
 	if [ -f "/usr/sbin/mariadbd" ]
 	then
 	    mysqldump -u trial -p$pass --databases $db1 > $db1.sql
@@ -86,10 +86,10 @@ case $1 in
 	    echo "No backup file found in current dir, please move it to current dir and try again."
 	    exit 0
 	fi
-	if [ `ls *.gz | wc -l` -gt 1 ]
+	if [ `ls backup*.gz | wc -l` -gt 1 ]
 	then
 	    echo "More than one backup file present, ensure that only the relevant backup is present in current dir."
-	    ls *.gz
+	    ls backup*.gz
 	    exit 0 
 	fi
 	if [ ! -f "/usr/sbin/mariadbd" ]
@@ -105,32 +105,27 @@ case $1 in
 		
 	fi
 	restore="$dstdir/restore"
-	echo -n "Downloading glFTPD, please wait...         "
+	echo "Downloading glFTPd, please wait..." | awk '{printf("%-50s",$0)}'
 	[ ! -d "$restore" ] && mkdir -p $restore
-        latest=`lynx --dump https://glftpd.io | grep "latest stable version" | cut -d ":" -f2 | sed -e 's/20[1-9][0-9].*//' -e 's/^  //' -e 's/^v//' | tr -d "[:space:]"`
-	version=`lscpu | grep Architecture | tr -s ' ' | cut -d ' ' -f2`
-	case $version in
-    	    i686)
-        	version="86"
-        	wget -P $restore -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep -v "BETA" | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz
-        	PK="`ls $restore | grep glftpd-LNX | grep x$version`"
-		tar -xf $restore/$PK -C $restore
-        	PKDIR="`echo $PK | sed 's|.tgz||'`"
-        	;;
+        latest=`curl -s https://glftpd.io | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1`
+        version=`lscpu | grep Architecture | awk '{print $2}'`
+        case $version in
+            i686)
+                version="32"
+                latest=`echo $latest | sed 's/x64/x86/'`
+                ;;
             x86_64)
-		version="64"
-        	wget -P $restore -q https://glftpd.io/files/`wget -q -O - https://glftpd.io/files/ | grep -v "BETA" | grep "LNX-$latest.*x$version.*" | grep -o -P '(?=glftpd).*(?=.tgz">)' | head -1`.tgz
-        	PK="`ls $restore | grep glftpd-LNX | grep x$version`"
-		tar -xf $restore/$PK -C $restore
-        	PKDIR="`echo $PK | sed 's|.tgz||'`"
-        	;;
+                version="64"
         esac
+        wget -P $restore -q https://glftpd.io/files/$latest
+        PK="`ls $restore | grep glftpd-LNX | grep x$version`"
+        tar -xf $restore/$PK -C $restore
+        PKDIR="`echo $PK | sed 's|.tgz||'`"
 
 	echo -e "[\e[32mDone\e[0m]"
-	echo
-	echo -n "Setting up glFTPD, please wait...          "
+	echo "Setting up glFTPd, please wait..." | awk '{printf("%-50s",$0)}'
         CHKGR=`grep -w "glftpd" /etc/group | cut -d ":" -f1`
-	CHKUS=`grep -w "sitebot" /etc/passwd | cut -d ":" -f1`
+        CHKUS=`grep -w "sitebot" /etc/passwd | cut -d ":" -f1`
 	if [ "$CHKGR" != "glftpd" ]
         then
 	    groupadd glftpd -g 199
@@ -148,11 +143,10 @@ case $1 in
 	cp -fr $restore/$PKDIR/gcp $glroot
 
 	echo -e "[\e[32mDone\e[0m]"
-	echo
-	echo -n "Restoring backup, please wait...           "
+	echo "Restoring backup, please wait..." | awk '{printf("%-50s",$0)}'
 	mkdir $restore/bup
 	mkdir $glroot/site
-	tar -xf *.gz -C $restore/bup
+	tar -xf backup-*.gz -C $restore/bup
 	cp $restore/bup/etc/rsyslog.d/glftpd.conf /etc/rsyslog.d && service rsyslog restart
 	cp -fr $restore/bup/glftpd/backup $glroot
         cp -fr $restore/bup/glftpd/bin $glroot
@@ -169,6 +163,7 @@ case $1 in
         mknod $glroot/dev/urandom c 1 9 ; chmod 666 $glroot/dev/urandom
 	mkdir -m777 $glroot/tmp
 	chmod 777 $glroot/ftp-data/logs
+	[ -f $glroot/bin/psxc-imdb-sanity.sh ] && $glroot/bin/psxc-imdb-sanity.sh >/dev/null 2>&1
         chmod 666 $glroot/ftp-data/logs/*
 	if [ -f "/usr/sbin/mariadbd" ]
 	then
@@ -215,40 +210,48 @@ case $1 in
 	    echo "You have mounted dirs in the path of /glftpd, unmount all including /glftpd and try again."
 	    exit 1
 	fi
-	echo -n "Starting cleanup, please wait...           "
-	rm -rf /glftpd
-	rm -f /etc/glftpd.conf
-	rm -rf /var/spool/mail/sitebot
-	rm -f /etc/rsyslog.d/glftpd.conf
-	killall sitebot > /dev/null 2>&1
-	sleep 3
-	userdel sitebot > /dev/null 2>&1
-	groupdel glftpd > /dev/null 2>&1
-	sed -i /glftpd/d /etc/services
+	echo -e "This will remove everything under \e[91m/glftpd\e[0m including \e[91m/glftpd/site\e[0m and undo system changes made by the installer"
+	echo
+	echo -n "Are you sure you want to proceed? [Y]es [N]o, default N : " ; read cleanup
 
-	if [ -f "/etc/inetd.conf" ]
-	then
-            sed -i /glftpd/d /etc/inetd.conf
-	    killall -HUP inetd
-	fi
-
-	sed -i /glftpd/Id /var/spool/cron/crontabs/root
-	rm -f /var/spool/cron/crontabs/sitebot
-
-	if [ -f "/etc/systemd/system/glftpd.socket" ]
-	then
-    	    systemctl stop glftpd.socket >/dev/null 2>&1
-    	    systemctl disable glftpd.socket >/dev/null 2>&1
-    	    rm -f /etc/systemd/system/glftpd*
-    	    systemctl daemon-reload
-    	    systemctl reset-failed
-	fi
-	echo -e "[\e[32mDone\e[0m]"
+        case $cleanup in
+            [Yy])
+		echo "Starting cleanup, please wait..." | awk '{printf("%-50s",$0)}'
+		rm -rf /glftpd
+		rm -f /etc/glftpd.conf
+		rm -rf /var/spool/mail/sitebot
+		rm -f /etc/rsyslog.d/glftpd.conf
+		killall sitebot > /dev/null 2>&1
+		sleep 3
+		userdel sitebot > /dev/null 2>&1
+		groupdel glftpd > /dev/null 2>&1
+		sed -i /glftpd/d /etc/services
+	
+		if [ -f "/etc/inetd.conf" ]
+		then
+		    sed -i /glftpd/d /etc/inetd.conf
+		    killall -HUP inetd
+		fi
+	
+		sed -i /glftpd/Id /var/spool/cron/crontabs/root
+		rm -f /var/spool/cron/crontabs/sitebot
+	
+		if [ -f "/etc/systemd/system/glftpd.socket" ]
+		then
+		    systemctl stop glftpd.socket >/dev/null 2>&1
+		    systemctl disable glftpd.socket >/dev/null 2>&1
+		    rm -f /etc/systemd/system/glftpd*
+		    systemctl daemon-reload
+		    systemctl reset-failed
+		fi
+		echo -e "[\e[32mDone\e[0m]"
+		;;
+	esac
 	;;
     *)
-	echo "./backup.sh backup - To create a backup of glFTPD settings, users and sitebot including system settings"
-	echo "./backup.sh restore - To restore a backup of glFTPD settings, users and sitebot including system settings"
-	echo "./backup.sh cleanup - To cleanup all traces related to glFTPD"
+	echo "./backup.sh backup - To create a backup of glFTPd settings, users and sitebot including system settings"
+	echo "./backup.sh restore - To restore a backup of glFTPd settings, users and sitebot including system settings"
+	echo "./backup.sh cleanup - To cleanup all traces related to glFTPd"
 	;;
 esac
 
