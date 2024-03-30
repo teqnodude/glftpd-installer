@@ -8,7 +8,7 @@ VER=1.1
 # scripts, settings, users and system settings related to 	#
 # glFTPd. For this to work as intended you will need to ensure 	#
 # that the system meets the requirements listed at: 		#
-# https://github.com/teqnodude/glftpd-installers 		#
+# https://github.com/teqnodude/glftpd-installer 		#
 # 								#
 # This script automatically downloads the appropiate 32/64 bit 	#
 # version of glftpd so there is no need to manually install 	#
