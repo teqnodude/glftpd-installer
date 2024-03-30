@@ -6,7 +6,7 @@ VER=1.0
 # setup made by glftpd-installer and does not work for other 	#
 # types of sites. This script takes a backup of all binaries, 	#
 # scripts, settings, users and system settings related to 	#
-# glFTPD. For this to work as intended you will need to ensure 	#
+# glFTPd. For this to work as intended you will need to ensure 	#
 # that the system meets the requirements listed at: 		#
 # https://github.com/teqnodude/glftpd-installers 		#
 # 								#
