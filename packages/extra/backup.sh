@@ -81,7 +81,7 @@ case $1 in
 	echo -e "[\e[32mDone\e[0m]"
 	;;
     restore)
-	if [ `ls | grep gz | grep backup | wc -l` -eq 0 ]
+	if [ `ls | backup*.gz | wc -l` -eq 0 ]
 	then
 	    echo "No backup file found in current dir, please move it to current dir and try again."
 	    exit 0
