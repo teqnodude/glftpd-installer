@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #--[ Intro ]----------------------------------------------------#
 # 								#
 # A backup/restore script that is specifically tailored to the 	#
