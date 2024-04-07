@@ -15,7 +15,8 @@ NODOUBLESFV="FALSE"
 NOSAMENAME="TRUE"
 NODOUBLENFO="TRUE"
 NOFTPRUSHNFOS="TRUE"
-DENY_SFV_IN_SAMPLE_DIRS="TRUE"
+DENY_SFV_NFO_IN_SAMPLE_DIRS="TRUE"
+DENY_IMAGE_IN_SAMPLE_DIRS="TRUE"
 
 DENY_WHEN_NO_SFV="\.r[a0-9][r0-9]$ \.0[0-9][0-9]$ \.mp[2|3]$ \.flac$"
 
@@ -147,13 +148,16 @@ if [ "$NODOUBLESFV" = "TRUE" ]; then
   fi
 fi
 
-if [ "$DENY_SFV_IN_SAMPLE_DIRS" = "TRUE" ]; then
+if [ "$DENY_SFV_NFO_IN_SAMPLE_DIRS" = "TRUE" ]; then
   if [ "`echo "$PWD" | egrep -i "/sample$|/covers$|/proof$"`" ]; then
     if [ "`echo "$1" | egrep -i "\.sfv$|\.nfo$"`" ]; then
       echo -e "$ERROR7\n"
       exit 2
     fi
   fi
+fi
+
+if [ "$DENY_IMAGE_IN_SAMPLE_DIRS" = "TRUE" ]; the
   if [ "`echo "$PWD" | egrep -i "/sample$"`" ]; then
     if [ "`echo "$1" | egrep -i "\.jpg$|\.png$"`" ]; then
       echo -e "$ERROR9\n"
