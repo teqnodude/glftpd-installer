@@ -31,7 +31,7 @@
 #define remove_dot_files_on_delete      	TRUE
     
 #define deny_double_sfv                 	TRUE
-#define force_sfv_first                 	TRUE
+#define force_sfv_first                 	FALSE
     
 #define audio_genre_path                	"/site/music.by.genre/"
 #define audio_artist_path               	"/site/music.by.artist/"
