@@ -1,8 +1,8 @@
 #!/bin/bash
 VER=1.5
 
-VERIFY_RAR_WITH_SFV="TRUE"
-VERIFY_MP3_WITH_SFV="TRUE"
+VERIFY_RAR_WITH_SFV="FALSE"
+VERIFY_MP3_WITH_SFV="FALSE"
 VERIFY_ZIP_WITH_CURRENT_DISKS="TRUE"
 
 DONT_ALLOW_DIZ="TRUE"
@@ -22,7 +22,7 @@ DENY_WHEN_NO_SFV="\.r[a0-9][r0-9]$ \.0[0-9][0-9]$ \.mp[2|3]$ \.flac$"
 #GLLOG="/ftp-data/logs/glftpd.log"
 GLLOG=""
 
-EXCLUDEDDIRS="/REQUESTS /ARCHIVE /PRE /SPEEDTEST"
+EXCLUDEDDIRS="/REQUESTS /PRE /SPEEDTEST"
 
 ERROR1="This file does not match any allowed file extentions. Skipping."
 ERROR2="This filename is BANNED. Add it to your skiplists. Wanker."
@@ -30,9 +30,9 @@ ERROR3="There is already a .sfv in this dir. You must delete that one first."
 ERROR4="This file is already there with a different case."
 ERROR5="There is already a .nfo in this dir. You must delete that one first."
 ERROR6="This nfo file format is not allowed ($1)"
-ERROR7="You can not upload a .sfv or .nfo file into a Sample, Covers or Proof dir."
+ERROR7="You can't upload a .sfv or .nfo file into a Sample, Covers or Proof dir."
 ERROR8="You must upload the .sfv file first."
-
+ERROR9="You can't upload a .jpg into a Sample dir."
 
 #--[ Script Start ]--------------------------------#
 
@@ -149,22 +149,28 @@ fi
 
 if [ "$DENY_SFV_IN_SAMPLE_DIRS" = "TRUE" ]; then
   if [ "`echo "$PWD" | egrep -i "/sample$|/covers$|/proof$"`" ]; then
-    if [ "`echo "$1" | grep "\.[sS][fF][vV]$\|\.[nN][fF][oO]"`" ]; then
+    if [ "`echo "$1" | egrep -i "\.sfv$|\.nfo"`" ]; then
       echo -e "$ERROR7\n"
+      exit 2
+    fi
+  fi
+  if [ "`echo "$PWD" | egrep -i "/sample$"`" ]; then
+    if [ "`echo "$1" | grep -i "\.jpg$"`" ]; then
+      echo -e "$ERROR9\n"
       exit 2
     fi
   fi
 fi
 
 if [ "$NODOUBLENFO" = "TRUE" ]; then
-  if [ "`echo "$1" | grep "\.[nN][fF][oO]$"`" ]; then
+  if [ "`echo "$1" | grep -i "\.nfo$"`" ]; then
     if [ -e $2/*.[nN][fF][oO] ]; then
       echo -e "$ERROR5\n"
       if [ "$GLLOG" ]; then
         DIR=`basename $2`
 
         # $1 = Filename. $2 = Full path. $DIR = Only the dir were currently in. $USER = duh
-        echo `date "+%a %b %e %T %Y"` TURGEN: \"[WANKER] - $USER tried to upload $1 into $DIR where there already is a nfo!\" >> $GLLOG
+        echo `date "+%a %b %e %T %Y"` TURGEN: \"^B[WANKER] - $USER^B tried to upload ^B$1^B into ^_$DIR^_ where there already is a nfo!\" >> $GLLOG
 
       fi
       exit 2
@@ -173,10 +179,10 @@ if [ "$NODOUBLENFO" = "TRUE" ]; then
 fi
 
 if [ "$NOFTPRUSHNFOS" = "TRUE" ]; then
-  if [ "`echo "$1" | grep "\.[nN][fF][oO]$"`" ]; then
-    if [ "`echo "$1" | grep "([0-9].*)\.[nN][fF][oO]$"`" ]; then
+  if [ "`echo "$1" | grep -i "\.nfo$"`" ]; then
+    if [ "`echo "$1" | grep -i "([0-9].*)\.nfo$"`" ]; then
       echo -e "$ERROR6\n"
-      exit 2      
+      exit 2
     fi
   fi
 fi
