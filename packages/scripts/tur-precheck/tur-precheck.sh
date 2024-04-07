@@ -157,7 +157,7 @@ if [ "$DENY_SFV_NFO_IN_SAMPLE_DIRS" = "TRUE" ]; then
   fi
 fi
 
-if [ "$DENY_IMAGE_IN_SAMPLE_DIRS" = "TRUE" ]; the
+if [ "$DENY_IMAGE_IN_SAMPLE_DIRS" = "TRUE" ]; then
   if [ "`echo "$PWD" | egrep -i "/sample$"`" ]; then
     if [ "`echo "$1" | egrep -i "\.jpg$|\.png$"`" ]; then
       echo -e "$ERROR9\n"
