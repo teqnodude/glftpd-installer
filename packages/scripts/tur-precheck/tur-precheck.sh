@@ -149,13 +149,13 @@ fi
 
 if [ "$DENY_SFV_IN_SAMPLE_DIRS" = "TRUE" ]; then
   if [ "`echo "$PWD" | egrep -i "/sample$|/covers$|/proof$"`" ]; then
-    if [ "`echo "$1" | egrep -i "\.sfv$|\.nfo"`" ]; then
+    if [ "`echo "$1" | egrep -i "\.sfv$|\.nfo$"`" ]; then
       echo -e "$ERROR7\n"
       exit 2
     fi
   fi
   if [ "`echo "$PWD" | egrep -i "/sample$"`" ]; then
-    if [ "`echo "$1" | grep -i "\.jpg$"`" ]; then
+    if [ "`echo "$1" | egrep -i "\.jpg$|\.png$"`" ]; then
       echo -e "$ERROR9\n"
       exit 2
     fi
