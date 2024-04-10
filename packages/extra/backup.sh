@@ -166,6 +166,7 @@ case $1 in
 	mkdir -m777 $glroot/tmp
 	chmod 777 $glroot/ftp-data/logs
 	[ -f $glroot/bin/psxc-imdb-sanity.sh ] && $glroot/bin/psxc-imdb-sanity.sh >/dev/null 2>&1 ; touch $glroot/ftp-data/logs/psxc-moviedata.log
+	[ -f $glroot/bin/tvmaze-nuker.sh ] && $glroot/bin/tvmaze-nuker.sh sanity >/dev/null 2>&1
         chmod 666 $glroot/ftp-data/logs/*
 	if [ -f "/usr/sbin/mariadbd" ]
 	then
