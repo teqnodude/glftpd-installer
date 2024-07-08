@@ -10,7 +10,8 @@ VER=1.1
 #                                                               #
 #--[ Settings ]-------------------------------------------------#
 
-logfile=/glftpd/ftp-data/logs/glftpd.log
+glroot=/glftpd
+logfile=$glroot/ftp-data/logs/glftpd.log
 
 #--[ Script Start ]---------------------------------------------#
 
