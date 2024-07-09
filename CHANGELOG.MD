@@ -8,6 +8,7 @@
 - Optimized code in backup.sh and introduced a warning message before doing a cleanup to prevent the wiping of wanted data
 - Removed the requirement to upload .sfv first in tur-precheck.sh and in zsconfig.h for pzs-ng 
 - Disabled the removal of unfilled requests to promote the filling of partly filled requests
+- Added a notice in section-manager for adding/removing rules in tur-rules and site.rules after add/remove of section
 
 ### Fixes
 
