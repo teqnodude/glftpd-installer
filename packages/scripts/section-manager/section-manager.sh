@@ -375,8 +375,18 @@ turlastul
 psxcimdb
 dated
 echo
-echo -e "\e[31mBe sure to rehash the bot or the updated settings will not take effect\e[0m"
+case $action in
+    [Rr])
+        [ -f "$glroot/bin/tur-rules.sh" ] && echo -e "\e[31mBe sure to remove rules for section $section in $glroot/bin/tur-rules.sh and $glroot/ftp-data/misc/site.rules\e[0m"
+        ;;
+    *)
+        [ -f "$glroot/bin/tur-rules.sh" ] && echo -e "\e[31mBe sure to add rules for section $section in $glroot/bin/tur-rules.sh and $glroot/ftp-data/misc/site.rules\e[0m"
+        ;;
+esac
 echo
+echo -e "\e[31mPlease rehash the bot or the updated settings will not take effect\e[0m"
+echo
+
 
 [ `ls /glftpd/site | egrep -iv "today" | egrep -i "0DAY|EBOOKS|FLAC|MP3|XXX-PAYSITE" | wc -l` = 0 ] && sed -i /dated.sh/d /var/spool/cron/crontabs/root
 if [ `ls /glftpd/site | egrep -iv "today" | egrep -i "0DAY|EBOOKS|FLAC|MP3|XXX-PAYSITE" | wc -l` -ge 1 ]
