@@ -9,7 +9,7 @@ VER=1.1
 #                                                               #
 #-[ Install ]---------------------------------------------------#
 #                                                               #
-# Copy this script to /glftpd/bin and chmod it 755. Go through  #
+# Copy this script to $GLROOT/bin and chmod it 755. Go through  #
 # the settings and ensure they are correct. If you change       #
 # trigger then ensure that it is the same as in tcl script. To  #
 # ensure that stats are up to date you have to run the import   #
@@ -18,12 +18,12 @@ VER=1.1
 # every 30 min in crontab and run a daily cleanup to ensure db  #
 # only has the releases that are on site. Put these in crontab. #
 #                                                               #
-# */30 * * * *    /glftpd/bin/xferlog-import_3.3.sh             #
-# 30 0 * * *      /glftpd/bin/section-traffic.sh cleanup        #
+# */30 * * * *    $GLROOT/bin/xferlog-import_3.3.sh             #
+# 30 0 * * *      $GLROOT/bin/section-traffic.sh cleanup        #
 #                                                               #
 #--[ Settings ]-------------------------------------------------#
 
-GLROOT=/glftpd
+GLROOT=$GLROOT
 TMP=$GLROOT/tmp
 
 SQLBIN="mysql"
@@ -72,7 +72,7 @@ if [ "$ARGS" = "cleanup" ]
 then
     for cleanup in `$SQL -e "select distinct section FROM $SQLTB"`
     do
-        if [ ! -d /glftpd/site/$cleanup ]
+        if [ ! -d $GLROOT/site/$cleanup ]
         then
             echo "Removing data for section $cleanup since it no longer exist on site"
             $SQL -e "delete from $SQLTB where section='$cleanup'"
@@ -164,7 +164,7 @@ then
 
     echo "${COLOR2}Section stats for${COLOR1} $month ${COLOR2}on${COLOR1} $SQLTB ${COLOR2}for user${COLOR1} $username"
 
-    for section in `ls /glftpd/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
+    for section in `ls $GLROOT/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
     do
 	query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%' and FTPuser='$username') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i' and FTPuser='$username') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o' and FTPuser='$username') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
 
@@ -280,7 +280,7 @@ fi
 
 echo "${COLOR2}Section stats for${COLOR1} $month ${COLOR2}on${COLOR1} $SQLTB"
 
-for section in `ls /glftpd/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
+for section in `ls $GLROOT/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
 do
 
     query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
