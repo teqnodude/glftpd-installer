@@ -43,7 +43,7 @@ EARLYHALFEMPTY="60"     # Minumum age to send pre-nuke warning.
 TIMEHALFEMPTY="720"     # Minumum age to nuke.
 HALFEMPTYMULTIPLIER="3" # Nuke multiplier
 EMBARRESHALF="TRUE"     # Send detailed nuke report.
-EMPTYEXCLUDE=".fix.nfo .mpg .m2v .mpeg .zip .rar .r00 .r01 .mp3 .000 .001 .flac" # See README
+EMPTYEXCLUDE=".fix.nfo .mpg .m2v .mpeg .zip .rar .r00 .r01 .mp3 .000 .001 .flac .mkv" # See README
 CLEANHOURS=""          	# Hours between cleaning index file.
 HALFHOURS="TRUE"        # Use hours in bot and log output?
 
