@@ -18,6 +18,7 @@
 - pzs-ng didn't compile properly due to bad coding in installer
 - the restore function didn't work properly in backup.sh
 - ircnick.sh, section-traffic.sh & precheck.sh didn't have $glroot set
+- Added the missing .mkv to pre.cfg for countable= and creditable= and tur-autonuke.conf for EMPTYEXCLUDED
 
 ## 11.0 - 2024-02-26
 
