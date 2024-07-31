@@ -282,7 +282,7 @@ announce.ULTEST                                 = "%c4{%b{SPEEDTEST%c1{:}}} %c3{
 announce.DLTEST                                 = "%c4{%b{SPEEDTEST%c1{:}}} %c3{%b{%u_name}} %c1{of} %c3{%g_name} %c1{tested DL-Speed with a} %c3{%b{%mbytes}}MB %c1{file @} %c3{%b{%mbytesps}}%c1{ MB/s.}"
 
 ## TSD
-announce.TSM                    		= "%b{SPACE%c1{:}} %c1{Freeing} %c3{%b{%relsize}}%c1{MB by moving} %c3%b{%release}} %c1{to} %c3{%destname} %c2{archive (%c3{%destfree} MB free)}"
+announce.TSM                    		= "%b{SPACE%c1{:}} %c1{Freeing} %c3{%b{%relsize}}%c1{MB by moving} %c3{%b{%release}} %c1{to} %c3{%destname} %c2{archive (%c3{%destfree} MB free)}"
 announce.TSD                    		= "%b{SPACE%c1{:}} %c1{Freeing} %c3{%b{%relsize}}%c1{MB from} %c3{%destname} %c1{section by deleting} %c3{%b{%release}}"
 
 ## slv-PreBW
