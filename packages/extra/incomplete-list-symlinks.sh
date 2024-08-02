@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.01
 ##############################
 #
 # Put in crontab * * * * *       /glftpd/bin/incomplete-list-symlinks.sh >/dev/null 2>&1
@@ -94,7 +94,13 @@ do
 				ln -s ../$secname/$release/$subs $glroot/site/$incomplete/$release-$subs
 				find $glroot/site/$secname/$release -type l -exec rm -f {} +
 			    else
-				ln -s ../$secname/$secrel $glroot/site/$incomplete/$secrel
+				if [[ "$secrel" == *"/"* ]]
+				then
+				    release=`echo $secrel | awk -F"/" '{print $NF}'`
+				    ln -s ../$secname/$secrel $glroot/site/$incomplete/$release
+				else
+				    ln -s ../$secname/$secrel $glroot/site/$incomplete/$secrel
+				fi
 				find $glroot/site/$secname/$secrel -type l -exec rm -f {} +
 			    fi
 			fi
