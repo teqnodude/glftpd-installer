@@ -1,4 +1,4 @@
-VER=1.0
+VER=1.01
 #--[ Info ]-----------------------------------------------------#
 #
 # A script that create an index of a section of movies of the 
@@ -33,9 +33,9 @@ then
     echo -n "Creating index, please wait...."
     for dir in `ls $glroot/site/$section`
     do
-        rating="`ls $glroot/site/$section/$dir | grep -o "Score_.*" | cut -d "_" -f2`"
+        rating="`ls $glroot/site/$section/$dir | egrep -o "Score_(NA|[0-9]|[0-9].[0-9])" | cut -d "_" -f2`"
         year="`ls $glroot/site/$section/$dir | grep -o "(.*)" | grep -v COMPLETE | grep -o "[0-9][0-9][0-9][0-9]"`"
-        genre="`ls $glroot/site/$section/$dir | grep -o "Score_.*" | cut -d "_" -f4`"
+        genre="`ls $glroot/site/$section/$dir | grep -o "Score_.*" | sed -e 's/(.*//' -e 's/Score_[0-9].[0-9]_-_//' -e 's/Score_NA_-_//'`"
         if [ ! -z "$rating" ]
         then
             echo "$rating $year $genre $section/$dir" >> $tmp/imdbrating.txt
