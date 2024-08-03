@@ -10,6 +10,7 @@
 - Disabled the removal of unfilled requests to promote the filling of partly filled requests
 - Added a notice in section-manager for adding/removing rules in tur-rules and site.rules after add/remove of section
 - Made tvmaze-symlink-maker.sh more universal in its ability to grab genre and type from TVMAZE tags
+- Made imdb-rating.sh more universal in its ability to grab genre, rating and year from IMDB tags
 
 ### Fixes
 
