@@ -44,7 +44,7 @@ then
 	do
 	    rating="`ls $glroot/site/$section/$dir | grep IMDB | egrep -o "Score_(NA|[0-9]|[0-9].[0-9])" | cut -d "_" -f2`"
 	    year="`ls $glroot/site/$section/$dir | grep IMDB | egrep -o "([0-9][0-9][0-9][0-9])" | tr -s '()'`"
-	    genres="`ls $glroot/site/$section/$dir | grep IMDB | grep -o "Score_.*" | sed -e 's/(.*//' -e 's/Score_[0-9].[0-9]_-_//' -e 's/Score_NA_-_//' | sed -e 's/-/ /g' -e 's/Sci Fi/Sci-Fi/' -e 's/Sci/Sci-Fi/' -e 's/Sci-Fi-Fi/Sci-Fi/' | tr -d '_'`"
+	    genres="`ls $glroot/site/$section/$dir | grep IMDB | grep -o "Score_.*" | sed -e 's/(.*//' -e 's/Score_[0-9].[0-9]_-_//' -e 's/Score_NA_-_//' | sed -e 's/-/ /g' -e 's/Sci Fi/Sci-Fi/' -e 's/Sci/Sci-Fi/' -e 's/Sci-Fi-Fi/Sci-Fi/' -e 's/_//g'`"
 	    for genre in $genres
 	    do
 		if [ ! -z "$rating" ]
