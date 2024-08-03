@@ -9,6 +9,7 @@
 - Removed the requirement to upload .sfv first in tur-precheck.sh and in zsconfig.h for pzs-ng 
 - Disabled the removal of unfilled requests to promote the filling of partly filled requests
 - Added a notice in section-manager for adding/removing rules in tur-rules and site.rules after add/remove of section
+- Made tvmaze-symlink-maker.sh more universal in its ability to grab genre and type from TVMAZE tags
 
 ### Fixes
 
