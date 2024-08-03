@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.01
 #--[ Info ]-----------------------------------------------------#
 # 
 # A script that create genre symlinks for a section of series out 
@@ -48,8 +48,6 @@ then
 
 	for dir in `ls $glroot/site/$section | egrep -v "$exclude"`
 	do
-	    rating="`ls $glroot/site/$section/$dir | grep -v IMDB | grep -o "Score_.*" | cut -d "_" -f2`"
-	    year="`ls $glroot/site/$section/$dir | grep -v IMDB | grep -o "(.*)" | grep -v COMPLETE | grep -o "[0-9][0-9][0-9][0-9]"`"
 	    genre="`ls $glroot/site/$section/$dir | grep -v IMDB | grep -o "Score_.*" | cut -d "_" -f4- | sed 's/(.*//' | tr -s "_" " " | sed 's/ - / /g'`"
 	    type="`ls $glroot/site/$section/$dir | grep -v IMDB | grep -o "Score_.*" | cut -d "(" -f2 | tr -d '()' | sed 's/_-.*//' | tr -s " " "_"`"
 
