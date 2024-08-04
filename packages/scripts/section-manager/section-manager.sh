@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.27
+VER=1.28
 #----------------------------------------------------------------#
 #								 #
 # Section Manager by Teqno     			 		 #
@@ -210,12 +210,13 @@ then
 	    case $day in
                 [Yy])
 	    	    sed -i '/set paths(REQUEST)/i set paths('"$section"')				"/site/'"$section"'/*/*"' $pzsbot
+		    sed -i '/set chanlist(REQUEST)/i set chanlist('"$section"')                 "$spamchan"' $pzsbot
 		    ;;
 		*)
+		    sed -i '/set chanlist(REQUEST)/i set chanlist('"$section"')                 "$mainchan"' $pzsbot
 	    	    sed -i '/set paths(REQUEST)/i set paths('"$section"')				"/site/'"$section"'/*"' $pzsbot
     	    	    ;;
 	    esac
-	    sed -i '/set chanlist(REQUEST)/i set chanlist('"$section"')			"$mainchan"' $pzsbot
 	    sed -i "/set sections/s/\"$/\ $section\"/g" $pzsbot
 	    ;;
     esac

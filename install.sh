@@ -359,10 +359,45 @@ function announce
 	fi
 	
     fi
-}
 
-function opschan
-{
+    if [[ -f "$cache" && "`grep -w "channelmain" $cache | wc -l`" = 1 ]]
+    then
+        channelmain=`grep -w "channelmain" $cache | cut -d "=" -f2 | tr -d "\""`
+        echo "Main channel       = $channelmain"
+    else
+        echo "Channels: `cat $rootdir/.tmp/channels`"
+        while [[ -z $channelmain ]]
+        do
+            echo -n "Which of these channels as main channel ? : " ; read channelmain
+        done
+    fi
+
+    echo "$channelmain" > $rootdir/.tmp/dzmchan
+
+    if [[ -f "$cache" && "`grep -w "channelmain=" $cache | wc -l`" = 0 ]]
+    then
+        echo "channelmain=\"$channelmain\"" >> $cache
+    fi
+
+    if [[ -f "$cache" && "`grep -w "channelspam" $cache | wc -l`" = 1 ]]
+    then
+        channelspam=`grep -w "channelspam" $cache | cut -d "=" -f2 | tr -d "\""`
+        echo "Spam channel       = $channelspam"
+    else
+        echo "Channels: `cat $rootdir/.tmp/channels`"
+        while [[ -z $channelspam ]]
+        do
+            echo -n "Which of these channels as spam channel ? : " ; read channelspam
+        done
+    fi
+
+    echo "$channelspam" > $rootdir/.tmp/dzspamchan
+
+    if [[ -f "$cache" && "`grep -w "channelspam=" $cache | wc -l`" = 0 ]]
+    then
+        echo "channelspam=\"$channelspam\"" >> $cache
+    fi
+
     if [[ -f "$cache" && "`grep -w "channelops" $cache | wc -l`" = 1 ]]
     then
     	channelops=`grep -w "channelops" $cache | cut -d "=" -f2 | tr -d "\""`
@@ -479,10 +514,10 @@ function writ
 	cat $rootdir/.tmp/.sections | awk -F '[" "]+' '{printf $0}' > $rootdir/.tmp/.validsections
 	#echo "set statsection($counta) \"$section\"" >> $rootdir/.tmp/dzsstats
 	echo "set paths($section)				\"/site/$section/*/*\"" >> $rootdir/.tmp/dzsrace
-	echo "set chanlist($section) 			\"$announcechannels\"" >> $rootdir/.tmp/dzschan
+	echo "set chanlist($section) 			\"$channelspam\"" >> $rootdir/.tmp/dzschan
 	#echo "#stat_section 	$section	/site/$section/* no" >> $rootdir/.tmp/glstat
 	echo "section.$section.name=$section" >> $rootdir/.tmp/footools
-	echo "section.$section.dir=/site/$section/YYYY-MM-DD" >> $rootdir/.tmp/footools
+	echo "section.$section.dir=/site/$section/%YYYY-%MM-%DD" >> $rootdir/.tmp/footools
 	echo "section.$section.gl_credit_section=0" >> $rootdir/.tmp/footools
 	echo "section.$section.gl_stat_section=0" >> $rootdir/.tmp/footools
 	sed -i "s/\bDIRS=\"/DIRS=\"\n\/site\/$section\/\$today/" packages/modules/tur-autonuke/tur-autonuke.conf
@@ -514,7 +549,7 @@ function writ
 	cat $rootdir/.tmp/.sections | awk -F '[" "]+' '{printf $0}' > $rootdir/.tmp/.validsections
 	#echo "set statsection($counta) \"$section\"" >> $rootdir/.tmp/dzsstats
 	echo "set paths($section) 			\"/site/$section/*\"" >> $rootdir/.tmp/dzsrace
-	echo "set chanlist($section) 			\"$announcechannels\"" >> $rootdir/.tmp/dzschan
+	echo "set chanlist($section) 			\"$channelmain\"" >> $rootdir/.tmp/dzschan
 	echo "/site/$section/ " > $rootdir/.tmp/.section && cat $rootdir/.tmp/.section >> $rootdir/.tmp/.temp
 	cat $rootdir/.tmp/.temp | awk -F '[" "]+' '{printf $0}' > $rootdir/.tmp/.nodatepath
 	#echo "#stat_section 	$section /site/$section/* no" >> $rootdir/.tmp/glstat
@@ -896,9 +931,9 @@ function pzsng
     $glroot/libcopy.sh >/dev/null 2>&1
     echo -e "[\e[32mDone\e[0m]"
     cp sitebot/ngB* $glroot/sitebot/scripts/pzs-ng/
-    cp -r sitebot/modules $glroot/sitebot/scripts/pzs-ng/
-    cp -r sitebot/plugins $glroot/sitebot/scripts/pzs-ng/
-    cp -r sitebot/themes $glroot/sitebot/scripts/pzs-ng/
+    mkdir $glroot/sitebot/scripts/pzs-ng/modules
+    cp sitebot/modules/glftpd.tcl $glroot/sitebot/scripts/pzs-ng/modules
+    mkdir $glroot/sitebot/scripts/pzs-ng/plugins
     cp ../core/glftpd-installer.theme $glroot/sitebot/scripts/pzs-ng/themes
     cp ../core/ngBot.vars $glroot/sitebot/scripts/pzs-ng
     cp -f ../core/sitewho.conf $glroot/bin
@@ -1020,7 +1055,9 @@ EOF`
     sed -i "s/\"sname\"/\"$sitename\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
     sed -i "s/\"ochan\"/\"$channelops\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
     sed -i "s/(ochan)/($channelops)/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
-    sed -i "s/\"channame\"/\"$announcechannels\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
+    sed -i "s/\"mainname\"/\"$channelmain\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
+    sed -i "s/\"spamname\"/\"$channelspam\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
+    sed -i "s/\"invitename\"/\"$announcechannels\"/" $glroot/sitebot/scripts/pzs-ng/ngBot.conf
 }
 
 ## CleanUp / Config
@@ -1088,7 +1125,6 @@ port
 device_name
 channel
 announce
-opschan
 ircnickname
 section_names
 glftpd

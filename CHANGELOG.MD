@@ -1,4 +1,4 @@
-## 11.x -
+## 11.1 - 2024-08-04
 
 ### Updated
 
@@ -12,6 +12,9 @@
 - Made tvmaze-symlink-maker.sh more universal in its ability to grab genre and type from TVMAZE tags
 - Made imdb-rating.sh more universal in its ability to grab genre, rating and year from IMDB tags
 - Made imdb-scan.sh more universal in its ability to grab genre, rating and year from IMDB tags
+- Latest foo-tools is being grabbed from github instead of checkout version cdb77c1
+- Reworked some of the code regarding channels and announce in install.sh that allowed the addition of a spam channel that all dated sections are automatically linked to
+- section-manager is now adding proper channel to new section which is determined by being dated or not where non-dated are set to $mainchan and dated to $spamchan
 
 ### Fixes
 
@@ -23,6 +26,8 @@
 - ircnick.sh, section-traffic.sh & precheck.sh didn't have $glroot set
 - Added the missing .mkv to pre.cfg for countable= and creditable= and tur-autonuke.conf for EMPTYEXCLUDED
 - incomplete-list-symlinks didn't work properly for dated sections
+- PreBW is now announcing to the proper channel during PRE
+- install.sh had incorrect code that made foo-pre not working properly with dated dirs after an install
 
 ## 11.0 - 2024-02-26
 

@@ -20,7 +20,7 @@ TAILNUM="2500"			# tail xferlog, default is 2500 lines
 CAPS="2 3 5 5 5"		# capture output bw and intervals in seconds
 SPEED_UNIT="MBPS"		# transfer unit/s, default is MBPS [MBPS|MBIT]
 SIZE_UNIT="GB"			# size unit, default is MB [MB|GB]
-SHOW_ALWAYS="0"			# also announce if there's no prebw [0/1]
+SHOW_ALWAYS="1"			# also announce if there's no prebw [0/1]
 SHOW_BWAVG="1"			# show average bw in announce [0/1]
 SHOW_TRAF="1"			# show total pre traffic by number of users [0/1]
 
