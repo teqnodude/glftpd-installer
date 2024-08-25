@@ -40,7 +40,7 @@ case $ask in
         git clone https://github.com/silv3rr/foo-tools >/dev/null 2>&1
         cp -f $rootdir/packages/core/pre.cfg $glroot/etc
         cd foo-tools
-#        git checkout cdb77c1 >/dev/null 2>&1
+        git checkout cdb77c1 >/dev/null 2>&1
         cd src
         ./configure -q && make build >/dev/null 2>&1
         cp pre/foo-pre $glroot/bin

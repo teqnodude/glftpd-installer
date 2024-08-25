@@ -1,3 +1,9 @@
+## 11.x -
+
+### Fixes
+
+- glFTPd website https://glftpd.io down broke the installer, changed source to https://mirror.glftpd.nl.eu.org when grabbing glFTPd
+
 ## 11.1 - 2024-08-04
 
 ### Updated
