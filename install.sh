@@ -108,17 +108,31 @@ function port
 function version
 {
     echo -n "Downloading relevant packages, please wait..." | awk '{printf("%-64s",$0)}'
-    latest=`curl -s https://mirror.glftpd.nl.eu.org | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1`
+    if [[ `curl -s https://glftpd.io | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1` == glftpd* ]]
+    then
+	url="https://glftpd.io"
+    else
+	if [[ `curl -s https://mirror.glftpd.nl.eu.org | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1` == glftpd* ]]
+	then
+	    url="https://mirror.glftpd.nl.eu.org"
+	else
+	    echo
+	    echo
+	    echo -e "\e[0;91mNo available website for downloading glFTPd, aborting installation.\e[0m"
+	    exit 1
+	fi
+    fi
+    latest=`curl -s $url | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1`
     version=`lscpu | grep Architecture | awk '{print $2}'`
     case $version in
 	i686)
 	    version="32"
 	    latest=`echo $latest | sed 's/x64/x86/'`
-	    cd packages && wget -q https://mirror.glftpd.nl.eu.org/files/$latest && cd ..
+	    cd packages && wget -q $url/files/$latest && cd ..
 	    ;;
 	x86_64)
 	    version="64"
-	    cd packages && wget -q https://mirror.glftpd.nl.eu.org/files/$latest && cd ..
+	    cd packages && wget -q $url/files/$latest && cd ..
 	    ;;
     esac
     PK1=`echo $latest`
