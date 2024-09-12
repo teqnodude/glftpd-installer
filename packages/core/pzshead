@@ -71,6 +71,7 @@
 #define complete_script                 	"/bin/mss-rlscomp.sh"
 
 #define mark_empty_dirs_as_incomplete_on_rescan TRUE
+#define ignore_zero_sized_on_rescan     	TRUE
 #define subdir_list                     	"cd??,disc??,disk??,dvd??,extra?,sub?,subtitle?,vobsub?,sample?,subpack?,ac3,audioaddon,addon,ac3addon,proof,cover?,tools"
 #define speedtest_delfile               	TRUE
 #define speedtest_dirs                  	"/site/SPEEDTEST/"

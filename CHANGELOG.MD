@@ -1,5 +1,9 @@
 ## 11.x -
 
+### Updated
+
+- Changed default setting in zsconfig.h that makes pzs-ng no longer rescan 0-byte files
+
 ### Fixes
 
 - glFTPd website https://glftpd.io down broke the installer, changed source to https://mirror.glftpd.nl.eu.org when grabbing glFTPd
