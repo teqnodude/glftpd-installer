@@ -1,34 +1,48 @@
 #!/bin/bash
-VER=1.0
+VER=1.1
 #--[ Settings ]-------------------------------------------------#
 
 glroot=/glftpd
-sourcedir=$glroot/backup/sources
+srcdir=$glroot/backup/sources
 
 #--[ Script Start ]---------------------------------------------#
 
 [ ! -d $glroot ] && echo "glFTPd doesn't seem to be installed in $glroot" && exit 0
 
-curversion=`/glftpd/bin/glftpd | grep glFTPd | cut -d ' ' -f2`
-newversion=`lynx --dump https://glftpd.io | grep "latest version" | cut -d ":" -f2 | cut -d ' ' -f3 | sed 's/v//'`
+curversion=`$glroot/bin/glftpd | grep glFTPd | cut -d ' ' -f2`
+if [[ `curl -s https://glftpd.io | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1` == glftpd* ]]
+then
+    url="https://glftpd.io"
+else
+    if [[ `curl -s https://mirror.glftpd.nl.eu.org | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1` == glftpd* ]]
+    then
+        url="https://mirror.glftpd.nl.eu.org"
+    else
+        echo
+        echo
+        echo -e "\e[0;91mNo available website for downloading glFTPd, aborting upgrade.\e[0m"
+        exit 1
+    fi
+fi
+newversion=`lynx --dump $url | grep "latest version" | cut -d ":" -f2 | cut -d ' ' -f3 | sed 's/v//'`
 
 [ "$curversion" = "$newversion" ] && echo "You already got the latest non BETA version" && exit 0
 
-latest=`curl -s https://glftpd.io | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1`
-changelog=https://glftpd.io/files/docs/UPGRADING
+latest=`curl -s $url | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1`
+changelog=$url/files/docs/UPGRADING
 
-[ ! -d $sourcedir ] && mkdir -p $sourcedir
-cd $sourcedir
+[ ! -d $srcdir ] && mkdir -p $srcdir
+cd $srcdir
 version=`lscpu | grep Architecture | awk '{print $2}'`
 case $version in
     i686)
         version="32"
         latest=`echo $latest | sed 's/x64/x86/'`
-        wget -q https://glftpd.io/files/$latest
+        wget -q $url/files/$latest
         ;;
     x86_64)
         version="64"
-        wget -q https://glftpd.io/files/$latest
+        wget -q $url/files/$latest
         ;;
 esac
 
