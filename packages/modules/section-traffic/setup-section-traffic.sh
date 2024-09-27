@@ -3,7 +3,7 @@
 SQLBIN="mysql"
 SQLHOST="localhost"
 SQLUSER="transfer"
-SQLPASS="gH5zO1sY7mA2fZ2o"
+SQLPASS=""
 SQLDB="transfers"
 
 if [ -z "$1" ]

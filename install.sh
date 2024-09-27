@@ -143,6 +143,7 @@ function version
     BOTU="sitebot"
     CHKGR=`grep -w "glftpd" /etc/group | cut -d ":" -f1`
     CHKUS=`grep -w "sitebot" /etc/passwd | cut -d ":" -f1`
+    SQLPASSWD=`tr -dc 'A-Za-z0-9' </dev/urandom | head -c 20; echo`
 	
     if [ "$CHKGR" != "glftpd" ] 
     then

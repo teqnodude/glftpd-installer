@@ -22,28 +22,28 @@ proc pub:trialscript3 {nick output binary chan text} {
   set who [lindex $text 0]
   foreach line [split [exec $tt3binary check $who] "\n"] {
     if { [lindex $line 0] != "DEBUG:"} {
-	puthelp "PRIVMSG $chan :- \002\[TT3\]\002 - $line"
+	putquick "PRIVMSG $chan :$line"
     }
   }
-  puthelp "NOTICE $nick :Note: Updates on positions are done every 30 minutes."
+  putquick "NOTICE $nick :Note: Updates on positions are done every 30 minutes."
 }
 
 proc pub:trialscriptlist3 {nick output binary chan text} { 
   global tt3binary
   foreach line [split [exec $tt3binary tlist] "\n"] {
     if { [lindex $line 0] != "DEBUG:"} {
-	puthelp "PRIVMSG $chan :- \002\[TT3\]\002 - $line"
+	putquick "PRIVMSG $chan :$line"
     }
   }
 }
 
 proc pub:trialscriptqlist3 {nick output binary chan text} { 
-  putquick "PRIVMSG $chan :- \002\[TT3\]\002 - Please wait."
+  putquick "PRIVMSG $chan :Please wait."
   global tt3binary
   set mode [lindex $text 0]
   foreach line [split [exec $tt3binary qlist $mode] "\n"] {
     if { [lindex $line 0] != "DEBUG:"} {
-	puthelp "PRIVMSG $chan :- \002\[TT3\]\002 - $line"
+	putquick "PRIVMSG $chan :$line"
     }
   }
 
@@ -57,7 +57,7 @@ proc pub:trialscriptadmin3 {nick output binary chan text} {
   set com3 [lindex $text 2]
   foreach line [split [exec $tt3binary $com1 $com2 $com3] "\n"] {
     if { [lindex $line 0] != "DEBUG:"} {
-	puthelp "PRIVMSG $nick :$line"
+	putquick "PRIVMSG $nick :$line"
     }
   }
 }
@@ -69,7 +69,7 @@ proc msg:trialscriptadmin3 { nick uhost chan arg } {
   set com3 [lindex $arg 2]
   foreach line [split [exec $tt3binary $com1 $com2 $com3] "\n"] {
     if { [lindex $line 0] != "DEBUG:"} {
-	puthelp "PRIVMSG $nick :$line"
+	putquick "PRIVMSG $nick :$line"
     }
   }
 }
@@ -79,7 +79,7 @@ proc pub:trialscriptstats {nick output binary chan text} {
   set com1 [lindex $text 0]
   foreach line [split [exec $tt3binary stats $com1] "\n"] {
     if { [lindex $line 0] != "DEBUG:"} {
-	puthelp "PRIVMSG $nick :$line"
+	putquick "PRIVMSG $nick :$line"
     }
   }
 }
@@ -89,7 +89,7 @@ proc pub:trialscriptstatsex {nick output binary chan text} {
   set com1 [lindex $text 0]
   foreach line [split [exec $tt3binary statsex $com1] "\n"] {
     if { [lindex $line 0] != "DEBUG:"} {
-	puthelp "PRIVMSG $nick :$line"
+	putquick "PRIVMSG $nick :$line"
     }
   }
 }

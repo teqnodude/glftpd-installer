@@ -63,7 +63,7 @@ SQLHOST="localhost"
 SQLUSER="root"
 
 ## MySQL users password.
-SQLPASS="gH5zO1sY7mA2fZ2o"
+SQLPASS=""
 
 ## Database to use.
 SQLDB="transfers"

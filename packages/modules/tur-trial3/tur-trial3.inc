@@ -30,6 +30,7 @@ case $ask in
             cp $rootdir/packages/modules/tur-trial3/tur-trial3.sh $glroot/bin
             cp $rootdir/packages/modules/tur-trial3/midnight.sh $glroot/bin
             cp $rootdir/packages/modules/tur-trial3/tur-trial3.conf $glroot/bin
+	    sed -i "s/SQLPASS=\"\"/SQLPASS=\"$SQLPASSWD\"/" $glroot/bin/tur-trial3.conf
             cp $rootdir/packages/modules/tur-trial3/tur-trial3.theme $glroot/bin
             cp $rootdir/packages/modules/tur-trial3/tur-trial3.tcl $glroot/sitebot/scripts
             cp $rootdir/packages/modules/tur-trial3/import.sql $rootdir/packages/modules/tur-trial3/import.sql.new
@@ -45,7 +46,9 @@ case $ask in
                 service mysql stop && mysql_install_db >/dev/null 2>&1 && service mysql start
             fi
     	cd $rootdir/packages/modules/tur-trial3
-            ./setup-tur-trial3.sh create && rm import.sql.new
+	    cp setup-tur-trial3.sh setup-tur-trial3.sh.new
+	    sed -i "s/SQLPASS=\"\"/SQLPASS=\"$SQLPASSWD\"/" setup-tur-trial3.sh.new
+            ./setup-tur-trial3.sh.new create && rm import.sql.new && rm setup-tur-trial3.sh.new
     	cd $rootdir
             echo "source scripts/tur-trial3.tcl" >> $glroot/sitebot/eggdrop.conf
             echo "*/31 * * * *              $glroot/bin/tur-trial3.sh update >/dev/null 2>&1" >> /var/spool/cron/crontabs/root

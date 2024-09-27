@@ -38,17 +38,19 @@ case $ask in
             then
                 service mysql stop && mysql_install_db >/dev/null 2>&1 && service mysql start
             fi
-            cd $rootdir/packages/modules/section-traffic
-            cp xferlog-import_3.3.sh $glroot/bin && sed -i "s/changeme/$sitename/" $glroot/bin/xferlog-import_3.3.sh
-            cp section-traffic.sh $glroot/bin && sed -i "s/changeme/$sitename/" $glroot/bin/section-traffic.sh
-            cp section-traffic.tcl $glroot/sitebot/scripts
+            cp $rootdir/packages/modules/section-traffic/xferlog-import_3.3.sh $glroot/bin && sed -i "s/changeme/$sitename/" $glroot/bin/xferlog-import_3.3.sh
+            cp $rootdir/packages/modules/section-traffic/section-traffic.sh $glroot/bin && sed -i "s/changeme/$sitename/" $glroot/bin/section-traffic.sh
+	    sed -i "s/SQLPASS=\"\"/SQLPASS=\"$SQLPASSWD\"/" $glroot/bin/section-traffic.sh
+	    sed -i "s/SQLPASS=\"\"/SQLPASS=\"$SQLPASSWD\"/" $glroot/bin/xferlog-import_3.3.sh
+            cp $rootdir/packages/modules/section-traffic/section-traffic.tcl $glroot/sitebot/scripts
             echo "source scripts/section-traffic.tcl" >> $glroot/sitebot/eggdrop.conf
             sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/section-traffic.tcl
-            cp import.sql import.sql.new && sed -i "s/changeme/$sitename/" import.sql.new
-            ./setup-section-traffic.sh create && rm import.sql.new
+            sed "s/changeme/$sitename/" $rootdir/packages/modules/section-traffic/import.sql > $rootdir/packages/modules/section-traffic/import.sql.new
+            cp $rootdir/packages/modules/section-traffic/setup-section-traffic.sh $rootdir/packages/modules/section-traffic/setup-section-traffic.sh.new 
+	    sed -i "s/SQLPASS=\"\"/SQLPASS=\"$SQLPASSWD\"/" $rootdir/packages/modules/section-traffic/setup-section-traffic.sh.new 
+	    cd $rootdir/packages/modules/section-traffic && ./setup-section-traffic.sh.new create && rm import.sql.new && rm setup-section-traffic.sh.new && cd $rootdir
             echo "*/30 * * * *            $glroot/bin/xferlog-import_3.3.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
             echo "30 0 * * *              $glroot/bin/section-traffic.sh cleanup >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-            cd $rootdir
             echo -e "[\e[32mDone\e[0m]"
         fi
         ;;

@@ -23,13 +23,13 @@ VER=1.1
 #                                                               #
 #--[ Settings ]-------------------------------------------------#
 
-GLROOT=$GLROOT
+GLROOT=/glftpd
 TMP=$GLROOT/tmp
 
 SQLBIN="mysql"
 SQLHOST="localhost"
 SQLUSER="transfer"
-SQLPASS="gH5zO1sY7mA2fZ2o"
+SQLPASS=""
 SQLDB="transfers"
 SQLTB="changeme"
 SQL="$SQLBIN -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s"
