@@ -1087,6 +1087,7 @@ function cleanup
     cp -r packages/source/pzs-ng $glroot/backup
     cp packages/extra/pzs-ng-update.sh $glroot/backup 
     cp packages/extra/backup.sh $glroot/backup && sed -i "s/changeme/$sitename/" $glroot/backup/backup.sh
+    sed -i "s/pass=/pass=$SQLPASSWD/" $glroot/backup/backup.sh
     cp $glroot/backup/pzs-ng/sitebot/extra/invite.sh $glroot/bin
     cp packages/extra/syscheck.sh $glroot/bin
     mv -f $rootdir/.tmp/dated.sh $glroot/bin

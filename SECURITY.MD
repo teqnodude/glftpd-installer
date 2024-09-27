@@ -14,34 +14,12 @@ Several security issues have been identified concerning the use of MariaDB with 
   - [Running Multiple MariaDB Server Processes](https://mariadb.com/kb/en/running-multiple-mariadb-server-processes/)
   - [mariadbd-multi](https://mariadb.com/kb/en/mariadbd-multi/)
 
-#### 2. **Plaintext Root MySQL Password and Non-Randomized Value**
-- **Issue**: It has been found that in several project files, a plaintext MySQL root password (`gH5zO1sY7mA2fZ2o`) is used. This password is not randomly generated but static and identical across all installations.
-  - Affected files:
-    ```
-    packages/source/scripts/extra/backup.sh:pass=gH5zO1sY7mA2fZ2o
-    packages/source/scripts/tur-trial3/tur-trial3.conf:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/source/scripts/tur-trial3/setup-tur-trial3.sh:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/source/scripts/section-traffic/section-traffic.sh:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/source/scripts/section-traffic/xferlog-import_3.3.sh:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/source/scripts/section-traffic/setup-section-traffic.sh:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/scripts/extra/backup.sh:pass=gH5zO1sY7mA2fZ2o
-    packages/scripts/tur-trial3/tur-trial3.conf:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/scripts/tur-trial3/setup-tur-trial3.sh:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/scripts/section-traffic/section-traffic.sh:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/scripts/section-traffic/xferlog-import_3.3.sh:SQLPASS="gH5zO1sY7mA2fZ2o"
-    packages/scripts/section-traffic/setup-section-traffic.sh:SQLPASS="gH5zO1sY7mA2fZ2o"
-    ```
-
-- **Impact**: This plaintext password means that any user with shell access to the machine could connect to MySQL as root, potentially compromising all databases and their data. The fact that this password is static and not generated for each installation increases the risk of compromise, as it is more likely to be discovered and exploited.
-
-- **Recommendation**: A more secure solution would be to modify the `install.sh` script to generate a random password during installation, similar to how users are created via `useradd` in the script for `sitebot`. This password could be randomly generated or manually set by the user during the configuration prompt (e.g., in `tur-trial3` or `section-traffic`). The generated password should be centralized and stored in a configuration file with restricted permissions (e.g., `600`) to limit access.
-
-#### 3. **Securing Scripts and Centralizing Sensitive Information**
+#### 2. **Securing Scripts and Centralizing Sensitive Information**
 - **Issue**: Sensitive information such as passwords is currently repeated across multiple scripts, increasing the risk of accidental exposure.
 
 - **Recommendation**: It is recommended to centralize passwords and other sensitive information in a single configuration file, such as `/glftpd/etc/glftpd.conf`. This file should be protected with strict permissions. A comprehensive audit of existing scripts should also be conducted to identify and secure any other sensitive data.
 
-#### 4. **Documentation and Best Practices**
+#### 3. **Documentation and Best Practices**
 - **Recommendation**: It would be helpful to include best practices for securing the installation in the project's documentation, such as password management, creating dedicated MariaDB instances, and securing scripts. This would provide users with all the necessary information for a secure and stable installation of `glftpd`.
 
 ---
