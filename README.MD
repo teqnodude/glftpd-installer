@@ -1,3 +1,10 @@
+## Intended systems
+
+This installer is intended to be used on systems that do not have existing MariaDB databases running. If it's being used on systems that have existing databases running, then keep in mind that this installer will backup the 
+existing /etc/mysql/mariadb.conf.d/50-server.cnf to /etc/mysql/mariadb.conf.d/50-server.cnf.bak and install its own version if section-traffic or tur-trial3 is installed. This could potentially 
+stop existing databases from working properly. If you want to use the installer despite having existing databases, then I would recommend you do not choose to install section-traffic or 
+tur-trial3 and do this manually instead.
+
 ## To download
 
 ``` 
