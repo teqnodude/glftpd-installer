@@ -9,7 +9,7 @@ set realname 		"give me more junkfood"
 #set ssl-verify-dcc      0
 #set ssl-ciphers         "ALL:!ADH:!LOW:!SSLv2:!SSLv3:!EXP:!aNULL:+HIGH:+MEDIUM"
 
-#listen +4444 all
+#listen 127.0.0.1 +4444 users
 
 # Ops: Change this to your nickname
 set owner 		"changeme"
