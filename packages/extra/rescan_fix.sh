@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.01
 #--[ Intro ]--------------------------------------------------------#
 #                                                                   #
 # rescan_fix 1.0 by Teqno                                           #
@@ -29,9 +29,9 @@ then
     echo "Check already running"
 
 else
-    check=`find $glroot/ftp-data/pzs-ng -name *.lock -mmin +$minutes`
     touch $tmp/rescan_fix.lock
-
+    check=`find $glroot/ftp-data/pzs-ng -name *.lock -mmin +$minutes`
+    
     if [ -z "$check" ]
     then
 
