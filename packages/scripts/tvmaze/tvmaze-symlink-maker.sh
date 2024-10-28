@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.04
+VER=1.05
 #--[ Info ]-----------------------------------------------------#
 # 
 # A script that create genre symlinks for a section of series out 
@@ -84,7 +84,7 @@ then
 
 	echo "`date "+%Y-%m-%d %T"` - Doing cleanup of broken links in section $section" >> $log
 	find $glroot$symlink -xtype l -exec rm -f {} +
- 	find $glroot$symlink -type d -empty -exec rm {} +
+ 	find $glroot$symlink -type d -empty -exec rm -rf {} +
 	echo "`date "+%Y-%m-%d %T"` - Done" >> $log
 
     done
