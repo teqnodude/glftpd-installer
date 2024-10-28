@@ -82,6 +82,7 @@ then
 	done
 	echo "`date "+%Y-%m-%d %T"` - Doing cleanup of broken links in section $section" >> $log
 	find $glroot$symlink -xtype l -exec rm -f {} +
+ 	find $glroot$symlink -type d -empty -exec rm -rf {} +
 	echo "`date "+%Y-%m-%d %T"` - Done" >> $log
     done
 fi
