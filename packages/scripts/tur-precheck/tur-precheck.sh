@@ -47,7 +47,7 @@ fi
 case "$1" in
 
   *.[rR0-9][aA0-9][rR0-9])
-    if [ "$VERIFY_RAR_WITH_SFV" ]; then
+    if [ "$VERIFY_RAR_WITH_SFV" = "TRUE" ]; then
       sfv_file="`ls -1 "$2" | grep -i "\.sfv$"`"
       if [ -z "$sfv_file" ]; then
         echo -e "You must upload .sfv first!\n"
@@ -62,7 +62,7 @@ case "$1" in
   ;;
 
   *.[mM][pP]3)
-    if [ "$VERIFY_MP3_WITH_SFV" ]; then
+    if [ "$VERIFY_MP3_WITH_SFV" = "TRUE" ]; then
       sfv_file="`ls -1 "$2" | grep -i "\.sfv$"`"
       if [ -z "$sfv_file" ]; then
         echo -e "You must upload .sfv first!\n"
