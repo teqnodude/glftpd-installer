@@ -12,6 +12,7 @@
 
 - glFTPd website https://glftpd.io down broke the installer, changed source to https://mirror.glftpd.nl.eu.org when grabbing glFTPd
 - tur-request announced the wrong color if the releasename started with a number
+- tur-precheck didn't work properly when VERIFY_RAR_WITH_SFV and VERIFY_MP3_WITH_SFV was set to FALSE
 
 ## 11.1 - 2024-08-04
 
