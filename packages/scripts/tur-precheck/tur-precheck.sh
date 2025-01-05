@@ -18,7 +18,8 @@ NOFTPRUSHNFOS="TRUE"
 DENY_SFV_NFO_IN_SAMPLE_DIRS="TRUE"
 DENY_IMAGE_IN_SAMPLE_DIRS="TRUE"
 
-DENY_WHEN_NO_SFV="\.r[a0-9][r0-9]$ \.0[0-9][0-9]$ \.mp[2|3]$ \.flac$"
+#DENY_WHEN_NO_SFV="\.r[a0-9][r0-9]$ \.0[0-9][0-9]$ \.mp[2|3]$ \.flac$"
+DENY_WHEN_NO_SFV=""
 
 #GLLOG="/ftp-data/logs/glftpd.log"
 GLLOG=""
