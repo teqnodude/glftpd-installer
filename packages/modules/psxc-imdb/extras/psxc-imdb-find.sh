@@ -149,7 +149,7 @@ let IMDBSEARCHCNT=IMDBSEARCHCNT-1
 if [ $IMDBSEARCHCNT -lt 1 ]; then
  IMDBSEARCHCNT=1
 fi
-IMDBSEARCHTITLA=`echo "$IMDBSEARCHORIG" | cut -d '-' -f 1-$IMDBSEARCHCNT | tr ' ' '\n' | grep -iv "^custom$" | grep -iv "^dvd" | grep -iv "^screener" | grep -iv "vcd" | grep -iv "divx" | grep -iv "xvid" | grep -iv "^ts$" | grep -iv "telesync" | grep -iv "^tc$" | grep -iv "telecine" | grep -iv "^proper$" | grep -iv "limited" | grep -iv "^subbed$" | grep -iv "^read$" | grep -iv "^nfo$" | grep -iv "internal" | grep -iv "workprint" | grep -iv "^wp$" | grep -iv "x264" | grep -iv "dvdrip" | grep -iv "bdrip" | tr '\n' ' '`
+IMDBSEARCHTITLA=`echo "$IMDBSEARCHORIG" | cut -d '-' -f 1-$IMDBSEARCHCNT | tr ' ' '\n' | egrep -iv "^custom$|^dvd|^screener|vcd|divx|xvid|^ts$|telesync|^tc$|telecine|^proper$|limited|^subbed$|^read$|^nfo$|internal|workprint|^wp$|x264|dvdrip|bdrip|^x264|^x265|^h265|^h264|^1080p|^2160p|^uhd|^remastered|^extended|^bluray" | tr '\n' ' '`
 IMDBSEARCHTITLE="`echo $IMDBSEARCHTITLA | tr ' -' '+'`""$IMDBFUZZ"
 IMDBSEARCHTITLB=`echo $IMDBSEARCHTITLA`
 
