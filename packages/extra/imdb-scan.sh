@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.22
+VER=1.23
 #--[ Info ]-----------------------------------------------------#
 # 
 # A script that create genre symlinks for a section of movies out 
@@ -19,6 +19,7 @@ ARCHIVE/MOVIES/X265-2160:/site/ARCHIVE/MOVIES/X265-2160_MOVIES_SORTED
 "
 exclude="^\[NUKED\]-|^\[incomplete\]-|^\[no-nfo\]-|^\[no-sample\]-"
 sort_by_genre=Sorted.By.Genre
+sort_by_rank=Sorted.By.Rank
 log=$glroot/ftp-data/logs/imdb-scan.log
 
 #--[ Script Start ]---------------------------------------------#
@@ -42,12 +43,12 @@ then
 	echo "`date "+%Y-%m-%d %T"` - Creating symlinks for section $section, please wait...." >> $log
 	for dir in `ls $glroot/site/$section | egrep -v "$exclude"`
 	do
-	    rating="`ls $glroot/site/$section/$dir | grep IMDB | egrep -o "Score_(NA|[0-9]|[0-9].[0-9])" | cut -d "_" -f2`"
+	    rank="`ls $glroot/site/$section/$dir | grep IMDB | egrep -o "Score_(NA|[0-9]|[0-9].[0-9])" | cut -d "_" -f2 | sed 's|.[1-9]||'`"
 	    year="`ls $glroot/site/$section/$dir | grep IMDB | egrep -o "([0-9][0-9][0-9][0-9])" | tr -s '()'`"
 	    genres="`ls $glroot/site/$section/$dir | grep IMDB | grep -o "Score_.*" | sed -e 's/(.*//' -e 's/Score_\([0-9]\(\.[0-9]\)\?\|NA\)_-_//' | sed -e 's/-/ /g' -e 's/Sci Fi/Sci-Fi/' -e 's/Sci/Sci-Fi/' -e 's/Sci-Fi-Fi/Sci-Fi/' -e 's/_//g'`"
 	    for genre in $genres
 	    do
-		if [ ! -z "$rating" ]
+		if [ ! -z "$rank" ]
 		then
 		    if [ ! -d "$glroot$symlink/$sort_by_genre/$genre" ]
 		    then
@@ -77,6 +78,35 @@ then
                     	    ;;
                 	esac
 		    fi
+
+                    if [ ! -d "$glroot$symlink/$sort_by_rank/$rank" ]
+                    then
+                        echo "`date "+%Y-%m-%d %T"` - Creating rank dir $glroot$symlink/$sort_by_rank/$rank" >> $log
+                        mkdir -pm777 $glroot$symlink/$sort_by_rank/$rank
+                    fi
+                    if [ ! -L "$glroot$symlink/$sort_by_rank/$rank/$dir" ]
+                    then
+                        echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_rank/$rank/$dir" >> $log
+                        depth=`echo $section | grep -o '/' | wc -l`
+                        case $depth in
+                            3)
+                            ln -s "../../../../../../$section/$dir" "$glroot$symlink/$sort_by_rank/$rank/$dir"
+                            rm -f "../../../../../../$section/$dir/$dir"
+                            ;;
+                            2)
+                            ln -s "../../../../../$section/$dir" "$glroot$symlink/$sort_by_rank/$rank/$dir"
+                            rm -f "../../../../../$section/$dir/$dir"
+                            ;;
+                            1)
+                            ln -s "../../../../$section/$dir" "$glroot$symlink/$sort_by_rank/$rank/$dir"
+                            rm -f "../../../../$section/$dir/$dir"
+                            ;;
+                            0)
+                            ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_rank/$rank/$dir"
+                            rm -f "../../../$section/$dir/$dir"
+                            ;;
+                        esac
+                    fi
 		fi
 	    done
 	done
