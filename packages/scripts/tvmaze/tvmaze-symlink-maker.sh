@@ -48,7 +48,7 @@ then
 
 	for dir in `ls $glroot/site/$section | egrep -v "$exclude"`
 	do
-	    genre="`ls $glroot/site/$section/$dir | egrep -v "IMDB|COMPLETE" | grep -o "Score_.*" | sed -e 's/(.*//' -e 's/Score_\([0-9]\(\.[0-9]\)\?\|NA\)_-_//' | tr -s "_" " " | sed 's/ - / /g'`"
+	    genre="`ls $glroot/site/$section/$dir | egrep -v "IMDB|COMPLETE" | grep -o "Score_.*" | sed -e 's/(.*//' -e 's/Score_10\|Score_\([0-9]\(\.[0-9]\)\?\|NA\)_-_//' | tr -s "_" " " | sed 's/ - / /g'`"
 	    type="`ls $glroot/site/$section/$dir | egrep -v "IMDB|COMPLETE" | grep -o "(.*)" | tr -d '()'| tr -s " " "_"`"
 
 	    if [ ! -z "$genre" ]
