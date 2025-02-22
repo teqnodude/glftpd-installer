@@ -131,8 +131,8 @@ mv -f $xferlog $tmp/xferlog.processing
 
 cat $tmp/xferlog.processing | tr ' ' '\t' | tr -s '\t' | tr '?' ' ' > $tmp/xferlog.processing.sort
 $SQL "load data local infile \"$tmp/xferlog.processing.sort\" INTO TABLE $SQLTB fields terminated BY '\t' (@day, @month, @daynum, @time, @year, transfertime, ip, bytes, path, @transfertype, @underscore, direction, @r, FTPuser, FTPgroup, @0or1, ident) set datetime = str_to_date(concat(@month, \"-\",@daynum, \"-\",@year, \" \", @time),'%b-%d-%Y %H:%i:%s')"
-$SQL "UPDATE $SQLTB SET section = SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', 3), '/', -1), filename = SUBSTRING_INDEX(path, '/', -1), relname = CASE WHEN relname IN ('sample', 'proof', 'covers', 'subs') OR relname LIKE 'cd%' OR relname LIKE 'disk%' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', -3), '/', 1) ELSE SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', -2), '/', 1) END"
-$SQL "DELETE from $SQLTB WHERE section='PRE'"
+$SQL "UPDATE $SQLTB SET section = SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', 3), '/', -1), filename = SUBSTRING_INDEX(path, '/', -1), relname = CASE WHEN LOWER(SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', -2), '/', 1)) IN ('sample', 'proof', 'covers', 'subs') OR LOWER(SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', -2), '/', 1)) LIKE 'cd%' OR LOWER(SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', -2), '/', 1)) LIKE 'disk%' THEN SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', -3), '/', 1) ELSE SUBSTRING_INDEX(SUBSTRING_INDEX(path, '/', -2), '/', 1) END"
+$SQL "DELETE FROM $SQLTB WHERE section='PRE'"
 cat $tmp/xferlog.processing >> $archive
 
 rm -f $tmp/xferlog.processing
