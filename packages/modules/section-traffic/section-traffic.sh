@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.1
+VER=1.2
 #--[ Intro ]----------------------------------------------------#
 #                                                               #
 # Section Traffic by Teqno                                      #
@@ -94,7 +94,17 @@ then
     release=`echo $ARGS | cut -d ' ' -f2`
     username=`echo $ARGS | cut -d ' ' -f3`
     echo "${COLOR2}Stats for release${COLOR1} $release ${COLOR2}for user${COLOR1} $username"
-    query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where relname='$release' and FTPuser='$username') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where relname='$release' and direction='i' and FTPuser='$username') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where relname='$release' and direction='o' and FTPuser='$username') as outgoing,(select count(id) as files from $SQLTB where relname='$release' and direction='i' and FTPuser='$username') as filesinc,(select count(id) as files from $SQLTB where relname='$release' and direction='o' and FTPuser='$username') as filesout FROM $SQLTB"`
+    query=`$SQL -e "SELECT
+    ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
+    ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
+    ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
+    COUNT(CASE WHEN direction = 'i' THEN id END) AS filesinc,
+    COUNT(CASE WHEN direction = 'o' THEN id END) AS filesout
+FROM
+    $SQLTB
+WHERE
+    relname = '$release'
+    AND FTPuser = '$username'"`
 
     echo $query | while read -r traffic incoming outgoing filesinc filesout;
     do
@@ -166,7 +176,17 @@ then
 
     for section in `ls $GLROOT/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
     do
-	query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%' and FTPuser='$username') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i' and FTPuser='$username') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o' and FTPuser='$username') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
+        query=`$SQL -e "SELECT
+    ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
+    ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
+    ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
+    MAX(CASE WHEN direction = 'i' THEN datetime END) AS lastup
+FROM
+    $SQLTB
+WHERE
+    section = '$section'
+    AND datetime LIKE '$month%'
+    AND FTPuser = '$username'"`
 
 	echo $query | while read -r traffic incoming outgoing lastup;
 	do
@@ -283,7 +303,16 @@ echo "${COLOR2}Section stats for${COLOR1} $month ${COLOR2}on${COLOR1} $SQLTB"
 for section in `ls $GLROOT/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d'`
 do
 
-    query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where section='$section' and datetime like '$month%') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where section='$section' and datetime like '$month%' and direction='i') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where section='$section' and datetime like '$month%' and direction='o') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' and section='$section' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
+    query=`$SQL -e "SELECT
+    ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
+    ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
+    ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
+    MAX(CASE WHEN direction = 'i' THEN datetime END) AS lastup
+FROM
+    $SQLTB
+WHERE
+    section = '$section'
+    AND datetime LIKE '$month%'"`
 
     if [ -z "$query" ]
     then
@@ -341,7 +370,15 @@ do
     done
 done
 
-query=`$SQL -e "SELECT distinct(select round(sum(bytes/1024/1024/1024),2) as traffic from $SQLTB where datetime like '$month%') as traffic,(select round(sum(bytes/1024/1024/1024),2) as incoming from $SQLTB where datetime like '$month%' and direction='i') as incoming,(select round(sum(bytes/1024/1024/1024),2) as outgoing from $SQLTB where datetime like '$month%' and direction='o') as outgoing,(select datetime from $SQLTB where datetime like '$month%' and direction='i' order by datetime DESC limit 1) as lastup FROM $SQLTB"`
+query=`$SQL -e "SELECT
+    ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
+    ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
+    ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
+    MAX(CASE WHEN direction = 'i' THEN datetime END) AS lastup
+FROM
+    $SQLTB
+WHERE
+    datetime LIKE '$month%'"`
 
 echo $query | while read -r traffic incoming outgoing lastup;
 do

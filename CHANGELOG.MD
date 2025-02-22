@@ -7,6 +7,7 @@
 - Added support for a mirror website in glftpd-version-check.sh and update_gl.sh
 - Changed from a fixed password in section-traffic and tur-trial to an install generated password for better security
 - Changed from a fixed password in backup.sh to an install generated password for better security
+- Improved the SQL queries for section-traffic and created two SQL indexes that increased the speed quite a lot, especially for larger databases
 
 ### Fixes
 

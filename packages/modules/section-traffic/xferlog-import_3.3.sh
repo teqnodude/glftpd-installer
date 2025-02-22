@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=3.3
+VER=3.4
 
 #----------------------------------------------------------#
 #                                                          #
@@ -50,7 +50,10 @@ VER=3.3
 #  KEY `Filename` (`filename`(8))
 # ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 #
-# (KEY parts optional. Depends on your queries.)
+#
+# CREATE INDEX idx_section_datetime_ftpuser ON transfers(section, datetime, FTPuser);
+# CREATE INDEX idx_section_datetime_direction ON transfers(section, datetime, direction);
+#
 #----------------------------------------------------------#
 
 ## Path to mysql binary. Leave as "mysql" if in path.

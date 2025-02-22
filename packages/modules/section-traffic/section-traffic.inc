@@ -45,7 +45,7 @@ case $ask in
             cp $rootdir/packages/modules/section-traffic/section-traffic.tcl $glroot/sitebot/scripts
             echo "source scripts/section-traffic.tcl" >> $glroot/sitebot/eggdrop.conf
             sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/section-traffic.tcl
-            sed "s/changeme/$sitename/" $rootdir/packages/modules/section-traffic/import.sql > $rootdir/packages/modules/section-traffic/import.sql.new
+            sed "s/changeme/$sitename/g" $rootdir/packages/modules/section-traffic/import.sql > $rootdir/packages/modules/section-traffic/import.sql.new
             cp $rootdir/packages/modules/section-traffic/setup-section-traffic.sh $rootdir/packages/modules/section-traffic/setup-section-traffic.sh.new 
 	    sed -i "s/SQLPASS=\"\"/SQLPASS=\"$SQLPASSWD\"/" $rootdir/packages/modules/section-traffic/setup-section-traffic.sh.new 
 	    cd $rootdir/packages/modules/section-traffic && ./setup-section-traffic.sh.new create && rm import.sql.new && rm setup-section-traffic.sh.new && cd $rootdir
