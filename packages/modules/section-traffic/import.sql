@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS `changeme` (
   KEY `Direction` (`direction`),
   KEY `FTPuser` (`FTPuser`(2)),
   KEY `Section` (`section`(2)),
-  KEY `Filename` (`filename`(8))
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-CREATE INDEX idx_section_datetime_ftpuser ON changeme(section, datetime, FTPuser);
-CREATE INDEX idx_section_datetime_direction ON changeme(section, datetime, direction);
+  KEY `Filename` (`filename`(8)),
+  KEY `idx_section_datetime_ftpuser` (`section`,`datetime`,`FTPuser`),
+  KEY `idx_section_datetime_direction` (`section`,`datetime`,`direction`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
