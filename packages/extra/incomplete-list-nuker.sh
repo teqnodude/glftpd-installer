@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.01
 ##############################
 # CONFIG                     #
 # ^^^^^^                     #
@@ -64,7 +64,7 @@ no_strict=0
 # ^^^^^^^^^^^^^             #
 #############################
 
-if [ "`find \"$glroot/tmp/incomplete-list-nuker.lock\" -type f -mmin +20`" ] ; then rm -f $glroot/tmp/incomplete-list-nuker.lock ; fi
+[ -f "$glroot/tmp/incomplete-list-nuker.lock" ] && [ -n "$(find "$glroot/tmp/incomplete-list-nuker.lock" -mmin +20 -type f)" ] && rm -f "$glroot/tmp/incomplete-list-nuker.lock"
 if [ -e "$glroot/tmp/incomplete-list-nuker.lock" ]
 then
     echo "Check already running"
