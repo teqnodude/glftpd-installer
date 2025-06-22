@@ -101,10 +101,16 @@ sections="3" # How many sections will be created, max 22 sections allowed
 # TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE
 section1="0DAY" # Name of section 1
 section1dated="y" # Dated section?
+section1zipfiles="y" # Zip files?
+section1movie="n" # Movie section?
 section2="MP3" # Name of section 2
-section2dated="n" # Dated section?
+section2dated="y" # Dated section?
+section2zipfiles="n" # Zip files?
+section2movie="n" # Movie section?
 section3="DVDR" # Name of section 3 
 section3dated="n" # Dated section?
+section3zipfiles="n" # Zip files?
+section3movie="Y" # Movie section?
 router="y" # If site is behind router
 pasv_addr="123.123.123.123" # IP or DNS to use as passive address for glFTPd
 pasv_ports="6000-7000" # Port range to use for passive mode for glFTPd
