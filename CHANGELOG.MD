@@ -15,6 +15,7 @@
 - tur-request announced the wrong color if the releasename started with a number
 - tur-precheck didn't work properly when VERIFY_RAR_WITH_SFV and VERIFY_MP3_WITH_SFV was set to FALSE
 - Fixed the error message when there is no .lock file in incomplete-list-nuker.sh
+- IMDB.com changed their layout so fixed psxc-imdb.sh and moved away from HTML parsing to JSON as much as I could
 
 ## 11.1 - 2024-08-04
 
