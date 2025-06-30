@@ -511,10 +511,11 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      TITLENAME="$( echo $ORIGTITLE | sed -e 's/^ *//g' -e 's/ (original title)//' )"
      TITLE="$TITLENAME $TITLEYEAR"
     fi
-    GENRE="Genre........: $(grep -oP '<a[^>]+href="/search/title/\?genres=[^"]+".*?<span class="ipc-chip__text">\K[^<]+' "$TMPFILE" | paste -sd '/'- | head -n $GENRENUM)"
+    GENRE="Genre........: $(grep -o '"genres":\[[^]]*' $TMPFILE | head -1 | grep -o '"text":"[^"]*' | cut -d'"' -f4 | uniq | paste -sd '/' - | head -n $GENRENUM)"
     GENRECLEAN=$(echo $GENRE | sed "s/Genre........: *//")
-    RATINGVAL="$(grep -oP '<span class="ipc-rating-star--rating">\K[0-9]+\.[0-9]+' "$TMPFILE" | head -n1)"
-    VOTES="$(grep -oP '<span class="ipc-rating-star--voteCount">[^0-9]*\K[0-9]+(\.[0-9]+)?[KM](?=<!--)' "$TMPFILE" | head -n1)"
+    RATINGVAL="$(grep -o '"aggregateRating":[0-9.]*' $TMPFILE | head -1 | cut -d':' -f2)"
+    VOTECOUNT="$(grep -o '"voteCount":[0-9]*' $TMPFILE | head -1 | cut -d':' -f2)"
+    VOTES="$(awk '{n=$1; s=""; while(n>=1000){s=sprintf(",%03d%s",n%1000,s); n=int(n/1000)}; printf "%d%s", n, s}' <<< "$VOTECOUNT")"
     RATING="User Rating..: $RATINGVAL ($VOTES)"
     if [ "$RATING" = "User Rating..: 0 (0)" ]; then
       RATING="User Rating..: Awaiting 5 votes"
@@ -547,12 +548,11 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     if [ ! -z "$BOTTOM" ]; then
       RATINGCLEAN="$(echo "$RATINGCLEAN Bottom 100: #$BOTTOM")"
     fi
-    COUNTRY="Country......: $(grep -o '<a [^>]*country_of_origin=[^>]*>[^<]*</a>' $TMPFILE | sed -E 's/.*>([^<]+)<.*/\1/' | paste -sd '/' - | head -n $COUNTRYNUM)"
+    COUNTRY="Country......: $(grep -o '"countriesOfOrigin":{[^}]*}' $TMPFILE | grep -o '"id":"[^"]*' | cut -d'"' -f4 | uniq | sed 's/GB/United Kingdom/; s/US/United States/' | paste -sd '/' - | head -n $COUNTRYNUM)"
     COUNTRYCLEAN=$(echo $COUNTRY | sed "s/Country......: *//")
-    TAGLINERAW="$(awk '/"taglines":{/,/"__typename":"TaglineConnection"/' $TMPFILE | tr -d '\n' | sed 's/.*\("taglines":{.*"__typename":"TaglineConnection"\).*/{\1}/' | head -n 1)"
-    TAGLINE="Tagline......: $(echo $TAGLINERAW | grep -Po '"text":"[^"]*"' | sed 's/"text":"\(.*\)"/\1/')"
+    TAGLINE="Tagline......: $(grep -o '"taglines":{[^}]*}' $TMPFILE | grep -o '"text":"[^"]*' | cut -d'"' -f4 | head -1)"
     TAGLINECLEAN=$(echo $TAGLINE | sed "s/Tagline......: *//")
-    LANGUAGE="Language.....: $(grep -oP '<a[^>]+href="/search/title/\?title_type=feature&amp;primary_language=[^"]+[^>]*>\K[^<]+' "$TMPFILE" | paste -sd '/' -)"
+    LANGUAGE="Language.....: $(grep -o '"spokenLanguages":\[[^]]*' $TMPFILE | head -1 | grep -o '"text":"[^"]*' | cut -d'"' -f4 | uniq | paste -sd '/' -)"
     LANGUAGECLEAN=$(echo $LANGUAGE | sed "s/Language.....: *//")
     # Yeah, this keeps getting worse ;)
     if [ -z $PLOTWIDTH ]; then
@@ -566,43 +566,7 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     fi
     CERT=$(grep -o '<a [^>]*certificates=[^>]*>[^<]*</a>' "$TMPFILE" | sed -E 's/.*>([^<]+)<.*/\1/' | paste -sd '/' - | head -n "$CERTIFICATIONNUM")
     CERTCLEAN=$(echo $CERT | sed "s/Certification: *//" | tr '/' '\n' | grep -a -e "United States:" | tr -d ' ' | tail -n 1)
-    # We get the name twice (due to the image alt-text) so need to remove by counting spaces
-    #CASTRAW=$(sed -E -n '/^(Cast|Cast verified as complete|Complete, Cast awaiting verification)$/,/^(Directed|Written) by$/{//d;p;}' $TMPFILE | \
-    #          sed -E '/^ (Edit|Rest of cast listed alphabetically:)/d' | sed -n 's/^ //p' | head -n $CASTNUM)
-    CASTRAW=$(
-      grep -o '<a [^>]*\?ref_=ttrv_fcr_cst_[0-9][^>]*>[^<]*</a>' "$TMPFILE" \
-      | sed -nE 's#<a ([^>]*)\?ref_=ttrv_fcr_cst_([0-9]+)[^>]*>([^<]+)</a>#\2|\1|\3#p' \
-      | sort -n \
-      | awk -F'|' '
-	{
-	  idx=$1
-	  if (match($2, /href="\/name\/nm/)) actors[idx]=$3
-	  if (match($2, /href="\/title\/tt[0-9]+\/characters\//)) chars[idx]=$3
-	}
-	END {
-	  for(i=1; i<=length(actors) || i<=length(chars); i++) {
-	    if(actors[i] != "" && chars[i] != "")
-	      print actors[i] " ... " chars[i]
-	  }
-	}
-      ' | head -n "${CASTNUM}"
-    )
-
-    CAST=""
-    OLDIFS=$IFS
-    IFS=$'\n'
-     # Need newline above so keep " there.
-    for CASTN in $CASTRAW; do
-      actor=$(echo "$CASTN" | sed -E 's/ \.\.\. .*//')
-      character=$(echo "$CASTN" | sed -E 's/.* \.\.\. //')
-      actor=$(echo "$actor" | sed "s/\"/$QUOTECHAR/g")
-      character=$(echo "$character" | sed "s/\"/$QUOTECHAR/g")
-      CAST+="$actor ... $character
-    "
-    done
-    IFS=$OLDIFS
-    # remove trailing newline
-    CAST=$(echo "$CAST" | sed '$d'| awk '{$1=$1}1')
+    CAST=$(grep -o '"nameText":{[^}]*}' $TMPFILE | grep -o '"text":"[^"]*' | cut -d'"' -f4 | awk '!a[$0]++' | head -n "${CASTNUM}")
     CASTCLEAN=$(echo "$CAST" | sed "s/\.\.\..*/|/g" | tr -s '\n' ' ' | sed "s/^\ *//g" | sed "s/\ *$//g" | sed "s/ |/\,/g" | sed "s/,$//")
     CASTLEADNAME="$(echo "$CAST" | head -n 1 | sed 's/\.\.\./\n/' | head -n 1 | tr -s ' ' | sed "s/^\ //g" | sed "s/\ $//g")"
     CASTLEADCHAR="$(echo "$CAST" | head -n 1 | sed 's/\.\.\./\n/' | tail -n 1 | tr -s ' ' | sed "s/^\ //g" | sed "s/\ $//g")"
@@ -610,13 +574,31 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     COMMENTSHORTCLEAN=$(echo $COMMENTSHORT | sed "s/User Reviews: *//")
     COMMENT="Not supported anymore"
     [[ -n "$COMMENT" ]] && COMMENTCLEAN=$(echo "$COMMENT" | sed "s/^\ *//g" | sed "s/\ *$//g" | sed s/\{\}\"/$QUOTECHAR/g | tr '\n' '|' | sed "s/[ /]*$//")
-    RUNTIME="Runtime......: $(grep -A5 '<span class="ipc-metadata-list-item__label ipc-btn--not-interactable" aria-disabled="false">Runtime</span>' $TMPFILE \
-	    | grep '<span class="ipc-metadata-list-item__list-content-item ipc-btn--not-interactable"' \
-	    | sed -E 's/.*>([0-9]+h [0-9]+m)<.*/\1/' \
-	    | head -n $RUNTIMENUM)"
-    RUNTIMECLEAN="$(echo $RUNTIME | sed "s/Runtime......: *//" | tr '/ ' '\n' | sed -e /^$/d | head -n 1 | tr -c -d '[:digit:]')"
+
+    runtime_sec=$(grep -o '"runtime":{[^}]*}' $TMPFILE | grep -o '"seconds":[0-9]*' | cut -d':' -f2 | head -1)
+    if [ -n "$runtime_sec" ]; then
+      hours=$((runtime_sec/3600))
+      mins=$(( (runtime_sec%3600)/60 ))
+      if [ $hours -gt 0 ]; then
+	RUNTIME=$(printf "%dh %dmin" "$hours" "$mins")
+      else
+	RUNTIME=$(printf "%dmin" "$mins")
+      fi
+    else
+      mins=$(grep -o '"runtime":[0-9]*' $TMPFILE | cut -d':' -f2 | head -1)
+      if [ -n "$mins" ]; then
+	hours=$((mins/60))
+	minleft=$((mins%60))
+	if [ $hours -gt 0 ]; then
+	  RUNTIME=$(printf "%dh %dmin" "$hours" "$minleft")
+	else
+	  RUNTIME=$(printf "%dmin" "$minleft")
+	fi
+      fi
+    fi
+    RUNTIMECLEAN=$RUNTIME
     if [ ! -z "$RUNTIMECLEAN" ]; then
-     RUNTIMECLEAN="$RUNTIMECLEAN min"
+     RUNTIMECLEAN="$RUNTIMECLEAN"
     fi
     DIRECTOR=$(sed -n '/Directed by$/,/^[^ ]/p' "$TMPFILE" | sed '1,2d;$d;s/^ *//' | sed 's/\"/$QUOTECHAR/g' | head -n $DIRECTORNUM | tr '\n' '/' | sed "s/ \.\.\..*//;s/ *$//;s/\/$//")
     DIRECTORCLEAN=$(echo $DIRECTOR)
@@ -1010,7 +992,7 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      echo "Limited Date.: $LIMITED" | fold -s -w $IMDBWIDTH | head -n 1 >> "$IMDBLNK"
     fi
     if [ ! -z "$RUNTIME" ]; then
-     echo "$RUNTIME" | fold -s -w $IMDBWIDTH | head -n 1 >> "$IMDBLNK"
+     echo "Runtime......: $RUNTIME" | fold -s -w $IMDBWIDTH | head -n 1 >> "$IMDBLNK"
     fi
     if [ ! -z "$CAST" ]; then
      echo "-" >> "$IMDBLNK"
@@ -1122,4 +1104,3 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
  > $IMDBPID
 fi
 exit 0
-
