@@ -1268,6 +1268,7 @@ function glftpd
     cp ../scripts/section-manager/section-manager.sh $glroot
     sed -i "s|changeme|$device|" $glroot/section-manager.sh
     cp ../scripts/imdbrating/imdbrating.sh $glroot/bin
+    sed -i s/10.10s/10.20s/ $glroot/ftp-data/text/ginfo.body
     bins="bc du expr echo sed touch chmod chown pwd grep basename date mv bash find sort which xargs"
     for file in $bins
     do
