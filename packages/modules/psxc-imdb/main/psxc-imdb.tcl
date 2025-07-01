@@ -83,7 +83,7 @@ namespace eval ::ngBot::plugin::psxc-IMDb {
         ## before known as "full" mode.
         ## You also set this to "YES" if you wish this addon to handle
         ## all !imdb requests.
-        set psxc(USEFULL) "NO"
+        set psxc(USEFULL) "YES"
         ##
         ## Is pre-support wanted?
         set psxc(USEPRE)  "YES"
