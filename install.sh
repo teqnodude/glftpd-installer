@@ -89,7 +89,7 @@ deferred_operations_file="$rootdir/.tmp/deferred_sections.sh"
 function validate_prerequisites() {
     local validation_passed=true
     
-    printf "Validating section management prerequisites...\n"
+    #printf "Validating section management prerequisites...\n"
     
     # Check compilation tools
     if ! command -v make >/dev/null 2>&1; then
@@ -134,7 +134,7 @@ printf "Finalizing deferred section operations...\n"
 
 EOF
         chmod +x "$deferred_operations_file"
-        printf "Deferred operations file created: %s\n" "$deferred_operations_file"
+        #printf "Deferred operations file created: %s\n" "$deferred_operations_file"
     fi
 }
 
@@ -218,7 +218,7 @@ function prompt_section_details() {
     section_details["${section_index}_zipfiles"]="$section_zipfiles"
     section_details["${section_index}_movie"]="$section_movie"
     
-    printf "Section %s configured successfully\n" "${section_name^^}"
+    #printf "Section %s configured successfully\n" "${section_name^^}"
 }
 
 ## Create section directory with appropriate permissions
@@ -227,7 +227,7 @@ function create_section_directory() {
     local section_name="${section_details["${section_index}_name"]}"
     local section_path="$glroot/site/$section_name"
     
-    printf "Creating directory for section %s...\n" "$section_name"
+    #printf "Creating directory for section %s...\n" "$section_name"
     
     # Create main directory
     mkdir -pm 777 "$rootdir/.tmp/site/$section_name"
@@ -235,7 +235,7 @@ function create_section_directory() {
     # Create final directory if glroot exists
     if [[ -d "$glroot" ]]; then
         mkdir -pm 777 "$section_path"
-        printf "Directory created: %s\n" "$section_path"
+        #printf "Directory created: %s\n" "$section_path"
     else
         printf "glroot directory not yet available - creation deferred\n"
     fi
@@ -253,12 +253,12 @@ function update_zsconfig_and_recompile() {
     
     # Check pzs-ng availability
     if [[ ! -f "$zsconfig_path" ]]; then
-        printf "zsconfig.h not available - adding to deferred operations list\n"
+        #printf "zsconfig.h not available - adding to deferred operations list\n"
         add_to_deferred_operations "update_zsconfig_and_recompile" "$section_name" "$section_dated" "$section_zipfiles"
         return 0
     fi
     
-    printf "Updating zsconfig.h for section %s...\n" "$section_name"
+    #printf "Updating zsconfig.h for section %s...\n" "$section_name"
     
     # Safety backup
     cp "$zsconfig_path" "$zsconfig_path.backup.$(date +%s)"
@@ -335,7 +335,7 @@ function update_ngbot_configuration() {
     
     # Check configuration file availability
     if [[ ! -f "$pzsbot" ]]; then
-        printf "ngBot.conf not available - configuration deferred\n"
+        #printf "ngBot.conf not available - configuration deferred\n"
         add_to_deferred_operations "update_ngbot_configuration" "$section_name" "$section_dated"
         
         # Create temporary bot config files
@@ -391,7 +391,7 @@ function update_auxiliary_scripts() {
     local section_dated="${section_details["${section_index}_dated"]}"
     local section_movie="${section_details["${section_index}_movie"]}"
     
-    printf "Updating auxiliary scripts for %s...\n" "$section_name"
+    #printf "Updating auxiliary scripts for %s...\n" "$section_name"
     
     # Update tur-autonuke
     update_tur_autonuke_config "$section_name" "$section_dated"
@@ -512,18 +512,18 @@ function handle_specialized_sections() {
     local section_movie="${section_details["${section_index}_movie"]}"
     
     # Special handling for movie sections
-    if [[ "$section_movie" = "y" ]]; then
-        printf "Special configuration for movie section %s\n" "$section_name"
+    #if [[ "$section_movie" = "y" ]]; then
+    #    printf "Special configuration for movie section %s\n" "$section_name"
         # PSXC-IMDB configuration will be handled in update_auxiliary_scripts
-    fi
+    #fi
     
     # Handling of special sections (0DAY, MP3, FLAC, EBOOKS)
-    case "${section_name^^}" in
-        "0DAY"|"MP3"|"FLAC"|"EBOOKS")
-            printf "Special section detected: %s - adapted configuration\n" "$section_name"
-            # These sections require special handling in approve.sh
-            ;;
-    esac
+    #case "${section_name^^}" in
+    #    "0DAY"|"MP3"|"FLAC"|"EBOOKS")
+    #        printf "Special section detected: %s - adapted configuration\n" "$section_name"
+             # These sections require special handling in approve.sh
+    #        ;;
+    #esac
     
     return 0
 }
@@ -549,7 +549,7 @@ function finalize_section_creation() {
         cat "$rootdir/.tmp/.temp" | awk -F '[" "]+' '{printf $0}' > "$rootdir/.tmp/.nodatepath"
     fi
     
-    printf "Section %s finalized successfully\n" "$section_name"
+    #printf "Section %s finalized successfully\n" "$section_name"
     return 0
 }
 
@@ -589,8 +589,8 @@ function create_section_workflow() {
     while [ $section_counter -lt $sections ]; do
         local current_section=$((section_counter + 1))
         
-        printf "\n"
-        printf "=== Configuring section %s/%s ===\n" "$current_section" "$sections"
+        #printf "\n"
+        #printf "=== Configuring section %s/%s ===\n" "$current_section" "$sections"
         
         # 1. Collect section details
         prompt_section_details "$current_section"
@@ -620,21 +620,21 @@ function create_section_workflow() {
         section_counter=$((section_counter + 1))
         rule_counter=$((rule_counter + 1))
         
-        printf "Section %s created successfully\n" "${section_details["${current_section}_name"]}"
-        printf "\n"
+        #printf "Section %s created successfully\n" "${section_details["${current_section}_name"]}"
+        #printf "\n"
     done
     
     # Workflow finalization
     finalize_section_workflow
     
-    printf "All sections have been configured successfully\n"
+    #printf "All sections have been configured successfully\n"
     
-    if [[ -f "$deferred_operations_file" ]]; then
-        printf "\n"
-        printf "IMPORTANT: Some operations have been deferred.\n"
-        printf "Execute the following script after complete installation:\n"
-        printf "%s\n" "$deferred_operations_file"
-    fi
+    #if [[ -f "$deferred_operations_file" ]]; then
+    #    printf "\n"
+    #    printf "IMPORTANT: Some operations have been deferred.\n"
+    #    printf "Execute the following script after complete installation:\n"
+    #    printf "%s\n" "$deferred_operations_file"
+    #fi
 }
 
 ## Update site rules
@@ -670,7 +670,7 @@ function finalize_section_workflow() {
     if [[ $dated_sections_count -gt 0 ]]; then
         if [[ ! -f /var/spool/cron/crontabs/root ]] || [[ `grep "dated.sh" /var/spool/cron/crontabs/root | wc -l` = 0 ]]; then
             printf "0 0 * * *               %s/bin/dated.sh >/dev/null 2>&1\n" "$glroot" >> /var/spool/cron/crontabs/root
-            printf "Cron job added for dated.sh\n"
+            #printf "Cron job added for dated.sh\n"
         fi
     fi
     
