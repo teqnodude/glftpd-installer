@@ -18,6 +18,7 @@ ARCHIVE/MOVIES/X264-1080:/site/ARCHIVE/MOVIES/X264-1080_MOVIES_SORTED
 ARCHIVE/MOVIES/X265-2160:/site/ARCHIVE/MOVIES/X265-2160_MOVIES_SORTED
 "
 exclude="^\[NUKED\]-|^\[incomplete\]-|^\[no-nfo\]-|^\[no-sample\]-"
+# Comment out the lines below or leave them empty to disable them
 sort_by_genre=Sorted.By.Genre
 sort_by_rank=Sorted.By.Rank
 log=$glroot/ftp-data/logs/imdb-scan.log
@@ -48,13 +49,15 @@ then
 	    genres="`ls $glroot/site/$section/$dir | grep IMDB | grep -o "Score_.*" | sed -e 's/(.*//' -e 's/Score_\([0-9]\(\.[0-9]\)\?\|NA\)_-_//' | sed -e 's/-/ /g' -e 's/Sci Fi/Sci-Fi/' -e 's/Sci/Sci-Fi/' -e 's/Sci-Fi-Fi/Sci-Fi/' -e 's/_//g'`"
 	    for genre in $genres
 	    do
-		if [ ! -z "$rank" ]
+		if [ ! -z "$sort_by_genre" ] && [ ! -z "$genre" ]
 		then
+  
 		    if [ ! -d "$glroot$symlink/$sort_by_genre/$genre" ]
 		    then
 			echo "`date "+%Y-%m-%d %T"` - Creating genre dir $glroot$symlink/$sort_by_genre/$genre" >> $log
 			mkdir -pm777 $glroot$symlink/$sort_by_genre/$genre
 		    fi
+      
 		    if [ ! -L "$glroot$symlink/$sort_by_genre/$genre/$dir" ]
 		    then
 			echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_genre/$genre/$dir" >> $log
@@ -62,7 +65,8 @@ then
                         source="$glroot/site/$section/$dir"
                         mkdir -p "$(dirname "$target")"
 
-                        if command -v realpath >/dev/null 2>&1; then
+                        if command -v realpath >/dev/null 2>&1
+			then
                             src_abs=$(realpath "$source")
                             tgt_dir_abs=$(realpath "$(dirname "$target")")
                             rel_source=$(realpath --relative-to="$tgt_dir_abs" "$src_abs")
@@ -72,12 +76,17 @@ then
                         fi
                         ln -sf "$rel_source" "$target"
 		    fi
-
+      		fi
+	
+		if [ ! -z "$sort_by_rank" ] && [ ! -z "$rank" ]
+  		then
+    
                     if [ ! -d "$glroot$symlink/$sort_by_rank/$rank" ]
                     then
                         echo "`date "+%Y-%m-%d %T"` - Creating rank dir $glroot$symlink/$sort_by_rank/$rank" >> $log
                         mkdir -pm777 $glroot$symlink/$sort_by_rank/$rank
                     fi
+		    
                     if [ ! -L "$glroot$symlink/$sort_by_rank/$rank/$dir" ]
                     then
                         echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_rank/$rank/$dir" >> $log
@@ -85,7 +94,8 @@ then
                         source="$glroot/site/$section/$dir"
                         mkdir -p "$(dirname "$target")"
 
-                        if command -v realpath >/dev/null 2>&1; then
+                        if command -v realpath >/dev/null 2>&1
+			then
                             src_abs=$(realpath "$source")
                             tgt_dir_abs=$(realpath "$(dirname "$target")")
                             rel_source=$(realpath --relative-to="$tgt_dir_abs" "$src_abs")
@@ -94,10 +104,12 @@ then
                             exit 1
                         fi
                         ln -sf "$rel_source" "$target"
+			
                     fi
 		fi
 	    done
 	done
+ 
 	echo "`date "+%Y-%m-%d %T"` - Doing cleanup of broken links in section $section" >> $log
 	find $glroot$symlink -xtype l -exec rm -f {} +
  	find $glroot$symlink -type d -empty -exec rm -rf {} +
