@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.05
+VER=1.06
 #--[ Info ]-----------------------------------------------------#
 # 
 # A script that create genre symlinks for a section of series out 
@@ -19,8 +19,10 @@ TV-HD:/site/TV-HD_SORTED
 TV-NL:/site/TV-NL_SORTED
 "
 exclude="^\[NUKED\]-|^\[incomplete\]-|^\[no-nfo\]-|^\[no-sample\]-"
+# Comment out the lines below or leave them empty to disable them
 sort_by_genre=Sorted.By.Genre
 sort_by_type=Sorted.By.Type
+sort_by_rank=Sorted.By.Rank
 #log=$glroot/ftp-data/logs/tvmaze-symlink-maker.log
 
 #--[ Script Start ]---------------------------------------------#
@@ -50,37 +52,91 @@ then
 	do
 	    genre="`ls $glroot/site/$section/$dir | egrep -v "IMDB|COMPLETE" | grep -o "Score_.*" | sed -e 's/(.*//' -e 's/Score_10\|Score_\([0-9]\(\.[0-9]\)\?\|NA\)_-_//' | tr -s "_" " " | sed 's/ - / /g'`"
 	    type="`ls $glroot/site/$section/$dir | egrep -v "IMDB|COMPLETE" | grep -o "(.*)" | tr -d '()'| tr -s " " "_"`"
+            rank="`ls $glroot/site/$section/$dir | egrep -v "IMDB|COMPLETE" | grep -o "Score_.*" | cut -d '_' -f2 | sed 's|.[0-9]||'`"
 
-	    if [ ! -z "$genre" ]
-	    then
-		for gen in $genre
-		do
-		    if [ ! -d "$glroot$symlink/$sort_by_genre/$gen" ]
-		    then
-			echo "`date "+%Y-%m-%d %T"` - Creating genre dir $glroot$symlink/$sort_by_genre/$gen" >> $log
-			mkdir -pm777 $glroot$symlink/$sort_by_genre/$gen
-		    fi
+            if [ ! -z "$sort_by_genre" ] && [ ! -z "$genre" ]
+            then
+                for gen in $genre
+                do
+                    target="$glroot$symlink/$sort_by_genre/$gen/$dir"
+                    source="$glroot/site/$section/$dir"
+                    target_dir="$(dirname "$target")"
 
-		    if [ ! -L "$glroot$symlink/$sort_by_genre/$gen/$dir" ]
-		    then
-			echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_genre/$gen/$dir" >> $log
-			ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$gen/$dir"
-		    fi
-		done
+                    if [ ! -d "$target_dir" ]
+                    then
+                        echo "$(date "+%Y-%m-%d %T") - Creating genre dir $target_dir" >> "$log"
+                        mkdir -pm777 "$target_dir"
+                    fi
 
-		if [ ! -d "$glroot$symlink/$sort_by_type/$type" ]
-		then
-		    echo "`date "+%Y-%m-%d %T"` - Creating type dir $glroot$symlink/$sort_by_type/$type" >> $log
-		    mkdir -pm777 $glroot$symlink/$sort_by_type/$type
-		fi
+                    if command -v realpath >/dev/null 2>&1
+                    then
+                        rel_source=$(realpath --relative-to="$target_dir" "$source")
+                    else
+                        echo "realpath is required for relative symlinks."
+                        exit 1
+                    fi
 
-		if [ ! -L "$glroot$symlink/$sort_by_type/$type/$dir" ]
-		then
-		    echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_type/$type/$dir" >> $log
-		    ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_type/$type/$dir"
-		fi
-	    fi
-	done
+                    if [ ! -L "$target" ]
+                    then
+                        echo "$(date "+%Y-%m-%d %T") - Creating symlink $target -> $rel_source" >> "$log"
+                        ln -sf "$rel_source" "$target"
+                    fi
+                done
+            fi
+            if [ ! -z "$sort_by_type" ]  && [ ! -z "$type" ]
+            then
+                target="$glroot$symlink/$sort_by_type/$type/$dir"
+                source="$glroot/site/$section/$dir"
+                target_dir="$(dirname "$target")"
+
+                if [ ! -d "$target_dir" ]
+                then
+                    echo "$(date "+%Y-%m-%d %T") - Creating type dir $target_dir" >> "$log"
+                    mkdir -pm777 "$target_dir"
+                fi
+
+                if command -v realpath >/dev/null 2>&1
+                then
+                    rel_source=$(realpath --relative-to="$target_dir" "$source")
+                else
+                    echo "realpath is required for relative symlinks."
+                    exit 1
+                fi
+
+                if [ ! -L "$target" ]
+                then
+                    echo "$(date "+%Y-%m-%d %T") - Creating symlink $target -> $rel_source" >> "$log"
+                    ln -sf "$rel_source" "$target"
+                fi
+            fi
+
+            if [ ! -z "$sort_by_rank" ] && [ ! -z "$rank" ]
+            then
+                target="$glroot$symlink/$sort_by_rank/$rank/$dir"
+                source="$glroot/site/$section/$dir"
+                target_dir="$(dirname "$target")"
+
+                if [ ! -d "$target_dir" ]
+                then
+                    echo "$(date "+%Y-%m-%d %T") - Creating rank dir $target_dir" >> "$log"
+                    mkdir -pm777 "$target_dir"
+                fi
+
+                if command -v realpath >/dev/null 2>&1
+                then
+                    rel_source=$(realpath --relative-to="$target_dir" "$source")
+                else
+                    echo "realpath is required for relative symlinks."
+                    exit 1
+                fi
+
+                if [ ! -L "$target" ]
+                then
+                    echo "$(date "+%Y-%m-%d %T") - Creating symlink $target -> $rel_source" >> "$log"
+                    ln -sf "$rel_source" "$target"
+                fi
+            fi
+ 	done
 
 	echo "`date "+%Y-%m-%d %T"` - Doing cleanup of broken links in section $section" >> $log
 	find $glroot$symlink -xtype l -exec rm -f {} +
