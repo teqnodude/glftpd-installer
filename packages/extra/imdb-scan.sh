@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.23
+VER=1.24
 #--[ Info ]-----------------------------------------------------#
 # 
 # A script that create genre symlinks for a section of movies out 
