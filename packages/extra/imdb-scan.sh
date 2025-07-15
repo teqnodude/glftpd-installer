@@ -58,25 +58,19 @@ then
 		    if [ ! -L "$glroot$symlink/$sort_by_genre/$genre/$dir" ]
 		    then
 			echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_genre/$genre/$dir" >> $log
-                	depth=`echo $section | grep -o '/' | wc -l`
-                	case $depth in
-                    	    3)
-                    	    ln -s "../../../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
-                    	    rm -f "../../../../../../$section/$dir/$dir"
-                    	    ;;
-                    	    2)
-                    	    ln -s "../../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
-                    	    rm -f "../../../../../$section/$dir/$dir"
-                    	    ;;
-                    	    1)
-                    	    ln -s "../../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
-                    	    rm -f "../../../../$section/$dir/$dir"
-                    	    ;;
-                    	    0)
-                    	    ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_genre/$genre/$dir"
-                    	    rm -f "../../../$section/$dir/$dir"
-                    	    ;;
-                	esac
+                        target="$glroot$symlink/$sort_by_genre/$genre/$dir"
+                        source="$glroot/site/$section/$dir"
+                        mkdir -p "$(dirname "$target")"
+
+                        if command -v realpath >/dev/null 2>&1; then
+                            src_abs=$(realpath "$source")
+                            tgt_dir_abs=$(realpath "$(dirname "$target")")
+                            rel_source=$(realpath --relative-to="$tgt_dir_abs" "$src_abs")
+                        else
+                            echo "realpath is required but not installed. Please install coreutils (provides realpath) or adjust your script."
+                            exit 1
+                        fi
+                        ln -sf "$rel_source" "$target"
 		    fi
 
                     if [ ! -d "$glroot$symlink/$sort_by_rank/$rank" ]
@@ -87,25 +81,19 @@ then
                     if [ ! -L "$glroot$symlink/$sort_by_rank/$rank/$dir" ]
                     then
                         echo "`date "+%Y-%m-%d %T"` - Creating symlink $glroot$symlink/$sort_by_rank/$rank/$dir" >> $log
-                        depth=`echo $section | grep -o '/' | wc -l`
-                        case $depth in
-                            3)
-                            ln -s "../../../../../../$section/$dir" "$glroot$symlink/$sort_by_rank/$rank/$dir"
-                            rm -f "../../../../../../$section/$dir/$dir"
-                            ;;
-                            2)
-                            ln -s "../../../../../$section/$dir" "$glroot$symlink/$sort_by_rank/$rank/$dir"
-                            rm -f "../../../../../$section/$dir/$dir"
-                            ;;
-                            1)
-                            ln -s "../../../../$section/$dir" "$glroot$symlink/$sort_by_rank/$rank/$dir"
-                            rm -f "../../../../$section/$dir/$dir"
-                            ;;
-                            0)
-                            ln -s "../../../$section/$dir" "$glroot$symlink/$sort_by_rank/$rank/$dir"
-                            rm -f "../../../$section/$dir/$dir"
-                            ;;
-                        esac
+                        target="$glroot$symlink/$sort_by_rank/$rank/$dir"
+                        source="$glroot/site/$section/$dir"
+                        mkdir -p "$(dirname "$target")"
+
+                        if command -v realpath >/dev/null 2>&1; then
+                            src_abs=$(realpath "$source")
+                            tgt_dir_abs=$(realpath "$(dirname "$target")")
+                            rel_source=$(realpath --relative-to="$tgt_dir_abs" "$src_abs")
+                        else
+                            echo "realpath is required but not installed. Please install coreutils (provides realpath) or adjust your script."
+                            exit 1
+                        fi
+                        ln -sf "$rel_source" "$target"
                     fi
 		fi
 	    done
