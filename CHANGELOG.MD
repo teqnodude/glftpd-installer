@@ -8,6 +8,7 @@
 - Changed from a fixed password in section-traffic and tur-trial to an install generated password for better security
 - Changed from a fixed password in backup.sh to an install generated password for better security
 - Improved the SQL queries for section-traffic and created two SQL indexes that increased the speed quite a lot, especially for larger databases
+- Improved tvmaze-symlink-maker.sh and imdb-scan.sh when it comes to the handling of relative paths and also added the rank option to tvmaze-symlink-maker.sh
 
 ### Fixes
 
