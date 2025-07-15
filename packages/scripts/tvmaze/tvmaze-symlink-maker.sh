@@ -83,7 +83,8 @@ then
                     fi
                 done
             fi
-            if [ ! -z "$sort_by_type" ]  && [ ! -z "$type" ]
+
+	    if [ ! -z "$sort_by_type" ]  && [ ! -z "$type" ]
             then
                 target="$glroot$symlink/$sort_by_type/$type/$dir"
                 source="$glroot/site/$section/$dir"
