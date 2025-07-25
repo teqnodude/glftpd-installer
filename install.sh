@@ -624,9 +624,6 @@ function create_section_workflow() {
         #printf "\n"
     done
     
-    # Workflow finalization
-    finalize_section_workflow
-    
     #printf "All sections have been configured successfully\n"
     
     #if [[ -f "$deferred_operations_file" ]]; then
@@ -655,26 +652,6 @@ function update_site_rules() {
     fi
 }
 
-## Finalize section workflow
-function finalize_section_workflow() {
-    
-    # Handle cron for dated sections
-    local dated_sections_count=0
-    for i in $(seq 1 $sections); do
-        if [[ "${section_details["${i}_dated"]}" = "y" ]]; then
-            dated_sections_count=$((dated_sections_count + 1))
-        fi
-    done
-    
-    # Update cron if needed
-    if [[ $dated_sections_count -gt 0 ]]; then
-        if [[ ! -f /var/spool/cron/crontabs/root ]] || [[ `grep "dated.sh" /var/spool/cron/crontabs/root | wc -l` = 0 ]]; then
-            printf "0 0 * * *               %s/bin/dated.sh >/dev/null 2>&1\n" "$glroot" >> /var/spool/cron/crontabs/root
-            #printf "Cron job added for dated.sh\n"
-        fi
-    fi
-    
-}
 
 ## Update approve script
 function update_approve_script() {

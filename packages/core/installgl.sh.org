@@ -1375,7 +1375,7 @@ fi
 echo -ne "\nAdding crontab entry to tabulate site stats nightly . . . "
 
 { crontab -l | grep -v "$jaildir$glroot/bin/reset"
-  echo "0  0 * * *      $jaildir$glroot/bin/reset ${euroweek}${confpath}"
+  echo "0 0 * * *		$jaildir$glroot/bin/reset ${euroweek}${confpath}"
 } | crontab - > /dev/null
 
 echo "Done."
