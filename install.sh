@@ -1551,8 +1551,7 @@ EOF`
     	ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp $username SiteOP" $connection > /dev/null
 	ncftpls -u glftpd -p glftpd -P $port -Y "site change $username flags +1347ABCDEFGH" $connection > /dev/null
 	ncftpls -u glftpd -p glftpd -P $port -Y "site change $username ratio 0" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp glftpd Admin" $connection > /dev/null
-	ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp glftpd SiteOP" $connection > /dev/null
+	ncftpls -u glftpd -p glftpd -P $port -Y "site chgrp glftpd glftpd" $connection > /dev/null
 	echo
 	echo "[$username] created successfully and added to the groups Admin and SiteOP"
 	echo "These groups were also created: NUKERS, iND, VACATION & Friends"
