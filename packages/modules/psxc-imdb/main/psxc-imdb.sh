@@ -558,7 +558,7 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     if [ -z $PLOTWIDTH ]; then
       PLOTWIDTH=275
     fi
-    PLOT=$(grep -oP '"plotText":\{"plainText":"\K[^"]+' "$TMPFILE" | head -n1 | fold -s -w $PLOTWIDTH | sed 's/\(.\{1000\}\).*/\1.../')
+    PLOT=$(grep -oP '"plotText":\{"plainText":"\K(.+?)(?<!\\)"' "$TMPFILE" | sed 's/\\"/'\''/g; s/"$//' | head -1 | fold -s -w $PLOTWIDTH | sed 's/\(.\{1000\}\).*/\1.../')
     PLOTCLEAN=$(echo "$PLOT" | sed "s/Plot: *//")
     if [ ! -z "$(echo "$PLOTCLEAN" | grep -a -e "\(\ \)\ \(\ \)")" ]; then
      OUTPUTOK=""
