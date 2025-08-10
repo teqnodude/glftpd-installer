@@ -147,7 +147,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 	##################################################
 
 	## Version
-	set tvmaze(version) "20200223"
+	set tvmaze(version) "20250809"
 	## Useragent
 	set tvmaze(useragent) "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.5) Gecko/2008120122 Firefox/3.0.5"
 
