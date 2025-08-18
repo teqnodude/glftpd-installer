@@ -32,7 +32,7 @@ SQLUSER="transfer"
 SQLPASS=""
 SQLDB="transfers"
 SQLTB="changeme"
-SQL="$SQLBIN -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s"
+SQL="$SQLBIN --ssl=0 -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s"
 SQLEXPIRE="6"
 
 COLOR1=4
