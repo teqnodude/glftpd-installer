@@ -88,7 +88,7 @@ tmp=/glftpd/tmp
 
 #--[ Script Start ]----------------------------------------------------#
 
-SQL="$SQLBIN -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
+SQL="$SQLBIN --ssl=0 -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
 
 if [ "$1" = "debug" -o "$1" = "test" ]; then
   DEBUG="TRUE"
