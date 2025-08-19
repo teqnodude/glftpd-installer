@@ -560,7 +560,6 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     fi
     PLOT="Plot: "$(grep -oP '"plotText":\{"plainText":"\K(.+?)(?<!\\)"' "$TMPFILE" \
         | head -1 \
-        | sed -e 's/\( \\\* Plot Summary\|Written by .*\)$//' -e '/(.*@.*)/d' \
         | sed 's/\\u0026/\&/g;' \
         | sed s/\"/$QUOTECHAR/g | sed 's/^\ *//g' | tr -s ' ' | sed "s/ *$//" \
         | sed 's/\\n/'"$NEWLINE"'/g' | sed 's/\(.\{1000\}\).*/\1.../' \
