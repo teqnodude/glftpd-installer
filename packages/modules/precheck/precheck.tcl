@@ -12,13 +12,17 @@
 bind pub - !precheck pub:precheck
 
 proc pub:precheck {nick output binary chan text} {
-	set binary {/glftpd/bin/precheck.sh}
-	set who [lindex $text 0]
-	foreach line [split [exec $binary $who] "\n"] {
-		putquick "PRIVMSG $nick :$line"
-	}
+    set binary {/glftpd/bin/precheck.sh}
+    set who [lindex $text 0]
+    
+    foreach line [split [exec $binary $who] "\n"] {
+
+	putquick "PRIVMSG $nick :$line"
+
+    }
+
 }
 
-putlog "Precheck 1.0 by Teqno loaded"
+putlog "Precheck 1.2 by Teqno loaded"
 
 		     

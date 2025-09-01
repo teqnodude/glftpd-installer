@@ -1,60 +1,62 @@
 #!/bin/bash
 VER=3.4
-
-#----------------------------------------------------------#
-#                                                          #
-# This script is used to import your xferlog into a mysql  #
-# database so you can do other fun stuff with it.          #
-#                                                          #
-# Only tested on glftpd 2.                                 #
-# 3.1 Fixed to work... better? Now uses a TAB seperator    #
-#     and also specifies the fieldnames to insert into.    #
-#     3.0 gave me errors on newer MariaDBs without this.   #
-#     Also fixed/renamed "transfefype" to "transfertype"   #
-#     so if you're upgrading, take that into account!      #
-#                                                          #
-# 3.2 Database structure changed. "load data" changed so   #
-#     that the various date/time fields are stored in a    #
-#     single 'datetime' instead.                           #
-#     Also removed (not importing) all the crap fields.    #
-#     You can NOT update directly from 3.1. If you want    #
-#     to use this new structure, create a new table for it #
-#     and import your old xferlog.archived file in it.     #
-#                                                          #
-# 3.3 Modified by Teqno to contain relname & section with  #
-#     optimized length of columns for improved performance #
-#                                                          #
-#-[ Setup ]------------------------------------------------#
-#                                                          #
-# * Setup the database and table to something like this:   #
+#--[ Info ]-----------------------------------------------------
+#                                                          
+# This script is used to import your xferlog into a mysql  
+# database so you can do other fun stuff with it.          
+#                                                          
+# Only tested on glftpd 2.                                 
+# 3.1 Fixed to work... better? Now uses a TAB seperator    
+#     and also specifies the fieldnames to insert into.    
+#     3.0 gave me errors on newer MariaDBs without this.   
+#     Also fixed/renamed "transfefype" to "transfertype"   
+#     so if you're upgrading, take that into account!      
+#                                                          
+# 3.2 Database structure changed. "load data" changed so   
+#     that the various date/time fields are stored in a    
+#     single 'datetime' instead.                           
+#     Also removed (not importing) all the crap fields.    
+#     You can NOT update directly from 3.1. If you want    
+#     to use this new structure, create a new table for it 
+#     and import your old xferlog.archived file in it.     
+#                                                          
+# 3.3 Modified by Teqno to contain relname & section with  
+#     optimized length of columns for improved performance 
 #
-# CREATE TABLE `transfers` (
-#  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-#  `datetime` datetime DEFAULT NULL,
-#  `ip` varchar(20) DEFAULT NULL,
-#  `FTPuser` varchar(20) DEFAULT NULL,
-#  `FTPgroup` varchar(20) DEFAULT NULL,
-#  `path` varchar(300) DEFAULT NULL,
-#  `filename` varchar(255) DEFAULT NULL,
-#  `relname` varchar(255) DEFAULT NULL,
-#  `section` varchar(30) DEFAULT NULL,
-#  `transfertime` bigint(20) DEFAULT NULL,
-#  `bytes` bigint(20) DEFAULT NULL,
-#  `direction` char(1) DEFAULT '',
-#  `ident` varchar(20) DEFAULT NULL,
-#  PRIMARY KEY (`ID`),
-#  KEY `IP` (`ip`(7)),
-#  KEY `Direction` (`direction`),
-#  KEY `FTPuser` (`FTPuser`(2)),
-#  KEY `Section` (`section`(2)),
-#  KEY `Filename` (`filename`(8))
+# 3.4 Optimized code and fixed default SSL issue that was introduced
+#     in newer versions of Debian.
+#                                                          
+#--[ Setup ]----------------------------------------------------
+#                                                          
+# * Setup the database and table to something like this:   
+#
+# CREATE TABLE $(transfers) (
+#  $(ID) bigint(20) NOT NULL AUTO_INCREMENT,
+#  $(datetime) datetime DEFAULT NULL,
+#  $(ip) varchar(20) DEFAULT NULL,
+#  $(FTPuser) varchar(20) DEFAULT NULL,
+#  $(FTPgroup) varchar(20) DEFAULT NULL,
+#  $(path) varchar(300) DEFAULT NULL,
+#  $(filename) varchar(255) DEFAULT NULL,
+#  $(relname) varchar(255) DEFAULT NULL,
+#  $(section) varchar(30) DEFAULT NULL,
+#  $(transfertime) bigint(20) DEFAULT NULL,
+#  $(bytes) bigint(20) DEFAULT NULL,
+#  $(direction) char(1) DEFAULT '',
+#  $(ident) varchar(20) DEFAULT NULL,
+#  PRIMARY KEY ($(ID)),
+#  KEY $(IP) ($(ip)(7)),
+#  KEY $(Direction) ($(direction)),
+#  KEY $(FTPuser) ($(FTPuser)(2)),
+#  KEY $(Section) ($(section)(2)),
+#  KEY $(Filename) ($(filename)(8))
 # ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 #
 #
 # CREATE INDEX idx_section_datetime_ftpuser ON transfers(section, datetime, FTPuser);
 # CREATE INDEX idx_section_datetime_direction ON transfers(section, datetime, direction);
 #
-#----------------------------------------------------------#
+#--[ Settings ]-------------------------------------------------
 
 ## Path to mysql binary. Leave as "mysql" if in path.
 SQLBIN="mysql"
@@ -63,7 +65,7 @@ SQLBIN="mysql"
 SQLHOST="localhost"
 
 ## MySQL user.
-SQLUSER="root"
+SQLUSER="admin"
 
 ## MySQL users password.
 SQLPASS=""
@@ -86,46 +88,80 @@ lockfile=/tmp/xferlog-import.lock
 ## Temporary path to store stuff. Make sure it exists.
 tmp=/glftpd/tmp
 
-#--[ Script Start ]----------------------------------------------------#
+#--[ Script Start ]---------------------------------------------
 
-SQL="$SQLBIN --ssl=0 -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
+SQL="$SQLBIN --ssl=0 -P 3307 -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
 
-if [ "$1" = "debug" -o "$1" = "test" ]; then
-  DEBUG="TRUE"
+DEBUG="FALSE"
+
+if [[ "${1:-}" = "debug" || "${1:-}" = "test" ]]
+then
+
+    DEBUG="TRUE"
+
 fi
+
 proc_debug() {
-  if [ "$DEBUG" = "TRUE" ]; then
-    echo "$*"
-  fi
+    if [[ "${DEBUG}" = "TRUE" ]]
+    then
+
+        printf '[DEBUG] %s\n' "$*"
+
+    fi
 }
 
-if [ -e "$lockfile" ]; then
-  if [ "`find \"$lockfile\" -type f -mmin -60`" ]; then
-    echo "Lockfile $lockfile exists and is not 60 minutes old yet. Quitting."
-    exit 0
-  else
-    echo "Lockfile exists, but its older then 60 minutes. Removing lockfile."
-    rm -f "$LOCKFILE"
-  fi
+# Ensure tmp exists
+mkdir -p "${tmp:-/tmp}"
+
+# Lockfile handling (corrected, consistent variable name)
+if [[ -e "$lockfile" ]]
+then
+
+    # If the lockfile is newer than 60 minutes, quit; otherwise remove stale lock
+    if find "$lockfile" -type f -mmin -60 -print -quit >/dev/null
+    then
+
+        echo "Lockfile $lockfile exists and is not 60 minutes old yet. Quitting."
+        exit 0
+
+    else
+
+        echo "Lockfile exists, but it's older than 60 minutes. Removing lockfile."
+        rm -f "$lockfile"
+
+    fi
+
 fi
 
-if [ ! -r "$xferlog" ]; then
-  proc_debug "Cant read xferlog. Quitting."
-  exit 1
+# Ensure xferlog is readable
+if [[ ! -r "$xferlog" ]]
+then
+
+    proc_debug "Can't read xferlog ($xferlog). Quitting."
+    exit 1
+
 fi
 
+# Test SQL connection
 proc_sqlconnecttest() {
-  sqldata="`$SQL "show table status" | tr -s '\t' '^' | cut -d '^' -f1`"
-  if [ -z "$sqldata" ]; then
-    unset ERRORLEVEL
-    echo "Mysql error. Check server"
-    exit 0
-  fi
+
+    sqldata="$($SQL "show table status" | tr -s '\t' '^' | cut -d '^' -f1)"
+
+    if [[ -z "$sqldata" ]]
+    then
+
+        unset ERRORLEVEL
+        echo "Mysql error. Check server"
+        exit 1
+    fi
+
 }
 
 proc_sqlconnecttest
 
-touch $lockfile
+# Create lockfile and ensure cleanup on exit
+touch "$lockfile"
+trap 'rm -f "$lockfile"' EXIT
 
 mv -f $xferlog $tmp/xferlog.processing
 
@@ -137,6 +173,5 @@ cat $tmp/xferlog.processing >> $archive
 
 rm -f $tmp/xferlog.processing
 rm -f $tmp/xferlog.processing.sort
-rm -f $lockfile
 
 exit 0

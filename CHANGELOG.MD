@@ -1,4 +1,4 @@
-## 11.x -
+## 12.0 - 2025-09-01
 
 ### Updated
 
@@ -9,6 +9,9 @@
 - Changed from a fixed password in backup.sh to an install generated password for better security
 - Improved the SQL queries for section-traffic and created two SQL indexes that increased the speed quite a lot, especially for larger databases
 - Improved tvmaze-symlink-maker.sh and imdb-scan.sh when it comes to the handling of relative paths and also added the rank option to tvmaze-symlink-maker.sh
+- Massive overhaul of the code in install.sh and the various scripts that I've made over the years that are included, all for the sake of much needed optimization
+- Moved away from overwriting 50-server.cnf in relation to the install of tur-trial and section-traffic that are using mariadb where it now runs on a mariadb on a separate port 3307 where
+  it also keeps its datadir in $glroot/backup/mysql that shouldn't affect other existing databases. This has hopefully resolved the major security issue #1 that was presented in SECURITY.MD
 
 ### Fixes
 
@@ -17,6 +20,7 @@
 - tur-precheck didn't work properly when VERIFY_RAR_WITH_SFV and VERIFY_MP3_WITH_SFV was set to FALSE
 - Fixed the error message when there is no .lock file in incomplete-list-nuker.sh
 - IMDB.com changed their layout so fixed psxc-imdb.sh and moved away from HTML parsing to JSON as much as I could
+- Various fixes in various scripts due to a massive overhaul of the code
 
 ## 11.1 - 2024-08-04
 

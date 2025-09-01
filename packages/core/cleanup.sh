@@ -1,53 +1,51 @@
 #!/bin/bash
 
-echo -e "This will remove everything under \e[91m/glftpd\e[0m including \e[91m/glftpd/site\e[0m and undo system changes made by the installer"
-echo
-echo -n "Are you sure you want to proceed? [Y]es [N]o, default N : " ; read cleanup
+red=$(tput setaf 1)
+reset=$(tput sgr0)
+
+printf "This will remove everything under ${red}/glftpd${reset} including ${red}/glftpd/site${reset} and undo system changes\n\n"
+read -rp "Are you sure? [Y]es [N]o, default N: " cleanup
 
 case $cleanup in
+
     [Yy])
-	rm -rf /glftpd
-	rm -rf packages/source
-	rm -rf packages/sitewho
-	rm -rf packages/sitewho
-	rm -rf packages/eggdrop*
-	rm -rf packages/glftpd*
-	rm -rf packages/pzs-ng
-        rm -f /etc/glftpd.conf
-	rm -f site.rules
-        rm -rf /var/spool/mail/sitebot
-	rm -rf .tmp
-        rm -f /etc/rsyslog.d/glftpd.conf
-	killall sitebot > /dev/null 2>&1
-        sleep 3
-	userdel sitebot > /dev/null 2>&1
-        groupdel glftpd > /dev/null 2>&1
-	sed -i /glftpd/d /etc/services
 
-        if [ -f "/etc/inetd.conf" ]
-	then
-	    sed -i /glftpd/d /etc/inetd.conf
-	    killall -HUP inetd
-        fi
+        rm -rf /glftpd packages/{source,sitewho,eggdrop*,glftpd*,pzs-ng} .tmp \
+               /etc/glftpd.conf site.rules /etc/rsyslog.d/glftpd.conf /etc/mysql/mariadb-glftpd.cnf \
+               /var/spool/{mail/sitebot,cron/crontabs/sitebot} 2>/dev/null
 
-	sed -i /glftpd/Id /var/spool/cron/crontabs/root
-        rm -f /var/spool/cron/crontabs/sitebot
+        { killall sitebot && sleep 3; } 2>/dev/null
+        userdel sitebot 2>/dev/null
+        groupdel glftpd 2>/dev/null
 
-	if [ -f "/etc/systemd/system/glftpd.socket" ]
+        rm -f /etc/services.d/glftpd
+        sed -i /glftpd/d /etc/services
+
+        [[ -f /etc/inetd.conf ]] && sed -i /glftpd/d /etc/inetd.conf && killall -HUP inetd
+
+        sed -i /glftpd/Id /var/spool/cron/crontabs/root
+
+        [[ -f /etc/systemd/system/glftpd.socket ]] && {
+            systemctl disable --now stop glftpd.socket &>/dev/null
+            rm -f /etc/systemd/system/glftpd*
+            systemctl daemon-reload
+            systemctl reset-failed
+        }
+        
+        if [[ -f /etc/systemd/system/mariadb-glftpd.service ]] 
         then
-    	    systemctl stop glftpd.socket
-	    systemctl disable glftpd.socket >/dev/null 2>&1
-	    rm -f /etc/systemd/system/glftpd*
-	    systemctl daemon-reload
-	    systemctl reset-failed
+        	
+        	systemctl disable --now mariadb-glftpd &>/dev/null
+        	rm -f /etc/systemd/system/mariadb-glftpd.service
+        	systemctl daemon-reload
+        
         fi
-	echo
-	echo "Cleanup completed"
-	;;
-    *)
-	echo
-	echo "Cleanup aborted"
-	;;
-esac
+		
+        [[ -f /usr/sbin/mariadbd ]] && systemctl restart mariadb
 
-exit 0
+        printf '\nCleanup completed\n'
+        ;;
+
+    *) printf '\nCleanup aborted\n' ;;
+
+esac

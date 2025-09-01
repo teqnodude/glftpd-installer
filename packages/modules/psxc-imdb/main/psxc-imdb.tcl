@@ -113,7 +113,7 @@ namespace eval ::ngBot::plugin::psxc-IMDb {
         set ${np}::disable(IMDBFINDVAR)            0
         ##
         ## Convert empty or zero variables into something else.
-	## If you use MYOWN these are not used, see psxc-imdb.conf
+		## If you use MYOWN these are not used, see psxc-imdb.conf
         set ${np}::zeroconvert(%imdbdirname)       "N/A"
         set ${np}::zeroconvert(%imdburl)           "N/A"
         set ${np}::zeroconvert(%imdbtitle)         "N/A"

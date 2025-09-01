@@ -593,38 +593,23 @@ echo ""
 
 echo -e "\n\033[1m4. SERVICE SETUP & MULTI-INSTALL:\033[0m\n\033[1m---------------------------------\033[0m\n"
 
-servicedef="`basename ${glroot}`"
-servicename=""
-while [ -z "$servicename" ]; do
-    echo "Enter a service name for glftpd. This name will be used as the"
-    echo "service name mapped to the port in /etc/services, the name"
-    echo "used in your (x)inetd settings, and the name of your config-file."
-    echo -e "\033[1mNOTE:\033[0m If you (wish to) have multiple instances of glftpd on the"
-    echo "same box, you *must* to change this."
-    echo -n "Press <enter> for the default (${servicedef})> "
-#    read servicename
-    if [ -z "$servicename" ]; then
-        servicename="${servicedef}"
-    else
-        if [ ! -z "`echo "$servicename" | tr -d '[a-zA-Z0-9]'`" ]; then
-            echo "Invalid chars in name. Please use numbers and letters only."
-            echo ""
-            servicename=""
+servicename="glftpd"
+
+# Check /etc/services
+if [ ! -z "$(grep -e "^${servicename}$" /etc/services 2>/dev/null)" ]; then
+    echo "Warning: Service '${servicename}' already exists. It will be updated."
+fi
+
+# Check /etc/services.d/ if it exists
+if [ -d /etc/services.d ]; then
+    # Use a loop to avoid wildcard expansion issues
+    for file in /etc/services.d/*; do
+        if [ -f "$file" ] && [ ! -z "$(grep -e "^${servicename}$" "$file" 2>/dev/null)" ]; then
+            echo "Warning: Service '${servicename}' already exists in $file. It will be updated."
+            break
         fi
-    fi
-    if [ ! -z "$servicename" ]; then
-        servicename="`echo $servicename | tr 'A-Z' 'a-z'`"
-        if [ ! -z "$(grep -e "^${servicename}$" /etc/services)" ]; then
-            echo "The service \"$servicename\" already exists in /etc/services."
-            echo -n "Replace it? (y/n)> "
-            read keystroke
-            keystroke="`echo $keystroke | cut -b 1-1 | tr 'A-Z' 'a-z'`"
-            if [ ! "$keystroke" = "y" ]; then
-                servicename=""
-            fi
-        fi
-    fi
-done
+    done
+fi
 
 if [ ! "${servicename}" = "glftpd" ]; then
   keystroke=""
@@ -845,14 +830,10 @@ chmod 644 "$jaildir$glroot/ftp-data/groups/"*
 echo "Done."
 
 echo ""
-echo -n "Adding glftpd service to /etc/services (as ${servicename}) . . . "
-
-{ grep -v ^${servicename} /etc/services;
-  echo "$servicename   $port/tcp"
-} > /etc/services.new
-mv -f /etc/services.new /etc/services
+echo -n "Adding glftpd service to /etc/services.d (as ${servicename}) . . . "
+[[ ! -d /etc/services.d/ ]] && mkdir /etc/services.d
+echo "$servicename   $port/tcp" > /etc/services.d/glftpd
 echo "Done."
-
 echo -n "Copying glftpd.conf to $confdir/${servicename}.conf . . . "
 
 if [ -f glftpd.conf ]; then

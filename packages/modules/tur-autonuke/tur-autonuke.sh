@@ -23,7 +23,7 @@ fi
 DATENOW="$(date +%D" - "%T)"
 
 if [ -e "$TEMPDIR/tur-autonuke.lock" ]; then
-  if [ "`find \"$TEMPDIR/tur-autonuke.lock\" -type f -mmin -60`" ]; then
+  if [ "$(find \"$TEMPDIR/tur-autonuke.lock\" -type f -mmin -60)" ]; then
     if [ "$1" = "test" ]; then
       echo "Tur-Autonuke already running? Remove $TEMPDIR/tur-autonuke.lock if its not."
       echo "Lockfile will be automatically removed once it is 60 minutes old (it is not, yet)."
@@ -93,7 +93,7 @@ if [ "$MATCHUSER" = "TRUE" ]; then
 fi
 
 ## Verify that nuked line dosnt contain [](){}. If it does, set it to NUKED. No biggie anyway.
-if [ "`echo "$NUKES" | egrep '\[|\]|\(|\)|\{|\}'`" ]; then
+if [ "$(echo "$NUKES" | egrep '\[|\]|\(|\)|\{|\}')" ]; then
   if [ "$1" = "test" ]; then
     echo "Warning. NUKES contains bad char ( $NUKES ). Setting it to NUKED (dont worry)"
   fi
@@ -158,17 +158,17 @@ if [ "$1" = "test" ]; then
 fi
 
 if [ "$AFFILSDIRS" ]; then
-  for folder in `echo $AFFILSDIRS`; do
+  for folder in $(echo $AFFILSDIRS); do
     if [ ! -d "$folder" ]; then
       echo "Error. $folder defined in AFFILSDIRS does not exist. Skipping."
     else
       cd $folder
-      for affils in `ls`; do
+      for affils in $(ls); do
         GAFFILS="\-$affils$ $GAFFILS"
       done
       ## Clean up GAFFILS from any frelled spaces.
       if [ "$GAFFILS" ]; then
-        GAFFILS=`echo $GAFFILS | tr -s ' '`
+        GAFFILS=$(echo $GAFFILS | tr -s ' ')
       fi
     fi
   done
@@ -245,7 +245,7 @@ if [ "$TOTALLYEMPTY" = "TRUE" ]; then
         echo "--Entering $folders"
       fi
 
-      for found in `find $GLROOT$folders -maxdepth 1 -mindepth 1 -empty -type d -mmin +$TIMEEMPTY -print | egrep -vi "$EXCLUDESPECIAL" | cut -b$CUT- | grep -v 'lost+found'`; do
+      for found in $(find $GLROOT$folders -maxdepth 1 -mindepth 1 -empty -type d -mmin +$TIMEEMPTY -print | egrep -vi "$EXCLUDESPECIAL" | cut -b$CUT- | grep -v 'lost+found'); do
         ALLOW="$( find $GLROOT$found -type d -maxdepth 1 -print | grep -i $ALLOWED )"
         if [ "$ALLOW" = "" ]; then
           if [ "$1" = "test" ]; then
@@ -296,7 +296,7 @@ if [ "$TOTALLYEMPTY" = "TRUE" ]; then
               done
               if [ "$gotuser" = "true" ]; then
                 sleep 1
-                echo `date "+%a %b %e %T %Y"` ANUKEL: \"$users\" >> $GLLOG
+                echo $(date "+%a %b %e %T %Y") ANUKEL: \"$users\" >> $GLLOG
                 sleep 2
               fi
               unset users
@@ -312,7 +312,7 @@ if [ "$TOTALLYEMPTY" = "TRUE" ]; then
       done
       ## Early Pre-Nuke warning
       if [ "$PRENUKEEMPTY" = "TRUE" ]; then
-        for found in `find $GLROOT$folders -maxdepth 1 -mindepth 1 -empty -type d -mmin +$EARLYEMPTY -print | egrep -vi "$EXCLUDESPECIAL" | cut -b$CUT- | grep -v 'lost+found'`; do
+        for found in $(find $GLROOT$folders -maxdepth 1 -mindepth 1 -empty -type d -mmin +$EARLYEMPTY -print | egrep -vi "$EXCLUDESPECIAL" | cut -b$CUT- | grep -v 'lost+found'); do
 
 
           ALLOW="$( find $GLROOT$found -maxdepth 1 -print -type d | grep -i $ALLOWED )"
@@ -327,7 +327,7 @@ if [ "$TOTALLYEMPTY" = "TRUE" ]; then
                 ## Find owner of dir
                 unset uname
                 unset unames
-                for unames in `cat $GLLOG | grep -w $folders/$REALEMPTY'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'`; do
+                for unames in $(cat $GLLOG | grep -w $folders/$REALEMPTY'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'); do
                   uname="$unames"
                 done
                 if [ "$uname" = "" ]; then
@@ -354,7 +354,7 @@ if [ "$TOTALLYEMPTY" = "TRUE" ]; then
                 if [ -e "$TEMPDIR/prewarned.$REALEMPTY" ]; then
                   BANPROCESS="TRUE"
                 else
-                  echo `date "+%a %b %e %T %Y"` ANUKEEMPTY: \"$lastfolder/$REALEMPTY\" \"$uname\" \"$ETIME\" \"$NTIME\" >> $GLLOG
+                  echo $(date "+%a %b %e %T %Y") ANUKEEMPTY: \"$lastfolder/$REALEMPTY\" \"$uname\" \"$ETIME\" \"$NTIME\" >> $GLLOG
                   echo "$DATENOW Warn: $found$uname, Pre-nuke warning (empty) sent. More then $ETIME old." >> $LOG
                   echo "Prewarning" > $TEMPDIR/prewarned.$REALEMPTY
                 fi
@@ -430,7 +430,7 @@ if [ "$HALFEMPTY" = "TRUE" ]; then
   if [ "$CLEANMINUTES" != "" ]; then
     if [ -e $TEMPDIR/tur-autonuke.time ]; then
       if [ -e $TEMPDIR/tur-autonuke.index ]; then
-        for found in `find $TEMPDIR/tur-autonuke.time -maxdepth 0 -mmin +$CLEANMINUTES -print`; do
+        for found in $(find $TEMPDIR/tur-autonuke.time -maxdepth 0 -mmin +$CLEANMINUTES -print); do
           if [ "$1" = "test" ]; then
             echo "Index file more then $CLEANHOURS hours old. Making a new one."
           fi
@@ -455,7 +455,7 @@ if [ "$HALFEMPTY" = "TRUE" ]; then
         echo "--Entering $folders"
       fi
  
-      for them in `ls | egrep -v '\[' | egrep -v '\(' | egrep -iv $EXCLUDESPECIAL | grep -v 'lost+found'`; do
+      for them in $(ls | egrep -v '\[' | egrep -v '\(' | egrep -iv $EXCLUDESPECIAL | grep -v 'lost+found'); do
         #echo "Checking $them"
          
         if [ -e $TEMPDIR/tur-autonuke.index ]; then
@@ -473,7 +473,7 @@ if [ "$HALFEMPTY" = "TRUE" ]; then
         fi
         if [ -z "$INDEX" ]; then
           GOTTHROUGH="TRUE"
-          for content in `ls -LR $them`; do
+          for content in $(ls -LR $them); do
             if [ "$GOTFILE" != "TRUE" ]; then
               for excludes in $EMPTYEXCLUDE; do
                 if [ "$GOTFILE" != "TRUE" ]; then
@@ -494,7 +494,7 @@ if [ "$HALFEMPTY" = "TRUE" ]; then
         fi
         if [ "$GOTFILE" != "TRUE" ]; then
           if [ "$GOTTHROUGH" = "TRUE" ]; then
-            for found in `find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$TIMEHALFEMPTY  -print | grep -vi "$NUKES" | cut -b$CUT- | grep -v 'lost+found'`; do
+            for found in $(find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$TIMEHALFEMPTY  -print | grep -vi "$NUKES" | cut -b$CUT- | grep -v 'lost+found'); do
               ALLOW="$( find $GLROOT$folders/$them -maxdepth 1 -type d -print | grep -i $ALLOWED )"
               if [ -z "$ALLOW" ]; then
                 if [ "$USESPACES" = "TRUE" ]; then
@@ -547,7 +547,7 @@ if [ "$HALFEMPTY" = "TRUE" ]; then
                     done
                     if [ "$gotuser" = "true" ]; then
                       sleep 1
-                      echo `date "+%a %b %e %T %Y"` ANUKEL: \"$users\" >> $GLLOG
+                      echo $(date "+%a %b %e %T %Y") ANUKEL: \"$users\" >> $GLLOG
                       sleep 2
                     fi
                     unset users
@@ -561,14 +561,14 @@ if [ "$HALFEMPTY" = "TRUE" ]; then
               fi
             done
             if [ "$HALFEMPTY" != "TRUE" ]; then
-              for found in `find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$EARLYHALFEMPTY -print | grep -vi "$NUKES" | cut -b$CUT- | grep -v 'lost+found'`; do
+              for found in $(find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$EARLYHALFEMPTY -print | grep -vi "$NUKES" | cut -b$CUT- | grep -v 'lost+found'); do
                 ALLOW="$( find $GLROOT$folders/$them -maxdepth 1 -type d -print | grep -i $ALLOWED )"
                 if [ -z "$ALLOW" ]; then
                   if [ "$MATCHUSER" = "TRUE" ]; then
                     ## Find owner of dir
                     uname=""
                     unames=""
-                    for unames in `cat $GLLOG | grep -w $folders/$them'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'`; do
+                    for unames in $(cat $GLLOG | grep -w $folders/$them'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'); do
                       uname="$unames"
                     done
                     if [ -z "$uname" ]; then
@@ -598,7 +598,7 @@ if [ "$HALFEMPTY" = "TRUE" ]; then
                       echo "Tur-autonuke prewarning file" > $TEMPDIR/prewarned.$them
                     else
                       if [ "$PRENUKEHALFEMPTY" = "TRUE" ]; then
-                        echo `date "+%a %b %e %T %Y"` ANUKEHEMPTY: \"$lastfolder/$them\" \"$uname\" \"$ETIME\" \"$NTIME\" >> $GLLOG
+                        echo $(date "+%a %b %e %T %Y") ANUKEHEMPTY: \"$lastfolder/$them\" \"$uname\" \"$ETIME\" \"$NTIME\" >> $GLLOG
                         echo "$DATENOW Warn: $folders/$them$uname, Half-empty after $ETIME. Pre-nuke warning sent." >> $LOG
                         echo "Tur-autonuke prewarning file" > $TEMPDIR/prewarned.$them
                       fi
@@ -710,7 +710,7 @@ if [ "$INCOMPLETE" = "TRUE" ]; then
             done
 
             if [ -e "$REALNAME" ]; then
-              for folder in `find $GLROOT$folders/$REALNAME -maxdepth 1 -type d -mmin +$TIMEINCOM -print | grep -vi "$NUKES" | cut -b$CUT-`; do
+              for folder in $(find $GLROOT$folders/$REALNAME -maxdepth 1 -type d -mmin +$TIMEINCOM -print | grep -vi "$NUKES" | cut -b$CUT-); do
 
                 if [ "$REALNAME" != "$LAST" ]; then
                   ALLOW="$( find $GLROOT$folders/$REALNAME -maxdepth 1 -type d -print | grep -i $ALLOWED )"
@@ -793,7 +793,7 @@ if [ "$INCOMPLETE" = "TRUE" ]; then
                           done
                           if [ "$gotuser" = "true" ]; then
                             sleep 1
-                            echo `date "+%a %b %e %T %Y"` ANUKEL: \"$users\" >> $GLLOG
+                            echo $(date "+%a %b %e %T %Y") ANUKEL: \"$users\" >> $GLLOG
                             sleep 2
                           fi
                           users=""
@@ -854,7 +854,7 @@ if [ "$INCOMPLETE" = "TRUE" ]; then
               if [ "$PRENUKEINCOM" = "TRUE" ]; then
                 if [ "$JUSTNUKED" != "$REALNAME" ]; then
                   unset LAST
-                  for folder in `find $GLROOT$folders/$REALNAME -maxdepth 1 -type d -mmin +$EARLYINCOM -print | grep -vi "$NUKES" | cut -b$CUT-`; do
+                  for folder in $(find $GLROOT$folders/$REALNAME -maxdepth 1 -type d -mmin +$EARLYINCOM -print | grep -vi "$NUKES" | cut -b$CUT-); do
 
                     if [ "$REALNAME" != "$LAST" ]; then
                       ALLOW="$( find $GLROOT$folders/$REALNAME -maxdepth 1 -type d -print | grep -i $ALLOWED )"
@@ -863,7 +863,7 @@ if [ "$INCOMPLETE" = "TRUE" ]; then
                           ## Find owner of dir
                           unset uname
                           unset unames
-                          for unames in `cat $GLLOG | grep -w $folders/$REALNAME'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'`; do
+                          for unames in $(cat $GLLOG | grep -w $folders/$REALNAME'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'); do
                             uname="$unames"
                           done
                           if [ -z "$uname" ]; then
@@ -910,7 +910,7 @@ if [ "$INCOMPLETE" = "TRUE" ]; then
                               else
                                 BANPROCESS="TRUE"
                                 if [ "$SAIDIT3" != "$REALNAME" ]; then
-                                  echo `date "+%a %b %e %T %Y"` ANUKEINC: \"$lastfolder/$REALNAME\" \"$uname\" \"$ETIME\" \"$NTIME\" >> $GLLOG
+                                  echo $(date "+%a %b %e %T %Y") ANUKEINC: \"$lastfolder/$REALNAME\" \"$uname\" \"$ETIME\" \"$NTIME\" >> $GLLOG
                                   echo "$REALNAME" > $TEMPDIR/prewarned.$REALNAME
                                   if [ "$SAIDIT4" != "$REALNAME" ]; then
                                     echo "$DATENOW Warn: $lastfolder/$REALNAME$uname is older then $ETIME. Sending pre-nuke warning" >> $LOG
@@ -1016,7 +1016,7 @@ if [ "$BANNEDWORDS" = "TRUE" ]; then
   if [ "$CLEANBANMINUTES" != "" ]; then
     if [ -e $TEMPDIR/tur-autonuke.ban.time ]; then
       if [ -e $TEMPDIR/tur-autonuke.ban.index ]; then
-        for found in `find $TEMPDIR/tur-autonuke.ban.time -maxdepth 0 -mmin +$CLEANBANMINUTES -print`; do
+        for found in $(find $TEMPDIR/tur-autonuke.ban.time -maxdepth 0 -mmin +$CLEANBANMINUTES -print); do
           if [ "$1" = "test" ]; then
             echo "Index file more then $CLEANBANHOURS hours old. Making a new one."
           fi
@@ -1055,7 +1055,7 @@ if [ "$BANNEDWORDS" = "TRUE" ]; then
     if [ -e $GLROOT$folders ]; then
       cd $GLROOT$folders
 
-      for them in `ls | egrep -v '\[' | egrep -iv $EXCLUDESPECIAL`; do
+      for them in $(ls | egrep -v '\[' | egrep -iv $EXCLUDESPECIAL); do
         ## Check if release is already accepted in indexfile for banned words.
         INIT=""
         INIT="$( cat $TEMPDIR/tur-autonuke.ban.index | grep -w $GLROOT$folders/$them )"
@@ -1078,7 +1078,7 @@ if [ "$BANNEDWORDS" = "TRUE" ]; then
             if [ "$VERIFY" ]; then
               BANFOUND="YES"
               #echo "$them contains a banned word!"
-              for found in `find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$TIMEBANNUKE -print | grep -vi "$NUKES" | cut -b$CUT-`; do
+              for found in $(find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$TIMEBANNUKE -print | grep -vi "$NUKES" | cut -b$CUT-); do
                 ALLOW="$( find $GLROOT$folders/$them -maxdepth 1 -type d -print | grep -i $ALLOWED )"
                 if [ -z "$ALLOW" ]; then
                   BANPROCESS="TRUE"
@@ -1133,7 +1133,7 @@ if [ "$BANNEDWORDS" = "TRUE" ]; then
                       done
                       if [ "$gotuser" = "true" ]; then
                         sleep 1
-                        echo `date "+%a %b %e %T %Y"` ANUKEL: \"$users\" >> $GLLOG
+                        echo $(date "+%a %b %e %T %Y") ANUKEL: \"$users\" >> $GLLOG
                         sleep 2
                       fi
                       users=""
@@ -1148,12 +1148,12 @@ if [ "$BANNEDWORDS" = "TRUE" ]; then
                 fi
               done
               if [ "$BANLAST" != "$them" ]; then
-                for found in `find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$EARLYBANPRENUKE -print | grep -vi "$NUKES" | cut -b$CUT-`; do
+                for found in $(find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$EARLYBANPRENUKE -print | grep -vi "$NUKES" | cut -b$CUT-); do
                   if [ "$MATCHUSER" = "TRUE" ]; then
                     ## Find owner of dir
                     uname=""
                     unames=""
-                    for unames in `cat $GLLOG | grep -w $folders/$them'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'`; do
+                    for unames in $(cat $GLLOG | grep -w $folders/$them'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'); do
                       uname="$unames"
                     done
                     if [ "$uname" = "" ]; then
@@ -1181,7 +1181,7 @@ if [ "$BANNEDWORDS" = "TRUE" ]; then
                     else
                       if [ ! -e $TEMPDIR/prewarned.$them ]; then
                         if [ "$BANPRENUKE" = "TRUE" ]; then
-                          echo `date "+%a %b %e %T %Y"` ANUKEBAN: \"$lastfolder/$them\" \"$uname\" \"$banword\" \"$ETIME\" \"$NTIME\" >> $GLLOG
+                          echo $(date "+%a %b %e %T %Y") ANUKEBAN: \"$lastfolder/$them\" \"$uname\" \"$banword\" \"$ETIME\" \"$NTIME\" >> $GLLOG
                           echo "Tur-autonuke prewarning file" > $TEMPDIR/prewarned.$them 
                           echo "$DATENOW Warn: $folders/$them$uname, Contains $banword after its $ETIME old. Pre-nuke warning sent." >> $LOG
                         fi
@@ -1290,9 +1290,9 @@ if [ "$ALLOWEDWORDS" = "TRUE" ]; then
 
     if [ -e $GLROOT$folders ]; then
       cd $GLROOT$folders
-      for them in `ls | egrep -v '\[' | egrep -iv $EXCLUDESPECIAL | egrep -iv -- $ALLOWWORDS`; do
+      for them in $(ls | egrep -v '\[' | egrep -iv $EXCLUDESPECIAL | egrep -iv -- $ALLOWWORDS); do
         BANPROCESS="TRUE"
-        for found in `find $GLROOT$folders/$them  -maxdepth 0 -type d -mmin +$TIMEALLOWNUKE -print | grep -vi "$NUKES" | cut -b$CUT-`; do
+        for found in $(find $GLROOT$folders/$them  -maxdepth 0 -type d -mmin +$TIMEALLOWNUKE -print | grep -vi "$NUKES" | cut -b$CUT-); do
           ALLOW="$( find $GLROOT$folders/$them -maxdepth 1 -type d -print | grep -i $ALLOWED )"
           if [ "$ALLOW" = "" ]; then
             BANPROCESS="TRUE"
@@ -1347,7 +1347,7 @@ if [ "$ALLOWEDWORDS" = "TRUE" ]; then
                 done
                 if [ "$gotuser" = "true" ]; then
                   sleep 1
-                  echo `date "+%a %b %e %T %Y"` ANUKEL: \"$users\" >> $GLLOG
+                  echo $(date "+%a %b %e %T %Y") ANUKEL: \"$users\" >> $GLLOG
                   sleep 2
                 fi
                 users=""
@@ -1361,13 +1361,13 @@ if [ "$ALLOWEDWORDS" = "TRUE" ]; then
           fi
         done
         if [ "$ALLOWLAST" != "$them" ]; then
-          for them in `find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$EARLYALLOWPRENUKE -print | grep -vi "$NUKES" | cut -b$CUT-`; do
-            them="`basename $them`"
+          for them in $(find $GLROOT$folders/$them -maxdepth 0 -type d -mmin +$EARLYALLOWPRENUKE -print | grep -vi "$NUKES" | cut -b$CUT-); do
+            them="$(basename $them)"
             if [ "$MATCHUSER" = "TRUE" ]; then
               ## Find owner of dir
               uname=""
               unames=""
-              for unames in `cat $GLLOG | grep -w $folders/$them'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'`; do
+              for unames in $(cat $GLLOG | grep -w $folders/$them'"' | grep -w NEWDIR: | awk -F" " '{print $8}' | tr -d '"'); do
                 uname="$unames"
               done
               if [ -z "$uname" ]; then
@@ -1395,7 +1395,7 @@ if [ "$ALLOWEDWORDS" = "TRUE" ]; then
               else
                 if [ ! -e $TEMPDIR/prewarned.$them ]; then
                   if [ "$BANALLOWNUKE" = "TRUE" ]; then
-                    echo `date "+%a %b %e %T %Y"` ANUKEALLOW: \"$lastfolder/$them\" \"$uname\" \"$ETIME\" \"$NTIME\" >> $GLLOG
+                    echo $(date "+%a %b %e %T %Y") ANUKEALLOW: \"$lastfolder/$them\" \"$uname\" \"$ETIME\" \"$NTIME\" >> $GLLOG
                     echo "Tur-autonuke prewarning file" > $TEMPDIR/prewarned.$them 
                     echo "$DATENOW Warn: $folders/$them$uname, no allowed word after its $ETIME old. Pre-nuke warning sent." >> $LOG
                   fi
@@ -1455,7 +1455,7 @@ if [ "$DELETENUKES" = "TRUE" ]; then
           if [ "$1" = "test" ]; then
             echo " Found nuked folder: $VERIFY"
           fi
-          for found in `find $GLROOT$folders/$VERIFY -maxdepth 0 -type d -mmin +$TIMETODELEM -print | grep -F -- "$NUKES" | grep -F -vx -- $VERIFY | cut -b$CUT-`; do
+          for found in $(find $GLROOT$folders/$VERIFY -maxdepth 0 -type d -mmin +$TIMETODELEM -print | grep -F -- "$NUKES" | grep -F -vx -- $VERIFY | cut -b$CUT-); do
             MB="$( du -s -m $GLROOT$folders/$VERIFY | awk -F" " '{print $1}' )"
             if [ "$1" = "test" ]; then
               echo " $VERIFY ($MB mb) is older then $TIMETODELEM minutes. Deleting it."

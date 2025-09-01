@@ -1,31 +1,46 @@
-if [[ -f "$cache" && "`grep -w "top" $cache | wc -l`" = 1 ]]
+if has_key "$cache" top
 then
-    ask=`grep -w "top" $cache | cut -d "=" -f2 | tr -d "\""`
+
+    ask=$(get_value "$cache" top)
+
 else
+
     echo
-    echo -e "\e[4mDescription for Top:\e[0m"
+    echo "${yellow}Description for Top:${reset}"
     cat $rootdir/packages/modules/top/description
     echo
-    echo -n "Install Top ? [Y]es [N]o, default Y : " ; read ask
+    read -p "Install Top ? [Y]es [N]o, default Y : " ask
+
 fi
 
 case $ask in
+
     [Nn])
-        if [[ -f "$cache" && "`grep -w "top=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" top
         then
+
             echo 'top="n"' >> $cache
+
         fi
         ;;
+
     [Yy]|*)
-        if [[ -f "$cache" && "`grep -w "top=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" top
         then
+
             echo 'top="y"' >> $cache
+
         fi
 
-        echo -n "Installing Top, please wait..." | awk '{printf("%-64s",$0)}'
+        print_status_start "Installing" "Top"
+
         cp $rootdir/packages/modules/top/top.tcl $glroot/sitebot/scripts
         cp $rootdir/packages/modules/top/top.sh $glroot/bin
         echo "source scripts/top.tcl" >> $glroot/sitebot/eggdrop.conf
-        echo -e "[\e[32mDone\e[0m]"
+
+        print_status_done
         ;;
+
 esac

@@ -1,18 +1,18 @@
 
-set realname 		"give me more junkfood"
+set realname 			"give me more junkfood"
 
-#set ssl-privatekey      "eggdrop.key"
-#set ssl-certificate     "eggdrop.crt"
-#set ssl-cert-auth       0
-#set ssl-verify-bots     0
-#set ssl-verify-clients  0
-#set ssl-verify-dcc      0
-#set ssl-ciphers         "ALL:!ADH:!LOW:!SSLv2:!SSLv3:!EXP:!aNULL:+HIGH:+MEDIUM"
+#set ssl-privatekey     "eggdrop.key"
+#set ssl-certificate    "eggdrop.crt"
+#set ssl-cert-auth      0
+#set ssl-verify-bots    0
+#set ssl-verify-clients 0
+#set ssl-verify-dcc     0
+#set ssl-ciphers        "ALL:!ADH:!LOW:!SSLv2:!SSLv3:!EXP:!aNULL:+HIGH:+MEDIUM"
 
 #listen +4444 all
 
 # Ops: Change this to your nickname
-set owner 		"changeme"
+set owner 				"changeme"
 set raw-log             1
 set dcc-flood-thr       0
 set double-mode         1
@@ -21,14 +21,14 @@ set telnet-flood        0
 set flood-ctcp          0
 set flood-msg           0
 set hourly-updates      15
-set msg-rate            0
+set msg-rate      		0
 
 # files & directories
-set userfile 		"logs/bot.user"
-set chanfile 		"logs/bot.chan"
-set temp-path 		"logs/"
-set console 		"mkcobxs"
-logfile msbxco * 	"logs/eggdrop.log"
+set userfile 			"logs/bot.user"
+set chanfile 			"logs/bot.chan"
+set temp-path 			"logs/"
+set console 			"mkcobxs"
+logfile msbxco * 		"logs/eggdrop.log"
 
 # SCRIPTS
 source scripts/getops.tcl
@@ -39,3 +39,4 @@ source scripts/pzs-ng/ngBot.tcl
 source scripts/rud-news.tcl
 source scripts/tur-predircheck_manager.tcl
 source scripts/tur-rules.tcl
+

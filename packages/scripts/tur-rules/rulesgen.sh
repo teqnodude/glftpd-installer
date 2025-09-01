@@ -1,6 +1,7 @@
 #!/bin/bash
-function GENERAL
+function GENERAL()
 {
+
 cat << EOF > site.rules
 GENERAL :
 01.0 Site does *NOT* exist! Talk about this site/channel..........................................................[DELUSER]
@@ -13,18 +14,19 @@ GENERAL :
 
 EOF
 sed -i 's/sections="/sections="\nGENERAL:^01./' packages/scripts/tur-rules/tur-rules.sh
+
 }
 
-function MISC
+function MISC()
 {
+
 cat << EOF >> site.rules
 Changelog :
 90.1 Rules updated `date +%Y-%m-%d`.....................................................................................[INFO]
 
 EOF
 sed -i 's/sections="/sections="\nChangelog:^90./' packages/scripts/tur-rules/tur-rules.sh
+
 }
 
-[ ! -z "$1" ] && $1
-
-exit 0
+[[ ! -z "$1" ]] && $1

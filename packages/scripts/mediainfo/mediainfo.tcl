@@ -11,11 +11,16 @@ bind pub - !mediainfo pub:mediainfo
 bind pub - !mi pub:mediainfo
 
 proc pub:mediainfo {nick output binary chan text} {
-  set binary {/glftpd/bin/mediainfo.sh}
-  putquick "PRIVMSG $chan :Getting info, please wait..."
+	
+	set binary {/glftpd/bin/mediainfo.sh}
+  	putquick "PRIVMSG $chan :Getting info, please wait..."
+    
     foreach line [split [exec $binary $nick $text] "\n"] {
-       putquick "PRIVMSG $chan :$line"
-    }
+    	
+    	putquick "PRIVMSG $chan :$line"
+	
+	}
+	
 }
 
-putlog "Mediainfo.tcl 1.8 by Teqno loaded"
+putlog "Mediainfo.tcl 1.9 by Teqno loaded"

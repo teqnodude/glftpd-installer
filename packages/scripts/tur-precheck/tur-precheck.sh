@@ -1,5 +1,6 @@
 #!/bin/bash
-VER=1.5
+VER=1.6
+#--[ Settings ]-------------------------------------------------
 
 VERIFY_RAR_WITH_SFV="FALSE"
 VERIFY_MP3_WITH_SFV="FALSE"
@@ -36,160 +37,300 @@ ERROR7="You can't upload a .sfv or .nfo file into a Sample, Covers or Proof dir.
 ERROR8="You must upload the .sfv file first."
 ERROR9="You can't upload a .jpg into a Sample dir."
 
-#--[ Script Start ]--------------------------------#
+#--[ Script Start ]---------------------------------------------
 
-if [ "$EXCLUDEDDIRS" ]; then
-  EXCLUDEDDIRS=`echo "$EXCLUDEDDIRS" | tr -s ' ' '|'`
-  if [ "`echo "$2" | egrep -i "$EXCLUDEDDIRS"`" ]; then
-    exit 0
-  fi
+BOLD=""
+UNDERLINE=""
+RESET=""
+
+# Skip excluded dirs
+if [[ -n "${EXCLUDEDDIRS:-}" ]]
+then
+
+    exclude_regex="$(tr -s ' ' '|' <<< "$EXCLUDEDDIRS")"
+    if [[ -n "${2:-}" ]] && grep -Eiq "$exclude_regex" <<< "$2"
+    then
+
+        exit 0
+
+    fi
+
 fi
 
 case "$1" in
 
-  *.[rR0-9][aA0-9][rR0-9])
-    if [ "$VERIFY_RAR_WITH_SFV" = "TRUE" ]; then
-      sfv_file="`ls -1 "$2" | grep -i "\.sfv$"`"
-      if [ -z "$sfv_file" ]; then
-        echo -e "You must upload .sfv first!\n"
-        exit 2
-      else
-        if [ -z "`grep -i "^$1\ " "$2/$sfv_file"`" ]; then
-          echo -e "File does not exist in sfv!\n"
-          exit 2
+    *.[rR0-9][aA0-9][rR0-9])
+
+        if [[ "${VERIFY_RAR_WITH_SFV:-}" == "TRUE" ]]
+        then
+
+            # Find an .sfv file in target dir (basename only)
+            sfv_file="$(find "$2" -maxdepth 1 -type f -iname '*.sfv' -printf '%f\n' -quit)"
+
+            if [[ -z "${sfv_file:-}" ]]
+            then
+
+                printf 'You must upload .sfv first!\n\n'
+                exit 2
+
+            else
+
+                # Exact, case-insensitive match of first field to $1
+                if ! awk -v name="$1" 'BEGIN{IGNORECASE=1} $1==name {f=1} END{exit f?0:1}' "$2/$sfv_file"
+                then
+
+                    printf 'File does not exist in sfv!\n\n'
+                    exit 2
+
+                fi
+
+            fi
+
         fi
-      fi
-    fi
-  ;;
+        ;;
 
-  *.[mM][pP]3)
-    if [ "$VERIFY_MP3_WITH_SFV" = "TRUE" ]; then
-      sfv_file="`ls -1 "$2" | grep -i "\.sfv$"`"
-      if [ -z "$sfv_file" ]; then
-        echo -e "You must upload .sfv first!\n"
-        exit 2
-      else
-        if [ -z "`grep -i "^$1\ " "$2/$sfv_file"`" ]; then
-          echo -e "File does not exist in sfv!\n"
-          exit 2
+    *.[mM][pP]3)
+
+        if [[ "${VERIFY_MP3_WITH_SFV:-}" == "TRUE" ]]
+        then
+
+            sfv_file="$(find "$2" -maxdepth 1 -type f -iname '*.sfv' -printf '%f\n' -quit)"
+
+            if [[ -z "${sfv_file:-}" ]]
+            then
+
+                printf 'You must upload .sfv first!\n\n'
+                exit 2
+
+            else
+
+                if ! awk -v name="$1" 'BEGIN{IGNORECASE=1} $1==name {f=1} END{exit f?0:1}' "$2/$sfv_file"
+                then
+
+                    printf 'File does not exist in sfv!\n\n'
+                    exit 2
+
+                fi
+
+            fi
+
         fi
-      fi
-    fi
-  ;;
+        ;;
 
+    *.[dD][iI][zZ])
 
-  *.[dD][iI][zZ])
-    if [ "$DONT_ALLOW_DIZ" = "TRUE" ]; then
-      exit 2
-    fi
-  ;;
+        if [[ "${DONT_ALLOW_DIZ:-}" == "TRUE" ]]
+        then
 
-  *.[zZ][iI][pP])
-    if [ "$VERIFY_ZIP_WITH_CURRENT_DISKS" = "TRUE" ]; then
-      if [ "`ls -1 | grep -i \.zip$`" ]; then
-       searchstr=`echo "$1" | cut -c-3`
-       if [ -z "`ls -1 | cut -c-3 | grep -i $searchstr`" ] ; then
-         echo -e "Filename does not match with existing disks"
-         exit 2
+            exit 2
+
         fi
-      fi
-    fi
-  ;;
+        ;;
+
+    *.[zZ][iI][pP])
+
+        if [[ "${VERIFY_ZIP_WITH_CURRENT_DISKS:-}" == "TRUE" ]]
+        then
+
+            # Proceed only if there are any .zip files in CWD
+            if compgen -G '*.zip' >/dev/null
+            then
+
+                searchstr="${1:0:3}"
+
+                # Compare first 3 chars of existing zips (case-insensitive)
+                if ! printf '%s\n' *.zip | cut -c1-3 | grep -iq "^${searchstr}$"
+                then
+
+                    printf 'Filename does not match with existing disks\n'
+                    exit 2
+
+                fi
+
+            fi
+
+        fi
+        ;;
 
 esac
 
-if [ "$ALLOWED" ]; then
-  ALLOWED=`echo "$ALLOWED" | tr -s ' ' '|'`
-  if [ -z "`echo "$1" | egrep -i "$ALLOWED"`" ]; then
-    echo -e "$ERROR1\n"
-    exit 2
-  fi
-fi
+if [[ -n "${ALLOWED:-}" ]]
+then
 
-if [ "$DENY_WHEN_NO_SFV" ]; then
-  DENY_WHEN_NO_SFV=`echo "$DENY_WHEN_NO_SFV" | tr -s ' ' '|'`
-  if [ "`echo "$1" | egrep -i "$DENY_WHEN_NO_SFV"`" ]; then
-    if [ -z "`ls -1 "$2" | grep -i "\.sfv$"`" ]; then
-      echo -e "$ERROR8\n"
-      exit 2
+    ALLOWED="$(tr -s ' ' '|' <<< "$ALLOWED")"
+    if ! grep -Eiq "$ALLOWED" <<< "$1"
+    then
+
+        printf '%s\n\n' "$ERROR1"
+        exit 2
+
     fi
-  fi
+
 fi
 
-if [ "$BANNED" ]; then
-  BANNED=`echo "$BANNED" | tr -s ' ' '|'`
-  if [ "`echo "$1" | egrep -i "$BANNED"`" ]; then
-    echo -e "$ERROR2\n"
-    exit 2
-  fi
-fi
+if [[ -n "${DENY_WHEN_NO_SFV:-}" ]]
+then
 
-if [ "$NOSAMENAME" = "TRUE" ]; then
-  if [ "`ls -1 "$2" | grep -i "^$1$"`" ]; then
-    if [ -z "`ls -1 "$2" | grep "^$1$"`" ]; then
-      echo -e "$ERROR4\n"
-      exit 2
+    DENY_WHEN_NO_SFV="$(tr -s ' ' '|' <<< "$DENY_WHEN_NO_SFV")"
+    if grep -Eiq "$DENY_WHEN_NO_SFV" <<< "$1"
+    then
+
+        if ! find "$2" -maxdepth 1 -type f -iname '*.sfv' | grep -q .
+        then
+
+            printf '%s\n\n' "$ERROR8"
+            exit 2
+
+        fi
+
     fi
-  fi
+
 fi
 
-if [ "$NODOUBLESFV" = "TRUE" ]; then
-  if [ "`echo "$1" | grep -i "\.sfv$"`" ]; then
-    if [ -e $2/*.[sS][fF][vV] ]; then
-      echo -e "$ERROR3\n"
-      if [ "$GLLOG" ]; then
-        DIR=`basename $2`
+if [[ -n "${BANNED:-}" ]]
+then
 
-        # $1 = Filename. $2 = Full path. $DIR = Only the dir were currently in. $USER = duh
-        echo `date "+%a %b %e %T %Y"` TURGEN: \"[WANKER] - $USER tried to upload $1 into $DIR where there already is a sfv!\" >> $GLLOG
+    BANNED="$(tr -s ' ' '|' <<< "$BANNED")"
+    if grep -Eiq "$BANNED" <<< "$1"
+    then
 
-      fi
-      exit 2
+        printf '%s\n\n' "$ERROR2"
+        exit 2
+
     fi
-  fi
+
 fi
 
-if [ "$DENY_SFV_NFO_IN_SAMPLE_DIRS" = "TRUE" ]; then
-  if [ "`echo "$PWD" | egrep -i "/sample$|/covers$|/proof$"`" ]; then
-    if [ "`echo "$1" | egrep -i "\.sfv$|\.nfo$"`" ]; then
-      echo -e "$ERROR7\n"
-      exit 2
+if [[ "${NOSAMENAME:-}" == "TRUE" ]]
+then
+
+    if ls -1 "$2" | grep -iq "^$1$"
+    then
+
+        if ! ls -1 "$2" | grep -q "^$1$"
+        then
+
+            printf '%s\n\n' "$ERROR4"
+            exit 2
+
+        fi
+
     fi
-  fi
+
 fi
 
-if [ "$DENY_IMAGE_IN_SAMPLE_DIRS" = "TRUE" ]; then
-  if [ "`echo "$PWD" | egrep -i "/sample$"`" ]; then
-    if [ "`echo "$1" | egrep -i "\.jpg$|\.png$"`" ]; then
-      echo -e "$ERROR9\n"
-      exit 2
+if [[ "${NODOUBLESFV:-}" == "TRUE" ]]
+then
+
+    if grep -Eiq '\.sfv$' <<< "$1"
+    then
+
+        if compgen -G "$2/*.[sS][fF][vV]" >/dev/null
+        then
+
+            printf '%s\n\n' "$ERROR3"
+
+            if [[ -n "${GLLOG:-}" ]]
+            then
+
+                DIR="$(basename "$2")"
+
+                # $1 = Filename. $2 = Full path. $DIR = current dir. $USER = duh
+                echo "$(date '+%a %b %e %T %Y') TURGEN: \"${BOLD}[WANKER] - $USER${RESET} tried to upload ${BOLD}$1${RESET} into ${UNDERLINE}$DIR${RESET} where there already is a sfv!\"" >> "$GLLOG"
+
+            fi
+
+            exit 2
+
+        fi
+
     fi
-  fi
+
 fi
 
-if [ "$NODOUBLENFO" = "TRUE" ]; then
-  if [ "`echo "$1" | grep -i "\.nfo$"`" ]; then
-    if [ -e $2/*.[nN][fF][oO] ]; then
-      echo -e "$ERROR5\n"
-      if [ "$GLLOG" ]; then
-        DIR=`basename $2`
+if [[ "${DENY_SFV_NFO_IN_SAMPLE_DIRS:-}" == "TRUE" ]]
+then
 
-        # $1 = Filename. $2 = Full path. $DIR = Only the dir were currently in. $USER = duh
-        echo `date "+%a %b %e %T %Y"` TURGEN: \"^B[WANKER] - $USER^B tried to upload ^B$1^B into ^_$DIR^_ where there already is a nfo!\" >> $GLLOG
+    if grep -Eiq '/sample$|/covers$|/proof$' <<< "$PWD"
+    then
 
-      fi
-      exit 2
+        if grep -Eiq '\.sfv$|\.nfo$' <<< "$1"
+        then
+
+            printf '%s\n\n' "$ERROR7"
+            exit 2
+
+        fi
+
     fi
-  fi
+
 fi
 
-if [ "$NOFTPRUSHNFOS" = "TRUE" ]; then
-  if [ "`echo "$1" | grep -i "\.nfo$"`" ]; then
-    if [ "`echo "$1" | grep -i "([0-9].*)\.nfo$"`" ]; then
-      echo -e "$ERROR6\n"
-      exit 2
+# DENY images in /sample
+if [[ "${DENY_IMAGE_IN_SAMPLE_DIRS:-}" == "TRUE" ]]
+then
+
+    if grep -Eiq '/sample$' <<< "$PWD"
+    then
+
+        if grep -Eiq '\.(jpg|png)$' <<< "$1"
+        then
+
+            printf '%s\n\n' "$ERROR9"
+            exit 2
+
+        fi
+
     fi
-  fi
+
 fi
 
-exit 0
+# Disallow double NFO
+if [[ "${NODOUBLENFO:-}" == "TRUE" ]]
+then
+
+    if grep -Eiq '\.nfo$' <<< "$1"
+    then
+
+        pattern_nfo="${2%/}/*.[nN][fF][oO]"
+        if compgen -G "$pattern_nfo" >/dev/null
+        then
+
+            printf '%s\n\n' "$ERROR5"
+
+            if [[ -n "${GLLOG:-}" ]]
+            then
+
+                DIR="$(basename "$2")"
+
+                # $1 = Filename. $2 = Full path. $DIR = current dir. $USER = duh
+                echo "$(date '+%a %b %e %T %Y') TURGEN: \"${BOLD}[WANKER] - $USER${RESET} tried to upload ${BOLD}$1${RESET} into ${UNDERLINE}$DIR${RESET} where there already is a nfo!\"" >> "$GLLOG"
+
+            fi
+
+            exit 2
+
+        fi
+
+    fi
+
+fi
+
+# No FTPRush-style NFO names like "(123).nfo"
+if [[ "${NOFTPRUSHNFOS:-}" == "TRUE" ]]
+then
+
+    if grep -Eiq '\.nfo$' <<< "$1"
+    then
+
+        if grep -Eiq '\([0-9].*\)\.nfo$' <<< "$1"
+        then
+
+            printf '%s\n\n' "$ERROR6"
+            exit 2
+
+        fi
+
+    fi
+
+fi

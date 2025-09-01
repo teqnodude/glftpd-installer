@@ -20,4 +20,4 @@ CREATE TABLE IF NOT EXISTS `changeme` (
   KEY `Filename` (`filename`(8)),
   KEY `idx_section_datetime_ftpuser` (`section`,`datetime`,`FTPuser`),
   KEY `idx_section_datetime_direction` (`section`,`datetime`,`direction`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

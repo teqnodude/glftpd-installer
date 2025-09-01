@@ -9,7 +9,7 @@ VER=2.15.1
 
 ## Read config
 if [ -z $config ]; then
-  config="`dirname $0`/tur-request.conf"
+  config="$(dirname $0)/tur-request.conf"
 fi
 if [ ! -r $config ]; then
   echo "Error. Can not read $config"
@@ -78,7 +78,7 @@ fi
 proc_log() {
   if [ "$log" ]; then
     if [ -w "$log" ]; then
-      echo `$datebin "+%a %b %e %T %Y"` "$@" >> $log
+      echo $($datebin "+%a %b %e %T %Y") "$@" >> $log
     else
       if [ "$USER" = "root" ]; then
         touch $log
@@ -86,7 +86,7 @@ proc_log() {
           chmod 666 $log
         fi
       else
-        logname=`basename $log`
+        logname=$(basename $log)
         echo "Error: Can not write to $logname. Create and set chmod 666."
       fi
     fi
@@ -96,67 +96,67 @@ proc_log() {
 ## Heres where we change those %blabla% into real text.
 proc_cookies() {
   if [ "$BY" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%WHO%/$BY/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%WHO%/$BY/g")
   fi
   if [ "$WHAT" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%WHAT%/$WHAT/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%WHAT%/$WHAT/g")
   fi
   if [ "$ACTION" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%ACTION%/$ACTION/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%ACTION%/$ACTION/g")
   fi
   if [ "$RELEASE" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%RELEASE%/$RELEASE/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%RELEASE%/$RELEASE/g")
   fi
   if [ "$mode" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%MODE%/$mode/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%MODE%/$mode/g")
   fi
   if [ "$name" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%NAME%/$name/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%NAME%/$name/g")
   fi
   if [ "$adddate" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%ADDDATE%/$adddate/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%ADDDATE%/$adddate/g")
   fi
   if [ "$requesthead" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%REQUESTHEAD%/"$requesthead"/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%REQUESTHEAD%/"$requesthead"/g")
   fi
   if [ "$filledhead" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%FILLEDHEAD%/$filledhead/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%FILLEDHEAD%/$filledhead/g")
   fi
   if [ "$HOWTOFILL" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%HOWTOFILL%/$HOWTOFILL/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%HOWTOFILL%/$HOWTOFILL/g")
   fi
   if [ "$sitename" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%SITENAME%/$sitename/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%SITENAME%/$sitename/g")
   fi
   if [ "$FOR" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%FOR%/$FOR/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%FOR%/$FOR/g")
   fi
   if [ "$num" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%NUM%/$num/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%NUM%/$num/g")
   fi
   if [ "$REWARD" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%REWARD%/$REWARD/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%REWARD%/$REWARD/g")
   fi
   ## Uses = when creating list. Will be replaced by / after the sed (sed dont like /).
   if [ "$REWARD_LIST" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%REWARDLIST%/$REWARD_LIST/g" | tr '=' '/'`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%REWARDLIST%/$REWARD_LIST/g" | tr '=' '/')
   fi
   if [ "$total_files" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%REWARD_FILES%/$total_files/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%REWARD_FILES%/$total_files/g")
   fi
   if [ "$total_files" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%REWARD_FILES%/$total_files/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%REWARD_FILES%/$total_files/g")
   fi
   if [ "$total_users" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%REWARD_USERS%/$total_users/g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%REWARD_USERS%/$total_users/g")
   fi
   if [ "$IRCOUTPUT" = "TRUE" -o "$AUTO" = "TRUE" ]; then
-    OUTPUT=`echo $OUTPUT | sed -e "s/%BOLD%//g"`
-    OUTPUT=`echo $OUTPUT | sed -e "s/%ULINE%//g"`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%BOLD%//g")
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%ULINE%//g")
   else
-    OUTPUT=`echo $OUTPUT | sed -e "s/%BOLD%//g"`
-    OUTPUT=`echo $OUTPUT | sed -e "s/%ULINE%//g"`
-    OUTPUT=`echo $OUTPUT | sed -e 's/[0-9][0-9]//g' -e 's/[0-9]//g'`
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%BOLD%//g")
+    OUTPUT=$(echo $OUTPUT | sed -e "s/%ULINE%//g")
+    OUTPUT=$(echo $OUTPUT | sed -e 's/[0-9][0-9]//g' -e 's/[0-9]//g')
   fi
 }
 
@@ -186,7 +186,7 @@ if [ "$enable_rewardsystem" = "TRUE" ] && [ "$do_not_create_dir_until_filled" = 
 fi
 
 ## Get all arguments into RAWSTRING.
-RAWSTRING="`echo "$@" | tr -d '\]' | tr -d '\[' | tr -d '\|' | tr -d '^'`"
+RAWSTRING="$(echo "$@" | tr -d '\]' | tr -d '\[' | tr -d '\|' | tr -d '^')"
 
 ## Make initial check. Cant include a /
 if [ "$( echo "$RAWSTRING" | grep "\/" )" ]; then
@@ -202,19 +202,19 @@ fi
 
 if [ "$mode" = "irc" -a "$1" != "checkold" ]; then
   ## If from irc, cut out second word to BY. This is who its from.
-  BY=`echo "$RAWSTRING" | cut -d ' ' -f2`
+  BY=$(echo "$RAWSTRING" | cut -d ' ' -f2)
   ## Remove that one when done.
-  RAWSTRING=`echo "$RAWSTRING" | sed -e "s/$BY//" | tr -s ' '`
+  RAWSTRING=$(echo "$RAWSTRING" | sed -e "s/$BY//" | tr -s ' ')
 fi
 
 ## Check first word. This is the action to take (request, reqfilled etc).
-RUN=`echo "$RAWSTRING" | cut -d' ' -f1`
+RUN=$(echo "$RAWSTRING" | cut -d' ' -f1)
 ## Remove run command from RAWSTRING.
-RAWSTRING=`echo "$RAWSTRING" | sed -e "s/^$RUN//"`
+RAWSTRING=$(echo "$RAWSTRING" | sed -e "s/^$RUN//")
 ## Make it lowercase
-RUN="`echo "$RUN" | tr '[:upper:]' '[:lower:]'`"
+RUN="$(echo "$RUN" | tr '[:upper:]' '[:lower:]')"
 ## Clear up RAWSTRING from leftover spaces.
-RAWSTRING=`echo $RAWSTRING`
+RAWSTRING=$(echo $RAWSTRING)
 
 if [ "$RAWSTRING" = "$RUN" -a "$RUN" = "request" -o "$RAWSTRING" = "" -a "$RUN" = "request" ]; then
   if [ "$mode" = "irc" ]; then
@@ -235,11 +235,11 @@ fi
 
 ## If this is a request, reqdel or reqwipe and we are running from irc, check the username and password.
 if [ "$AUTH_SYSTEM" = "TRUE" ]; then
-  if [ "`echo "$RUN" | egrep "^request$|^reqdel$|^reqwipe$"`" ] && [ "$mode" = "irc" ]; then
-    username="`echo "$RAWSTRING" | cut -d ' ' -f1`"
-    userpass="`echo "$RAWSTRING" | cut -d ' ' -f2`"
-    RAWSTRING="`echo "$RAWSTRING" | cut -d ' ' -f3-`"
-    if [ "`$passchk "$username" "$userpass" "$passwd"`" != "$passchk_ok" ]; then
+  if [ "$(echo "$RUN" | egrep "^request$|^reqdel$|^reqwipe$")" ] && [ "$mode" = "irc" ]; then
+    username="$(echo "$RAWSTRING" | cut -d ' ' -f1)"
+    userpass="$(echo "$RAWSTRING" | cut -d ' ' -f2)"
+    RAWSTRING="$(echo "$RAWSTRING" | cut -d ' ' -f3-)"
+    if [ "$($passchk "$username" "$userpass" "$passwd")" != "$passchk_ok" ]; then
       echo "Wrong username or password. Use !$1 <username> <password> <request>"
       exit 0
     fi
@@ -255,8 +255,8 @@ if [ "$AUTH_SYSTEM" = "TRUE" ]; then
 
       ## Allowed by flag?
       if [ "$request_allowed_flags" ]; then
-        request_allowed_flags="`echo "$request_allowed_flags" | tr -s ' ' '|'`"
-        if [ "`grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$request_allowed_flags"`" ]; then
+        request_allowed_flags="$(echo "$request_allowed_flags" | tr -s ' ' '|')"
+        if [ "$(grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$request_allowed_flags")" ]; then
           ALLOWED_TO_REQUEST="TRUE"
         fi
       fi
@@ -269,7 +269,7 @@ if [ "$AUTH_SYSTEM" = "TRUE" ]; then
         request_allowed_users="$FIXED_LIST"; unset FIXED_LIST
 
         ## Check if username matches.
-        if [ "`echo "$username" | egrep "$request_allowed_users"`" ]; then
+        if [ "$(echo "$username" | egrep "$request_allowed_users")" ]; then
           ALLOWED_TO_REQUEST="TRUE"
         fi
       fi
@@ -287,16 +287,16 @@ else
 fi
 
 ## Check if -hide is in RAWSTRING. If so, remove it and set HIDE=TRUE
-if [ "`echo "$RAWSTRING" | grep -w "\-hide"`" ]; then
+if [ "$(echo "$RAWSTRING" | grep -w "\-hide")" ]; then
   HIDE=TRUE
-  RAWSTRING=`echo "$RAWSTRING" | sed -e "s/\-hide//"`
+  RAWSTRING=$(echo "$RAWSTRING" | sed -e "s/\-hide//")
 else
   HIDE=FALSE
 fi
 
 ## Check if -reward is in RAWSTRING. If so, remove it and set REWARD=amount
 ## Only if its a request.
-if [ "$RUN" = "request" ] && [ "`echo "$RAWSTRING" | grep " \-reward\:"`" ]; then
+if [ "$RUN" = "request" ] && [ "$(echo "$RAWSTRING" | grep " \-reward\:")" ]; then
   if [ "$enable_rewardsystem" != "TRUE" ]; then
     echo "Error: -reward: is not enabled."
     exit 0
@@ -313,8 +313,8 @@ if [ "$RUN" = "request" ] && [ "`echo "$RAWSTRING" | grep " \-reward\:"`" ]; the
 
   ## Allowed by flag?
   if [ "$reward_allowed_flags" ]; then
-    reward_allowed_flags="`echo "$reward_allowed_flags" | tr -s ' ' '|'`"
-    if [ "`grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$reward_allowed_flags"`" ]; then
+    reward_allowed_flags="$(echo "$reward_allowed_flags" | tr -s ' ' '|')"
+    if [ "$(grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$reward_allowed_flags")" ]; then
       REWARD_ACCESS="TRUE"
     fi
   fi
@@ -327,7 +327,7 @@ if [ "$RUN" = "request" ] && [ "`echo "$RAWSTRING" | grep " \-reward\:"`" ]; the
     reward_allowed_users="$FIXED_LIST"; unset FIXED_LIST
 
     ## Check if username matches.
-    if [ "`echo "$username" | egrep "$reward_allowed_users"`" ]; then
+    if [ "$(echo "$username" | egrep "$reward_allowed_users")" ]; then
       REWARD_ACCESS="TRUE"
     fi
   fi
@@ -342,8 +342,8 @@ if [ "$RUN" = "request" ] && [ "`echo "$RAWSTRING" | grep " \-reward\:"`" ]; the
 
   ## No decuction when using -reward:? Check by flag.
   if [ "$reward_free_flags" ]; then
-    reward_free_flags="`echo "$reward_free_flags" | tr -s ' ' '|'`"
-    if [ "`grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$reward_free_flags"`" ]; then
+    reward_free_flags="$(echo "$reward_free_flags" | tr -s ' ' '|')"
+    if [ "$(grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$reward_free_flags")" ]; then
       REWARD_FREE="TRUE"
     fi
   fi
@@ -356,7 +356,7 @@ if [ "$RUN" = "request" ] && [ "`echo "$RAWSTRING" | grep " \-reward\:"`" ]; the
     reward_free_users="$FIXED_LIST"; unset FIXED_LIST
 
     ## Check if username matches.
-    if [ "`echo "$username" | egrep "$reward_free_users"`" ]; then
+    if [ "$(echo "$username" | egrep "$reward_free_users")" ]; then
       REWARD_FREE="TRUE"
     fi
   fi
@@ -364,7 +364,7 @@ if [ "$RUN" = "request" ] && [ "`echo "$RAWSTRING" | grep " \-reward\:"`" ]; the
   ## Keep going.
   for crap in $RAWSTRING; do
     if [ "$( echo "$crap" | grep '\-reward\:' )" ]; then
-      REWARD=`echo $crap | cut -d ':' -f2`
+      REWARD=$(echo $crap | cut -d ':' -f2)
       break
     fi
   done
@@ -372,13 +372,13 @@ if [ "$RUN" = "request" ] && [ "`echo "$RAWSTRING" | grep " \-reward\:"`" ]; the
   if [ -z "$REWARD" ]; then
     echo "You used -reward: but no amount of credits specified that will be rewarded."
     exit 0
-  elif [ "`echo "$REWARD" | tr -d '[:digit:]'`" ]; then
+  elif [ "$(echo "$REWARD" | tr -d '[:digit:]')" ]; then
     echo "Error. Only use pure MB number in the reward amount."
     exit 0
   fi
 
   if [ "$REWARD_FREE" != "TRUE" ]; then
-    current_credits_kb="`grep "^CREDITS " "$usersdir/$username" | cut -d ' ' -f2`"
+    current_credits_kb="$(grep "^CREDITS " "$usersdir/$username" | cut -d ' ' -f2)"
     current_credits_mb=$[$current_credits_kb/1024]
     if [ -z "$current_credits_mb" ]; then
       echo "Internal error. Did not manage to read current credits for $username."
@@ -393,14 +393,14 @@ if [ "$RUN" = "request" ] && [ "`echo "$RAWSTRING" | grep " \-reward\:"`" ]; the
     fi
   fi
 
-  RAWSTRING=`echo "$RAWSTRING" | sed -e "s/\-reward:$REWARD//"`
+  RAWSTRING=$(echo "$RAWSTRING" | sed -e "s/\-reward:$REWARD//")
 
 else
   unset REWARD
 fi
 
 ## Clear up RAWSTRING from start and ending spaces.
-RAWSTRING=`echo $RAWSTRING`
+RAWSTRING=$(echo $RAWSTRING)
 
 ## Check if -for: is in RAWSTRING. If so, cut it out and check who its for.
 ## Only if its a request.
@@ -408,7 +408,7 @@ unset FOR; unset FORLAST
 if [ "$RUN" = "request" ] && [ "$( echo "$RAWSTRING" | grep '\-for\:' )" ]; then
   for crap in $RAWSTRING; do
     if [ "$( echo "$crap" | grep '\-for\:' )" ]; then
-      FOR=`echo $crap | cut -d ':' -f2`
+      FOR=$(echo $crap | cut -d ':' -f2)
       break
     fi
   done
@@ -419,13 +419,13 @@ if [ "$RUN" = "request" ] && [ "$( echo "$RAWSTRING" | grep '\-for\:' )" ]; then
     exit 0
   fi
 
-  RAWSTRING=`echo "$RAWSTRING" | sed -e "s/\-for:$FOR//"`
+  RAWSTRING=$(echo "$RAWSTRING" | sed -e "s/\-for:$FOR//")
 
   unset FORLAST
 fi
 
 ## Clear up RAWSTRING again
-RAWSTRING=`echo $RAWSTRING`
+RAWSTRING=$(echo $RAWSTRING)
 
 ## DEBUG VALUES. Remove below #'s to only get debug output.
 # echo "full  : <$@>"
@@ -448,8 +448,8 @@ if [ "$AUTH_SYSTEM" = "TRUE" ]; then
 
     ## Remake flags. put a | in between. See if they match a userflag.
     if [ "$reqwipe_access_flags" ]; then
-      reqwipe_access_flags="`echo "$reqwipe_access_flags" | tr -s ' ' '|'`"
-      if [ "`grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$reqwipe_access_flags"`" ]; then
+      reqwipe_access_flags="$(echo "$reqwipe_access_flags" | tr -s ' ' '|')"
+      if [ "$(grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$reqwipe_access_flags")" ]; then
         ALLOWED_REQWIPE="TRUE"
       fi
     fi
@@ -461,7 +461,7 @@ if [ "$AUTH_SYSTEM" = "TRUE" ]; then
       reqwipe_access_users="$FIXED_LIST"; unset FIXED_LIST
 
       ## Check if username matches.
-      if [ "`echo "$username" | egrep "$reqwipe_access_users"`" ]; then
+      if [ "$(echo "$username" | egrep "$reqwipe_access_users")" ]; then
         ALLOWED_REQWIPE="TRUE"
       fi
     fi
@@ -480,8 +480,8 @@ if [ "$AUTH_SYSTEM" = "TRUE" ]; then
 
     ## Remake flags. put a | in between. See if they match a userflag.
     if [ "$max_requests_ignore_flags" ]; then
-      max_requests_ignore_flags="`echo "$max_requests_ignore_flags" | tr -s ' ' '|'`"
-      if [ "`grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$max_requests_ignore_flags"`" ]; then
+      max_requests_ignore_flags="$(echo "$max_requests_ignore_flags" | tr -s ' ' '|')"
+      if [ "$(grep "^FLAGS " "$usersdir/$username" | cut -d ' ' -f2 | egrep "$max_requests_ignore_flags")" ]; then
         MAX_REQS_EXCLUDED="TRUE"
       fi
     fi
@@ -499,15 +499,15 @@ if [ "$AUTH_SYSTEM" = "TRUE" ]; then
       unset temp_access_users
 
       ## Check if username matches.
-      if [ "`echo "$username" | egrep "$max_requests_ignore_users"`" ]; then
+      if [ "$(echo "$username" | egrep "$max_requests_ignore_users")" ]; then
         MAX_REQS_EXCLUDED="TRUE"
       fi
     fi
 
     if [ "$MAX_REQS_EXCLUDED" = "FALSE" ]; then
       user_requests="0"
-      for rawdata in `cat $reqfile | tr ' ' '~'`; do
-        if [ "`echo "$rawdata" | grep "by~${username}~("`" ]; then
+      for rawdata in $(cat $reqfile | tr ' ' '~'); do
+        if [ "$(echo "$rawdata" | grep "by~${username}~(")" ]; then
           user_requests=$[$user_requests+1]
         fi
       done
@@ -527,7 +527,7 @@ if [ "$allowspace" = "FALSE" ]; then
     ## If there was a space, check if replacewith is set.
     if [ "$replacewith" ]; then
       ## If it was, replace all spaces with it.
-      WHAT=`echo "$WHAT" | tr ' ' "$replacewith"`
+      WHAT=$(echo "$WHAT" | tr ' ' "$replacewith")
     else
       ## If replacewith is empty, say the NOSPACES error.
       if [ "$mode" = "irc" ]; then
@@ -615,7 +615,7 @@ proc_reorder() {
 
   ## Count each line in the reqfile to see which number we should put on it.
   num=0
-  for line in `cat $reqfile | tr -s ' ' '^' | tr -d ']' | tr -d '[' | cut -d':' -f2-`; do
+  for line in $(cat $reqfile | tr -s ' ' '^' | tr -d ']' | tr -d '[' | cut -d':' -f2-); do
     num=$[$num+1]
     if [ -z "$( echo "$num" | grep ".." )" ]; then
       newnum="[ $num:]"
@@ -643,11 +643,11 @@ proc_reorder() {
 ## Check for old requests.
 proc_checkold() {
   if [ "$removedays" ]; then
-    for line in `cat $reqfile | tr -s ' ' '^'`; do
+    for line in $(cat $reqfile | tr -s ' ' '^'); do
       unset FIRST; unset SECOND; unset THIRD; unset GOTNAME; unset RELEASE
       unset SECONDSOLD; unset OLD; unset RELNUMBER; unset return_username
       if [ "$line" ]; then
-        for each in `echo "$line" | tr -s '^' ' '`; do
+        for each in $(echo "$line" | tr -s '^' ' '); do
           if [ "$GOTNAME" != "TRUE" ]; then
             if [ "$each" = "~" ]; then
               GOTNAME=TRUE
@@ -657,7 +657,7 @@ proc_checkold() {
           fi
 
           if [ "$GOT_REQUESTER" != "TRUE" ]; then
-            if [ "`echo "$each" | grep "^by$"`" ]; then
+            if [ "$(echo "$each" | grep "^by$")" ]; then
               GOT_REQUESTER="TRUE"
             fi
           else
@@ -673,7 +673,7 @@ proc_checkold() {
           if [ "$FIRST" = "at" ]; then
             unset FIRST
           fi
-          if [ "`echo "$THIRD" | grep "^REWARD"`" ]; then
+          if [ "$(echo "$THIRD" | grep "^REWARD")" ]; then
             unset THIRD
           fi
 
@@ -689,25 +689,25 @@ proc_checkold() {
           OLD=TRUE
 
           ## Any reward offered? Find it, set REWARD to the value and return the credits to the requester.
-          if [ "`echo "$line" | grep "\^REWARD:.*MB"`" ]; then
-            temp_line="`echo "$line" | tr -s '^' ' '`"
+          if [ "$(echo "$line" | grep "\^REWARD:.*MB")" ]; then
+            temp_line="$(echo "$line" | tr -s '^' ' ')"
             for each_line in $temp_line; do
-              if [ "`echo "$each_line" | grep "^REWARD:"`" ]; then
-                REWARD="`echo "$each_line" | cut -d ':' -f2 | tr -d '[:alpha:]'`"
+              if [ "$(echo "$each_line" | grep "^REWARD:")" ]; then
+                REWARD="$(echo "$each_line" | cut -d ':' -f2 | tr -d '[:alpha:]')"
                 if [ "$REWARD" ]; then
                   break
                 fi
               fi
             done
 
-            current_credits_kb="`grep "^CREDITS\ " "$usersdir/$return_username" | cut -d ' ' -f2`"
-            full_credits="`grep "^CREDITS\ " "$usersdir/$return_username" | cut -d ' ' -f2-`"
+            current_credits_kb="$(grep "^CREDITS\ " "$usersdir/$return_username" | cut -d ' ' -f2)"
+            full_credits="$(grep "^CREDITS\ " "$usersdir/$return_username" | cut -d ' ' -f2-)"
             add_credits_kb=$[$REWARD*1024]
             if [ "$current_credits_kb" ] && [ "$add_credits_kb" ]; then
               new_credits_kb=$[$current_credits_kb+add_credits_kb]
               if [ "$new_credits_kb" ]; then
                 # echo "New credits: $new_credits_kb"
-                NEWVALUES="`echo "$full_credits " | sed -e "s/[0-9]* /$new_credits_kb /"`"
+                NEWVALUES="$(echo "$full_credits " | sed -e "s/[0-9]* /$new_credits_kb /")"
                 # echo "new values: $NEWVALUES"
                 grep -v "^CREDITS\ " "$usersdir/$return_username" > "/tmp/${return_username}.tmp"
                 echo "CREDITS $NEWVALUES" >> "/tmp/${return_username}.tmp"
@@ -754,7 +754,7 @@ proc_checkold() {
     ## Make a new file without the reqfilled ones and copy it over the old one.
     if [ "$GOT_OLD_RELEASE" = "TRUE" ]; then
       for REAL_POSITION in $DEL_NUMBERS; do
-        REAL_POSITION="`echo "$REAL_POSITION" | tr '^' ' '`"
+        REAL_POSITION="$(echo "$REAL_POSITION" | tr '^' ' ')"
         grep -vF "$REAL_POSITION" "$reqfile" > $tmp/newreqfile.tmp
         cp -f "$tmp/newreqfile.tmp" "$reqfile"
         rm -f "$tmp/newreqfile.tmp"
@@ -786,13 +786,13 @@ proc_checkold() {
       fi
 
       cd "${requests}/${filled_dir}"
-      for dir in `ls | grep "$mustinclude" | egrep -v "$exclude"`; do
+      for dir in $(ls | grep "$mustinclude" | egrep -v "$exclude"); do
         # echo="checking $dir because its from $reldate"
-        timestamp=`$file_date $dir`
-        secsold=`$datebin -d "$timestamp" +%s`
-        seclimit=`$datebin -d "-$removefdays day" +%s`
+        timestamp=$($file_date $dir)
+        secsold=$($datebin -d "$timestamp" +%s)
+        seclimit=$($datebin -d "-$removefdays day" +%s)
         if [ "$secsold" -lt "$seclimit" ]; then
-          reldate=`$datebin -d "$timestamp" +%m%d`
+          reldate=$($datebin -d "$timestamp" +%m%d)
           rm -rf "$dir"
           IRCOUTPUT="TRUE"
           if [ ! -e "$dir" ]; then
@@ -800,7 +800,7 @@ proc_checkold() {
               OUTPUT="$STATUSANNOUNCE"
               proc_cookies
               LINETOSAY="$OUTPUT 14Deleting4 $dir 14because it's from4 $reldate"
-              echo `$datebin "+%a %b %e %T %Y"` TURGEN: \"$LINETOSAY\" >> $gllog
+              echo $($datebin "+%a %b %e %T %Y") TURGEN: \"$LINETOSAY\" >> $gllog
               unset LINETOSAY
             fi
           else
@@ -808,7 +808,7 @@ proc_checkold() {
               OUTPUT="$STATUSANNOUNCE"
               proc_cookies
               LINETOSAY="$OUTPUT 14Was going to delete4 $dir 14because it's from4 $reldate,14 but seems I couldn't."
-              echo `$datebin "+%a %b %e %T %Y"` TURGEN: \"$LINETOSAY\" >> $gllog
+              echo $($datebin "+%a %b %e %T %Y") TURGEN: \"$LINETOSAY\" >> $gllog
               unset LINETOSAY
             fi
           fi
@@ -826,7 +826,7 @@ proc_request() {
   proc_checkfile
 
   if [ "$date_format_in_reqfile" = "NEW" ]; then
-    adddate="`$datebin +%Y'-'%m'-'%d' '%H':'%M`"
+    adddate="$($datebin +%Y'-'%m'-'%d' '%H':'%M)"
   elif [ "$date_format_in_reqfile" = "OLD" ]; then
     adddate="$( $datebin +%r" "%x | tr -s '/' '-' )"
   else
@@ -851,11 +851,11 @@ proc_request() {
     fi
   fi
 
-  if [ "`$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$"`" ]; then
+  if [ "$($dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$")" ]; then
     if [ "$mode" = "gl" ]; then
-	echo "Release already exists on site: `$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
+	echo "Release already exists on site: $($dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//')"
     else
-	echo "14Release already exists on site: 4`$dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//'`"
+	echo "14Release already exists on site: 4$($dirloglist_gl | egrep -iv "STATUS: 1|STATUS: 3" | grep "/$WHAT$" | tr -s "[:blank:]" "-" | sed 's/STATUS:-[0-2]-DIRNAME:-\/site//')"
     fi
     exit 0
   fi
@@ -872,12 +872,12 @@ proc_request() {
   else
     ## Figure out which number its gonna get.
     num=1
-    for each in `cat $reqfile | tr -s ' ' '^'`; do
+    for each in $(cat $reqfile | tr -s ' ' '^'); do
       num=$[$num+1]
     done
 
     if [ "$max_requests" ]; then
-      if [ "`cat $reqfile | wc -l | tr -d ' '`" -ge "$max_requests" ]; then
+      if [ "$(cat $reqfile | wc -l | tr -d ' ')" -ge "$max_requests" ]; then
         OUTPUT="$TOOMANYREQUESTS"
         proc_cookies
         echo "$OUTPUT"
@@ -893,7 +893,7 @@ proc_request() {
 
     ## If REWARD is set and REWARD_FREE is not TRUE, check if the user has leech. Dont allow if if so.
     if [ "$REWARD" ] && [ "$REWARD_FREE" != "TRUE" ]; then
-      if [ "`grep "^RATIO\ 0" "$usersdir/$username"`" ]; then
+      if [ "$(grep "^RATIO\ 0" "$usersdir/$username")" ]; then
         echo "You have leech and can not set a reward unless a siteop approves it in the config."
         exit 0
       fi
@@ -990,16 +990,16 @@ proc_request() {
     ## If REWARD is set and REWARD_FREE is not TRUE, remove the MB from the user.
     if [ "$REWARD" ] && [ "$REWARD_FREE" != "TRUE" ]; then
       REWARD_KB=$[$REWARD*1024]
-      current_credits="`grep "^CREDITS " "$usersdir/$username" | cut -d ' ' -f2`"
+      current_credits="$(grep "^CREDITS " "$usersdir/$username" | cut -d ' ' -f2)"
 
-      full_credits="`grep "^CREDITS " "$usersdir/$username" | cut -d ' ' -f2-`"
+      full_credits="$(grep "^CREDITS " "$usersdir/$username" | cut -d ' ' -f2-)"
 
       new_credits=$[$current_credits-$REWARD_KB]
       # echo "Will deduct: $REWARD_KB kb"
       # echo "Current    : $current_credits"
       # echo "New credits: $new_credits"
 
-      NEWVALUES="`echo "$full_credits " | sed -e "s/[0-9]* /$new_credits /"`"
+      NEWVALUES="$(echo "$full_credits " | sed -e "s/[0-9]* /$new_credits /")"
       # echo "OLD: $full_credits"
       # echo "NEW: $NEWVALUES"
       grep -v "^CREDITS " "$usersdir/$username" > "$tmp\$username.tmp"
@@ -1042,7 +1042,7 @@ proc_reqfilled() {
    fi
 
   ## Is it requested? (check by number)
-  if [ -z "`echo "$WHAT" | tr -d '[:digit:]'`" ]; then
+  if [ -z "$(echo "$WHAT" | tr -d '[:digit:]')" ]; then
     if [ -z "$( echo "$WHAT" | grep ".." )" ]; then
       WHATNEW="[ $WHAT:]"
     else
@@ -1053,7 +1053,7 @@ proc_reqfilled() {
   ## By default we pretend it was found in the request list. Will be set to FALSE if its actually not, below.
   REQUEST_FOUND="TRUE"
 
-  if [ -z "`echo "$WHAT" | tr -d '[:digit:]'`" ]; then
+  if [ -z "$(echo "$WHAT" | tr -d '[:digit:]')" ]; then
     ## Check if requested by number
     if [ -z "$( cat $reqfile | cut -d ':' -f1 | cut -d '~' -f1 | tr -d '[' | tr -d ']' | grep -w -- "$WHAT" )" ]; then
       REQUEST_FOUND="FALSE"
@@ -1094,7 +1094,7 @@ proc_reqfilled() {
     LINETODEL="$( grep -F "${WHATNEW}" "$reqfile" | head -n1 )"
 
     ## Verify that the number we got from the search really is the correct one.
-    if [ "`echo "$LINETODEL" | cut -c1-5`" != "$WHATNEW" ]; then
+    if [ "$(echo "$LINETODEL" | cut -c1-5)" != "$WHATNEW" ]; then
       echo "Error. Searched for $WHATNEW but got $LINETODEL"
       echo "Aborting. Report this to author."
       exit 0
@@ -1106,20 +1106,20 @@ proc_reqfilled() {
 
     ## Grab who its for (if any) and who made the request.
     if [ "$( echo "$LINETODEL" | grep " for " )" ]; then
-      REQUESTFOR=`echo "$LINETODEL" | cut -d ')' -f2 | cut -d ' ' -f3`
+      REQUESTFOR=$(echo "$LINETODEL" | cut -d ')' -f2 | cut -d ' ' -f3)
     fi
-    REQUESTBY=`echo "$LINETODEL" | cut -d '~' -f2- | cut -d ' ' -f3`
+    REQUESTBY=$(echo "$LINETODEL" | cut -d '~' -f2- | cut -d ' ' -f3)
 
     ## Get release name.
-    RELEASE=`echo "$LINETODEL" | cut -d ':' -f2 | cut -d '~' -f1 | cut -c2-`
-    RELEASE=`echo $RELEASE` ## Clean it up from initial and ending spaces.
+    RELEASE=$(echo "$LINETODEL" | cut -d ':' -f2 | cut -d '~' -f1 | cut -c2-)
+    RELEASE=$(echo $RELEASE) ## Clean it up from initial and ending spaces.
 
     if [ "$enable_rewardsystem" = "TRUE" ]; then
       ## Any reward offered? Find it, set REWARD to the value.
-      if [ "`echo "$LINETODEL" | grep "\ REWARD:.*MB"`" ]; then
+      if [ "$(echo "$LINETODEL" | grep "\ REWARD:.*MB")" ]; then
         for each_line in $LINETODEL; do
-          if [ "`echo "$each_line" | grep "^REWARD:"`" ]; then
-            REWARD="`echo "$each_line" | cut -d ':' -f2 | tr -d '[:alpha:]'`"
+          if [ "$(echo "$each_line" | grep "^REWARD:")" ]; then
+            REWARD="$(echo "$each_line" | cut -d ':' -f2 | tr -d '[:alpha:]')"
             if [ "$REWARD" ]; then
               break
             fi
@@ -1142,7 +1142,7 @@ proc_reqfilled() {
           if [ -d "$requests/$requesthead$RELEASE" ]; then
 
             ## Check that its not empty.
-            if [ -z "`ls -1 "$requests/$requesthead$RELEASE"`" ]; then
+            if [ -z "$(ls -1 "$requests/$requesthead$RELEASE")" ]; then
               if [ "$mode" = "gl" ]; then
                 echo "$REQFILLEDEMPTY"
               else
@@ -1183,7 +1183,7 @@ proc_reqfilled() {
 
           else
             if [ "$mode" = "gl" ]; then
-              requestname=`basename $requests`
+              requestname=$(basename $requests)
               echo "$requesthead$RELEASE was not found in $requestname. Skipping rename of dir!"
               unset requestname
             fi
@@ -1198,13 +1198,13 @@ proc_reqfilled() {
         ACTION="reqfilled" ## Action for irc announce
         proc_log "REQFILL: \"$BY filled $RELEASE\""
         if [ "$REWARD_LIST" ]; then
-          REWARD_LIST_TEMP="`echo "$REWARD_LIST" | tr '=' '/'`"
+          REWARD_LIST_TEMP="$(echo "$REWARD_LIST" | tr '=' '/')"
           proc_log "REQFILLREWARD: \"Rewarded: $total_users users - $total_files files : $REWARD_LIST_TEMP\""
         fi
         ;;
 
       reqdel)
-        if [ "`echo "$BY" | grep -i "^$REQUESTBY$"`" ]; then
+        if [ "$(echo "$BY" | grep -i "^$REQUESTBY$")" ]; then
           ## Say this to glftpd in either case.
 
           if [ -d "$requests/$requesthead$RELEASE" ]; then
@@ -1331,8 +1331,8 @@ proc_reward() {
 
   ## If the first part of COMPLETE_REQUEST is RETURN (RETURN-username), it will give the full
   ## reward to that guy instead of trying to split it up. Used for reqdel.
-  if [ "`echo "$COMPLETE_REQUEST" | cut -d '-' -f1`" = "RETURN" ]; then
-    return_username="`echo "$COMPLETE_REQUEST" | cut -d '-' -f2-`"
+  if [ "$(echo "$COMPLETE_REQUEST" | cut -d '-' -f1)" = "RETURN" ]; then
+    return_username="$(echo "$COMPLETE_REQUEST" | cut -d '-' -f2-)"
     # echo "returning creds to requester: $return_username"
     if [ ! -e "$usersdir/$return_username" ]; then
       echo "Was going to return $REWARD MB to $return_username, but that user does not exist."
@@ -1340,8 +1340,8 @@ proc_reward() {
       REWARD_FREE="FALSE"
       ## No decuction when using -reward:? Check by flag.
       if [ "$reward_free_flags" ]; then
-        reward_free_flags="`echo "$reward_free_flags" | tr -s ' ' '|'`"
-        if [ "`grep "^FLAGS " "$usersdir/$return_username" | cut -d ' ' -f2 | egrep "$reward_free_flags"`" ]; then
+        reward_free_flags="$(echo "$reward_free_flags" | tr -s ' ' '|')"
+        if [ "$(grep "^FLAGS " "$usersdir/$return_username" | cut -d ' ' -f2 | egrep "$reward_free_flags")" ]; then
           REWARD_FREE="TRUE"
         fi
       fi
@@ -1354,7 +1354,7 @@ proc_reward() {
         reward_free_users="$FIXED_LIST"; unset FIXED_LIST
 
         ## Check if username matches.
-        if [ "`echo "$return_username" | egrep "$reward_free_users"`" ]; then
+        if [ "$(echo "$return_username" | egrep "$reward_free_users")" ]; then
           REWARD_FREE="TRUE"
         fi
       fi
@@ -1362,14 +1362,14 @@ proc_reward() {
 
       ## Only return credits if it wasnt free when requesting.
       if [ "$REWARD_FREE" != "TRUE" ]; then
-        current_credits_kb="`grep "^CREDITS\ " "$usersdir/$return_username" | cut -d ' ' -f2`"
-        full_credits="`grep "^CREDITS\ " "$usersdir/$return_username" | cut -d ' ' -f2-`"
+        current_credits_kb="$(grep "^CREDITS\ " "$usersdir/$return_username" | cut -d ' ' -f2)"
+        full_credits="$(grep "^CREDITS\ " "$usersdir/$return_username" | cut -d ' ' -f2-)"
         add_credits_kb=$[$REWARD*1024]
         if [ "$current_credits_kb" ] && [ "$add_credits_kb" ]; then
           new_credits_kb=$[$current_credits_kb+add_credits_kb]
           if [ "$new_credits_kb" ]; then
             # echo "New credits: $new_credits_kb"
-            NEWVALUES="`echo "$full_credits " | sed -e "s/[0-9]* /$new_credits_kb /"`"
+            NEWVALUES="$(echo "$full_credits " | sed -e "s/[0-9]* /$new_credits_kb /")"
             # echo "new values: $NEWVALUES"
             grep -v "^CREDITS\ " "$usersdir/$return_username" > "/tmp/${return_username}.tmp"
             echo "CREDITS $NEWVALUES" >> "/tmp/${return_username}.tmp"
@@ -1401,18 +1401,18 @@ proc_find_and_give() {
   $tuls | tr -d ' ' | egrep -v "::::\.::::|::::\.\.::::|^d" | tr -s ':' ' ' > /tmp/reqlist.tmp
   # echo "Grabbing files from $PWD"
 
-  for each_subdir in `$tuls | grep "^d" | egrep -v "::::\.::::|::::\.\.::::" | tr -d ' ' | tr -s ':' | cut -d ':' -f4`; do
+  for each_subdir in $($tuls | grep "^d" | egrep -v "::::\.::::|::::\.\.::::" | tr -d ' ' | tr -s ':' | cut -d ':' -f4); do
     if [ -d "$each_subdir" ]; then
       cd "$each_subdir"
       # echo "entering $each_subdir"
       $tuls | tr -d ' ' | egrep -v "::::\.::::|::::\.\.::::|^d" | tr -s ':' ' ' >> /tmp/reqlist.tmp
-      for each_subdir_2 in `$tuls | grep "^d" | egrep -v "::::\.::::|::::\.\.::::" | tr -d ' ' | tr -s ':' | cut -d ':' -f4`; do
+      for each_subdir_2 in $($tuls | grep "^d" | egrep -v "::::\.::::|::::\.\.::::" | tr -d ' ' | tr -s ':' | cut -d ':' -f4); do
         if [ -d "$each_subdir_2" ]; then
           cd "$each_subdir_2"
           # echo "entering $each_subdir_2"
           $tuls | tr -d ' ' | egrep -v "::::\.::::|::::\.\.::::|^d" | tr -s ':' ' ' >> /tmp/reqlist.tmp
 
-          for each_subdir_3 in `$tuls | grep "^d" | egrep -v "::::\.::::|::::\.\.::::" | tr -d ' ' | tr -s ':' | cut -d ':' -f4`; do
+          for each_subdir_3 in $($tuls | grep "^d" | egrep -v "::::\.::::|::::\.\.::::" | tr -d ' ' | tr -s ':' | cut -d ':' -f4); do
             if [ -d "$each_subdir_3" ]; then
               cd "$each_subdir_3"
               # echo "entering $each_subdir_3"
@@ -1439,11 +1439,11 @@ proc_find_and_give() {
     echo "dummy_so_cat_dosnt_fuck_up" > /tmp/reqlist.tmp2
   fi
 
-  for rawdata in `cat /tmp/reqlist.tmp2`; do
-    filename="`echo "$rawdata" | cut -d ':' -f4`"
-    if [ "`echo "$filename" | egrep -i "$reward_count"`" ]; then
+  for rawdata in $(cat /tmp/reqlist.tmp2); do
+    filename="$(echo "$rawdata" | cut -d ':' -f4)"
+    if [ "$(echo "$filename" | egrep -i "$reward_count")" ]; then
       total_files=$[$total_files+1]
-      uid="`echo "$rawdata" | cut -d ':' -f2`"
+      uid="$(echo "$rawdata" | cut -d ':' -f2)"
       if [ "$last_uid" != "$uid" ]; then
         total_users=$[$total_users+1]
       fi
@@ -1454,10 +1454,10 @@ proc_find_and_give() {
   unset last_uid
 
   user="0"
-  for rawdata in `cat /tmp/reqlist.tmp2`; do
-    filename="`echo "$rawdata" | cut -d ':' -f4`"
-    if [ "`echo "$filename" | egrep -i "$reward_count"`" ]; then
-      uid="`echo "$rawdata" | cut -d ':' -f2`"
+  for rawdata in $(cat /tmp/reqlist.tmp2); do
+    filename="$(echo "$rawdata" | cut -d ':' -f4)"
+    if [ "$(echo "$filename" | egrep -i "$reward_count")" ]; then
+      uid="$(echo "$rawdata" | cut -d ':' -f2)"
 
       ## First user in list get one.
       if [ -z "$last_uid" ]; then
@@ -1502,12 +1502,12 @@ proc_reward_uid() {
   # echo "reward     : $REWARD"
   total_reward_for_uid=$[$REWARD/$total_files*$files_for_uid]
   # echo "Reward uid : $total_reward_for_uid"
-  reward_username="`grep "^.*:.*:${last_uid}:" "$passwd" | cut -d ':' -f1 | head -n1`"
+  reward_username="$(grep "^.*:.*:${last_uid}:" "$passwd" | cut -d ':' -f1 | head -n1)"
   # echo "username   : $reward_username"
 
   if [ "$reward_username" ]; then
     ## Check if RATIO is not 0 (leech).
-    if [ "`grep "^RATIO " "$usersdir/$reward_username" | grep "0"`" ]; then
+    if [ "$(grep "^RATIO " "$usersdir/$reward_username" | grep "0")" ]; then
       if [ -z "$leechers" ]; then
         leechers="1"
       else
@@ -1515,14 +1515,14 @@ proc_reward_uid() {
       fi
     else
       # echo "Giving $reward_username $total_reward_for_uid MB credits"
-      current_credits_kb="`grep "^CREDITS\ " "$usersdir/$reward_username" | cut -d ' ' -f2`"
-      full_credits="`grep "^CREDITS\ " "$usersdir/$reward_username" | cut -d ' ' -f2-`"
+      current_credits_kb="$(grep "^CREDITS\ " "$usersdir/$reward_username" | cut -d ' ' -f2)"
+      full_credits="$(grep "^CREDITS\ " "$usersdir/$reward_username" | cut -d ' ' -f2-)"
       add_credits_kb=$[$total_reward_for_uid*1024]
       if [ "$current_credits_kb" ] && [ "$add_credits_kb" ]; then
         new_credits_kb=$[$current_credits_kb+add_credits_kb]
         if [ "$new_credits_kb" ]; then
           # echo "New credits: $new_credits_kb"
-          NEWVALUES="`echo "$full_credits " | sed -e "s/[0-9]* /$new_credits_kb /"`"
+          NEWVALUES="$(echo "$full_credits " | sed -e "s/[0-9]* /$new_credits_kb /")"
           # echo "new values: $NEWVALUES"
           grep -v "^CREDITS\ " "$usersdir/$reward_username" > "/tmp/${reward_username}.tmp"
           echo "CREDITS $NEWVALUES" >> "/tmp/${reward_username}.tmp"
@@ -1554,7 +1554,7 @@ proc_status() {
 
   if [ "$mode" = "irc" ]; then
 
-    if [ "`echo "$arg1" | egrep -i "^request$|^reqdel$|^reqwipe$"`" ]; then
+    if [ "$(echo "$arg1" | egrep -i "^request$|^reqdel$|^reqwipe$")" ]; then
       AUTO=TRUE
       mode="gl"
     fi
@@ -1568,7 +1568,7 @@ proc_status() {
     IRCOUTPUT="FALSE"
   fi
 
-  for each in `cat $reqfile | tr -s ' ' '^'`; do
+  for each in $(cat $reqfile | tr -s ' ' '^'); do
     FOUNDONE="TRUE"
 
     ## Header stuff.
@@ -1586,21 +1586,21 @@ proc_status() {
 
     ## Request. One per line in file.
 
-    LINETOSAY=`echo "$each" | tr -s '^' ' '`
-    POS=`echo $LINETOSAY | cut -d' ' -f1-2 | sed 's/] .*/]/'`
-    REL=`echo $LINETOSAY | cut -d' ' -f2-3 | sed -e 's/[0-9]:] //g' -e 's/ ~.*//'`
-    USR=`echo $LINETOSAY | cut -d'~' -f2 | sed -e 's/ by //g' -e 's/ (.*//g'`
-    FOR=`echo $LINETOSAY | cut -d' ' -f8`
-    if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
+    LINETOSAY=$(echo "$each" | tr -s '^' ' ')
+    POS=$(echo $LINETOSAY | cut -d' ' -f1-2 | sed 's/] .*/]/')
+    REL=$(echo $LINETOSAY | cut -d' ' -f2-3 | sed -e 's/[0-9]:] //g' -e 's/ ~.*//')
+    USR=$(echo $LINETOSAY | cut -d'~' -f2 | sed -e 's/ by //g' -e 's/ (.*//g')
+    FOR=$(echo $LINETOSAY | cut -d' ' -f8)
+    if [ $(echo $LINETOSAY | grep " for " | wc -l) = 0 ]
     then
-        DAT=`echo $LINETOSAY | cut -d' ' -f8- | sed 's/at //g'`
+        DAT=$(echo $LINETOSAY | cut -d' ' -f8- | sed 's/at //g')
     else
-        DAT=`echo $LINETOSAY | cut -d' ' -f10- | sed 's/at //g'`
+        DAT=$(echo $LINETOSAY | cut -d' ' -f10- | sed 's/at //g')
     fi
     #OUTPUT="$LINETOSAY"
     if [ "$mode" = "irc" ] || [ "$mode" = "gl" ]
     then
-        if [ `echo $LINETOSAY | grep " for " | wc -l` = 0 ]
+        if [ $(echo $LINETOSAY | grep " for " | wc -l) = 0 ]
         then
 	    OUTPUT="14${POS}4 $REL 14created by4 $USR 14at4 $DAT"
 	else

@@ -27,4 +27,4 @@ proc msg:turfreecheck { nick host hand arg } {
  }
 }
 
-putlog "Tur-Free.tcl 1.0 by Turranius loaded"
+putlog "Tur-Free.tcl 1.2 by Turranius loaded"

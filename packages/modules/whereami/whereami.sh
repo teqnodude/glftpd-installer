@@ -149,7 +149,7 @@ if [ -z "$TMP" ]; then
 fi
 
 ## Nuketop is a totally seperate procedure.
-if [ "`echo "$1" | tr [:upper:] [:lower:]`" = "nuketop" ]; then
+if [ "$(echo "$1" | tr [:upper:] [:lower:])" = "nuketop" ]; then
   if [ -z "$2" ]; then
     echo "Please specify a username to check nuketop."
     exit 0
@@ -163,22 +163,22 @@ if [ "`echo "$1" | tr [:upper:] [:lower:]`" = "nuketop" ]; then
   fi
 
   num=0
-  for each in `grep "^NUKE\ " $USERDIR/* | grep -v "NUKE [0-9]* 0" | sort -k 3,3nr -k4,4nr -k2,2nr | cut -d ':' -f1`; do
+  for each in $(grep "^NUKE\ " $USERDIR/* | grep -v "NUKE [0-9]* 0" | sort -k 3,3nr -k4,4nr -k2,2nr | cut -d ':' -f1); do
     num=$[$num+1]
-    username="`basename $each`"
+    username="$(basename $each)"
     echo "$num@$username" >> $TMP/nuketop.tmp
   done
   
-  USERPOSRAW="`grep "@$2$" $TMP/nuketop.tmp`"
+  USERPOSRAW="$(grep "@$2$" $TMP/nuketop.tmp)"
 
   if [ -z "$USERPOSRAW" ]; then
     echo "Nothing found for $2. Misspelled or no nukes registered for $2"
     exit 0
   fi
-  USERPOS="`echo "$USERPOSRAW" | cut -d '@' -f1`"
-  USERNAME="`echo "$USERPOSRAW" | cut -d '@' -f2`"
-  USERTIMES="`grep "^NUKE\ " $USERDIR/$2 | cut -d ' ' -f3`"
-  USERMB="`grep "^NUKE\ " $USERDIR/$2 | cut -d ' ' -f4`"
+  USERPOS="$(echo "$USERPOSRAW" | cut -d '@' -f1)"
+  USERNAME="$(echo "$USERPOSRAW" | cut -d '@' -f2)"
+  USERTIMES="$(grep "^NUKE\ " $USERDIR/$2 | cut -d ' ' -f3)"
+  USERMB="$(grep "^NUKE\ " $USERDIR/$2 | cut -d ' ' -f4)"
   if [ "$MBLIMIT" ]; then
     USERMB="$( echo "$USERMB" | tr -d '[:alpha:]' )"
     if [ "$USERMB" -gt "$MBLIMIT" ]; then
@@ -191,14 +191,14 @@ if [ "`echo "$1" | tr [:upper:] [:lower:]`" = "nuketop" ]; then
 
   ## IF this user is first.
   if [ "$USERPOS" = "1" ]; then
-    AFTERPOSRAW="`grep "^2@" $TMP/nuketop.tmp`"
+    AFTERPOSRAW="$(grep "^2@" $TMP/nuketop.tmp)"
     if [ -z "$AFTERPOSRAW" ]; then
       echo "$USERNAME is 1st and ONLY on the list. Nuked $USERTIMES times with $USERMB nuked."
     else
       AFTERPOS="2"
-      AFTERNAME="`echo "$AFTERPOSRAW" | cut -d '@' -f2`"
-      AFTERTIMES="`grep "^NUKE\ " $USERDIR/$AFTERNAME | cut -d ' ' -f3`"
-      AFTERMB="`grep "^NUKE\ " $USERDIR/$AFTERNAME | cut -d ' ' -f4`"
+      AFTERNAME="$(echo "$AFTERPOSRAW" | cut -d '@' -f2)"
+      AFTERTIMES="$(grep "^NUKE\ " $USERDIR/$AFTERNAME | cut -d ' ' -f3)"
+      AFTERMB="$(grep "^NUKE\ " $USERDIR/$AFTERNAME | cut -d ' ' -f4)"
       if [ "$MBLIMIT" ]; then
         AFTERMB="$( echo "$AFTERMB" | tr -d '[:alpha:]' )"
         if [ "$AFTERMB" -gt "$MBLIMIT" ]; then
@@ -216,10 +216,10 @@ if [ "`echo "$1" | tr [:upper:] [:lower:]`" = "nuketop" ]; then
   ## If this user is last.
   if [ "$num" = "$USERPOS" ]; then
     BEFOREPOS=$[$num-1]
-    BEFOREPOSRAW="`grep "^$BEFOREPOS@" $TMP/nuketop.tmp`"
-    BEFORENAME="`echo "$BEFOREPOSRAW" | cut -d '@' -f2`"
-    BEFORETIMES="`grep "^NUKE\ " $USERDIR/$BEFORENAME | cut -d ' ' -f3`"
-    BEFOREMB="`grep "^NUKE\ " $USERDIR/$BEFORENAME | cut -d ' ' -f4`"
+    BEFOREPOSRAW="$(grep "^$BEFOREPOS@" $TMP/nuketop.tmp)"
+    BEFORENAME="$(echo "$BEFOREPOSRAW" | cut -d '@' -f2)"
+    BEFORETIMES="$(grep "^NUKE\ " $USERDIR/$BEFORENAME | cut -d ' ' -f3)"
+    BEFOREMB="$(grep "^NUKE\ " $USERDIR/$BEFORENAME | cut -d ' ' -f4)"
     if [ "$MBLIMIT" ]; then
       BEFOREMB="$( echo "$BEFOREMB" | tr -d '[:alpha:]' )"
       if [ "$BEFOREMB" -gt "$MBLIMIT" ]; then
@@ -236,10 +236,10 @@ if [ "`echo "$1" | tr [:upper:] [:lower:]`" = "nuketop" ]; then
 
   ## This user is neither first or last:
   BEFOREPOS=$[$USERPOS-1]
-  BEFOREPOSRAW="`grep "^$BEFOREPOS@" $TMP/nuketop.tmp`"
-  BEFORENAME="`echo "$BEFOREPOSRAW" | cut -d '@' -f2`"
-  BEFORETIMES="`grep "^NUKE\ " $USERDIR/$BEFORENAME | cut -d ' ' -f3`"
-  BEFOREMB="`grep "^NUKE\ " $USERDIR/$BEFORENAME | cut -d ' ' -f4`"
+  BEFOREPOSRAW="$(grep "^$BEFOREPOS@" $TMP/nuketop.tmp)"
+  BEFORENAME="$(echo "$BEFOREPOSRAW" | cut -d '@' -f2)"
+  BEFORETIMES="$(grep "^NUKE\ " $USERDIR/$BEFORENAME | cut -d ' ' -f3)"
+  BEFOREMB="$(grep "^NUKE\ " $USERDIR/$BEFORENAME | cut -d ' ' -f4)"
   if [ "$MBLIMIT" ]; then
     BEFOREMB="$( echo "$BEFOREMB" | tr -d '[:alpha:]' )"
     if [ "$BEFOREMB" -gt "$MBLIMIT" ]; then
@@ -251,10 +251,10 @@ if [ "`echo "$1" | tr [:upper:] [:lower:]`" = "nuketop" ]; then
   fi
 
   AFTERPOS=$[$USERPOS+1]
-  AFTERPOSRAW="`grep "^$AFTERPOS@" $TMP/nuketop.tmp`"
-  AFTERNAME="`echo "$AFTERPOSRAW" | cut -d '@' -f2`"
-  AFTERTIMES="`grep "^NUKE\ " $USERDIR/$AFTERNAME | cut -d ' ' -f3`"
-  AFTERMB="`grep "^NUKE\ " $USERDIR/$AFTERNAME | cut -d ' ' -f4`"
+  AFTERPOSRAW="$(grep "^$AFTERPOS@" $TMP/nuketop.tmp)"
+  AFTERNAME="$(echo "$AFTERPOSRAW" | cut -d '@' -f2)"
+  AFTERTIMES="$(grep "^NUKE\ " $USERDIR/$AFTERNAME | cut -d ' ' -f3)"
+  AFTERMB="$(grep "^NUKE\ " $USERDIR/$AFTERNAME | cut -d ' ' -f4)"
   if [ "$MBLIMIT" ]; then
     AFTERMB="$( echo "$AFTERMB" | tr -d '[:alpha:]' )"
     if [ "$AFTERMB" -gt "$MBLIMIT" ]; then
@@ -285,17 +285,17 @@ if [ -z "$USERDATA" ]; then
 fi
 
 USERPOS="$( echo "$USERDATA" | cut -d ' ' -f1 | tr -d '[' | tr -d ']' )"
-if [ -z "`echo "$USERPOS" | grep ".."`" ]; then
+if [ -z "$(echo "$USERPOS" | grep "..")" ]; then
   USERPOS=0$USERPOS
 fi
 
-USERBEFORENR=`expr "$USERPOS" \- "1"`
-if [ -z "`echo "$USERBEFORENR" | grep ".."`" ]; then
+USERBEFORENR=$(expr "$USERPOS" \- "1")
+if [ -z "$(echo "$USERBEFORENR" | grep "..")" ]; then
   USERBEFORENR=0$USERBEFORENR
 fi
 
-USERAFTERNR=`expr "$USERPOS" \+ "1"`
-if [ -z "`echo "$USERAFTERNR" | grep ".."`" ]; then
+USERAFTERNR=$(expr "$USERPOS" \+ "1")
+if [ -z "$(echo "$USERAFTERNR" | grep "..")" ]; then
   USERAFTERNR=0$USERAFTERNR
 fi
 

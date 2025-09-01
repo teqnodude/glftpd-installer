@@ -20,7 +20,7 @@ fi
 
 ## Load config file
 if [ -z "$config" ]; then
-  if [ "`dirname $0`" = "." ]; then
+  if [ "$(dirname $0)" = "." ]; then
     echo "DEBUG: Config loaded from ./ - not good. Using $PWD instead."
     config="${PWD}/tur-trial3.conf"
   else
@@ -31,7 +31,7 @@ else
 fi
 
 if [ -z "$theme" ]; then
-  if [ "`dirname $0`" = "." ]; then
+  if [ "$(dirname $0)" = "." ]; then
     echo "DEBUG: Config theme from ./ - not good. Using $PWD instead."
     theme="${PWD}/tur-trial3.theme"
   else
@@ -92,13 +92,13 @@ if [ -z "$FLAGS" ]; then
 else
 
   ## Set SQL command..
-  SQL="/bin/mysql -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
+  SQL="/bin/mysql -P 3307 -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
   RUN_MODE="gl"
   NODEBUG=TRUE
 fi
 
 if [ "$RUN_MODE" = "irc" ] && [ "$USER" = "root" ]; then
-  if [ "`crontab -l | grep -v "^#" | grep "/bin/reset" | grep "glftpd"`" ]; then
+  if [ "$(crontab -l | grep -v "^#" | grep "/bin/reset" | grep "glftpd")" ]; then
     echo "WARNING! Seems you have the glftpd reset binary in crontab."
     echo "This is BAD. Use a midnight script instead (see README) and"
     echo "remove reset from the crontab. Otherwise, kiss you users goodbye."
@@ -109,7 +109,7 @@ fi
 ## Function for writing to log with full date (for trial).
 proc_log() {
   if [ "$LOG" ]; then
-    echo `date "+%a %b %e %T %Y"` TT3: \"$*\" >> $LOG
+    echo $(date "+%a %b %e %T %Y") TT3: \"$*\" >> $LOG
   fi
 }
 
@@ -123,7 +123,7 @@ proc_logclean() {
 ## Function for writing to glftpd.log
 proc_gllog() {
   if [ "$GLLOG" ]; then
-    echo `date "+%a %b %e %T %Y"` TURGEN: \"$*\" >> $GLLOG
+    echo $(date "+%a %b %e %T %Y") TURGEN: \"$*\" >> $GLLOG
   fi
 }
 
@@ -134,7 +134,7 @@ proc_debug() {
   fi
 
   if [ "$DEBUG_LOG" ]; then
-    echo `date "+%a %b %e %T %Y"` $* >> $DEBUG_LOG
+    echo $(date "+%a %b %e %T %Y") $* >> $DEBUG_LOG
   fi
 }
 
@@ -143,7 +143,7 @@ if [ -z "$DATEBIN" ]; then
   DATEBIN="date"
 fi
 if [ "$PASS_BOTH_EXCLUDE_MONTHS" ]; then
-  if [ "`echo "$PASS_BOTH_EXCLUDE_MONTHS" | tr -d '[:digit:]'`" ]; then
+  if [ "$(echo "$PASS_BOTH_EXCLUDE_MONTHS" | tr -d '[:digit:]')" ]; then
     echo "Error. PASS_BOTH_EXCLUDE_MONTHS should be the number of months to exclude. Not: $PASS_BOTH_EXCLUDE_MONTHS"
     exit 0
   fi
@@ -152,14 +152,14 @@ else
 fi
 if [ "$USER" = "root" ] && [ "$LOG" ]; then
   touch $LOG
-  if [ "`ls -al "$LOG" | cut -d ' ' -f1`" != "-rw-rw-rw-" ]; then
+  if [ "$(ls -al "$LOG" | cut -d ' ' -f1)" != "-rw-rw-rw-" ]; then
     proc_debug "Chmodding $LOG to 666"
     chmod 666 $LOG
   fi
 fi
 if [ "$USER" = "root" ] && [ "$DEBUG_LOG" ]; then
   touch $DEBUG_LOG
-  if [ "`ls -al "$DEBUG_LOG" | cut -d ' ' -f1`" != "-rw-rw-rw-" ]; then
+  if [ "$(ls -al "$DEBUG_LOG" | cut -d ' ' -f1)" != "-rw-rw-rw-" ]; then
     proc_debug "Chmodding $DEBUG_LOG to 666"
     chmod 666 $DEBUG_LOG
   fi
@@ -170,19 +170,19 @@ fi
 if [ -z "$GL_VERSION" ]; then
   GL_VERSION="1"
 fi
-if [ "$QUOTA_SECTIONS_MERGE" ] && [ "`echo "$QUOTA_SECTIONS" | grep "\ "`" ]; then
+if [ "$QUOTA_SECTIONS_MERGE" ] && [ "$(echo "$QUOTA_SECTIONS" | grep "\ ")" ]; then
   echo "Error. You can not specify more then one section in QUOTA_SECTIONS if you have"
   echo "QUOTA_SECTIONS_MERGE=\"TRUE\" in config."
   exit 0
 fi
 if [ "$TRIAL_SECTIONS_MERGE" ]; then
-  if [ "`$SQL "select username from $SQLTB where active = '1' and startstats like '% %' limit 1"`" ]; then
+  if [ "$($SQL "select username from $SQLTB where active = '1' and startstats like '% %' limit 1")" ]; then
     echo "Error. You have TRIAL_SECTIONS_MERGE=\"TRUE\" but some users have more then one statstats in"
     echo "database. You need to make sure you have no triallers before enabling TRIAL_SECTIONS_MERGE."
     exit 0
   fi
 fi
-if [ "$TRIAL_SECTIONS_MERGE" ] && [ "`echo "$TRIAL_SECTIONS" | grep "\ "`" ]; then
+if [ "$TRIAL_SECTIONS_MERGE" ] && [ "$(echo "$TRIAL_SECTIONS" | grep "\ ")" ]; then
   echo "Error. You can not specify more then one section in TRIAL_SECTIONS if you have"
   echo "TRIAL_SECTIONS_MERGE=\"TRUE\" in config."
   exit 0
@@ -195,20 +195,20 @@ fi
 ## Check that the MYSQL server is running and all tables exists.
 check_tables="^${SQLTB}$ ^${SQLTB_EXCLUDED}$ ^${SQLTB_RANK}$ ^${SQLTB_PASSED}$"
 
-sqldata="`$SQL "show table status" | tr -s '\t' '^' | cut -d '^' -f1`"
+sqldata="$($SQL "show table status" | tr -s '\t' '^' | cut -d '^' -f1)"
 if [ -z "$sqldata" ]; then
   unset ERRORLEVEL
   echo "Mysql error. Check server"
   exit 0
 fi
 for table in $sqldata; do
-  if [ "`echo "$table" | grep "^ERROR$"`" ]; then
+  if [ "$(echo "$table" | grep "^ERROR$")" ]; then
     echo "TT3 mysql error: $sqldata"
     exit 0
   fi
   unset table_ok
   for check_table in $check_tables; do
-    if [ "`echo "$table" | grep "$check_table"`" ]; then
+    if [ "$(echo "$table" | grep "$check_table")" ]; then
       table_ok="yepp"
     fi
   done
@@ -227,9 +227,9 @@ proc_addtrialhelp() {
   echo "# Default number of days  : $TRIAL_DAYS_DEFAULT"
   echo "# Default Limit/Section is:"
   for rawdata in $TRIAL_SECTIONS; do
-    sec_num="`echo "$rawdata" | cut -d ':' -f1`"
-    sec_name="`echo "$rawdata" | cut -d ':' -f2`"
-    sec_limit="`echo "$rawdata" | cut -d ':' -f3`"
+    sec_num="$(echo "$rawdata" | cut -d ':' -f1)"
+    sec_name="$(echo "$rawdata" | cut -d ':' -f2)"
+    sec_limit="$(echo "$rawdata" | cut -d ':' -f3)"
 
     echo "# $sec_num Name:$sec_name Limit:$sec_limit Days"
   done
@@ -254,7 +254,7 @@ proc_addtrial() {
   fi
 
   ## Check if expr is installed.
-  if [ "`expr 100 \+ 100`" != "200" ]; then
+  if [ "$(expr 100 \+ 100)" != "200" ]; then
     if [ "$RUN_MODE" = "gl" ]; then
       echo ""
       echo "Seems you are missing the binary 'expr'. Find and copy that to your glftpd/bin dir."
@@ -266,7 +266,7 @@ proc_addtrial() {
   fi
 
   ## Check that the user isnt already added to the database.
-  if [ "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+  if [ "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
     echo "No go there. $CURUSER is already added to the database."
     echo "If this user should get another trial (perhaps missed before) then"
     echo "use the 'treset' command to reset his trial stats."
@@ -274,27 +274,27 @@ proc_addtrial() {
   fi
 
   ## Grab the number of seconds since 1970-01-01 -> now.
-  SECONDS_NOW="`$DATEBIN +%s`"
+  SECONDS_NOW="$($DATEBIN +%s)"
   ## Count how many seconds to add until end...
   END_TIME=$[$TRIAL_DAYS_DEFAULT*24*60*60+$SECONDS_NOW]
 
   ## Figure out how to make it an even hour rounded upwards ..:00
-  rawdata="`$DATEBIN -d "1970-01-01 01:01:00 $END_TIME sec" +%M`"
+  rawdata="$($DATEBIN -d "1970-01-01 01:01:00 $END_TIME sec" +%M)"
   if [ "$rawdata" != "00" ]; then
-    rawdataplus="`expr 60 \- $rawdata`"
+    rawdataplus="$(expr 60 \- $rawdata)"
     END_TIME=$[$rawdataplus*60+$END_TIME]
     unset rawdataplus; unset rawdata
   fi
-  extra_seconds="`$DATEBIN +%S`"
+  extra_seconds="$($DATEBIN +%S)"
   if [ "$extra_seconds" != "00" ]; then
-    END_TIME="`expr $END_TIME \- $extra_seconds \- 2`"
+    END_TIME="$(expr $END_TIME \- $extra_seconds \- 2)"
   fi 
 
   ## Grab the userstats he currently has ( KB value from all sections ).
   if [ "$TRIAL_SECTIONS_MERGE" ]; then
-    USER_STATS_NOW="`grep "^ALLUP" $USERSDIR/$CURUSER | cut -d ' ' -f$TRIAL_SECTIONS_MERGE`"
+    USER_STATS_NOW="$(grep "^ALLUP" $USERSDIR/$CURUSER | cut -d ' ' -f$TRIAL_SECTIONS_MERGE)"
   else
-    USER_STATS_NOW="`grep "^ALLUP" $USERSDIR/$CURUSER | cut -d ' ' -f3,6,9,12,15,18,21,24,27,30`"
+    USER_STATS_NOW="$(grep "^ALLUP" $USERSDIR/$CURUSER | cut -d ' ' -f3,6,9,12,15,18,21,24,27,30)"
   fi
 
   if [ "$TRIAL_SECTIONS_MERGE" ]; then
@@ -321,7 +321,7 @@ proc_addtrial() {
     start_stats="$start_stats 0"
   done
   ## Clean up $start_stats from extra spaces.
-  start_stats="`echo $start_stats`"
+  start_stats="$(echo $start_stats)"
 
   proc_debug "Seconds now: $SECONDS_NOW -- Stats for $CURUSER: $USER_STATS_NOW - $start_stats"
 
@@ -329,7 +329,7 @@ proc_addtrial() {
   for rawdata in $TRIAL_SECTIONS; do
     USER_LIMITS="$USER_LIMITS 0"
   done
-  USER_LIMITS="`echo $USER_LIMITS`"
+  USER_LIMITS="$(echo $USER_LIMITS)"
   if [ -z "$USER_LIMITS" ]; then
     echo "Error. proc_addtrial could not get a list of defined sections from TRIAL_SECTIONS."
     exit 0
@@ -339,13 +339,13 @@ proc_addtrial() {
   $SQL "insert into $SQLTB (active, username, stats, added, endtime, extratime, startstats, tlimit) VALUES ('1', '$CURUSER', '$start_stats', '$SECONDS_NOW', '$END_TIME', '0', '$USER_STATS_NOW', '$USER_LIMITS')"
 
   ## Verify that the user was added successfully.
-  if [ -z "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+  if [ -z "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
     echo "Error. Tried to add but $CURUSER can not be found in the database now... Try again."
     exit 0
   fi
 
   ## Make a human readable "end time" display.
-  END_TIME_NICE="`$DATEBIN -d "1970-01-01 01:01:00 $END_TIME sec" +%Y"-"%m"-"%d" : "%H":"%M`"
+  END_TIME_NICE="$($DATEBIN -d "1970-01-01 01:01:00 $END_TIME sec" +%Y"-"%m"-"%d" : "%H":"%M)"
  
   ## Show the information.
   echo "$CURUSER added for trial until $END_TIME_NICE:00"
@@ -375,9 +375,9 @@ proc_addquotahelp() {
 
   echo "# Default Limit/Section is:"
   for rawdata in $QUOTA_SECTIONS; do
-    sec_num="`echo "$rawdata" | cut -d ':' -f1`"
-    sec_name="`echo "$rawdata" | cut -d ':' -f2`"
-    sec_limit="`echo "$rawdata" | cut -d ':' -f3`"
+    sec_num="$(echo "$rawdata" | cut -d ':' -f1)"
+    sec_name="$(echo "$rawdata" | cut -d ':' -f2)"
+    sec_limit="$(echo "$rawdata" | cut -d ':' -f3)"
 
     echo "# $sec_num Name: $sec_name Limit: $sec_limit"
   done
@@ -409,11 +409,11 @@ proc_addquota() {
 
   ## Verify that MONTHS, if set, is correct.
   if [ "$MONTHS" ]; then
-    if [ "`echo "$MONTHS" | tr -d '[:digit:]'`" ]; then
+    if [ "$(echo "$MONTHS" | tr -d '[:digit:]')" ]; then
       echo "Error. Months specified should be a number."
       exit 0
     fi
-    if [ "`echo "$MONTHS" | grep "..."`" ]; then
+    if [ "$(echo "$MONTHS" | grep "...")" ]; then
       echo "Error. Can not exclude someone for that long this way. Use eadd instead"
       echo "       or set the correct amount of months to exclude."
       exit 0
@@ -421,17 +421,17 @@ proc_addquota() {
   fi
 
   ## Get the current active status, if any.
-  rawdata="`$SQL "select active, stats, added, extratime, tlimit from $SQLTB where username = '$CURUSER'" | tr ' ' '~' | awk '{print $1"^"$2"^"$3"^"$4"^"$5}'`"
+  rawdata="$($SQL "select active, stats, added, extratime, tlimit from $SQLTB where username = '$CURUSER'" | tr ' ' '~' | awk '{print $1"^"$2"^"$3"^"$4"^"$5}')"
 
   ## If we DID get an active status from the database.
   ## Check his current active status and see that its not 1 (trial) and not the same
   ## as were trying to set.
   if [ "$rawdata" ]; then
-    cur_active="`echo "$rawdata" | cut -d '^' -f1`"
-    cur_stats="`echo "$rawdata" | cut -d '^' -f2 | tr '~' ' '`"
-    cur_added="`echo "$rawdata" | cut -d '^' -f3`"
-    cur_extratime="`echo "$rawdata" | cut -d '^' -f4`"
-    cur_tlimit="`echo "$rawdata" | cut -d '^' -f5 | tr '~' ' '`"
+    cur_active="$(echo "$rawdata" | cut -d '^' -f1)"
+    cur_stats="$(echo "$rawdata" | cut -d '^' -f2 | tr '~' ' ')"
+    cur_added="$(echo "$rawdata" | cut -d '^' -f3)"
+    cur_extratime="$(echo "$rawdata" | cut -d '^' -f4)"
+    cur_tlimit="$(echo "$rawdata" | cut -d '^' -f5 | tr '~' ' ')"
     IN_DB_BEFORE="TRUE"
 
     if [ "$SACTIVE" = "0" ] && [ "$cur_active" = "0" ]; then
@@ -475,14 +475,14 @@ proc_addquota() {
     $SQL "insert into $SQLTB (active, username, stats, added, endtime, extratime, startstats, tlimit) VALUES ('$SACTIVE', '$CURUSER', '$stats', '$cur_added', '$END_TIME', '0', '$startstats', '$cur_tlimit')"
 
     ## Verify that the user was added successfully.
-    if [ -z "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+    if [ -z "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
       echo "Error. Tried to add but $CURUSER can not be found in the database now..."
       proc_log "Error. Tried to add but $CURUSER can not be found in the database now... Aborting."
       exit 0
     fi
 
   else
-    SECONDS_NOW="`$DATEBIN +%s`"
+    SECONDS_NOW="$($DATEBIN +%s)"
 
     ## Make a few 0's depending on the number of sections defined.
     ## Its for specific limits / section. 0 = default from config.
@@ -490,7 +490,7 @@ proc_addquota() {
       for rawdata in $QUOTA_SECTIONS; do
         USER_LIMITS="$USER_LIMITS 0"
       done
-      USER_LIMITS="`echo $USER_LIMITS`"
+      USER_LIMITS="$(echo $USER_LIMITS)"
     fi
 
     if [ -z "$USER_LIMITS" ]; then
@@ -508,7 +508,7 @@ proc_addquota() {
     $SQL "insert into $SQLTB (active, username, stats, added, endtime, extratime, startstats, tlimit) VALUES ('$SACTIVE', '$CURUSER', '$stats', '$SECONDS_NOW', '$END_TIME', '0', '$startstats', '$USER_LIMITS')"
 
     ## Verify that the user was added successfully.
-    if [ -z "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+    if [ -z "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
       echo "Error. Tried to add but $CURUSER can not be found in the database now..."
       proc_log "Error. Tried to add but $CURUSER can not be found in the database now... Aborting."
       exit 0
@@ -564,7 +564,7 @@ proc_deltrial() {
   fi
 
   ## Check that the user is in the database..
-  if [ -z "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+  if [ -z "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
     echo "No go there. $CURUSER is not added to the database. Use 'site trial add $CURUSER' first."
     exit 0
   fi
@@ -578,14 +578,14 @@ proc_deltrial() {
   ## Check that hes not already an inactive trialler.
   
   ## Check that hes on trial
-  if [ "`$SQL "select active from $SQLTB where username = '$CURUSER'"`" = "0" ]; then
+  if [ "$($SQL "select active from $SQLTB where username = '$CURUSER'")" = "0" ]; then
     echo "$CURUSER is not active on trial. If you want to wipe him from the database"
     echo "then use the 'wipe' command instead."
     exit 0
   fi
 
   $SQL "update $SQLTB set active = "0" where username = '$CURUSER'"
-  if [ "`$SQL "select active from $SQLTB where username = '$CURUSER'"`" != "0" ]; then
+  if [ "$($SQL "select active from $SQLTB where username = '$CURUSER'")" != "0" ]; then
     echo "Error. Tried to set 0 in the active field on $CURUSER, but its not 0 now..."
     exit 0
   fi
@@ -613,7 +613,7 @@ proc_wipe() {
   fi
 
   ## Check that the user is in the database..
-  if [ -z "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+  if [ -z "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
     echo "$CURUSER is not in the database. No need to wipe."
     exit 0
   fi
@@ -626,7 +626,7 @@ proc_wipe() {
   fi
 
   $SQL "delete from $SQLTB where username = '$CURUSER'"
-  if [ "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+  if [ "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
     echo "Error. Could not wipe out $CURUSER from the database for some reason.."
     exit 0
   fi
@@ -677,13 +677,13 @@ proc_changetime() {
   fi
 
   ## Check that the user is in the database..
-  if [ -z "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+  if [ -z "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
     echo "No go there. $CURUSER is not added to the database. Use 'site trial add $CURUSER' first."
     exit 0
   fi
 
   ## Check that hes on trial
-  if [ "`$SQL "select active from $SQLTB where username = '$CURUSER'"`" != "1" ]; then
+  if [ "$($SQL "select active from $SQLTB where username = '$CURUSER'")" != "1" ]; then
     echo "#--"
     echo "# NOTICE: $CURUSER is currently not active in trial. You must activate him if these"
     echo "# changes will have any effect."
@@ -699,10 +699,10 @@ proc_changetime() {
   fi
 
   ## Check if the first char in the time is either + or -
-  if [ "`echo "$CHANGE_TIME" | cut -c1`" = "+" ]; then
+  if [ "$(echo "$CHANGE_TIME" | cut -c1)" = "+" ]; then
     SIGN="+"
     WORD="Gave"
-  elif [ "`echo "$CHANGE_TIME" | cut -c1`" = "-" ]; then
+  elif [ "$(echo "$CHANGE_TIME" | cut -c1)" = "-" ]; then
     SIGN="-"
     WORD="Took"
   else
@@ -712,33 +712,33 @@ proc_changetime() {
   fi
 
   ## Get the interval and check that its either D, H or M
-  INTERVAL="`echo "$CHANGE_TIME" | cut -c2 | tr '[:lower:]' '[:upper:]'`"
-  if [ -z "`echo "$INTERVAL" | egrep "^D$|^H$|^M$"`" ]; then
+  INTERVAL="$(echo "$CHANGE_TIME" | cut -c2 | tr '[:lower:]' '[:upper:]')"
+  if [ -z "$(echo "$INTERVAL" | egrep "^D$|^H$|^M$")" ]; then
     proc_changetimehelp
     echo "Error. Must defined either D, H or M as interval.."
     exit 0
   fi
 
   ## Get the number behind SIGN INTERVAL and make sure its really a number.
-  NUMBER="`echo "$CHANGE_TIME" | cut -c3-`"
+  NUMBER="$(echo "$CHANGE_TIME" | cut -c3-)"
   if [ -z "$NUMBER" ]; then
     proc_changetimehelp
     echo "Error. Didnt get a number for $CHANGE_TIME"
     exit 0
-  elif [ "`echo "$NUMBER" | tr -d '[:digit:]'`" ]; then
+  elif [ "$(echo "$NUMBER" | tr -d '[:digit:]')" ]; then
     proc_changetimehelp
     echo "Error. Didnt seem to get amount of time there..."
     exit 0
   fi
   ## Make sure the number dosnt start with 0
-  if [ "`echo "$NUMBER" | cut -c1`" = "0" ]; then
+  if [ "$(echo "$NUMBER" | cut -c1)" = "0" ]; then
     echo "Error. Please dont start the time with a '0'"
     exit 0
   fi
 
   ## Get current time when its going to end from database.
 
-  OLD_END_TIME="`$SQL "select endtime from $SQLTB where username = '$CURUSER'" | awk '{print $1}'`"
+  OLD_END_TIME="$($SQL "select endtime from $SQLTB where username = '$CURUSER'" | awk '{print $1}')"
   if [ -z "$OLD_END_TIME" ]; then
     echo "Major error. While $CURUSER is in the database, there is no defined endtime."
     echo "You have to manually add one or remove that user and add him again."
@@ -772,7 +772,7 @@ proc_changetime() {
   fi
 
   ## Update the extratime value to reflect how many extra seconds the user got.
-  CUR_EXTRA_TIME="`$SQL "select extratime from $SQLTB where username = '$CURUSER'" | awk '{print $1}'`"
+  CUR_EXTRA_TIME="$($SQL "select extratime from $SQLTB where username = '$CURUSER'" | awk '{print $1}')"
   ## Verify that we got something. If not, set the value to 0 and quit (shouldnt happen)
   if [ -z "$CUR_EXTRA_TIME" ]; then
     echo "Error. Database failure. User $CURUSER exists but his extratime value is NULL."
@@ -794,14 +794,14 @@ proc_changetime() {
   $SQL "update $SQLTB set endtime='$NEW_END_TIME',extratime='$NEW_EXTRA_TIME' where username = '$CURUSER'"
 
   ## Verify that the endtime value was added successfully.
-  if [ "`$SQL "select endtime from $SQLTB where username = '$CURUSER'" | awk '{print $1}'`" != "$NEW_END_TIME" ]; then
+  if [ "$($SQL "select endtime from $SQLTB where username = '$CURUSER'" | awk '{print $1}')" != "$NEW_END_TIME" ]; then
     echo "Error. Verification failed. Value for endtime in database is not $NEW_END_TIME as it should be..."
     $SQL "update $SQLTB set extratime = '$CUR_EXTRA_TIME' where username = '$CURUSER'"
     exit 0
   fi
 
-  OLD_END_TIME_NICE="`$DATEBIN -d "1970-01-01 01:01:00 $OLD_END_TIME sec" +%Y"-"%m"-"%d" : "%H":"%M`"
-  NEW_END_TIME_NICE="`$DATEBIN -d "1970-01-01 01:01:00 $NEW_END_TIME sec" +%Y"-"%m"-"%d" : "%H":"%M`"
+  OLD_END_TIME_NICE="$($DATEBIN -d "1970-01-01 01:01:00 $OLD_END_TIME sec" +%Y"-"%m"-"%d" : "%H":"%M)"
+  NEW_END_TIME_NICE="$($DATEBIN -d "1970-01-01 01:01:00 $NEW_END_TIME sec" +%Y"-"%m"-"%d" : "%H":"%M)"
 
   ## All is well. Announce it.
   echo "Moved $CURUSER's endtime by $SIGN $NUMBER $intname"
@@ -831,7 +831,7 @@ proc_trialuploaded() {
   fi
 
   ## Grab the starting stats from database for when the user went on trial.
-  startstats="`$SQL "select startstats from $SQLTB where username = '$CURUSER'"`"
+  startstats="$($SQL "select startstats from $SQLTB where username = '$CURUSER'")"
 
   ## Verify that we got some data.
   if [ -z "$startstats" ]; then
@@ -842,9 +842,9 @@ proc_trialuploaded() {
 
   ## Grab current ALUP stats from user (all sections) and put in statskb.
   if [ "$TRIAL_SECTIONS_MERGE" ]; then
-    curstats="`grep "^ALLUP\ " $USERSDIR/$CURUSER | cut -d ' ' -f$TRIAL_SECTIONS_MERGE`"
+    curstats="$(grep "^ALLUP\ " $USERSDIR/$CURUSER | cut -d ' ' -f$TRIAL_SECTIONS_MERGE)"
   else
-    curstats="`grep "^ALLUP\ " $USERSDIR/$CURUSER | cut -d ' ' -f3,6,9,12,15,18,21,24,27,30`"
+    curstats="$(grep "^ALLUP\ " $USERSDIR/$CURUSER | cut -d ' ' -f3,6,9,12,15,18,21,24,27,30)"
   fi
   ## Did we get anything ?
   if [ -z "$curstats" ]; then
@@ -890,15 +890,15 @@ proc_trialuploaded() {
     fi
   done
   ## Clean it up and move newstatkb to statskb
-  statskb="`echo $newstatskb`"; unset newstatskb
+  statskb="$(echo $newstatskb)"; unset newstatskb
 
   ## Convert all values to MB and put in $stats
   for stat in $statskb; do
     stats="$stats "$[$stat/1024]
   done
   ## Clean up $stats and statskb from excess spaces. rename stats to statsmb
-  statsmb="`echo $stats`"
-  statskb="`echo $statskb`"
+  statsmb="$(echo $stats)"
+  statskb="$(echo $statskb)"
 }
 
 
@@ -919,9 +919,9 @@ proc_quotauploaded() {
   ## Grab current MONTHUP stats from user (all sections) and put in statskb.
   ## If QUOTA_SECTIONS_MERGE is set, only use those values.
   if [ "$QUOTA_SECTIONS_MERGE" ]; then
-    statskb="`grep "^MONTHUP\ " $USERSDIR/$CURUSER | cut -d ' ' -f$QUOTA_SECTIONS_MERGE`"
+    statskb="$(grep "^MONTHUP\ " $USERSDIR/$CURUSER | cut -d ' ' -f$QUOTA_SECTIONS_MERGE)"
   else
-    statskb="`grep "^MONTHUP\ " $USERSDIR/$CURUSER | cut -d ' ' -f3,6,9,12,15,18,21,24,27,30`"
+    statskb="$(grep "^MONTHUP\ " $USERSDIR/$CURUSER | cut -d ' ' -f3,6,9,12,15,18,21,24,27,30)"
   fi
 
   ## Did we get anything ?
@@ -953,8 +953,8 @@ proc_quotauploaded() {
     stats="$stats "$[$stat/1024]
   done
   ## Clean up $stats and statskb from excess spaces. rename stats to statsmb
-  statsmb="`echo $stats`"
-  statskb="`echo $statskb`"
+  statsmb="$(echo $stats)"
+  statskb="$(echo $statskb)"
 }
 
 
@@ -969,9 +969,9 @@ proc_get_groups() {
  
   ## Grab all the groups for this user in variable $CURGROUPS
   ## If this is glftpd 2.0 and the user is gadmin, add a * infront of the groupname.
-  for usergroupraw in `egrep "^GROUP |^PRIVATE " $USERSDIR/$CURUSER | cut -d ' ' -f2- | tr ' ' '~'`; do
-    groupname="`echo "$usergroupraw" | cut -d '~' -f1`"
-    gadmin="`echo "$usergroupraw" | cut -d '~' -f2`"
+  for usergroupraw in $(egrep "^GROUP |^PRIVATE " $USERSDIR/$CURUSER | cut -d ' ' -f2- | tr ' ' '~'); do
+    groupname="$(echo "$usergroupraw" | cut -d '~' -f1)"
+    gadmin="$(echo "$usergroupraw" | cut -d '~' -f2)"
     if [ -z "$CURPRIGROUP" ]; then
       CURPRIGROUP="$groupname"
     fi
@@ -980,7 +980,7 @@ proc_get_groups() {
     fi
     CURGROUPS="$CURGROUPS $groupname"
   done
-  CURGROUPS="`echo $CURGROUPS`"
+  CURGROUPS="$(echo $CURGROUPS)"
 
   ## Set NoGroup if no group was found.
   if [ -z "$CURGROUPS" ]; then
@@ -1004,7 +1004,7 @@ proc_info() {
   fi
 
   ## Check that the user is in the database..
-  if [ -z "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+  if [ -z "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
     echo "No go there. $CURUSER is not added to the database. Use 'site trial tadd $CURUSER' first."
     exit 0
   fi
@@ -1021,7 +1021,7 @@ proc_info() {
   proc_trialuploaded
 
   ## Grab all the trialdata from this user.
-  rawdata="`$SQL "select active, username, stats, added, endtime, extratime, startstats, tlimit from $SQLTB where username = '$CURUSER'" | tr ' ' '~' | awk '{print $1"^"$2"^"$3"^"$4"^"$5"^"$6"^"$7}'`"
+  rawdata="$($SQL "select active, username, stats, added, endtime, extratime, startstats, tlimit from $SQLTB where username = '$CURUSER'" | tr ' ' '~' | awk '{print $1"^"$2"^"$3"^"$4"^"$5"^"$6"^"$7}')"
 
   ## Verify that we got some data.
   if [ -z "$rawdata" ]; then
@@ -1030,12 +1030,12 @@ proc_info() {
   fi
 
   ## Split the data up into variables.
-  active="`echo "$rawdata" | cut -d '^' -f1`"
-  added="`echo "$rawdata" | cut -d '^' -f4`"
-  endtime="`echo "$rawdata" | cut -d '^' -f5`"
-  extratime="`echo "$rawdata" | cut -d '^' -f6`"
-  startstats="`echo "$rawdata" | cut -d '^' -f7 | tr '~' ' '`"
-  tlimit="`echo "$rawdata" | cut -d '^' -f8 | tr '~' ' '`"
+  active="$(echo "$rawdata" | cut -d '^' -f1)"
+  added="$(echo "$rawdata" | cut -d '^' -f4)"
+  endtime="$(echo "$rawdata" | cut -d '^' -f5)"
+  extratime="$(echo "$rawdata" | cut -d '^' -f6)"
+  startstats="$(echo "$rawdata" | cut -d '^' -f7 | tr '~' ' ')"
+  tlimit="$(echo "$rawdata" | cut -d '^' -f8 | tr '~' ' ')"
 
   proc_debug "Stats from userfile: $statskb"
   proc_debug "Converted to MB    : $statsmb"
@@ -1067,9 +1067,9 @@ proc_info() {
   for rawdata in $TRIAL_LIMITS; do
     unset statsmb
     sectionnum=0
-    numsection="`echo "$rawdata" | cut -d ':' -f1`"
-    namesection="`echo "$rawdata" | cut -d ':' -f2`"
-    limitsection="`echo "$rawdata" | cut -d ':' -f3`"
+    numsection="$(echo "$rawdata" | cut -d ':' -f1)"
+    namesection="$(echo "$rawdata" | cut -d ':' -f2)"
+    limitsection="$(echo "$rawdata" | cut -d ':' -f3)"
 
     for rawdata2 in $stats; do
       if [ "$numsection" = "$sectionnum" ]; then
@@ -1087,10 +1087,10 @@ proc_info() {
   echo ""
   echo "#-"
 
-  ADDED_NICE="`$DATEBIN -d "1970-01-01 01:01:00 $added sec" +%Y"-"%m"-"%d" : "%H":"%M`"  
+  ADDED_NICE="$($DATEBIN -d "1970-01-01 01:01:00 $added sec" +%Y"-"%m"-"%d" : "%H":"%M)"  
   echo "# Added to trial on: $ADDED_NICE"
 
-  END_NICE="`$DATEBIN -d "1970-01-01 01:01:00 $endtime sec" +%Y"-"%m"-"%d" : "%H":"%M`"  
+  END_NICE="$($DATEBIN -d "1970-01-01 01:01:00 $endtime sec" +%Y"-"%m"-"%d" : "%H":"%M)"  
   echo "# Trial ending on  : $END_NICE"
 
   if [ "$added" -gt "$endtime" ]; then
@@ -1099,7 +1099,7 @@ proc_info() {
   fi
 
   if [ "$active" = "1" ]; then
-    if [ "`$DATEBIN +%s`" -gt "$endtime" ]; then
+    if [ "$($DATEBIN +%s)" -gt "$endtime" ]; then
       echo "# WARNING: This date is in the past. Either hes just about to go off quota"
       echo "#          or there is a missing crontab..."
       echo "#"
@@ -1151,9 +1151,9 @@ proc_info() {
   echo -n "# "
   for rawdata in $startstats; do
     for rawdata2 in $TRIAL_SECTIONS; do
-      numsection="`echo "$rawdata2" | cut -d ':' -f1`"
+      numsection="$(echo "$rawdata2" | cut -d ':' -f1)"
       if [ "$numsection" = "$sectionnum" ]; then
-        namesection="`echo "$rawdata2" | cut -d ':' -f2`"
+        namesection="$(echo "$rawdata2" | cut -d ':' -f2)"
         break 1
       fi
     done
@@ -1179,9 +1179,9 @@ proc_getsections() {
 
   if [ -z "$DEFINED_SECTIONS" ]; then
     for rawdata in $VALUE_SECTIONS; do
-      secnum="`echo "$rawdata" | cut -d ':' -f1`"
-      secname="`echo "$rawdata" | cut -d ':' -f2`" 
-      seclimit="`echo "$rawdata" | cut -d ':' -f3`"
+      secnum="$(echo "$rawdata" | cut -d ':' -f1)"
+      secname="$(echo "$rawdata" | cut -d ':' -f2)" 
+      seclimit="$(echo "$rawdata" | cut -d ':' -f3)"
       if [ -z "$DEFINED_SECTIONS" ]; then
         DEFINED_SECTIONS="[#$secnum $secname $seclimit MB]"
         DEFINED_SECTIONS_NAME="#$secnum:$secname"
@@ -1203,8 +1203,8 @@ proc_getsections() {
 
 #  if [ -z "$DEFINED_SECTIONS_NAME" ]; then
 #    for rawdata in $VALUE_SECTIONS; do
-#      secnum="`echo "$rawdata" | cut -d ':' -f1`" 
-#      secname="`echo "$rawdata" | cut -d ':' -f2`" 
+#      secnum="$(echo "$rawdata" | cut -d ':' -f1)" 
+#      secname="$(echo "$rawdata" | cut -d ':' -f2)" 
 #      if [ -z "$DEFINED_SECTIONS_NAME" ]; then
 #        DEFINED_SECTIONS_NAME="#$secnum:$secname"
 #      else
@@ -1225,7 +1225,7 @@ proc_recalctlimit() {
   fi
 
   ## Get current values
-  tdata="`$SQL "select tlimit from $SQLTB where username = '$CURUSER'"`"
+  tdata="$($SQL "select tlimit from $SQLTB where username = '$CURUSER'")"
   ## Match it to section
 
   if [ "$MODE" = "QUOTA" ]; then
@@ -1236,10 +1236,10 @@ proc_recalctlimit() {
 
   for sectionraw in $ACTIVE_MODE; do
     tnum=0
-    secnum="`echo "$sectionraw" | cut -d ':' -f1`"
-    secname="`echo "$sectionraw" | cut -d ':' -f2`"
-    defseclimit="`echo "$sectionraw" | cut -d ':' -f3`"
-    topupquota="`echo "$sectionraw" | cut -d ':' -f4`"
+    secnum="$(echo "$sectionraw" | cut -d ':' -f1)"
+    secname="$(echo "$sectionraw" | cut -d ':' -f2)"
+    defseclimit="$(echo "$sectionraw" | cut -d ':' -f3)"
+    topupquota="$(echo "$sectionraw" | cut -d ':' -f4)"
 
     for dbdata in $tdata; do
       if [ "$tnum" = "$secnum" ]; then
@@ -1311,9 +1311,9 @@ proc_changesectionhelp() {
     proc_recalctlimit
     unset OUTPUT
     for rawdata in $TRIAL_LIMITS; do
-      secnum="`echo "$rawdata" | cut -d ':' -f1`"
-      secname="`echo "$rawdata" | cut -d ':' -f2`"
-      seclimit="`echo "$rawdata" | cut -d ':' -f3`"
+      secnum="$(echo "$rawdata" | cut -d ':' -f1)"
+      secname="$(echo "$rawdata" | cut -d ':' -f2)"
+      seclimit="$(echo "$rawdata" | cut -d ':' -f3)"
       if [ "$seclimit" = "DISABLED" ]; then
         WORD="DISABLED"
       else
@@ -1347,7 +1347,7 @@ proc_changesection() {
   fi
 
   ## Check that the user is in the database..
-  if [ -z "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+  if [ -z "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
     echo "No go there. $CURUSER is not added to the database. Use 'tadd', 'qadd' or 'eadd' first."
     echo "tadd = Add user to trial"
     echo "qadd = Add user to quota"
@@ -1356,7 +1356,7 @@ proc_changesection() {
   fi
 
   ## Active on the specified mode?
-  active="`$SQL "select active from $SQLTB where username = '$CURUSER'"`"
+  active="$($SQL "select active from $SQLTB where username = '$CURUSER'")"
   if [ "$MODE" = "TRIAL" ]; then
     if [ "$active" != "1" ]; then
       echo "#-"
@@ -1415,11 +1415,11 @@ proc_changesection() {
   fi
 
   ## Reset values?
-  if [ "`echo "$CHANGE_SECTION" | tr '[:lower:]' '[:upper:]'`" = "DEFAULT" ]; then
+  if [ "$(echo "$CHANGE_SECTION" | tr '[:lower:]' '[:upper:]')" = "DEFAULT" ]; then
     for rawdata in $VALUE_SECTIONS; do
       NEW_VALUES="$NEW_VALUES 0"
     done
-    NEW_VALUES="`echo $NEW_VALUES`"
+    NEW_VALUES="$(echo $NEW_VALUES)"
 
     proc_getsections
 
@@ -1438,7 +1438,7 @@ proc_changesection() {
     echo "# Missing <section:limit_to_pass>"
     echo "#--"
     exit 0
-  elif [ -z "`echo "$CHANGE_SECTION" | grep ":"`" ]; then
+  elif [ -z "$(echo "$CHANGE_SECTION" | grep ":")" ]; then
     proc_changesectionhelp
     echo "# Error message:"
     echo "Section:Limit in wrong format. Missing :"
@@ -1446,8 +1446,8 @@ proc_changesection() {
     exit 0
   fi
 
-  SELECTED_SECTION="`echo "$CHANGE_SECTION" | cut -d ':' -f1`"
-  if [ "`echo "$SELECTED_SECTION" | tr -d '[:digit:]'`" ]; then
+  SELECTED_SECTION="$(echo "$CHANGE_SECTION" | cut -d ':' -f1)"
+  if [ "$(echo "$SELECTED_SECTION" | tr -d '[:digit:]')" ]; then
     proc_changesectionhelp
     echo "# Error message:"
     echo "# Section $SELECTED_SECTION is not valid as a section number."
@@ -1456,7 +1456,7 @@ proc_changesection() {
     echo "# $DEFINED_SECTIONS"
     echo "#--"
     exit 0
-  elif [ -z "`echo "$SELECTED_SECTION" | grep "^[0-9]$"`" ]; then
+  elif [ -z "$(echo "$SELECTED_SECTION" | grep "^[0-9]$")" ]; then
     echo "#--"
     echo "# Error message:"
     echo "# Selected section should only contain one digit: 0-9"
@@ -1467,9 +1467,9 @@ proc_changesection() {
     exit 0
   fi
 
-  NEW_LIMIT="`echo "$CHANGE_SECTION" | cut -d ':' -f2`"
+  NEW_LIMIT="$(echo "$CHANGE_SECTION" | cut -d ':' -f2)"
 
-  if [ "`echo "$NEW_LIMIT" | tr -d '[:digit:]'`" ] && [ "$NEW_LIMIT" != "-1" ]; then
+  if [ "$(echo "$NEW_LIMIT" | tr -d '[:digit:]')" ] && [ "$NEW_LIMIT" != "-1" ]; then
     proc_changesectionhelp
     echo "# Error message:"
     echo "# $NEW_LIMIT isnt a number.. Should contain the number of MB's to change section $SELECTED_SECTION to."
@@ -1478,7 +1478,7 @@ proc_changesection() {
     echo "# $DEFINED_SECTIONS"
     echo "#--"
     exit 0
-  elif [ "`echo "$NEW_LIMIT" | grep "......."`" ]; then
+  elif [ "$(echo "$NEW_LIMIT" | grep ".......")" ]; then
     echo "#--"
     echo "# Cant use limit $NEW_LIMIT - Number is much too large to be MB"
     echo "#--"
@@ -1486,10 +1486,10 @@ proc_changesection() {
   fi
 
   for rawdata in $VALUE_SECTIONS; do
-    secnum="`echo "$rawdata" | cut -d ':' -f1`"
+    secnum="$(echo "$rawdata" | cut -d ':' -f1)"
     if [ "$secnum" = "$SELECTED_SECTION" ]; then
-      secname="`echo "$rawdata" | cut -d ':' -f2`" 
-      default_limit="`echo "$rawdata" | cut -d ':' -f3`"
+      secname="$(echo "$rawdata" | cut -d ':' -f2)" 
+      default_limit="$(echo "$rawdata" | cut -d ':' -f3)"
     fi
   done
 
@@ -1504,7 +1504,7 @@ proc_changesection() {
   fi
 
   ## Grab info from DB
-  rawdata="`$SQL "select active, stats, added, endtime, extratime, startstats, tlimit from $SQLTB where username = '$CURUSER'" | tr ' ' '~' | awk '{print $1"^"$2"^"$3"^"$4"^"$5"^"$6"^"$7}'`"
+  rawdata="$($SQL "select active, stats, added, endtime, extratime, startstats, tlimit from $SQLTB where username = '$CURUSER'" | tr ' ' '~' | awk '{print $1"^"$2"^"$3"^"$4"^"$5"^"$6"^"$7}')"
 
   ## Verify that we got some data.
   if [ -z "$rawdata" ]; then
@@ -1515,13 +1515,13 @@ proc_changesection() {
   fi
 
   ## Split the data up into variables.
-  active="`echo "$rawdata" | cut -d '^' -f1`"
-  stats="`echo "$rawdata" | cut -d '^' -f2 | tr '~' ' '`"
-  added="`echo "$rawdata" | cut -d '^' -f3`"
-  endtime="`echo "$rawdata" | cut -d '^' -f4`"
-  extratime="`echo "$rawdata" | cut -d '^' -f5`"
-  startstats="`echo "$rawdata" | cut -d '^' -f6 | tr '~' ' '`"
-  tlimit="`echo "$rawdata" | cut -d '^' -f7 | tr '~' ' '`"
+  active="$(echo "$rawdata" | cut -d '^' -f1)"
+  stats="$(echo "$rawdata" | cut -d '^' -f2 | tr '~' ' ')"
+  added="$(echo "$rawdata" | cut -d '^' -f3)"
+  endtime="$(echo "$rawdata" | cut -d '^' -f4)"
+  extratime="$(echo "$rawdata" | cut -d '^' -f5)"
+  startstats="$(echo "$rawdata" | cut -d '^' -f6 | tr '~' ' ')"
+  tlimit="$(echo "$rawdata" | cut -d '^' -f7 | tr '~' ' ')"
 
   ## Rebuild the data which we'll put in the database instead...
   tnum=0
@@ -1541,7 +1541,7 @@ proc_changesection() {
     fi
     tnum=$[$tnum+1]
   done
-  NEW_LIMITS="`echo $NEW_LIMITS`"
+  NEW_LIMITS="$(echo $NEW_LIMITS)"
 
   if [ -z "$secname" ]; then
     echo "Error. Could not get the defined name for section $secnum from TRIAL_LIMITS"
@@ -1573,19 +1573,19 @@ proc_changesection() {
 
 ## Used when DAYS_LEFT is 0 to announce hours/minutes instead.
 proc_get_hours_left() {
-  hour_now="`$DATEBIN +%H`"
+  hour_now="$($DATEBIN +%H)"
   ## Remove first char from hour_now if its a 0.
-  if [ "`echo "$hour_now" | cut -c1`" = "0" ]; then
-    hour_now="`echo "$hour_now" | cut -c2-`"
+  if [ "$(echo "$hour_now" | cut -c1)" = "0" ]; then
+    hour_now="$(echo "$hour_now" | cut -c2-)"
   fi
 
   hour_left=$[23-$hour_now]
   proc_debug "Checking hours/minutes left. Hours left: $hour_left (now: $hour_now)"
 
-  minute_now="`$DATEBIN +%M`"
+  minute_now="$($DATEBIN +%M)"
   ## Remove first char of minute_now if its a 0.
-  if [ "`echo "$minute_now" | cut -c1`" = "0" ]; then
-    minute_now="`echo "$minute_now" | cut -c2-`"
+  if [ "$(echo "$minute_now" | cut -c1)" = "0" ]; then
+    minute_now="$(echo "$minute_now" | cut -c2-)"
   fi
 
   minute_left=$[60-$minute_now]
@@ -1630,7 +1630,7 @@ proc_check() {
     exit 0
   fi
   ## Check if the user exists.
-  if [ ! -e "$USERSDIR/$CURUSER" ] || [ "`echo "$CURUSER" | grep "^default\."`" ]; then
+  if [ ! -e "$USERSDIR/$CURUSER" ] || [ "$(echo "$CURUSER" | grep "^default\.")" ]; then
     . $theme
     echo "$USER_NON_EXIST"
     exit 0
@@ -1656,15 +1656,15 @@ proc_check() {
   fi
 
   ## Exists in trial db?
-  rawdata="`$SQL "select active, endtime, extratime from $SQLTB where username = '$CURUSER'" | awk '{print $1"^"$2"^"$3}'`"
+  rawdata="$($SQL "select active, endtime, extratime from $SQLTB where username = '$CURUSER'" | awk '{print $1"^"$2"^"$3}')"
   if [ -z "$rawdata" ]; then
     active="0"
   else
-    active="`echo "$rawdata" | cut -d '^' -f1`"
+    active="$(echo "$rawdata" | cut -d '^' -f1)"
     proc_debug "$CURUSER is in the database. Got active value: $active"
 
-    endtime="`echo "$rawdata" | cut -d '^' -f2`"
-    extratime="`echo "$rawdata" | cut -d '^' -f3`"
+    endtime="$(echo "$rawdata" | cut -d '^' -f2)"
+    extratime="$(echo "$rawdata" | cut -d '^' -f3)"
     unset rawdata
 
     ## If the user has active 3 but is in excluded group, set active 0 instead to get the correct
@@ -1717,7 +1717,7 @@ proc_check() {
     fi
 
     ## Get time in seconds now.
-    SECS_NOW="`$DATEBIN +%s`"
+    SECS_NOW="$($DATEBIN +%s)"
 #    proc_calctime1
 
 
@@ -1759,7 +1759,7 @@ proc_check() {
 
     ## Check how many days are left.
     proc_get_days_in_month
-    DAYS_LEFT="$( expr "$MONTHTOTAL" \- "`$DATEBIN +%d`" )"
+    DAYS_LEFT="$( expr "$MONTHTOTAL" \- "$($DATEBIN +%d)" )"
     proc_debug "Days left: $DAYS_LEFT"
 
     if [ "$DAYS_LEFT" = "0" ]; then
@@ -1936,7 +1936,7 @@ proc_check() {
     if [ "$extratime" = "0" ]; then
       ## Check how many days are left.
       proc_get_days_in_month
-      DAYS_LEFT="$( expr "$MONTHTOTAL" \- "`$DATEBIN +%d`" )"
+      DAYS_LEFT="$( expr "$MONTHTOTAL" \- "$($DATEBIN +%d)" )"
       proc_debug "Days left: $DAYS_LEFT"
 
       if [ "$DAYS_LEFT" = "0" ]; then
@@ -2123,12 +2123,12 @@ proc_check_this_month() {
   if [ "$PASSWD" ]; then
     proc_debug "Checking if $CURUSER was added this month."
     ## Have this user been on the site long enough?
-    passwd_date="`grep "^$CURUSER:" $PASSWD | cut -d ':' -f5`"
+    passwd_date="$(grep "^$CURUSER:" $PASSWD | cut -d ':' -f5)"
     if [ -z "$passwd_date" ]; then
       proc_log "WARNING. $CURUSER dosnt seem to have any entry in $PASSWD"
     else
-      passwd_month="`echo "$passwd_date" | cut -d '-' -f1`"
-      passwd_year="`echo "$passwd_date" | cut -d '-' -f3`"
+      passwd_month="$(echo "$passwd_date" | cut -d '-' -f1)"
+      passwd_year="$(echo "$passwd_date" | cut -d '-' -f3)"
 
       if [ "$passwd_year" -lt "50" ]; then
         passwd_year="20${passwd_year}"
@@ -2136,15 +2136,15 @@ proc_check_this_month() {
         passwd_year="19${passwd_year}"
       fi
 
-      if [ "$passwd_year" = "`$DATEBIN +%Y`" ]; then
-        if [ "$passwd_month" = "`$DATEBIN +%m`" ]; then
+      if [ "$passwd_year" = "$($DATEBIN +%Y)" ]; then
+        if [ "$passwd_month" = "$($DATEBIN +%m)" ]; then
           THIS_MONTH="TRUE"
           proc_debug "$CURUSER added this month !"
         fi
       fi
 
-      if [ "$passwd_year" = "`$DATEBIN -d "-1 month" +%Y`" ]; then
-        if [ "$passwd_month" = "`$DATEBIN -d "-1 month" +%m`" ]; then
+      if [ "$passwd_year" = "$($DATEBIN -d "-1 month" +%Y)" ]; then
+        if [ "$passwd_month" = "$($DATEBIN -d "-1 month" +%m)" ]; then
           ## LAST_MONTH was added for the 'qcron' function since it runs
           ## at the start of a new month...
           LAST_MONTH="TRUE"
@@ -2189,9 +2189,9 @@ proc_check_quota() {
   for rawdata in $QUOTA_LIMITS; do
     cur_limit_num=0
     unset cur_limit
-    statnum="`echo "$rawdata" | cut -d ':' -f1`"
-    sectionname="`echo "$rawdata" | cut -d ':' -f2`"
-    pass_limit="`echo "$rawdata" | cut -d ':' -f3`"
+    statnum="$(echo "$rawdata" | cut -d ':' -f1)"
+    sectionname="$(echo "$rawdata" | cut -d ':' -f2)"
+    pass_limit="$(echo "$rawdata" | cut -d ':' -f3)"
 
     ## Match the statnum with the stats for this section (taken from the userfiles MONTHUP).
     for statsmb_value in $statsmb; do 
@@ -2211,7 +2211,7 @@ proc_check_quota() {
     else
       if [ -z "$DAYS_LEFT" ]; then
         proc_get_days_in_month
-        DAYS_LEFT="$( expr "$MONTHTOTAL" \- "`$DATEBIN +%d`" )"
+        DAYS_LEFT="$( expr "$MONTHTOTAL" \- "$($DATEBIN +%d)" )"
       fi
       if [ $DAYS_LEFT != "0" ]; then
         per_day=$[$pass_limit-$cur_limit]
@@ -2274,8 +2274,8 @@ proc_check_quota() {
     fi
   done
   ## Clean it up from excess spaces.
-  trial_line="`echo $trial_line`"
-  PASS_DATA="`echo $PASS_DATA`"
+  trial_line="$(echo $trial_line)"
+  PASS_DATA="$(echo $PASS_DATA)"
 }
 
 ## Procedure for displaying information about someone currently on trial (active:1)
@@ -2312,7 +2312,7 @@ proc_check_trial() {
 
   unset trial_line
 
-  SECS_NOW="`$DATEBIN +%s`"
+  SECS_NOW="$($DATEBIN +%s)"
 
   ## Did the user get extra time ?
   if [ "$extratime" != "0" ]; then
@@ -2341,9 +2341,9 @@ proc_check_trial() {
 
   ## Go through each trial limit for user and see if hes currently over any limit."
   for rawdata in $TRIAL_LIMITS; do
-    statnum="`echo "$rawdata" | cut -d ':' -f1`"
-    sectionname="`echo "$rawdata" | cut -d ':' -f2`"
-    pass_limit="`echo "$rawdata" | cut -d ':' -f3`"
+    statnum="$(echo "$rawdata" | cut -d ':' -f1)"
+    sectionname="$(echo "$rawdata" | cut -d ':' -f2)"
+    pass_limit="$(echo "$rawdata" | cut -d ':' -f3)"
 
     ## Match the statnum with the stats for this section (taken from the userfiles MONTHUP).
     cur_limit_num=0
@@ -2361,7 +2361,7 @@ proc_check_trial() {
 
 ##
     if [ -z "$TRIAL_DAYS_LEFT" ]; then
-      TRIAL_DAYS_LEFT="`echo "$TIME_COUNTD" | cut -d ' ' -f1`"
+      TRIAL_DAYS_LEFT="$(echo "$TIME_COUNTD" | cut -d ' ' -f1)"
       if [ -z "$TRIAL_DAYS_LEFT" ]; then
         TRIAL_DAYS_LEFT="0"
       fi
@@ -2414,18 +2414,18 @@ proc_check_trial() {
     fi
   done
   ## Clean it up from excess spaces.
-  trial_line="`echo $trial_line`"
+  trial_line="$(echo $trial_line)"
 }
 
 ## Procedure to show everyone on trial and how they are doing.
 proc_triallist() {
   ## Get time in seconds now.
-  SECS_NOW="`$DATEBIN +%s`"
+  SECS_NOW="$($DATEBIN +%s)"
 
-  for rawdata in `$SQL "select username,endtime,extratime from $SQLTB where active = '1'" | awk '{print $1"^"$2"^"$3}'`; do
-    CURUSER="`echo "$rawdata" | cut -d '^' -f1`"
-    endtime="`echo "$rawdata" | cut -d '^' -f2`"
-    extratime="`echo "$rawdata" | cut -d '^' -f3`"
+  for rawdata in $($SQL "select username,endtime,extratime from $SQLTB where active = '1'" | awk '{print $1"^"$2"^"$3}'); do
+    CURUSER="$(echo "$rawdata" | cut -d '^' -f1)"
+    endtime="$(echo "$rawdata" | cut -d '^' -f2)"
+    extratime="$(echo "$rawdata" | cut -d '^' -f3)"
     proc_debug "Checking status for $CURUSER"
     if [ ! -e "$USERSDIR/$CURUSER" ]; then
       echo "$CURUSER - Not on site but active in DB."
@@ -2463,7 +2463,7 @@ proc_check_delete() {
     exit 0
   fi
 
-  if [ "`grep "^FLAGS " $USERSDIR/$CURUSER | cut -d ' ' -f2 | grep "6"`" ]; then
+  if [ "$(grep "^FLAGS " $USERSDIR/$CURUSER | cut -d ' ' -f2 | grep "6")" ]; then
     USER_DELETED="TRUE"
   else
     USER_DELETED="FALSE"
@@ -2475,13 +2475,13 @@ proc_crontrial() {
   unset rawdata
 
   ## Get time in seconds now, plus two seconds incase we run at the exact time.
-  SECS_NOW=$[`$DATEBIN +%s`+2]
+  SECS_NOW=$[$($DATEBIN +%s)+2]
 
   ## Check trials. For each user with active 1 ...
-  for rawdata in `$SQL "select username, endtime, extratime from $SQLTB where active = '1'" | awk '{print $1"^"$2"^"$3}'`; do
-    CURUSER="`echo "$rawdata" | cut -d '^' -f1`"
-    endtime="`echo "$rawdata" | cut -d '^' -f2`"
-    extratime="`echo "$rawdata" | cut -d '^' -f3`"
+  for rawdata in $($SQL "select username, endtime, extratime from $SQLTB where active = '1'" | awk '{print $1"^"$2"^"$3}'); do
+    CURUSER="$(echo "$rawdata" | cut -d '^' -f1)"
+    endtime="$(echo "$rawdata" | cut -d '^' -f2)"
+    extratime="$(echo "$rawdata" | cut -d '^' -f3)"
     proc_debug "Checking $CURUSER with endtime: $endtime"
 
     ## Check if the user is delled. Sets USER_DELETED=TRUE if so.
@@ -2527,14 +2527,14 @@ proc_crontrial() {
 proc_cronquota() {
   sleep 2 ## Security.
 
-  if [ "`$DATEBIN +%d`" != "01" ]; then
+  if [ "$($DATEBIN +%d)" != "01" ]; then
     if [ "$TEST" = "TRUE" ] && [ "$DEBUG" = "TRUE" ]; then
       proc_debug "Not the first of the month. Continuing anyway since TEST is TRUE"
     else
       exit 0
     fi
   fi
-  if [ "`$DATEBIN +%H`" != "00" ]; then
+  if [ "$($DATEBIN +%H)" != "00" ]; then
     if [ "$TEST" != "TRUE" ]; then
       echo "ERROR: tur-trial3.sh qcron should be crontabbed at 0 0 * * * using the midnight script."
       exit 0      
@@ -2554,7 +2554,7 @@ proc_cronquota() {
   fi
 
   cd $USERSDIR
-  for CURUSER in `grep "^FLAGS " * | cut -d ':' -f1 | egrep -v "default\.|\.lock"`; do
+  for CURUSER in $(grep "^FLAGS " * | cut -d ':' -f1 | egrep -v "default\.|\.lock"); do
     unset trial_line; unset PASSED; unset rawdata; unset passed_cause_of_top_up; unset failed_cause_of_top_up
     unset MONTH_EXCLUDED; unset extratime; unset ON_VACATION
 
@@ -2563,12 +2563,12 @@ proc_cronquota() {
     if [ "$QUOTA_ENABLED" = "FALSE" ]; then
       proc_debug "QUOTA_ENABLED is FALSE. Skipping cron quota"
       proc_logclean ""
-      proc_logclean "Quota Stats for `date`"
+      proc_logclean "Quota Stats for $(date)"
       proc_logclean "QUOTA_ENABLED is FALSE. Skipping this month.."
     else
 
       ## Check if the user is excluded...
-      rawdata="`$SQL "select excluded from $SQLTB_EXCLUDED where username = '$CURUSER'"`"
+      rawdata="$($SQL "select excluded from $SQLTB_EXCLUDED where username = '$CURUSER'")"
       case $rawdata in
         1) USER_EXCLUDED="TRUE" ;;
         0) USER_EXCLUDED="FALSE" ;;
@@ -2576,14 +2576,14 @@ proc_cronquota() {
       esac
 
       ## Check if the user is excluded for the rest of the month.
-      rawdata="`$SQL "select active, stats, extratime from $SQLTB where username = '$CURUSER'" | awk '{print $1"^"$2"^"$3}'`"
-      active="`echo "$rawdata" | cut -d '^' -f1`"   
+      rawdata="$($SQL "select active, stats, extratime from $SQLTB where username = '$CURUSER'" | awk '{print $1"^"$2"^"$3}')"
+      active="$(echo "$rawdata" | cut -d '^' -f1)"   
       if [ "$active" = "3" ]; then
         proc_debug "$CURUSER is excluded for the rest of the month."
         ## Also get the value from stats. Should be 0 or 1. If 0, we just change the active field.
         ## If 1, it means he wasnt in the database when put on exclude and we can wipe him from database.
-        stats="`echo "$rawdata" | cut -d '^' -f2`"   
-        extratime="`echo "$rawdata" | cut -d '^' -f3`"
+        stats="$(echo "$rawdata" | cut -d '^' -f2)"   
+        extratime="$(echo "$rawdata" | cut -d '^' -f3)"
         MONTH_EXCLUDED="TRUE"
       elif [ "$active" = "2" ]; then
         proc_debug "$CURUSER is permanently manually excluded."
@@ -2686,7 +2686,7 @@ proc_cronquota() {
       rm -f "/tmp/tt3.quota.failed.tmp"
     else
       proc_logclean ""
-      proc_logclean "Quota Stats for `date`"
+      proc_logclean "Quota Stats for $(date)"
       if [ -e "/tmp/tt3.quota.passed.tmp" ]; then
         proc_logclean "#--[ Passed users ]----------------------#"
         cat "/tmp/tt3.quota.passed.tmp" >> $LOG
@@ -2710,7 +2710,7 @@ proc_mss_sync() {
       proc_debug "Error.MSS_CONFIG defined but $MSS_CONFIG was not found."
       proc_log "Error.MSS_CONFIG defined but $MSS_CONFIG was not found."
     else
-      SLAVES="`grep "^SLAVES=" $MSS_CONFIG | cut -d '=' -f2 | tr -d '"'`"
+      SLAVES="$(grep "^SLAVES=" $MSS_CONFIG | cut -d '=' -f2 | tr -d '"')"
       proc_debug "Sending SYNC BASIC $CURUSER to $SLAVES"
       for slave in $SLAVES; do
         echo "SYNC BASIC $CURUSER" >> /glftpd/etc/$slave.actions
@@ -2723,7 +2723,7 @@ proc_mss_sync() {
 ## Only used if VACATION_GROUP is set.
 proc_vacation() {
   if [ "$VACATION_GROUP" ]; then
-    if [ "`grep "^GROUP\ $VACATION_GROUP" "$USERSDIR/$CURUSER"`" ]; then
+    if [ "$(grep "^GROUP\ $VACATION_GROUP" "$USERSDIR/$CURUSER")" ]; then
       proc_debug "proc_vacation reports that $CURUSER is on vacation."
       ON_VACATION="TRUE"
     else
@@ -2749,7 +2749,7 @@ proc_quota_passed() {
   if [ "$PASS_SECTIONS_EXCLUDE" ] && [ "$PASS_SECTIONS_EXCLUDE" != "0" ]; then
     passed_sections="0"
     for passd in $PASS_DATA; do
-      if [ "`echo "$passd" | grep "\:P"`" ]; then
+      if [ "$(echo "$passd" | grep "\:P")" ]; then
         passed_sections=$[$passed_sections+1]
       fi
     done
@@ -2829,7 +2829,7 @@ proc_quota_failed() {
     else
       QFAIL_SET_CREDITS_CURRENT="0"
     fi
-    CUR_EXTRA_CREDS="`grep "^CREDITS " "$USERSDIR/$CURUSER" | cut -d ' ' -f3-`"
+    CUR_EXTRA_CREDS="$(grep "^CREDITS " "$USERSDIR/$CURUSER" | cut -d ' ' -f3-)"
     grep -v "^CREDITS " "$USERSDIR/$CURUSER" > /tmp/tt3.$CURUSER.failed
     echo "CREDITS $QFAIL_SET_CREDITS_CURRENT $CUR_EXTRA_CREDS" >> /tmp/tt3.$CURUSER.failed
     LOG_CREDS="- CS:$QFAIL_SET_CREDITS_CURRENT"
@@ -2838,7 +2838,7 @@ proc_quota_failed() {
     else
 
       if [ "$MSGS" ]; then
-        CUR_CREDS="`grep "^CREDITS " "$USERSDIR/$CURUSER" | cut -d ' ' -f2`"
+        CUR_CREDS="$(grep "^CREDITS " "$USERSDIR/$CURUSER" | cut -d ' ' -f2)"
         CUR_CREDS=$[$CUR_CREDS/1024]
         echo "" >> $MSGS/$CURUSER
         echo "!H------------------------------------------------------------------------------!0" >> $MSGS/$CURUSER
@@ -2859,10 +2859,10 @@ proc_quota_failed() {
   if [ "$QFAIL_LOWER_CREDITS" ] && [ "$QFAIL_LOWER_CREDITS" != "0" ]; then
 
     ## Grab current credits
-    CUR_CREDS="`grep "^CREDITS " "$USERSDIR/$CURUSER" | cut -d ' ' -f2`"
+    CUR_CREDS="$(grep "^CREDITS " "$USERSDIR/$CURUSER" | cut -d ' ' -f2)"
     CUR_CREDS_MB=$[$CUR_CREDS/1024]
 
-    CUR_EXTRA_CREDS="`grep "^CREDITS " "$USERSDIR/$CURUSER" | cut -d ' ' -f3-`"
+    CUR_EXTRA_CREDS="$(grep "^CREDITS " "$USERSDIR/$CURUSER" | cut -d ' ' -f3-)"
 
     if [ "$QFAIL_LOWER_CREDITS" -ge "$CUR_CREDS_MB" ]; then
       NEW_CREDS_MB="0"
@@ -2896,7 +2896,7 @@ proc_quota_failed() {
   fi
 
   if [ "QFAIL_SET_FLAGS" ]; then
-    CURFLAGS="`grep "^FLAGS " "$USERSDIR/$CURUSER" | cut -d ' ' -f2`"
+    CURFLAGS="$(grep "^FLAGS " "$USERSDIR/$CURUSER" | cut -d ' ' -f2)"
     grep -v "^FLAGS " "$USERSDIR/$CURUSER" > /tmp/tt3.$CURUSER.failedf
     echo "FLAGS $QFAIL_SET_FLAGS$CURFLAGS" >> /tmp/tt3.$CURUSER.failedf
     LOG_FLAGS="- Flag:$QFAIL_SET_FLAGS"
@@ -2907,7 +2907,7 @@ proc_quota_failed() {
       rm -f "/tmp/tt3.$CURUSER.failedf"
 
       ## Check if flag 6 is given. If so, if BYEFILES is defined, send a goodbye message to the user.
-      if [ "`echo "$QFAIL_SET_FLAGS" | grep "6"`" ]; then
+      if [ "$(echo "$QFAIL_SET_FLAGS" | grep "6")" ]; then
         if [ "$BYEFILES" ]; then
           echo "You were deleted because of failed Quota." > $BYEFILES/$CURUSER.bye
           echo "Stats: $trial_line" >> $BYEFILES/$CURUSER.bye
@@ -2927,7 +2927,7 @@ proc_quota_failed() {
     else
 
       proc_debug "Adding $CURUSER on trial again with default values."
-      if [ "`$SQL "select username from $SQLTB where username = '$CURUSER'"`" ]; then
+      if [ "$($SQL "select username from $SQLTB where username = '$CURUSER'")" ]; then
         RUNMODE="WIPE"
         ANNOUNCE="FALSE"
         proc_wipe
@@ -2966,7 +2966,7 @@ proc_quota_tlimit() {
   for rawdata in $QUOTA_SECTIONS; do
     new_tlimit="$new_tlimit 0"
   done
-  new_tlimit="`echo $new_tlimit`"
+  new_tlimit="$(echo $new_tlimit)"
 }    
 
 
@@ -3010,7 +3010,7 @@ proc_trial_failed() {
     proc_log "$CURUSER FAILED with $trial_line - Already got flag 6 though."
   else
     ## Add flag 6 to user.  
-    CURFLAGS="`grep "^FLAGS " "$USERSDIR/$CURUSER" | cut -d ' ' -f2`"
+    CURFLAGS="$(grep "^FLAGS " "$USERSDIR/$CURUSER" | cut -d ' ' -f2)"
     if [ -z "$CURFLAGS" ]; then
       echo "ERROR: Could not get current flags for $CURUSER in proc_trial_failed"
       proc_log "ERROR: Could not get current flags for $CURUSER in proc_trial_failed"
@@ -3059,15 +3059,15 @@ proc_check_excluded_groups() {
          echo "Error. predir $predir defined in QUOTA_EXCLUDED_AFFILS_DIRS does not exist."
        else
          cd "$predir"
-         for excluded_group in `ls -1`; do
-           if [ -z "`echo "$EXCLUDED_GROUPS" | grep "\ $excluded_group\ "`" ]; then
+         for excluded_group in $(ls -1); do
+           if [ -z "$(echo "$EXCLUDED_GROUPS" | grep "\ $excluded_group\ ")" ]; then
              EXCLUDED_GROUPS=" $EXCLUDED_GROUPS $excluded_group "
            fi
          done
        fi
      done
    fi
-   EXCLUDED_GROUPS="`echo $EXCLUDED_GROUPS`"
+   EXCLUDED_GROUPS="$(echo $EXCLUDED_GROUPS)"
 
    ## Make em searchable with egrep.
    for excluded_group in $EXCLUDED_GROUPS; do
@@ -3085,7 +3085,7 @@ proc_check_excluded_groups() {
        fi
      fi
    done
-   EXCLUDED_GROUPS_2="`echo $EXCLUDED_GROUPS_2`"
+   EXCLUDED_GROUPS_2="$(echo $EXCLUDED_GROUPS_2)"
  fi
 }
 
@@ -3104,11 +3104,11 @@ proc_check_excluded() {
 
   ## Get all excluded groups in a list.
   proc_check_excluded_groups
-  if [ "`egrep "$EXCLUDED_GROUPS_2" "$USERSDIR/$CURUSER"`" ]; then
+  if [ "$(egrep "$EXCLUDED_GROUPS_2" "$USERSDIR/$CURUSER")" ]; then
     EXCLUDED_USER="TRUE"
     ## Find out which group hes excluded by..
     for group in $EXCLUDED_GROUPS; do
-      if [ "`egrep "^GROUP $group|^PRIVATE $group" "$USERSDIR/$CURUSER"`" ]; then
+      if [ "$(egrep "^GROUP $group|^PRIVATE $group" "$USERSDIR/$CURUSER")" ]; then
         if [ "$EXCLUDED_BY" ]; then
           EXCLUDED_BY="$EXCLUDED_BY/$group"
         else
@@ -3131,13 +3131,13 @@ proc_update_excludelist() {
   ## Dont run update if its within one hour of the new month."
   if [ "$UPDATE_ONLY" = "TRUE" ]; then
     proc_debug "This is an update only. Checking if its within an hour of the last day of the month."
-    if [ "`$DATEBIN -d "+1 day" +%d`" = "01" ]; then
-      if [ "`$DATEBIN +%H`" = "23" ] && [ "`$DATEBIN +%M`" -gt "30" ]; then
+    if [ "$($DATEBIN -d "+1 day" +%d)" = "01" ]; then
+      if [ "$($DATEBIN +%H)" = "23" ] && [ "$($DATEBIN +%M)" -gt "30" ]; then
         proc_debug "Skipping 'tur-trial3.sh update' as this is the last 30 minutes of the last month."
         exit 0
       fi
-    elif [ "`$DATEBIN +%d`" = "01" ]; then
-      if [ "`$DATEBIN +%H`" = "00" ] && [ "`$DATEBIN +%M`" -lt "30" ]; then
+    elif [ "$($DATEBIN +%d)" = "01" ]; then
+      if [ "$($DATEBIN +%H)" = "00" ] && [ "$($DATEBIN +%M)" -lt "30" ]; then
         proc_debug "Skipping 'tur-trial3.sh update as this is the first 30 minutes of the new month."
         exit 0
       fi
@@ -3150,7 +3150,7 @@ proc_update_excludelist() {
   TABLE_LIST="$SQLTB $SQLTB_EXCLUDED $SQLTB_RANK $SQLTB_PASSED"
   for table in $TABLE_LIST; do
     proc_debug "Checking for leftover data in table: $table"
-    for CURUSER in `$SQL "select username from $table"`; do
+    for CURUSER in $($SQL "select username from $table"); do
       if [ ! -e "$USERSDIR/$CURUSER" ]; then
         proc_debug "Removing $CURUSER from table $table - Dosnt exist anymore."
         $SQL "delete from $table where username = '$CURUSER'"
@@ -3166,7 +3166,7 @@ proc_update_excludelist() {
   rm -f /tmp/tt3.stats*
 
   ## Start updating excluded and ranking tables.
-  for CURUSER in `grep "^FLAGS " * | cut -d ':' -f1 | egrep -v "default\.user|\.lock"`; do
+  for CURUSER in $(grep "^FLAGS " * | cut -d ':' -f1 | egrep -v "default\.user|\.lock"); do
 
     ## New way of checking exclude. Goes through everything itself..
     proc_is_user_excluded
@@ -3176,7 +3176,7 @@ proc_update_excludelist() {
       VALUE="0"
     fi
 
-    excluded="`$SQL "select excluded from $SQLTB_EXCLUDED where username = '$CURUSER'"`"
+    excluded="$($SQL "select excluded from $SQLTB_EXCLUDED where username = '$CURUSER'")"
     if [ -z "$excluded" ]; then
       $SQL "insert into $SQLTB_EXCLUDED (username, excluded) VALUES ('$CURUSER', '$VALUE')"
       proc_debug "-- Inserting $CURUSER into excluded table with status: $VALUE"
@@ -3193,7 +3193,7 @@ proc_update_excludelist() {
       ## Continue if the user really is in the vacation group.
       if [ "$ON_VACATION" = "TRUE" ]; then
         ## Get the current active status
-        active="`$SQL "select active from $SQLTB where username = '$CURUSER'"`"
+        active="$($SQL "select active from $SQLTB where username = '$CURUSER'")"
         ## No active status returned. User isnt in the database so add him
         if [ -z "$active" ]; then
           proc_debug "$CURUSER is in group $VACATION_GROUP - Adding with active 3 to database."
@@ -3240,7 +3240,7 @@ proc_update_excludelist() {
   if [ "$UPDATE_PASSED_TABLE" = "TRUE" ] && [ "$RUNMODE" != "qcron" ]; then
     proc_debug "---------"
     proc_debug "Starting update on the $SQLTB_PASSED table."
-    for CURUSER in `$SQL "select username from $SQLTB_EXCLUDED where excluded = '0'"`; do
+    for CURUSER in $($SQL "select username from $SQLTB_EXCLUDED where excluded = '0'"); do
       proc_debug ""
       proc_debug "Checking $CURUSER"
       proc_check_quota
@@ -3251,7 +3251,7 @@ proc_update_excludelist() {
       fi
 
       ## Get current status from passed table
-      passed_table_status="`$SQL "select passed from $SQLTB_PASSED where username = '$CURUSER'"`"
+      passed_table_status="$($SQL "select passed from $SQLTB_PASSED where username = '$CURUSER'")"
       if [ -z "$passed_table_status" ]; then
         proc_debug "-- Inserting $CURUSER into passed table with status: $current_status"
         $SQL "insert into $SQLTB_PASSED (username, passed) VALUES ('$CURUSER', '$current_status')"
@@ -3264,8 +3264,8 @@ proc_update_excludelist() {
     done
 
     ## Remove users from passed table if they are excluded from quota.
-    for CURUSER in `$SQL "select username from $SQLTB_EXCLUDED where excluded = '1'"`; do
-      if [ "`$SQL "select username from $SQLTB_PASSED where username = '$CURUSER'"`" ]; then
+    for CURUSER in $($SQL "select username from $SQLTB_EXCLUDED where excluded = '1'"); do
+      if [ "$($SQL "select username from $SQLTB_PASSED where username = '$CURUSER'")" ]; then
         proc_debug "Removing $CURUSER from $SQLTB_PASSED table - Not on quota right now."
         $SQL "delete from $SQLTB_PASSED where username = '$CURUSER'"
       fi
@@ -3282,7 +3282,7 @@ proc_update_excludelist() {
 
 proc_create_exclude_list() {
   if [ -z "$EXCLUDED_LIST_OF_USERS" ]; then
-    for rawdata in `$SQL "select username from $SQLTB_EXCLUDED where excluded = '1'"`; do 
+    for rawdata in $($SQL "select username from $SQLTB_EXCLUDED where excluded = '1'"); do 
 
       ## Unset the list if its noneatall so its not added to the list of excluded users.
       if [ "$EXCLUDED_LIST_OF_USERS" = "noneatall" ]; then
@@ -3339,8 +3339,8 @@ proc_get_user_position() {
   for each in $QUOTA_SECTIONS; do
     unset POSITION_PASSED
     unset CURUSER_UPLOAD_NUM; unset rawdata
-    secnum="`echo "$each" | cut -d ':' -f1`"
-    secname="`echo "$each" | cut -d ':' -f2`"
+    secnum="$(echo "$each" | cut -d ':' -f1)"
+    secname="$(echo "$each" | cut -d ':' -f2)"
 
     ## If the stats file for this section does not exist, create a new one.
     ## This highly speeds up the process instead of running 'stats' for each user times the number
@@ -3370,7 +3370,7 @@ proc_get_user_position() {
     fi
 
     ## If this limit for this section isnt disabled...
-    if [ "`echo "$each" | cut -d ':' -f3`" != "DISABLED" ]; then
+    if [ "$(echo "$each" | cut -d ':' -f3)" != "DISABLED" ]; then
 
       ## If the file containing non-excluded users dosnt exist, create it.
       if [ ! -e "/tmp/tt3.stats.quota.$secnum" ]; then
@@ -3379,7 +3379,7 @@ proc_get_user_position() {
         proc_debug "Creating the stats list for non-excluded users only using /tmp/tt3.stats.$secnum."
         userpos=0
         ## This is for quota users, exclude the excluded users from list.
-        for rawdata in `cat /tmp/tt3.stats.$secnum | egrep -v "$EXCLUDED_LIST_OF_USERS"`; do
+        for rawdata in $(cat /tmp/tt3.stats.$secnum | egrep -v "$EXCLUDED_LIST_OF_USERS"); do
           userpos=$[$userpos+1]
           MAX_UPLOAD_NUM_NONEX="$userpos"
           echo "$userpos^$rawdata" >> "/tmp/tt3.stats.quota.$secnum"
@@ -3392,7 +3392,7 @@ proc_get_user_position() {
         proc_debug "Creating the stats list for excluded users only using /tmp/tt3.stats.$secnum."
         userpos=0
         ## This is for users that are excluded only. So only list users that are excluded.
-        for rawdata in `cat /tmp/tt3.stats.$secnum`; do
+        for rawdata in $(cat /tmp/tt3.stats.$secnum); do
           userpos=$[$userpos+1]
           MAX_UPLOAD_NUM_EX="$userpos"
           echo "$userpos^$rawdata" >> "/tmp/tt3.stats.all.$secnum"
@@ -3401,29 +3401,29 @@ proc_get_user_position() {
 
       if [ "$USER_EXCLUDED" = "TRUE" ]; then
         proc_debug "Trying to find $CURUSER in excluded list for section $secnum."
-        rawdata2="`grep "\]\^${CURUSER}\^" "/tmp/tt3.stats.all.$secnum" | head -n1`"
+        rawdata2="$(grep "\]\^${CURUSER}\^" "/tmp/tt3.stats.all.$secnum" | head -n1)"
         ## Grab the user from the last line in the file for the section. That number is total users
-        MAX_UPLOAD_NUM="`tail -n1 "/tmp/tt3.stats.all.$secnum" | cut -d '^' -f1`"
+        MAX_UPLOAD_NUM="$(tail -n1 "/tmp/tt3.stats.all.$secnum" | cut -d '^' -f1)"
       else
         proc_debug "Trying to find $CURUSER in non-excluded list for section $secnum."
-        rawdata2="`grep "\]\^${CURUSER}\^" "/tmp/tt3.stats.quota.$secnum" | head -n1`"
+        rawdata2="$(grep "\]\^${CURUSER}\^" "/tmp/tt3.stats.quota.$secnum" | head -n1)"
         ## Grab the user from the last line in the file for the section. That number is total users
-        MAX_UPLOAD_NUM="`tail -n1 "/tmp/tt3.stats.quota.$secnum" | cut -d '^' -f1`"
+        MAX_UPLOAD_NUM="$(tail -n1 "/tmp/tt3.stats.quota.$secnum" | cut -d '^' -f1)"
       fi
       if [ -z "$MAX_UPLOAD_NUM" ]; then
         MAX_UPLOAD_NUM="0"
       fi
 
       if [ "$rawdata2" ]; then
-        CURUSER_UPLOAD_NUM="`echo "$rawdata2" | cut -d '^' -f1`"
+        CURUSER_UPLOAD_NUM="$(echo "$rawdata2" | cut -d '^' -f1)"
         proc_debug "Got $CURUSER in list. Position is $CURUSER_UPLOAD_NUM / $MAX_UPLOAD_NUM (uploaders so far)."
-        rawdata="`echo "$rawdata2" | cut -d '^' -f2-`"
+        rawdata="$(echo "$rawdata2" | cut -d '^' -f2-)"
         unset rawdata2
       else
         proc_debug "No data found. Nothing uploaded in this section."
       fi
 
-      NEED_TO_PASS="`echo "$each" | cut -d ':' -f4`"
+      NEED_TO_PASS="$(echo "$each" | cut -d ':' -f4)"
       if [ -z "$NEED_TO_PASS" ]; then
         NEED_TO_PASS="0"
       fi
@@ -3472,7 +3472,7 @@ proc_get_user_position() {
             secnum=$secnumorg; secname="$secnameorg"; unset secnumorg; unset secnameorg
 
             ## If the user has $secnum:P ( from proc_quota_check ), he also passed here.
-            if [ "`echo " $PASS_DATA " | grep "\ $secnum:P\ "`" ]; then
+            if [ "$(echo " $PASS_DATA " | grep "\ $secnum:P\ ")" ]; then
               PASSED_TOPUP="TRUE"
               POSITION_PASSED="P"
               proc_debug "$CURUSER passed quota in $secname and therefor passed topup in this section."
@@ -3512,10 +3512,10 @@ proc_get_user_position() {
   proc_debug "$CURUSER's numbers are $POSITION"
   # proc_debug "Format: Section_Num^Current_Position^Total_Positions^Need_To_Pass^Passed_Status"
 
-  if [ -z "`$SQL "select username from $SQLTB_RANK where username = '$CURUSER'"`" ]; then
+  if [ -z "$($SQL "select username from $SQLTB_RANK where username = '$CURUSER'")" ]; then
     $SQL "insert into $SQLTB_RANK (username, rank) VALUES ('$CURUSER', '$POSITION')"
     proc_debug "Inserting into $SQLTB_RANK: $CURUSER - $POSITION"
-  elif [ "`$SQL "select rank from $SQLTB_RANK where username = '$CURUSER'"`" != "$POSITION" ]; then
+  elif [ "$($SQL "select rank from $SQLTB_RANK where username = '$CURUSER'")" != "$POSITION" ]; then
     proc_debug "Updating rank on $CURUSER to $POSITION"
     $SQL "update $SQLTB_RANK set rank = '$POSITION' where username = '$CURUSER'"
   fi
@@ -3542,14 +3542,14 @@ proc_get_user_pos_nice() {
 
   ## If user is excluded and top uploaders is false, get number from ALL users.
   if [ "$USER_EXCLUDED" = "TRUE" ] && [ "$TOP_UPLOADERS" = "FALSE" ]; then
-    total_quota_users="`$SQL "select count(username) from $SQLTB_EXCLUDED"`"
+    total_quota_users="$($SQL "select count(username) from $SQLTB_EXCLUDED")"
   else
     ## If he isnt excluded get a list of total non-excluded users.
-    total_quota_users="`$SQL "select count(username) from $SQLTB_EXCLUDED where excluded = '0'"`"
+    total_quota_users="$($SQL "select count(username) from $SQLTB_EXCLUDED where excluded = '0'")"
   fi
 
   ## Get a list of which positions the user is for each section.
-  POSITION="`$SQL "select rank from $SQLTB_RANK where username = '$CURUSER'"`"
+  POSITION="$($SQL "select rank from $SQLTB_RANK where username = '$CURUSER'")"
   if [ -z "$POSITION" ]; then
     proc_debug "proc_get_user_pos_nice did not get a POSITION from table $SQLTB_RANK. Getting a new list."
     proc_get_user_position
@@ -3561,15 +3561,15 @@ proc_get_user_pos_nice() {
   else
 
     for rawdata in $POSITION; do
-      posnum="`echo "$rawdata" | cut -d '^' -f1`"          
+      posnum="$(echo "$rawdata" | cut -d '^' -f1)"          
       for secraw in $QUOTA_LIMITS; do
-        secnum="`echo "$secraw" | cut -d ':' -f1`"
-        if [ "$secnum" = "$posnum" ] && [ "`echo "$secraw" | cut -d ':' -f3`" != "DISABLED" ]; then
-          secname="`echo "$secraw" | cut -d ':' -f2`"
-          curuser_position="`echo "$rawdata" | cut -d '^' -f2`"
-          maxuser_position="`echo "$rawdata" | cut -d '^' -f3`"
-          needed_position="`echo "$rawdata" | cut -d '^' -f4`"
-          curuser_passed="`echo "$rawdata" | cut -d '^' -f5`"
+        secnum="$(echo "$secraw" | cut -d ':' -f1)"
+        if [ "$secnum" = "$posnum" ] && [ "$(echo "$secraw" | cut -d ':' -f3)" != "DISABLED" ]; then
+          secname="$(echo "$secraw" | cut -d ':' -f2)"
+          curuser_position="$(echo "$rawdata" | cut -d '^' -f2)"
+          maxuser_position="$(echo "$rawdata" | cut -d '^' -f3)"
+          needed_position="$(echo "$rawdata" | cut -d '^' -f4)"
+          curuser_passed="$(echo "$rawdata" | cut -d '^' -f5)"
 
           ## If the user have no stats in this section, dont show the information.
           if [ "$curuser_position" != "0" ]; then
@@ -3668,9 +3668,9 @@ proc_get_user_pos_nice() {
 
 ## Used to check how many days are in this month. Returns MONTHTOTAL
 proc_get_days_in_month() {
-  case `$DATEBIN +%m` in
+  case $($DATEBIN +%m) in
     01) MONTHTOTAL="31" ;;
-    02) if [ "$( $DATEBIN -d "-1day `$DATEBIN +%Y`-03-01" +%d )" = "29" ]; then
+    02) if [ "$( $DATEBIN -d "-1day $($DATEBIN +%Y)-03-01" +%d )" = "29" ]; then
           MONTHTOTAL="29"
           proc_debug "This is a leap year. Setting 29 days for FEB"
         else
@@ -3695,13 +3695,13 @@ proc_get_days_in_month() {
 ## Show info.
 proc_ratios() {
 
-  TOT_EXCLUDED="`$SQL "select count(username) from $SQLTB_EXCLUDED where excluded = '1'"`"
-  TOT_NON_EXCLUDED="`$SQL "select count(username) from $SQLTB_EXCLUDED where excluded = '0'"`"
+  TOT_EXCLUDED="$($SQL "select count(username) from $SQLTB_EXCLUDED where excluded = '1'")"
+  TOT_NON_EXCLUDED="$($SQL "select count(username) from $SQLTB_EXCLUDED where excluded = '0'")"
 
-  TOT_FORCED_QUOTA="`$SQL "select count(username) from $SQLTB where active = '0'"`"
-  TOT_TRIAL="`$SQL "select count(username) from $SQLTB where active = '1'"`"
-  TOT_EXCLUDED_F="`$SQL "select count(username) from $SQLTB where active = '2'"`"
-  TOT_EXCLUDED_M="`$SQL "select count(username) from $SQLTB where active = '3'"`"
+  TOT_FORCED_QUOTA="$($SQL "select count(username) from $SQLTB where active = '0'")"
+  TOT_TRIAL="$($SQL "select count(username) from $SQLTB where active = '1'")"
+  TOT_EXCLUDED_F="$($SQL "select count(username) from $SQLTB where active = '2'")"
+  TOT_EXCLUDED_M="$($SQL "select count(username) from $SQLTB where active = '3'")"
 
   if [ -z "$TOT_TRIAL" ]; then
     TOT_TRIAL="0"
@@ -3729,7 +3729,7 @@ proc_ratios() {
   TOT_USERS=$[$TOT_EXCLUDED+$TOT_NON_EXCLUDED]
 
   cd $USERSDIR
-  for CURUSER in `grep "^FLAGS " * | cut -d ':' -f1 | egrep -v "default\.user|\.lock"`; do
+  for CURUSER in $(grep "^FLAGS " * | cut -d ':' -f1 | egrep -v "default\.user|\.lock"); do
 
     proc_check_excluded
     if [ "$EXCLUDED_USER" = "TRUE" ]; then
@@ -3752,7 +3752,7 @@ proc_ratios() {
     fi
 
     if [ "$QUOTA_EXCLUDE_LEECH" = "TRUE" ]; then
-      if [ "`grep "^RATIO 0" "$USERSDIR/$CURUSER"`" ]; then
+      if [ "$(grep "^RATIO 0" "$USERSDIR/$CURUSER")" ]; then
         TOT_LEECH=$[$TOT_LEECH+1]
       fi
     fi
@@ -3764,9 +3764,9 @@ proc_ratios() {
     total_passed="0"
     total_failed="0"
     proc_debug "Grabbing passed/failed users from $SQLTB_PASSED"
-    for rawdata in `$SQL "select username, passed from $SQLTB_PASSED" | awk '{print $1"^"$2}'`; do
-      CURUSER="`echo "$rawdata" | cut -d '^' -f1`"
-      PASSED_STATUS="`echo "$rawdata" | cut -d '^' -f2`"
+    for rawdata in $($SQL "select username, passed from $SQLTB_PASSED" | awk '{print $1"^"$2}'); do
+      CURUSER="$(echo "$rawdata" | cut -d '^' -f1)"
+      PASSED_STATUS="$(echo "$rawdata" | cut -d '^' -f2)"
       total_quota=$[$total_quota+1]
       ## Count users. Announce if the the line is more then 50 lines long so that
       ## IRC dosnt cut it short.
@@ -3811,10 +3811,10 @@ proc_ratios() {
   if [ "$TOT_EXCLUDED_F" != "0" ]; then
     echo "#--[ Permanently Excluded Users (manually) ]--------#"
     echo "#"
-    secs_now="`$DATEBIN +%s`"
-    for rawdata in `$SQL "select username, added from $SQLTB where active = '2'" | awk '{print $1"^"$2}'`; do    
-      CURUSER="`echo "$rawdata" | cut -d '^' -f1`"
-      added="`echo "$rawdata" | cut -d '^' -f2`"
+    secs_now="$($DATEBIN +%s)"
+    for rawdata in $($SQL "select username, added from $SQLTB where active = '2'" | awk '{print $1"^"$2}'); do    
+      CURUSER="$(echo "$rawdata" | cut -d '^' -f1)"
+      added="$(echo "$rawdata" | cut -d '^' -f2)"
       ## Calculate when they were added to DB...
       secs_check=$[$secs_now-$added]
       proc_calctime1
@@ -3823,7 +3823,7 @@ proc_ratios() {
       CURUSER="$CURUSER / $CURPRIGROUP"
 
       ## Fix the lenght of $username...
-      while [ -z "`echo "$CURUSER" | grep "....................."`" ]; do
+      while [ -z "$(echo "$CURUSER" | grep ".....................")" ]; do
         CURUSER="$CURUSER "
       done
 
@@ -3840,12 +3840,12 @@ proc_ratios() {
       echo "# Note: Users in the $VACATION_GROUP group are listed as \"This month\""
     fi
     echo "#"
-    secs_now="`$DATEBIN +%s`"
-    for rawdata in `$SQL "select username, active, added, extratime from $SQLTB where active = '3' order by extratime" | awk '{print $1"^"$2"^"$3"^"$4}'`; do
-      CURUSER="`echo "$rawdata" | cut -d '^' -f1`"
-      active="`echo "$rawdata" | cut -d '^' -f2`"
-      added="`echo "$rawdata" | cut -d '^' -f3`"
-      extratime="`echo "$rawdata" | cut -d '^' -f4`"
+    secs_now="$($DATEBIN +%s)"
+    for rawdata in $($SQL "select username, active, added, extratime from $SQLTB where active = '3' order by extratime" | awk '{print $1"^"$2"^"$3"^"$4}'); do
+      CURUSER="$(echo "$rawdata" | cut -d '^' -f1)"
+      active="$(echo "$rawdata" | cut -d '^' -f2)"
+      added="$(echo "$rawdata" | cut -d '^' -f3)"
+      extratime="$(echo "$rawdata" | cut -d '^' -f4)"
 
       ## Calculate when they were added to DB...
       secs_check=$[$secs_now-$added]
@@ -3855,7 +3855,7 @@ proc_ratios() {
       CURUSER="$CURUSER / $CURPRIGROUP"
 
       ## Fix the lenght of $username...
-      while [ -z "`echo "$CURUSER" | grep "....................."`" ]; do
+      while [ -z "$(echo "$CURUSER" | grep ".....................")" ]; do
         CURUSER="$CURUSER "
       done
 
@@ -3887,7 +3887,7 @@ proc_quotalist() {
   fi
 
   ## Make sure the user specified failed or passed. Make it uppercase.
-  LIST_MODE="`echo "$LIST_MODE" | tr '[:lower:]' '[:upper:]'`"
+  LIST_MODE="$(echo "$LIST_MODE" | tr '[:lower:]' '[:upper:]')"
   if [ -z "$LIST_MODE" ] || [ "$LIST_MODE" != "FAILED" ] && [ "$LIST_MODE" != "PASSED" ]; then
     echo "Enter 'passed' or 'failed' to show quota status."
     exit 0
@@ -3903,9 +3903,9 @@ proc_quotalist() {
   ## Use the passed table if UPDATE_PASSED_TABLE is TRUE. Otherwise do it the old way.
   if [ "$UPDATE_PASSED_TABLE" = "TRUE" ]; then
     proc_debug "Running proc_quotalist() the new way. UPDATE_PASSED_TABLE is TRUE."
-    for rawdata in `$SQL "select username, passed from $SQLTB_PASSED" | awk '{print $1"^"$2}'`; do
-      CURUSER="`echo "$rawdata" | cut -d '^' -f1`"
-      PASSED_STATUS="`echo "$rawdata" | cut -d '^' -f2`"
+    for rawdata in $($SQL "select username, passed from $SQLTB_PASSED" | awk '{print $1"^"$2}'); do
+      CURUSER="$(echo "$rawdata" | cut -d '^' -f1)"
+      PASSED_STATUS="$(echo "$rawdata" | cut -d '^' -f2)"
       if [ "$PASSED_STATUS" = "1" ]; then
         PASSED="TRUE"
       else
@@ -3942,8 +3942,8 @@ proc_quotalist() {
     proc_debug "Running proc_quotalist() the old slow way. UPDATE_PASSED_TABLE is FALSE."
     ## For each user in the excluded database, do this.
     cd $USERSDIR
-    for CURUSER in `grep "^FLAGS " * | cut -d ':' -f1 | egrep -v "default\.user|\.lock"`; do
-      excluded="`$SQL "select excluded from $SQLTB_EXCLUDED where username = '$CURUSER'"`"
+    for CURUSER in $(grep "^FLAGS " * | cut -d ':' -f1 | egrep -v "default\.user|\.lock"); do
+      excluded="$($SQL "select excluded from $SQLTB_EXCLUDED where username = '$CURUSER'")"
 
       ## If the user is excluded, check the trial database that hes not on forced quota.
       if [ "$excluded" = "1" ]; then
@@ -3953,16 +3953,16 @@ proc_quotalist() {
       fi
 
       ## If the user is not excluded in the excluded table, make sure hes not excluded in the trial table.
-      if [ "`$SQL "select username from $SQLTB where username = '$CURUSER' and active = '1'"`" ]; then
+      if [ "$($SQL "select username from $SQLTB where username = '$CURUSER' and active = '1'")" ]; then
         ON_QUOTA="FALSE"
 #        echo "$CURUSER currently on trial. No quota."
-      elif [ "`$SQL "select username from $SQLTB where username = '$CURUSER' and active = '2'"`" ]; then
+      elif [ "$($SQL "select username from $SQLTB where username = '$CURUSER' and active = '2'")" ]; then
         ON_QUOTA="FALSE"
 #        echo "$CURUSER currently hard excluded. No quota."
-      elif [ "`$SQL "select username from $SQLTB where username = '$CURUSER' and active = '3'"`" ]; then
+      elif [ "$($SQL "select username from $SQLTB where username = '$CURUSER' and active = '3'")" ]; then
         ON_QUOTA="FALSE"
 #        echo "$CURUSER currently excluded this month. No quota."
-      elif [ "`$SQL "select username from $SQLTB where username = '$CURUSER' and active = '0'"`" ]; then
+      elif [ "$($SQL "select username from $SQLTB where username = '$CURUSER' and active = '0'")" ]; then
         ON_QUOTA="TRUE"
 #        echo "$CURUSER on hard set quota."
       fi
@@ -4092,13 +4092,13 @@ proc_is_user_excluded() {
   EXCLUDED_REASON="NONE"
 
   ## If the user is not excluded in the excluded table, make sure hes not excluded in the trial table.
-  if [ "`$SQL "select username from $SQLTB where username = '$CURUSER' and active = '1'"`" ]; then
+  if [ "$($SQL "select username from $SQLTB where username = '$CURUSER' and active = '1'")" ]; then
     USER_EXCLUDED="TRUE"
     EXCLUDED_REASON="On_Trial"
-  elif [ "`$SQL "select username from $SQLTB where username = '$CURUSER' and active = '2'"`" ]; then
+  elif [ "$($SQL "select username from $SQLTB where username = '$CURUSER' and active = '2'")" ]; then
     USER_EXCLUDED="TRUE"
     EXCLUDED_REASON="Manually_Excluded"
-  elif [ "`$SQL "select username from $SQLTB where username = '$CURUSER' and active = '3'"`" ]; then
+  elif [ "$($SQL "select username from $SQLTB where username = '$CURUSER' and active = '3'")" ]; then
     USER_EXCLUDED="TRUE"
     EXCLUDED_REASON="Manually_Excluded_M"
   fi
@@ -4132,7 +4132,7 @@ proc_is_user_excluded() {
   ## Check if the user has leech, if thats enabled.
   if [ "$USER_EXCLUDED" = "FALSE" ]; then
     if [ "$QUOTA_EXCLUDE_LEECH" = "TRUE" ]; then
-      if [ "`grep "^RATIO 0" "$USERSDIR/$CURUSER"`" ]; then
+      if [ "$(grep "^RATIO 0" "$USERSDIR/$CURUSER")" ]; then
         USER_EXCLUDED="TRUE"
         EXCLUDED_REASON="User_Has_Leech"
       fi
@@ -4140,7 +4140,7 @@ proc_is_user_excluded() {
   fi
 
   ## If on forced quota, this overrides all others (except deleted user)
-  if [ "`$SQL "select username from $SQLTB where username = '$CURUSER' and active = '0'"`" ]; then
+  if [ "$($SQL "select username from $SQLTB where username = '$CURUSER' and active = '0'")" ]; then
     USER_EXCLUDED="FALSE"
     EXCLUDED_REASON="Forced_Quota"
     ## Unset THIS_MONTH if the user is on forced quota (3.4 change).
@@ -4184,7 +4184,7 @@ proc_stats() {
     proc_debug "No section provided. Using 0"
     SELECTED_SECTION="0"
   else
-    if [ "`echo "$SELECTED_SECTION" | tr -d '[:digit:]'`" ]; then
+    if [ "$(echo "$SELECTED_SECTION" | tr -d '[:digit:]')" ]; then
       proc_getsections
       echo "Please use the section number when specifying section: $DEFINED_SECTIONS_NAME"
       exit 0
@@ -4195,7 +4195,7 @@ proc_stats() {
   SELECTED_SECTION_RAW=$[$SELECTED_SECTION+1]
 
   ## Check if the selected section exists. Otherwise, present valid sections.
-  SELECTED_SECTION="`echo "$QUOTA_SECTIONS" | cut -d ' ' -f$SELECTED_SECTION_RAW`"
+  SELECTED_SECTION="$(echo "$QUOTA_SECTIONS" | cut -d ' ' -f$SELECTED_SECTION_RAW)"
   if [ -z "$SELECTED_SECTION" ]; then
     proc_getsections
     echo "No such section. Valid sections: $DEFINED_SECTIONS_NAME"
@@ -4203,7 +4203,7 @@ proc_stats() {
   fi
 
   ## Grab the name for this section so we have something nice to present.
-  SELECTED_SECTION_NAME="`echo "$SELECTED_SECTION" | cut -d ':' -f2`"
+  SELECTED_SECTION_NAME="$(echo "$SELECTED_SECTION" | cut -d ':' -f2)"
   proc_debug "Selected section is: $SELECTED_SECTION $SELECTED_SECTION_NAME"
 
   ## Run the statsbinary on the selected section. Pipe output to a file we can parse later.
@@ -4220,20 +4220,20 @@ proc_stats() {
   fi
 
   ## For each user that means the flag criteria above, run...
-  for CURUSER in `$SQL "select username from $SQLTB_EXCLUDED where excluded = '$flag'"`; do
+  for CURUSER in $($SQL "select username from $SQLTB_EXCLUDED where excluded = '$flag'"); do
     proc_debug "Grabbind ranking stats for $WORD user: $CURUSER"
-    curdata="`$SQL "select rank from $SQLTB_RANK where username = '$CURUSER'" | cut -d ' ' -f$SELECTED_SECTION_RAW`"
+    curdata="$($SQL "select rank from $SQLTB_RANK where username = '$CURUSER'" | cut -d ' ' -f$SELECTED_SECTION_RAW)"
 
     proc_debug "Rawdata for $CURUSER = $curdata"
 
     ## Get current position from ranking.
-    cur_pos="`echo "$curdata" | cut -d '^' -f2`"
+    cur_pos="$(echo "$curdata" | cut -d '^' -f2)"
 
     ## Check that its not 0. If it is, the user havent uploaded anything and we'll skip em.
     if [ "$cur_pos" != "0" ]; then
 
       ## Grab the current stats line from the piped file, created earlier.
-      cur_stats="`grep "^\[.*\]\^$CURUSER\^" /tmp/tt3.stats.$SELECTED_SECTION_NAME | head -n1`"
+      cur_stats="$(grep "^\[.*\]\^$CURUSER\^" /tmp/tt3.stats.$SELECTED_SECTION_NAME | head -n1)"
 
       ## Check that we got anything from the file or not.
       if [ -z "$cur_stats" ]; then
@@ -4242,7 +4242,7 @@ proc_stats() {
         proc_debug "Current: $cur_stats"
 
         ## Make sure $cur_pos is 01 instead of 1, etc (up to 9).
-        if [ -z "`echo "$cur_pos" | grep ".."`" ]; then
+        if [ -z "$(echo "$cur_pos" | grep "..")" ]; then
           cur_pos="0${cur_pos}"
         fi
 
@@ -4278,8 +4278,8 @@ proc_stats() {
 ## Old way before we got seperate lists for quota and non quota.
       cat "/tmp/tt3.quotastats.$SELECTED_SECTION_NAME" | sed -e 's/\[/\ /' | sed -e 's/\]/\ /' | sort -k 1,1 -n | sed -e 's/\ /\[/' | sed -e 's/\ /\]/' | tr '^' ' ' > /tmp/tt3.sorted.tmp
 
-      for rawdata in `cat "/tmp/tt3.sorted.tmp" | tr ' ' '^' | cut -d '^' -f2-`; do
-        if [ -z "`echo "$num" | grep ".."`" ]; then
+      for rawdata in $(cat "/tmp/tt3.sorted.tmp" | tr ' ' '^' | cut -d '^' -f2-); do
+        if [ -z "$(echo "$num" | grep "..")" ]; then
           num_nice="0${num}"
         else
           num_nice="$num"
@@ -4319,12 +4319,12 @@ proc_stats() {
 
 ## Used to get rawdata from the tables.
 proc_get_rawdata() {
-  if [ -z "`echo "$QUERY" | grep "\ "`" ]; then
+  if [ -z "$(echo "$QUERY" | grep "\ ")" ]; then
     echo "Specify a mysql query too."
     exit 1
   fi
 
-  COMMAND="`echo "$QUERY" | cut -d ' ' -f2-`"
+  COMMAND="$(echo "$QUERY" | cut -d ' ' -f2-)"
   if [ -z "$COMMAND" ]; then
     echo "Got no queryline from $QUERY"
     exit 1

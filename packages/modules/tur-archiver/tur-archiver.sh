@@ -201,9 +201,9 @@ VER=2.5
 #         been a long time since 2.4, I'm not sure if this applies  
 #         to everyone.                                              
 #         In either case;                                           
-#         REL_DATE="`$DATE_BIN -d "$($FILE_DATE $releasename)" +%s`"
+#         REL_DATE="$($DATE_BIN -d "$($FILE_DATE $releasename)" +%s)"
 #         was changed to:                                           
-#         REL_DATE="`$DATE_BIN -d "$($FILE_DATE $FROM_DIR/$releasename)" +%s`"
+#         REL_DATE="$($DATE_BIN -d "$($FILE_DATE $FROM_DIR/$releasename)" +%s)"
 #         so if the new version does not work for you when checking 
 #         the age of releases, change it back to what it was =)     
 #                                                                   
@@ -243,7 +243,7 @@ VER=2.5
 GLROOT=/glftpd
 SITEROOT=/site
 
-today="`date +%Y-%m-%d`"
+today="$(date +%Y-%m-%d)"
 
 MOVE="
 /0DAYS~DEEP:^The\.|\-BP$:/Links/TheAndBP
@@ -328,7 +328,7 @@ proc_move() {
       echo "Leave the TULS= option empty to disable or fix so tuls is executable."
       exit 1
     else    
-      reldate="`$TULS | grep "\:\:\:\:$releasename\:\:\:\:" | head -n1 | cut -d ':' -f17- | cut -d '^' -f3,2,5,4 | tr '^' ' '`" 
+      reldate="$($TULS | grep "\:\:\:\:$releasename\:\:\:\:" | head -n1 | cut -d ':' -f17- | cut -d '^' -f3,2,5,4 | tr '^' ' ')" 
     fi
   fi
 
@@ -394,16 +394,16 @@ proc_symlink() {
 ## Procedure for checking if the release is old enough.
 proc_checkold() {
   if [ "$MINUTES_OLD" ] && [ "$SKIP" != "YES" ]; then
-    REL_DATE="`$DATE_BIN -d "$($FILE_DATE $FROM_DIR/$releasename)" +%s`"
+    REL_DATE="$($DATE_BIN -d "$($FILE_DATE $FROM_DIR/$releasename)" +%s)"
     if [ -z "$REL_DATE" ]; then
       SKIP=YES
       proc_debug "Skipping move of $releasename - Seems to be from right now or in the future... or $FILE_DATE dosnt work."
     else
-      REL_SEC_OLD="`echo "$NOW_DATE - $REL_DATE" | bc -l | cut -d '.' -f1`"
+      REL_SEC_OLD="$(echo "$NOW_DATE - $REL_DATE" | bc -l | cut -d '.' -f1)"
       if [ -z "$REL_SEC_OLD" ]; then
         REL_SEC_OLD="0"
       fi
-      REL_MIN_OLD="`echo "$REL_SEC_OLD / 60" | bc -l | cut -d '.' -f1`"
+      REL_MIN_OLD="$(echo "$REL_SEC_OLD / 60" | bc -l | cut -d '.' -f1)"
       if [ -z "$REL_MIN_OLD" ]; then
         REL_MIN_OLD="0"
       fi
@@ -421,12 +421,12 @@ proc_checkfor() {
   if [ "$CHECK_FOR" ] && [ "$SKIP" != "YES" ]; then
 
     ## Multiple CD's ?
-    if [ "`ls -1 $releasename | grep "^[cC][dD][1-9]$"`" ]; then
+    if [ "$(ls -1 $releasename | grep "^[cC][dD][1-9]$")" ]; then
 
-      for each_cd in `ls -1 $releasename | grep "^[cC][dD][1-9]$"`; do
-        if [ -z "`ls -1 $releasename/$each_cd | egrep "$CHECK_FOR"`" ]; then
+      for each_cd in $(ls -1 $releasename | grep "^[cC][dD][1-9]$"); do
+        if [ -z "$(ls -1 $releasename/$each_cd | egrep "$CHECK_FOR")" ]; then
           if [ "$NO_SFV_OK" = "TRUE" ]; then
-            if [ "`ls -1 $releasename/$each_cd | grep "\.[sS][fF][vV]$"`" ]; then
+            if [ "$(ls -1 $releasename/$each_cd | grep "\.[sS][fF][vV]$")" ]; then
               proc_debug "Skipping $releasename - $each_cd does not seem complete and a sfv exists."
               SKIP=YES
               break
@@ -443,9 +443,9 @@ proc_checkfor() {
 
     ## Single CD release.
     else
-      if [ -z "`ls -1 $releasename | egrep "$CHECK_FOR"`" ]; then
+      if [ -z "$(ls -1 $releasename | egrep "$CHECK_FOR")" ]; then
         if [ "$NO_SFV_OK" = "TRUE" ]; then
-          if [ "`ls -1 $releasename | grep "\.[sS][fF][vV]$"`" ]; then
+          if [ "$(ls -1 $releasename | grep "\.[sS][fF][vV]$")" ]; then
             proc_debug "Skipping $releasename - Does not seem complete and a sfv exists."
             SKIP=YES
           else
@@ -461,7 +461,7 @@ proc_checkfor() {
 }
 
 if [ "$MINUTES_OLD" ]; then
-  NOW_DATE="`$DATE_BIN +%s`"
+  NOW_DATE="$($DATE_BIN +%s)"
   if [ ! -x "$FILE_DATE" ]; then
     echo "Error. MINUTES_OLD is defined but cant find/execute file_date from $FILE_DATE"
     exit 1
@@ -471,7 +471,7 @@ fi
 ## If we use symlinks and SYMLINK_CLEAR is TRUE, delete all TO_DIRs and recreate
 if [ "$WHAT_TO_DO" = "S" ] && [ "$SYMLINK_CLEAR" = "TRUE" ]; then
   for rawdata in $MOVE; do
-    TO_DIR="$ROOT`echo "$rawdata" | cut -d ':' -f3 | sed -e 's/\[space\]/ /g'`"
+    TO_DIR="$ROOT$(echo "$rawdata" | cut -d ':' -f3 | sed -e 's/\[space\]/ /g')"
     if [ "$TO_DIR" != "$LAST_TO_DIR" ]; then
       if [ -d "$TO_DIR" ]; then
         if [ "$DEBUG" = "TRUE" ]; then
@@ -489,19 +489,19 @@ fi
 ## Go. Main loop.
 for rawdata in $MOVE; do
   unset SKIP; unset DATED
-  FROM_DIR="$GLROOT$SITEROOT`echo "$rawdata" | cut -d ':' -f1 | sed -e 's/\[space\]/ /g'`"
-  FROM_DIRSYM="$SITEROOT`echo "$rawdata" | cut -d ':' -f1 | sed -e 's/\[space\]/ /g'`"
+  FROM_DIR="$GLROOT$SITEROOT$(echo "$rawdata" | cut -d ':' -f1 | sed -e 's/\[space\]/ /g')"
+  FROM_DIRSYM="$SITEROOT$(echo "$rawdata" | cut -d ':' -f1 | sed -e 's/\[space\]/ /g')"
 
-  GRAB_WHAT="`echo "$rawdata" | cut -d ':' -f2`"
+  GRAB_WHAT="$(echo "$rawdata" | cut -d ':' -f2)"
 
-  if [ "`echo "$FROM_DIR" | grep "~"`" ]; then
+  if [ "$(echo "$FROM_DIR" | grep "~")" ]; then
     DATED="TRUE"
-    FROM_DIR="`echo "$FROM_DIR" | cut -d '~' -f1`"
-    FROM_DIRSYM="`echo "$FROM_DIRSYM" | cut -d '~' -f1`"
+    FROM_DIR="$(echo "$FROM_DIR" | cut -d '~' -f1)"
+    FROM_DIRSYM="$(echo "$FROM_DIRSYM" | cut -d '~' -f1)"
   fi
 
-  TO_DIR="$GLROOT$SITEROOT`echo "$rawdata" | cut -d ':' -f3 | sed -e 's/\[space\]/ /g'`"
-  TO_DIRSYM="$SITEROOT`echo "$rawdata" | cut -d ':' -f3 | sed -e 's/\[space\]/ /g'`"
+  TO_DIR="$GLROOT$SITEROOT$(echo "$rawdata" | cut -d ':' -f3 | sed -e 's/\[space\]/ /g')"
+  TO_DIRSYM="$SITEROOT$(echo "$rawdata" | cut -d ':' -f3 | sed -e 's/\[space\]/ /g')"
 
   if [ ! -d "$FROM_DIR" ]; then
     echo "Error. \"$FROM_DIR\" does not exist."
@@ -521,7 +521,7 @@ for rawdata in $MOVE; do
     cd "$FROM_DIR"
 
     if [ "$DATED" = "TRUE" ]; then
-      for subsection in `ls -1 | egrep -v "$EXCLUDE" | tr ' ' '^'`; do
+      for subsection in $(ls -1 | egrep -v "$EXCLUDE" | tr ' ' '^'); do
         cd "$FROM_DIR"
         cd "$subsection"
 
@@ -529,9 +529,9 @@ for rawdata in $MOVE; do
         FROM_DIRSYM_DEEP="$FROM_DIRSYM/$subsection"
 
         proc_debug "Entering (DEEP) $FROM_DIR/$subsection - Looking for \"$GRAB_WHAT\""
-        for releasename in `ls -1 | $EGREP "$GRAB_WHAT" | egrep -v "$EXCLUDE" | tr ' ' '^'`; do
+        for releasename in $(ls -1 | $EGREP "$GRAB_WHAT" | egrep -v "$EXCLUDE" | tr ' ' '^'); do
           unset SKIP
-          releasename="`echo "$releasename" | tr '^' ' '`"
+          releasename="$(echo "$releasename" | tr '^' ' ')"
 
           proc_checkold
           proc_checkfor
@@ -546,9 +546,9 @@ for rawdata in $MOVE; do
         done
       done
     else
-      for releasename in `ls -1 | $EGREP "$GRAB_WHAT" | egrep -v "$EXCLUDE" | tr ' ' '^'`; do
+      for releasename in $(ls -1 | $EGREP "$GRAB_WHAT" | egrep -v "$EXCLUDE" | tr ' ' '^'); do
         unset SKIP
-        releasename="`echo "$releasename" | tr '^' ' '`"
+        releasename="$(echo "$releasename" | tr '^' ' ')"
 
         proc_checkold
         proc_checkfor

@@ -49,15 +49,14 @@ DEBUG=FALSE
 
 GLLOG=/ftp-data/logs/glftpd.log
 
-bold=""
-lred=4
-ldgry=14
-IERROR1="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}which already exists with a different case structure."
-IERROR2="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}which is already on site or was nuked."
-IERROR3="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}which is from a BANNED GROUP."
-IERROR4="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}but was denied."
-IERROR5="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}which isnt an allowed group or release."
-IERROR6="${lred}$USER ${ldgry}tried to create ${lred}$1 ${ldgry}but was denied in blocklist."
+RED=4
+GREY=14
+IERROR1="${RED}$USER ${GREY}tried to create ${RED}$1 ${GREY}which already exists with a different case structure."
+IERROR2="${RED}$USER ${GREY}tried to create ${RED}$1 ${GREY}which is already on site or was nuked."
+IERROR3="${RED}$USER ${GREY}tried to create ${RED}$1 ${GREY}which is from a BANNED GROUP."
+IERROR4="${RED}$USER ${GREY}tried to create ${RED}$1 ${GREY}but was denied."
+IERROR5="${RED}$USER ${GREY}tried to create ${RED}$1 ${GREY}which isnt an allowed group or release."
+IERROR6="${RED}$USER ${GREY}tried to create ${RED}$1 ${GREY}but was denied in blocklist."
 
 
 #--[ Script Start ]---------------------------------------------------#
@@ -74,7 +73,7 @@ proc_announce() {
       proc_debug "Error. Can not write to $GLLOG"
     else
       proc_debug "Sending to gllog: $OUTPUT"
-      echo `date "+%a %b %e %T %Y"` PREDIRCHECK: \"$OUTPUT\" >> $GLLOG
+      echo $(date "+%a %b %e %T %Y") PREDIRCHECK: \"$OUTPUT\" >> $GLLOG
     fi
   fi
 }
@@ -91,35 +90,35 @@ if [ "$DEBUG" = "TRUE" ]; then
       exit 1
     fi    
     proc_debug "Testing dirloglist_gl binary. Should output 5 last lines in dirlog."
-    for rawdata in `$DIRLOGLIST_GL | tr -d '\t' | tr ' ' '^' | cut -d '^' -f3 | tail -n5`; do
+    for rawdata in $($DIRLOGLIST_GL | tr -d '\t' | tr ' ' '^' | cut -d '^' -f3 | tail -n5); do
       proc_debug "$rawdata"
     done
   fi
 fi
 
 if [ "$SKIPSECTIONS" ]; then
-  if [ "`echo "$2" | egrep -i "$SKIPSECTIONS"`" ]; then
+  if [ "$(echo "$2" | egrep -i "$SKIPSECTIONS")" ]; then
     proc_debug "Stop & Allow: Excluded section in SKIPSECTIONS"
     exit 0
   fi
 fi
 
 if [ "$SKIPUSERS" ]; then
-  if [ "`echo "$USER" | egrep -i "$SKIPUSERS"`" ]; then
+  if [ "$(echo "$USER" | egrep -i "$SKIPUSERS")" ]; then
     proc_debug "Stop & Allow: Excluded user in SKUPUSERS"
     exit 0
   fi
 fi
 
 if [ "$SKIPGROUPS" ]; then
-  if [ "`echo "$GROUP" | egrep -i "$SKIPGROUPS"`" ]; then
+  if [ "$(echo "$GROUP" | egrep -i "$SKIPGROUPS")" ]; then
     proc_debug "Stop & Allow: Excluded group $GROUP in SKUPGROUPS"
     exit 0
   fi
 fi
 
 if [ "$SKIPFLAGS" ]; then
-  if [ "`echo "$FLAGS" | egrep -i "$SKIPFLAGS"`" ]; then
+  if [ "$(echo "$FLAGS" | egrep -i "$SKIPFLAGS")" ]; then
     proc_debug "Stop & Allow: Excluded flag on $USER. ($FLAGS) in SKIPFLAGS"
     exit 0
   fi
@@ -128,7 +127,7 @@ fi
 proc_checkallow() {
   if [ "$ALLOWFILE" ]; then
     if [ -e "$ALLOWFILE" ]; then
-      if [ "`grep "^$1$" "$ALLOWFILE" `" ]; then
+      if [ "$(grep "^$1$" "$ALLOWFILE" )" ]; then
         proc_debug "Stop & Allow: This file has been allowed"
         exit 0
       fi
@@ -138,7 +137,7 @@ proc_checkallow() {
 
 if [ ! -d "$2/$1" ]; then
   if [ -d "$2" ]; then
-    if [ "`ls -al "$2" | grep -i "[0-9] $1$" | cut -c1`" = "d" ]; then
+    if [ "$(ls -al "$2" | grep -i "[0-9] $1$" | cut -c1)" = "d" ]; then
       proc_debug "Stop & Deny: This dir exists here with another case structure already."
       if [ "$IERROR1" ]; then OUTPUT="$IERROR1"; proc_announce; fi
       echo -e "$ERROR1\n"
@@ -156,17 +155,17 @@ if [ ! -d "$2/$1" ]; then
     fi
   fi
 
-  if [ "`echo "$1" | egrep -i "$SKIPDIRS"`" ]; then
+  if [ "$(echo "$1" | egrep -i "$SKIPDIRS")" ]; then
     proc_debug "Stop & Allow: This dirname is excluded in SKIPDIRS"
     exit 0
   fi
 
   if [ "$ALLOWDIRS" ]; then
     for rawdata in $ALLOWDIRS; do
-      section="`echo "$rawdata" | cut -d ':' -f1`"
-      allowed="`echo "$rawdata" | cut -d ':' -f2`"
-      if [ "`echo "$2" | egrep "$section"`" ]; then
-        if [ -z "`echo "$1" | egrep -i "$allowed"`" ]; then
+      section="$(echo "$rawdata" | cut -d ':' -f1)"
+      allowed="$(echo "$rawdata" | cut -d ':' -f2)"
+      if [ "$(echo "$2" | egrep "$section")" ]; then
+        if [ -z "$(echo "$1" | egrep -i "$allowed")" ]; then
           proc_checkallow "$1"
           proc_debug "Stop & Deny: This dir/group is not allowed."
           if [ "$IERROR5" ]; then OUTPUT="$IERROR5"; proc_announce; fi
@@ -188,11 +187,11 @@ if [ ! -d "$2/$1" ]; then
 
   if [ "$DENYGROUPS" ] && [ "$ALLOW_OVERRULE_GROUP" != "TRUE" ]; then
     for rawdata in $DENYGROUPS; do
-      section="`echo "$rawdata" | cut -d ':' -f1`"
-      deniedgroup="`echo "$rawdata" | cut -d ':' -f2`"
+      section="$(echo "$rawdata" | cut -d ':' -f1)"
+      deniedgroup="$(echo "$rawdata" | cut -d ':' -f2)"
 
-      if [ "`echo "$2" | egrep -i "$section"`" ]; then
-        if [ "`echo "$1" | egrep -i "$deniedgroup"`" ]; then
+      if [ "$(echo "$2" | egrep -i "$section")" ]; then
+        if [ "$(echo "$1" | egrep -i "$deniedgroup")" ]; then
           proc_checkallow "$1"
           proc_debug "Stop & Deny: This group is banned."
           if [ "$IERROR3" ]; then OUTPUT="$IERROR3"; proc_announce; fi
@@ -205,11 +204,11 @@ if [ ! -d "$2/$1" ]; then
 
   if [ "$DENYDIRS" ] && [ "$ALLOW_OVERRULE_DIR" != "TRUE" ]; then
     for rawdata in $DENYDIRS; do
-      section="`echo "$rawdata" | cut -d ':' -f1`"
-      denied="`echo "$rawdata" | cut -d ':' -f2`"
+      section="$(echo "$rawdata" | cut -d ':' -f1)"
+      denied="$(echo "$rawdata" | cut -d ':' -f2)"
 
-      if [ "`echo "$2" | egrep -i "$section"`" ]; then
-        if [ "`echo "$1" | egrep -i "$denied"`" ]; then
+      if [ "$(echo "$2" | egrep -i "$section")" ]; then
+        if [ "$(echo "$1" | egrep -i "$denied")" ]; then
           proc_checkallow "$1"
           proc_debug "Stop & Deny: This dir seems denied in DENYDIRS"
           if [ "$IERROR4" ]; then OUTPUT="$IERROR4"; proc_announce; fi
@@ -221,7 +220,7 @@ if [ ! -d "$2/$1" ]; then
   fi
 
   if [ "$DIRLOGLIST_GL" ]; then
-    if [ "`$DIRLOGLIST_GL | grep -iv "STATUS: 3" | grep "/$1$"`" ]; then
+    if [ "$($DIRLOGLIST_GL | grep -iv "STATUS: 3" | grep "/$1$")" ]; then
       proc_checkallow "$1"
       proc_debug "Stop & Deny: It was found in dirlog, thus already upped before (NOPARENT CHECK)."
       if [ "$IERROR2" ]; then OUTPUT="$IERROR2"; proc_announce; fi
@@ -231,11 +230,11 @@ if [ ! -d "$2/$1" ]; then
   fi
 
   if [ -e "$BLOCKFILE" ]; then
-    for rawdata in `cat $BLOCKFILE`; do
-      section="`echo "$rawdata" | cut -d ':' -f1`"
-      denied="`echo "$rawdata" | cut -d ':' -f2`"
-      if [ "`echo "$2" | egrep -i "$section"`" ]; then
-        if [ "`echo "$1" | egrep -i "$denied"`" ]; then
+    for rawdata in $(cat $BLOCKFILE); do
+      section="$(echo "$rawdata" | cut -d ':' -f1)"
+      denied="$(echo "$rawdata" | cut -d ':' -f2)"
+      if [ "$(echo "$2" | egrep -i "$section")" ]; then
+        if [ "$(echo "$1" | egrep -i "$denied")" ]; then
 	  proc_checkallow "$1"    
 	  proc_debug "Stop & Deny: This dir seems denied in BLOCKLIST"
 	  if [ "$IERROR6" ]; then OUTPUT="$IERROR6"; proc_announce; fi

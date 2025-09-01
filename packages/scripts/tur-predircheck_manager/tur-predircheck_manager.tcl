@@ -24,25 +24,36 @@ set mainchannel "changeme"
 
 ## Public chan.
 proc pub:tur-predircheck {nick output binary chan text} {
-  set binary {/glftpd/bin/tur-predircheck_manager.sh}
-  global mainchannel
-  if {$chan == $mainchannel} {
-    foreach line [split [exec $binary $nick $text] "\n"] {
-       putquick "PRIVMSG $chan :$line"
+
+	set binary {/glftpd/bin/tur-predircheck_manager.sh}
+  	global mainchannel
+  	
+  	if {$chan == $mainchannel} {
+    
+    	foreach line [split [exec $binary $nick $text] "\n"] {
+       	putquick "PRIVMSG $chan :$line"
+    
     }
+  
   }
+
 }
 
 proc pub:banned {nick output binary chan text} {
-  set binary {/glftpd/bin/tur-predircheck_manager.sh}
+	set binary {/glftpd/bin/tur-predircheck_manager.sh}
+    
     foreach line [split [exec $binary $nick list groups] "\n"] {
+       
        putquick "PRIVMSG $nick :$line"
-    }
-    foreach line [split [exec $binary $nick list sections] "\n"] {
-       putquick "PRIVMSG $nick :$line"
+
     }
 
+    foreach line [split [exec $binary $nick list sections] "\n"] {
+
+       putquick "PRIVMSG $nick :$line"
+
+    }
 
 }
 
-putlog "Tur-Predircheck_Manager.tcl 1.75 by Teqno loaded"
+putlog "Tur-Predircheck_Manager.tcl 1.8 by Teqno loaded"

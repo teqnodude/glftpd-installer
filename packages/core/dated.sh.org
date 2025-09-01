@@ -5,11 +5,11 @@
 #                                                               #
 #--[ Settings ]-------------------------------------------------#
 
-today=$(date +%Y-%m-%d)                         # 2021-12-31
-tomorrow=$(date --date "+1 day" +%Y-%m-%d)      # 2022-01-01
-yesterday=$(date --date "-1 day" +%Y-%m-%d)     # 2021-12-30
-glroot=/glftpd                                  # path to glftpd
-gllog=$glroot/ftp-data/logs/glftpd.log          # path to glftpd.log
+today="$(date +%Y-%m-%d)"                       # 2021-12-31
+tomorrow="$(date --date "+1 day" +%Y-%m-%d)"    # 2022-01-01
+yesterday="$(date --date "-1 day" +%Y-%m-%d)"   # 2021-12-30
+glroot="/glftpd"                                # path to glftpd
+gllog="$glroot/ftp-data/logs/glftpd.log"        # path to glftpd.log
 sections="
 "                      
 
@@ -17,14 +17,15 @@ sections="
 
 for section in $sections
 do
-    [ -d "$glroot/site/$section/$today" ] && continue
-    chmod 755 $glroot/site/$section/*
-    mkdir -m 777 -p $glroot/site/$section/$today
-    echo $(date "+%a %b %e %T %Y") TURDAY: \"$today\" \"$yesterday\" \"$section\" >> $gllog
-    rm $glroot/site/!Today_$section
-    cd $glroot/site
-    ln -s ./$section/$today !Today_$section
-    cd ..
-done
 
-exit 0
+    [[ -d "$glroot/site/$section/$today" ]] && continue
+    chmod 755 "$glroot/site/$section/"*
+    mkdir -m 777 -p "$glroot/site/$section/$today"
+    echo "$(date "+%a %b %e %T %Y") TURDAY: \"$today\" \"$yesterday\" \"$section\"" >> "$gllog"
+    rm -f "$glroot/site/!Today_$section"
+
+    cd "$glroot/site" || exit 1
+    ln -s "./$section/$today" "!Today_$section"
+    cd - > /dev/null || exit 1
+
+done

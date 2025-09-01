@@ -20,14 +20,22 @@ set stmainchannel "changeme"
 
 ## Public chan.
 proc pub:section-traffic {nick output binary chan text} {
-  set binary {/glftpd/bin/section-traffic.sh}
-  global stmainchannel
-  if {$chan == $stmainchannel} {
-        putquick "PRIVMSG $chan : \0037Gathering info, please wait..."
-    foreach line [split [exec $binary $nick $text] "\n"] {
-        putquick "PRIVMSG $chan :$line"
+
+    set binary {/glftpd/bin/section-traffic.sh}
+    global stmainchannel
+
+    if {$chan == $stmainchannel} {
+
+	putquick "PRIVMSG $chan : \0037Gathering info, please wait..."
+
+	foreach line [split [exec $binary $nick $text] "\n"] {
+    
+    	    putquick "PRIVMSG $chan :$line"
+
+	}
+
     }
-  }
+
 }
 
-putlog "section-traffic.tcl 1.0 by Teqno loaded"
+putlog "section-traffic.tcl 1.3 by Teqno loaded"

@@ -1,32 +1,47 @@
-if [[ -f "$cache" && "`grep -w "autonuke" $cache | wc -l`" = 1 ]]
+if has_key "$cache" autonuke
 then
-    ask=`grep -w "autonuke" $cache | cut -d "=" -f2 | tr -d "\""`
+
+    ask=$(get_value "$cache" autonuke)
+
 else
+
     echo
-    echo -e "\e[4mDescription for Tur-Autonuke:\e[0m"
+    echo "${yellow}Description for Tur-Autonuke:${reset}"
     cat $rootdir/packages/modules/tur-autonuke/description
     echo
-    echo -n "Install Tur-Autonuke ? [Y]es [N]o, default Y : " ; read ask
+    read -p "Install Tur-Autonuke ? [Y]es [N]o, default Y : " ask
+
 fi
 
 case $ask in
+
     [Nn])
-        if [[ -f "$cache" && "`grep -w "autonuke=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" autonuke
         then
+
             echo 'autonuke="n"' >> $cache
+
         fi
         ;;
+
     [Yy]|*)
-        if [[ -f "$cache" && "`grep -w "autonuke=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" autonuke
         then
+
             echo 'autonuke="y"' >> $cache
+
         fi
 
-        echo -n "Installing Tur-Autonuke, please wait..." | awk '{printf("%-64s",$0)}'
+        print_status_start "Installing" "Tur-Autonuke"
+
         mv $rootdir/packages/modules/tur-autonuke/tur-autonuke.conf $glroot/bin
         cp $rootdir/packages/modules/tur-autonuke/tur-autonuke.sh $glroot/bin
-        echo "*/10 * * * *          $glroot/bin/tur-autonuke.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+        add_cron_job "*/10 * * * *" "$glroot/bin/tur-autonuke.sh"
         touch $glroot/ftp-data/logs/tur-autonuke.log
-        echo -e "[\e[32mDone\e[0m]"
+
+        print_status_done
         ;;
+
 esac

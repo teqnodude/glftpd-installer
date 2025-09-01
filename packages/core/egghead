@@ -1,17 +1,18 @@
-set mod-path    "modules/"
-set help-path   "help/"
-set use-ssl     1
-set net-type    Other
-loadmodule channels
-loadmodule server
-loadmodule ctcp
-loadmodule irc
-loadmodule notes
-loadmodule console
-#loadmodule blowfish
-loadmodule pbkdf2
-loadmodule transfer
-loadmodule share
+set mod-path			"modules/"
+set help-path   		"help/"
+set use-ssl     		1
+set net-type   			Other
+
+loadmodule     			channels
+loadmodule     			server
+loadmodule     			ctcp
+loadmodule     			irc
+loadmodule     			notes
+loadmodule     			console
+#loadmodule    			blowfish
+loadmodule     			pbkdf2
+loadmodule     			transfer
+loadmodule     			share
 
 bind evnt - init-server evnt:init-server 
 

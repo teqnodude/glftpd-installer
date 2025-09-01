@@ -1,31 +1,46 @@
-if [[ -f "$cache" && "`grep -w "archiver" $cache | wc -l`" = 1 ]]
+if has_key "$cache" archiver
 then
-    ask=`grep -w "archiver" $cache | cut -d "=" -f2 | tr -d "\""`
+
+    ask=$(get_value "$cache" archiver)
+
 else
+
     echo
-    echo -e "\e[4mDescription for Tur-Archiver:\e[0m"
+    echo "${yellow}Description for Tur-Archiver:${reset}"
     cat $rootdir/packages/modules/tur-archiver/description
     echo
-    echo -n "Install Tur-Archiver ? [Y]es [N]o, default Y : " ; read ask
+    read -p "Install Tur-Archiver ? [Y]es [N]o, default Y : " ask
+
 fi
 
 case $ask in
+
     [Nn])
-        if [[ -f "$cache" && "`grep -w "archiver=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" archiver
         then
+
             echo 'archiver="n"' >> $cache
+
         fi
         ;;
+
     [Yy]|*)
-        if [[ -f "$cache" && "`grep -w "archiver=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" archiver
         then
+
             echo 'archiver="y"' >> $cache
+
         fi
 
-        echo -n "Installing Tur-Archiver, please wait..." | awk '{printf("%-64s",$0)}'
+        print_status_start "Installing" "Tur-Archiver"
+
         cp $rootdir/packages/modules/tur-archiver/tur-archiver.sh $glroot/bin
         [ ! -f $glroot/bin/file_date ] && gcc -o $glroot/bin/file_date $rootdir/packages/modules/tur-archiver/file_date.c
-        echo "0 0 * * *               $glroot/bin/tur-archiver.sh >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-        echo -e "[\e[32mDone\e[0m]"
+        add_cron_job "0 0 * * *" "$glroot/bin/tur-archiver.sh"
+
+        print_status_done
         ;;
+
 esac

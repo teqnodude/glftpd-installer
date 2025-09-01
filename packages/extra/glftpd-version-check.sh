@@ -1,37 +1,49 @@
 #!/bin/bash
-VER=1.1
-#--[ Settings ]-------------------------------------------------#
+VER=1.2
+#--[ Settings ]-------------------------------------------------
 
 glroot=/glftpd
 gllog=$glroot/ftp-data/logs/glftpd.log
 
-#--[ Script Start ]---------------------------------------------#
+#--[ Script Start ]---------------------------------------------
 
-if [[ `curl -s https://glftpd.io | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1` == glftpd* ]]
+red="$(tput setaf 1)"
+green="$(tput setaf 2)"
+reset="$(tput sgr0)"
+
+if [[ $(curl -s https://glftpd.io | grep -E "/files/glftpd" | grep -Ev "BETA" | grep -o "glftpd-LNX.*\.tgz" | head -n 1) == glftpd* ]]
 then
+
     url="https://glftpd.io"
+
 else
-    if [[ `curl -s https://mirror.glftpd.nl.eu.org | grep "/files/glftpd" | grep -v BETA | grep -o "glftpd-LNX.*.tgz" | head -1` == glftpd* ]]
+
+    if [[ $(curl -s https://mirror.glftpd.nl.eu.org | grep -E "/files/glftpd" | grep -Ev "BETA" | grep -o "glftpd-LNX.*\.tgz" | head -n 1) == glftpd* ]]
     then
+
         url="https://mirror.glftpd.nl.eu.org"
+
     else
+
         echo
         echo
-        echo -e "\e[0;91mNo available website for glFTPd, aborting check.\e[0m"
+        echo "${red}No available website for glFTPd, aborting check.${reset}"
         exit 1
+
     fi
+
 fi
 
-newversion=`lynx --dump $url | grep "latest version" | cut -d ":" -f2 | cut -d ' ' -f3 | sed 's/v//'`
-curversion=`$glroot/bin/glftpd | grep glFTPd | cut -d ' ' -f2`
+newversion="$(lynx --dump "$url" | grep -E "latest version" | cut -d ":" -f2 | awk '{print $1}' | sed 's/^v//')"
+curversion="$("$glroot/bin/glftpd" | grep -E "glFTPd" | awk '{print $2}')"
 
-
-if [ "$newversion" != "$curversion" ]
+if [[ "$newversion" != "$curversion" ]]
 then
-    echo "New version available: $newversion"
-    echo `date "+%a %b %e %T %Y"` GLVERSION: \"There is a new glFTPd version available: $newversion - Current version: $curversion - https://glftpd.io\" >> $gllog
-else
-    echo "Current non BETA version up to date"
-fi
 
-exit 0
+    echo "$(date "+%a %b %e %T %Y") GLVERSION: \"There is a new glFTPd version available: $newversion - Current version: $curversion - https://glftpd.io\"" >> "$gllog"
+
+else
+
+    echo "${green}Current non BETA version up to date${reset}"
+
+fi

@@ -1,28 +1,41 @@
-if [[ -f "$cache" && "`grep -w "ircadmin" $cache | wc -l`" = 1 ]]
+if has_key "$cache" ircadmin
 then
-    ask=`grep -w "ircadmin" $cache | cut -d "=" -f2 | tr -d "\""`
+
+    ask=$(get_value "$cache" ircadmin)
+
 else
+
     echo
-    echo -e "\e[4mDescription for Tur-Ircadmin:\e[0m"
+    echo "${yellow}Description for Tur-Ircadmin:${reset}"
     cat $rootdir/packages/modules/tur-ircadmin/description
     echo
-    echo -n "Install Tur-Ircadmin ? [Y]es [N]o, default Y : " ; read ask
+    read -p "Install Tur-Ircadmin ? [Y]es [N]o, default Y : " ask
+
 fi
 
 case $ask in
+
     [Nn])
-        if [[ -f "$cache" && "`grep -w "ircadmin=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" ircadmin
         then
+
             echo 'ircadmin="n"' >> $cache
+
         fi
         ;;
+
     [Yy]|*)
-        if [[ -f "$cache" && "`grep -w "ircadmin=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" ircadmin
         then
+
             echo 'ircadmin="y"' >> $cache
+
         fi
 
-        echo -n "Installing Tur-Ircadmin, please wait..." | awk '{printf("%-64s",$0)}'
+        print_status_start "Installing" "Tur-Ircadmin"
+
         cp $rootdir/packages/modules/tur-ircadmin/tur-ircadmin.sh $glroot/bin
         cp $rootdir/packages/modules/tur-ircadmin/tur-ircadmin.tcl $glroot/sitebot/scripts
         touch $glroot/ftp-data/logs/tur-ircadmin.log
@@ -30,6 +43,8 @@ case $ask in
         sed -i "s/changeme/$channelops/" $glroot/sitebot/scripts/tur-ircadmin.tcl
         sed -i "s/changeme/$port/" $glroot/bin/tur-ircadmin.sh
         cat $rootdir/packages/modules/tur-ircadmin/gl >> $glroot/etc/glftpd.conf
-        echo -e "[\e[32mDone\e[0m]"
+
+        print_status_done
         ;;
+
 esac

@@ -316,9 +316,9 @@ if [ "$USEMSS" = "TRUE" ]; then
     exit 1
   fi
   if [ -z "$MSSROLE" ]; then
-    if [ "`echo "$MSSCONFIG" | grep "\-hub\.conf$"`" ]; then
+    if [ "$(echo "$MSSCONFIG" | grep "\-hub\.conf$")" ]; then
       MSSROLE="HUB"
-    elif [ "`echo "$MSSCONFIG" | grep "\-slave\.conf$"`" ]; then
+    elif [ "$(echo "$MSSCONFIG" | grep "\-slave\.conf$")" ]; then
       MSSROLE="SLAVE"
     else
       echo "Error. Could not detirmine the role of this mss box."
@@ -339,9 +339,9 @@ if [ "$USEMSS" = "TRUE" ]; then
     ACTIONS="/etc"
   elif [ "$MSSROLE" = "SLAVE" ]; then
     USERS="$USERSOURCE"
-    if [ -z "`grep "^FLAGS\ " $USERS/$VERIFYUSER`" ]; then
+    if [ -z "$(grep "^FLAGS\ " $USERS/$VERIFYUSER)" ]; then
       echo "Hub connection seems down. Try again later."
-      if [ "`echo "$FLAGS" | grep "1"`" ]; then
+      if [ "$(echo "$FLAGS" | grep "1")" ]; then
         echo "Flag 1 detected."
         echo "Reason for error message:"
         echo "Defined VERIFYUSER in $MSSCONFIG ( $VERIFYUSER ) cant not be"
@@ -361,7 +361,7 @@ if [ "$USEMSS" = "TRUE" ]; then
 
     if [ ! -e "$FETCHLOGSDIR/mss-slavestatus.db" ]; then
       echo "Error. Can not find a list of slaves. Try again later."
-      if [ "`echo "$FLAGS" | grep "1"`" ]; then
+      if [ "$(echo "$FLAGS" | grep "1")" ]; then
         echo "Flag 1 detected"
         echo "Do you have mss-report.sh loaded on the hub?"
         echo "The list it produces ( $FETCHLOGSDIR/mss-slavestatus.db )"
@@ -371,7 +371,7 @@ if [ "$USEMSS" = "TRUE" ]; then
       fi
       exit 1
     else
-      SLAVES="`grep "^\*\*" $FETCHLOGSDIR/mss-slavestatus.db | cut -d '=' -f2`"
+      SLAVES="$(grep "^\*\*" $FETCHLOGSDIR/mss-slavestatus.db | cut -d '=' -f2)"
       if [ -z "$SLAVES" ]; then
         echo "Error. Could not get a list of slaves."
         exit 1
@@ -401,7 +401,7 @@ if [ -z "$DATEBIN" ]; then
 fi
 
 ## Test the DATEBIN
-if [ -z "`$DATEBIN`" ]; then
+if [ -z "$($DATEBIN)" ]; then
   echo "Error. Cant execute $DATEBIN. Make sure it exists and is executable."
   exit 1
 fi
@@ -431,7 +431,7 @@ proc_help() {
   echo "#"
   echo "# To enable vacation, issue 'site vacation on'"
   echo "# To disable it, issue 'site vacation off'"
-  if [ "`grep "^FLAGS " "$USERS/$USER" | egrep "$ADMINFLAG"`" ]; then
+  if [ "$(grep "^FLAGS " "$USERS/$USER" | egrep "$ADMINFLAG")" ]; then
     echo "#"
     echo "# To check users on vacation, issue 'site vacation status'"
     echo "# To force a user on/off vacation, issue 'site vacation adduser/deluser <username>'"
@@ -456,7 +456,7 @@ proc_status() {
     ADMINFLAG="none"
   fi
 
-  for each in `cat $DB`; do
+  for each in $(cat $DB); do
     if [ "$each" ]; then
       user="$( echo $each | cut -d '^' -f1 )"
       otime="$( echo $each | cut -d '^' -f4 )"
@@ -558,7 +558,7 @@ proc_on() {
     exit 1
   fi
 
-  if [ "`grep "^GROUP $VACATIONGROUP$" $USERS/$USER`" ]; then
+  if [ "$(grep "^GROUP $VACATIONGROUP$" $USERS/$USER)" ]; then
     echo "Hmm, seems we have some inconsistensies.. You are already in the $VACATIONGROUP group"
     echo "but no information about you in the DB..."
     echo "Get someone to remove you from the $VACATIONGROUP group and check your up/down slots."
@@ -570,8 +570,8 @@ proc_on() {
     TRIALINFO="$( grep "^$USER^" $TRIALDATA | cut -d '^' -f2 )"
     if [ "$TRIALINFO" ]; then
 
-      SECONDSNOW="`$DATEBIN +%s`"
-      DAYOFMONTH="`$DATEBIN +%d | sed -e 's/^0//'`"
+      SECONDSNOW="$($DATEBIN +%s)"
+      DAYOFMONTH="$($DATEBIN +%d | sed -e 's/^0//')"
       SECONDSSOFAR=$[$DAYOFMONTH*86400]
       MONTHSTARTSEC=$[$SECONDSNOW-$SECONDSSOFAR]
 
@@ -634,7 +634,7 @@ proc_on() {
   AFTERLOGINS="$FIRST $SECOND $DNSLOTS $UPSLOTS"
 
   if [ "$GLLOG" ]; then
-    echo `$DATEBIN "+%a %b %e %T %Y"` VACATION: \"$USER\" \"$BEFORELOGINS\" \"$AFTERLOGINS\"  >> $GLLOG
+    echo $($DATEBIN "+%a %b %e %T %Y") VACATION: \"$USER\" \"$BEFORELOGINS\" \"$AFTERLOGINS\"  >> $GLLOG
   fi
 
   sed -e "s/^LOGINS $BEFORELOGINS/LOGINS $AFTERLOGINS/" $USERS/$USER > $TMP/$USER.tmp
@@ -745,7 +745,7 @@ proc_off() {
 
 
   if [ "$TRIALDATA" ]; then
-    OLDLINE=`grep "^$USER\^" $TRIALDATA`
+    OLDLINE=$(grep "^$USER\^" $TRIALDATA)
     if [ -z "$OLDLINE" ]; then
       echo "Could not verify saved data in TRIALDATA. Contact siteops."
       echo "Write to $TRIALDATA with your info must have failed."
@@ -753,13 +753,13 @@ proc_off() {
       grep -vw "^$USER" $TRIALDATA > $TMP/trialdata.tmp
       cp -f $TMP/trialdata.tmp $TRIALDATA
       rm -f $TMP/trialdata.tmp
-      TIMENOW=`date +%s`
+      TIMENOW=$(date +%s)
       echo "$OLDLINE^$TIMENOW" >> $TRIALDATA
     fi
   fi
 
   if [ "$GLLOG" ]; then
-    echo `$DATEBIN "+%a %b %e %T %Y"` VACATIONOFF: \"$USER\" \"$DIFFERENCE\" \"$BEFORELOGINS\" \"$AFTERLOGINS\"  >> $GLLOG
+    echo $($DATEBIN "+%a %b %e %T %Y") VACATIONOFF: \"$USER\" \"$DIFFERENCE\" \"$BEFORELOGINS\" \"$AFTERLOGINS\"  >> $GLLOG
   fi
  
   echo "Welcome back!"
@@ -775,11 +775,11 @@ proc_off() {
 
 
 ## Set args into A1 and A2, removing all control chars for safety.
-A1=`echo "$1" | tr -d '[:cntrl:]'`
-A2=`echo "$2" | tr -d '[:cntrl:]'`
+A1=$(echo "$1" | tr -d '[:cntrl:]')
+A2=$(echo "$2" | tr -d '[:cntrl:]')
 
 proc_usercheck() {
-  if [ -z "`grep "^FLAGS " "$USERS/$OUSER" | egrep "$ADMINFLAG"`" ]; then
+  if [ -z "$(grep "^FLAGS " "$USERS/$OUSER" | egrep "$ADMINFLAG")" ]; then
     echo "Error. You do not have access to this command."
     exit 1
   fi

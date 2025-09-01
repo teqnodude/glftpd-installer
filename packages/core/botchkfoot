@@ -1,67 +1,164 @@
 
-cd $botdir
+umask 077
 
-# is there a pid file?
-if test -r $pidfile
-then
-  # there is a pid file -- is it current?
-  botpid=`cat $pidfile`
-  if `kill -CHLD $botpid >/dev/null 2>&1`
-  then
-    # it's still going -- back out quietly
-    exit 0
-  fi
-  echo ""
-  echo "Stale $pidfile file, erasing..."
-  rm -f $pidfile
-fi
+lockfile="${pidfile}.lock"
 
-if test -r CANTSTART.$botname
-then
-  if test -r $userfile || test -r $userfile~new || test -r $userfile~bak
-  then
-    echo ""
-    echo "Userfile found, removing check file 'CANTSTART.$botname'..."
-    rm -f CANTSTART.$botname
-  fi
-fi
+has_command()
+{
 
-# test if we have run botchk previously and didn't find a userfile
-if test ! -f CANTSTART.$botname
-then
-  echo ""
-  echo "Couldn't find bot '$botname' running, reloading..."
-  echo ""
-  # check for userfile and reload bot if found
-  if test -r $userfile
-  then
-    # It's there, load the bot
-    ./$botscript
-    exit 0
-  else
-    if test -r $userfile~new
+    command -v "$1" >/dev/null 2>&1
+
+}
+
+with_lock()
+{
+
+    # Prefer flock if available; fallback to mkdir lock
+    if has_command flock
     then
-      # Bot f*@!ed up while saving the userfile last time.  Move it over.
-      echo "Userfile missing.  Using last saved userfile..."
-      mv -f $userfile~new $userfile
-      ./$botscript
-      exit 0
-    else
-      if test -r $userfile~bak
-      then
-        # Userfile is missing, use backup userfile.
-        echo "Userfile missing.  Using backup userfile..."
-        cp -f $userfile~bak $userfile
-        ./$botscript
-        exit 0
-      else
-        # Well, nothing to work with...
-        echo "No userfile.  Could not reload the bot..."
-        echo "no userfile" > CANTSTART.$botname
-        exit 1
-      fi
-    fi
-  fi
-fi
 
-exit 0
+        exec {lockfd}>"$lockfile"
+        if ! flock -n "$lockfd"
+        then
+
+            # Another instance is running this script
+            exit 0
+
+        fi
+
+        # lock stays held by FD
+
+    else
+
+        if mkdir "$lockfile" 2>/dev/null
+        then
+
+            trap 'rmdir "$lockfile" 2>/dev/null || true' EXIT
+
+        else
+
+            exit 0
+
+        fi
+
+    fi
+
+}
+
+is_pid_running()
+{
+
+    local pid="$1"
+
+    if [[ ! "$pid" =~ ^[0-9]+$ ]]
+    then
+
+        return 1
+
+    fi
+
+    if kill -0 "$pid" 2>/dev/null
+    then
+
+        return 0
+
+    fi
+
+    return 1
+
+}
+
+remove_cantstart_if_userfile()
+{
+
+    if [[ -r "CANTSTART.$botname" ]]
+    then
+
+        if [[ -r "$userfile" || -r "$userfile~new" || -r "$userfile~bak" ]]
+        then
+
+            printf "\nUserfile found, removing check file 'CANTSTART.%s'...\n" "$botname"
+            rm -f "CANTSTART.$botname"
+
+        fi
+
+    fi
+
+}
+
+start_bot()
+{
+
+    printf "\nCouldn't find bot '%s' running, reloading...\n\n" "$botname"
+
+    if [[ -r "$userfile" ]]
+    then
+
+        ./"$botscript"
+
+    elif [[ -r "$userfile~new" ]]
+    then
+
+        printf "Userfile missing. Using last saved userfile...\n"
+        mv -f -- "$userfile~new" "$userfile"
+        ./"$botscript"
+
+    elif [[ -r "$userfile~bak" ]]
+    then
+
+        printf "Userfile missing. Using backup userfile...\n"
+        cp -f -- "$userfile~bak" "$userfile"
+        ./"$botscript"
+
+    else
+
+        printf "No userfile. Could not reload the bot...\n"
+        printf "no userfile\n" > "CANTSTART.$botname"
+        exit 1
+
+    fi
+}
+
+main()
+{
+    cd "$botdir" || exit
+
+    with_lock
+
+    # Check if bot is already running
+    if [[ -r "$pidfile" ]]
+    then
+
+        botpid=""
+        if ! read -r botpid < "$pidfile"
+        then
+
+            botpid=""
+
+        fi
+
+        if is_pid_running "$botpid"
+        then
+
+            exit 0  # Bot is running
+
+        fi
+
+        printf "\nStale %s file, erasing...\n" "$pidfile"
+        rm -f "$pidfile"
+
+    fi
+
+    remove_cantstart_if_userfile
+
+    # Start bot if CANTSTART doesn't exist
+    if [[ ! -f "CANTSTART.$botname" ]]
+    then
+
+        start_bot
+
+    fi
+
+}
+
+main

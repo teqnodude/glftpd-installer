@@ -108,41 +108,41 @@ namespace eval ::ngBot::plugin::TVMaze {
 	## TVMAZE is used on NEWDIR, TVMAZE-PRE on PRE,
 	## TVMAZE-MSGFULL is used with !tv-trigger with specific episode
 	## and TVMAZE-MSGSHOW is used with !tv-trigger with only a showname or invalid episode number
-	set ${np}::disable(TVMAZE)         0
-	set ${np}::disable(TVMAZE-PRE)     0
-	set ${np}::disable(TVMAZE-MSGFULL) 0
-	set ${np}::disable(TVMAZE-MSGSHOW) 0
+	set ${np}::disable(TVMAZE)                                  0   
+	set ${np}::disable(TVMAZE-PRE)                              0   
+	set ${np}::disable(TVMAZE-MSGFULL)                          0   
+	set ${np}::disable(TVMAZE-MSGSHOW)                          0   
 	##
 	## Convert empty or zero variables into something else.
-	set ${np}::zeroconvert(%tvmaze_show_name)                 "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_id)                   "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_genres)               "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_country)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_language)             "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_network)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_status)               "ENDED"
-	set ${np}::zeroconvert(%tvmaze_show_latest_title)         "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_latest_episode)       "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_latest_airdate)       "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_next_title)           "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_next_episode)         "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_next_airdate)         "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_url)                  "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_type)                 "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_premiered)            "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_started)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_ended)                "Said"
-	set ${np}::zeroconvert(%tvmaze_show_airtime)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_runtime)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_rating)               "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_imdb)      		  "N/A"
-	set ${np}::zeroconvert(%tvmaze_show_summary)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_url)               "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_season_episode)    "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_season)            "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_number)            "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_original_airdate)  "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_title)             "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_name)                 	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_id)                   	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_genres)               	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_country)              	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_language)             	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_network)              	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_status)               	"ENDED"
+	set ${np}::zeroconvert(%tvmaze_show_latest_title)         	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_latest_episode)       	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_latest_airdate)       	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_next_title)           	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_next_episode)         	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_next_airdate)         	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_url)                  	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_type)                 	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_premiered)            	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_started)              	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_ended)                	"Said"
+	set ${np}::zeroconvert(%tvmaze_show_airtime)              	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_runtime)              	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_rating)               	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_imdb)      		  		"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_summary)                "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_url)                 "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_season_episode)      "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_season)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_number)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_original_airdate)    "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_title)              	"N/A"
 	##
 	##################################################
 
@@ -356,58 +356,61 @@ namespace eval ::ngBot::plugin::TVMaze {
 				if {($empty == 0) || ([string is true -strict $tvmaze(announce-empty)])} {
 					set listlength [llength $logData]
 					if {$listlength > 32} {
-                                                append rls_name "\"[string map {" " _} [lindex $logData 0]]\""
-                                                append user "\"[string map {" " _} [lindex $logData 1]]\""
-                                                append group "\"[string map {" " _} [lindex $logData 2]]\""
-                                                append tagline "\"[string map {" " _} [lindex $logData 3]]\""
-                                                append show_name "\"[string map {" " _} [lindex $logData 4]]\""
-                                                append show_id "\"[string map {" " _} [lindex $logData 5]]\""
-                                                append show_genres "\"[string map {" " _} [lindex $logData 6]]\""
-                                                append show_country "\"[string map {" " _} [lindex $logData 7]]\""
+						append rls_name "\"[string map {" " _} [lindex $logData 0]]\""
+						append user "\"[string map {" " _} [lindex $logData 1]]\""
+						append group "\"[string map {" " _} [lindex $logData 2]]\""
+						append tagline "\"[string map {" " _} [lindex $logData 3]]\""
+						append show_name "\"[string map {" " _} [lindex $logData 4]]\""
+						append show_id "\"[string map {" " _} [lindex $logData 5]]\""
+						append show_genres "\"[string map {" " _} [lindex $logData 6]]\""
+						append show_country "\"[string map {" " _} [lindex $logData 7]]\""
 						append show_language "\"[string map {" " _} [lindex $logData 8]]\""
-                                                append show_network "\"[string map {" " _} [lindex $logData 9]]\""
-                                                append show_status "\"[string map {" " _} [lindex $logData 10]]\""
-                                                append show_latest_title "\"[string map {" " _} [lindex $logData 11]]\""
-                                                append show_latest_episode "\"[string map {" " _} [lindex $logData 12]]\""
-                                                append show_latest_airdate "\"[string map {" " _} [lindex $logData 13]]\""
-                                                append show_next_title "\"[string map {" " _} [lindex $logData 14]]\""
-                                                append show_next_episode "\"[string map {" " _} [lindex $logData 15]]\""
-                                                append show_next_airdate "\"[string map {" " _} [lindex $logData 16]]\""
-                                                append show_url "\"[string map {" " _} [lindex $logData 17]]\""
-                                                append show_type "\"[string map {" " _} [lindex $logData 18]]\""
-                                                append show_premiered "\"[string map {" " _} [lindex $logData 19]]\""
-                                                append show_started "\"[string map {" " _} [lindex $logData 20]]\""
-                                                append show_ended "\"[string map {" " _} [lindex $logData 21]]\""
-                                                append show_airtime "\"[string map {" " _} [lindex $logData 22]]\""
-                                                append show_runtime "\"[string map {" " _} [lindex $logData 23]]\""
-			    			append show_rating "\"[string map {" " _} [lindex $logData 24]]\""
+						append show_network "\"[string map {" " _} [lindex $logData 9]]\""
+						append show_status "\"[string map {" " _} [lindex $logData 10]]\""
+						append show_latest_title "\"[string map {" " _} [lindex $logData 11]]\""
+						append show_latest_episode "\"[string map {" " _} [lindex $logData 12]]\""
+						append show_latest_airdate "\"[string map {" " _} [lindex $logData 13]]\""
+						append show_next_title "\"[string map {" " _} [lindex $logData 14]]\""
+						append show_next_episode "\"[string map {" " _} [lindex $logData 15]]\""
+						append show_next_airdate "\"[string map {" " _} [lindex $logData 16]]\""
+						append show_url "\"[string map {" " _} [lindex $logData 17]]\""
+						append show_type "\"[string map {" " _} [lindex $logData 18]]\""
+						append show_premiered "\"[string map {" " _} [lindex $logData 19]]\""
+						append show_started "\"[string map {" " _} [lindex $logData 20]]\""
+						append show_ended "\"[string map {" " _} [lindex $logData 21]]\""
+						append show_airtime "\"[string map {" " _} [lindex $logData 22]]\""
+						append show_runtime "\"[string map {" " _} [lindex $logData 23]]\""
+						append show_rating "\"[string map {" " _} [lindex $logData 24]]\""
 						append show_imdb "\"[string map {" " _} [lindex $logData 25]]\""
 						append show_summary "\"[string map {" " _} [lindex $logData 26]]\""
-                                                append ep_url "\"[string map {" " _} [lindex $logData 27]]\""
-                                                append ep_season_episode "\"[string map {" " _} [lindex $logData 28]]\""
-                                                append ep_season "\"[string map {" " _} [lindex $logData 29]]\""
-                                                append ep_number "\"[string map {" " _} [lindex $logData 30]]\""
-                                                append ep_airdate "\"[string map {" " _} [lindex $logData 31]]\""
+						append ep_url "\"[string map {" " _} [lindex $logData 27]]\""
+						append ep_season_episode "\"[string map {" " _} [lindex $logData 28]]\""
+						append ep_season "\"[string map {" " _} [lindex $logData 29]]\""
+						append ep_number "\"[string map {" " _} [lindex $logData 30]]\""
+						append ep_airdate "\"[string map {" " _} [lindex $logData 31]]\""
 						append ep_title "\"[string map {" " _} [lindex $logData 32]]\""
 
 						if {[string equal $tvmaze(imdbfile) "true"]} {
+
 							exec /glftpd/bin/tvmaze.sh $rls_name $show_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating $show_imdb $show_summary $show_premiered $show_url $ep_url
+
 						}
-                                                exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
+                        
+                        exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
 
 
-                                        }
+                    }
 			
-			    		${np}::sndall $target $section [${np}::ng_format $target $section $logData]
+			    	${np}::sndall $target $section [${np}::ng_format $target $section $logData]
 				}
 
 				break
 			}
 
-
 		}
 
 		return 1
+
 	}
 
 	proc FindInfo {string logData {strict true}} {

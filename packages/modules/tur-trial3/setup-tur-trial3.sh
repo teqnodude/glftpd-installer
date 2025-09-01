@@ -6,24 +6,26 @@ SQLUSER="trial"
 SQLPASS=""
 SQLDB="trial"
 
-if [ -z "$1" ]
-then
-    echo "Run './setup-tur-trial3.sh create' to create database, table and user"
-    echo "Run './setup-tur-trial3.sh remove to remove database, table and user"
-fi
+case "$1" in
 
-if [ "$1" = "create" ]
-then
-    mysql -uroot -e "CREATE DATABASE IF NOT EXISTS $SQLDB"
-    mysql -uroot -e "CREATE USER IF NOT EXISTS '$SQLUSER'@'$SQLHOST' IDENTIFIED BY '$SQLPASS';"
-    mysql -uroot -e "GRANT ALL PRIVILEGES ON $SQLDB . * TO '$SQLUSER'@'$SQLHOST';"
-    mysql -uroot -e "FLUSH PRIVILEGES"
-    mysql -uroot -D $SQLDB < import.sql
+    "create")
 
-elif [ "$1" = "remove" ]
-then
-    mysql -uroot -e "DROP DATABASE IF EXISTS $SQLDB"
-    mysql -uroot -e "DROP USER IF EXISTS 'transfer'@'localhost';"
-fi
+        mysql -S /run/mysqld/mariadb-glftpd.sock -uroot -e "CREATE DATABASE IF NOT EXISTS $SQLDB CHARACTER SET utf8mb4"
+        mysql -S /run/mysqld/mariadb-glftpd.sock -uroot -e "CREATE USER IF NOT EXISTS '$SQLUSER'@'$SQLHOST' IDENTIFIED BY '$SQLPASS';"
+        mysql -S /run/mysqld/mariadb-glftpd.sock -uroot -e "GRANT ALL PRIVILEGES ON $SQLDB . * TO '$SQLUSER'@'$SQLHOST';"
+        mysql -S /run/mysqld/mariadb-glftpd.sock -uroot -D $SQLDB < import.sql.new
+        ;;
 
-exit 0
+    "remove")
+
+        mysql -S /run/mysqld/mariadb-glftpd.sock -uroot -e "DROP DATABASE IF EXISTS $SQLDB"
+        mysql -S /run/mysqld/mariadb-glftpd.sock -uroot -e "DROP USER IF EXISTS 'transfer'@'localhost';"
+        ;;
+
+    *)
+
+        echo "Run '$0 create' to create database, table and user"
+        echo "Run '$0 remove' to remove database, table and user"
+        ;;
+
+esac

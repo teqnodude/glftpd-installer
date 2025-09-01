@@ -1,96 +1,124 @@
 #!/bin/bash
+VER=1.0
+#--[ Settings ]-------------------------------------------------
 
-
-##############################
-# CONFIG                     #
-# ^^^^^^                     #
-##############################
-
-# enter path glftpd is installed in.
 glroot=/glftpd
-
-# enter path to the cleanup binary.
 cleanup=$glroot/bin/cleanup
-
-# enter sections in the following format:
-# <announce name of section>:<path to section, including a terminating slash ``/''
-# spaces and newline separates.
-#sections="
-#0DAY:/site/incoming/0day/
-#GAMES:/site/incoming/games/
-#APPS:/site/incoming/apps/
-#MV:/site/incoming/musicvideos/
-#"
-
-# alternative, set the following variable to point to your dZSbot.conf and
-# uncomment the ''botconf='' directive below.
 botconf=/glftpd/sitebot/scripts/pzs-ng/ngBot.conf
-
-# Set this to your complete line (non-dynamic part)
+sections=""
 releaseComplete="Complete -"
 
-# set this to one if you have sections in subdirs of one another - ie,
-# if you have defined in $sections "A:/site/DIR" and "B:/site/DIR/SUBDIR"
-no_strict=0
+# set to 1 to list fully-complete releases that are missing an NFO
+nonfo=0
 
-bold=
-dgry=14
-lred=4
+#--[ Script ]---------------------------------------------------
 
-#############################
-# END OF CONFIG             #
-# ^^^^^^^^^^^^^             #
-#############################
-
-# grab sections from the sitebot's conf instead
-if [ ! -z "$botconf" ] && [ -e "$botconf" ]
+colors=$(tput colors 2>/dev/null || echo 0)
+if (( colors >= 16 ))
 then
-    sections="`grep "^set paths(" $botconf | sed 's/^set paths(\(.*\))[[:space:]]\{1,\}\"\(.*\)\*\"/\1:\2/' | sort`"
+
+    red="$(tput setaf 9)"
+
+else
+
+    red="$(tput bold; tput setaf 1)"
+
+fi
+grey="$(tput setaf 8 2>/dev/null)"
+
+# derive sections from botconf if present
+if [[ -n "$botconf" && -e "$botconf" ]]
+then
+
+    sections="$(grep -E '^set[[:space:]]+paths\(' "$botconf" | sed 's/^set paths(\(.*\))[[:space:]]\{1,\}"\(.*\)\*"/\1:\2/' | sort)"
+
 fi
 
+if [[ -z "$sections" ]]
+then
+
+    echo "No sections configured (set \$botconf or \$sections)."
+    exit 1
+
+fi
+
+# run cleanup once and reuse
+cleanup_raw="$("$cleanup" "$glroot" 2>/dev/null)"
+cleanup_lines="$(printf '%s\n' "$cleanup_raw" | grep -E '^Incomplete' | tr '\"' '\n' | grep -Ev '/Sample' | tr -s '/' | sort)"
+
 IFSORIG="$IFS"
-IFS="
-"
+IFS=$'\n'
+
+found=0
 
 for section in $sections
 do
-    secname="`echo "$section" | cut -d ':' -f 1`"
-    secpaths="`echo "$section" | cut -d ':' -f 2- | tr ' ' '\n'`"
+
+    secname="$(echo "$section" | cut -d ':' -f 1)"
+    secpaths="$(echo "$section" | cut -d ':' -f 2- | tr ' ' '\n')"
 
     for secpath in $secpaths
     do
-        results="`$cleanup $glroot 2>/dev/null | grep -e "^Incomplete" | tr '\"' '\n' | grep -e "$secpath" | tr -s '/' | sort`"
 
-        if [ ! -z "$results" ]
-        then
-            for result in $results
-            do
-                secrel=`echo $result | sed "s|$secpath||" | tr -s '/' | sed "s|$glroot||"`
-                comp="`ls -1 $result/ | grep "$releaseComplete"`"
-                percent="`echo $comp | awk -F " " '{print $3}'` complete"
-                if [ $percent != " complete" ]
+        results="$(printf '%s\n' "$cleanup_lines" | grep -F "$secpath")"
+        [[ -z "$results" ]] && continue
+
+        for result in $results
+        do
+
+            secrel="$(echo "$result" | sed "s|$secpath||" | tr -s '/' | sed "s|$glroot||")"
+            target="$glroot/site/$secname/$secrel"
+
+            # Approved_by gate
+            if [[ $(find "$target" -maxdepth 0 -type f -iname "Approved_by*" | wc -l) -ne 0 ]]
+            then
+
+                continue
+
+            fi
+
+            comp="$(ls -1 "$result"/ 2>/dev/null | grep -F "$releaseComplete")"
+            percent="$(awk '{for(i=1;i<=NF;i++) if($i~/^[0-9]+%$/){print $i; exit}}' <<< "$comp")"
+
+            if [[ -n "$percent" && "$percent" != "100%" ]]
+            then
+
+                echo "$secname:${red} ${secrel}${grey} is${red} $percent ${grey}complete."
+                ((found++))
+
+            else
+
+                if [[ -z "$percent" ]]
                 then
-                    percent="`echo $comp | awk -F " " '{print $3}'`"
-                    if [ $no_strict ] || [ "`dirname $secrel`/" = "`echo $secpath/ | tr -s '/'`" ]
-                    then
-                        echo "$secname:${lred} ${secrel}${dgry} is${lred} $percent ${dgry}complete."
-                    fi
-                else
-                    if [ $no_strict ] || [ "`dirname $secrel`/" = "`echo $secpath/ | tr -s '/'`" ]
-                    then
-                        echo "$secname:${lred} ${secrel}${dgry} is missing a NFO."
-                    fi
-                fi
-            done
-        fi
-    done
-done
-if [ "`$cleanup $glroot 2>/dev/null | grep -e "^Incomplete" | wc -l`" = 0 ]
-then
-    echo "No incomplete releases found."
-else
-    echo "No more incompletes found."
-fi
-IFS="$IFSORIG"
 
-exit 0
+                    echo "$secname:${red} ${secrel}${grey} has no sfv file or progress marker."
+                    ((found++))
+
+                elif (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" | wc -l) -eq 0 ]]
+                then
+
+                    echo "$secname:${red} ${secrel}${grey} is missing a NFO."
+                    ((found++))
+
+                fi
+
+            fi
+
+        done
+
+    done
+
+done
+
+if (( found == 0 ))
+then
+
+    echo "No incomplete releases found."
+
+else
+
+    echo "No more incompletes found."
+
+fi
+
+IFS="$IFSORIG"

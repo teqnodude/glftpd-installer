@@ -159,11 +159,11 @@ if [ -z "$2" -a "$1" != "test" ]; then
   exit 0
 fi
 
-ARGS=`echo "$@" | cut -d ' ' -f2-`
+ARGS=$(echo "$@" | cut -d ' ' -f2-)
 
 proc_log() {
   if [ "$log" ]; then
-    echo `date "+%a %b %e %T %Y"`" : $NICK : $ARGS" >> $log
+    echo $(date "+%a %b %e %T %Y")" : $NICK : $ARGS" >> $log
   fi
 }
 
@@ -218,26 +218,26 @@ fi
 
 proc_log "$ARGS"
 
-RESULT=`echo -e "user $user $pass\nsite $ARGS" | $ftp -vn $host $port | grep -A$maxlines "^230 User $user" | egrep -v "$clean" | cut -c 5- | tr ' ' '^'`
+RESULT=$(echo -e "user $user $pass\nsite $ARGS" | $ftp -vn $host $port | grep -A$maxlines "^230 User $user" | egrep -v "$clean" | cut -c 5- | tr ' ' '^')
 
 num=0
 for rawline in $RESULT; do
   num=$[$num+1]
 
   if [ "$alignleft" = "TRUE" ]; then
-    rawline=`echo $rawline | sed -e 's/^\^//'`
+    rawline=$(echo $rawline | sed -e 's/^\^//')
   fi
   if [ "$mergespaces" = "TRUE" ]; then
-    rawline=`echo $rawline | tr -s '^'`
+    rawline=$(echo $rawline | tr -s '^')
   fi
   if [ "$merge" ]; then
     for mergechar in $merge; do
-      rawline=`echo $rawline | tr -s "$mergechar"`
+      rawline=$(echo $rawline | tr -s "$mergechar")
     done
   fi
   if [ "$remove" ]; then
     for removechar in $remove; do
-      rawline=`echo $rawline | tr -d "$removechar"`
+      rawline=$(echo $rawline | tr -d "$removechar")
     done
   fi
 

@@ -1,5 +1,5 @@
 ##############################################################################
-# Tur-AddIp.tcl 1.1 by Turranius                                             #
+# Tur-AddIp.tcl 1.4 by Turranius                                             #
 # Change binds below to whatever you want the trigger the script with.       #
 # pub is for public chan command & msg is for private msg.                   #
 #                                                                            #      
@@ -49,4 +49,4 @@ proc msg:tur-addip { nick host hand text } {
  }
 }
 
-putlog "Tur-AddIp.tcl 1.1 by Turranius loaded"
+putlog "Tur-AddIp.tcl 1.4 by Turranius loaded"

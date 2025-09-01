@@ -6,15 +6,15 @@ CREATE TABLE IF NOT EXISTS `trial` (
 `extratime` text, 
 `startstats` text NOT NULL, 
 `endtime` text NOT NULL, 
-`tlimit` text NOT NULL ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+`tlimit` text NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `excluded` ( 
 `username` text NOT NULL, 
-`excluded` tinyint(1) NOT NULL default '0' ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+`excluded` tinyint(1) NOT NULL default '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `passed` ( 
 `username` text NOT NULL, 
-`passed` tinyint(1) NOT NULL default '0' ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+`passed` tinyint(1) NOT NULL default '0' ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `ranking` ( 
-`username` text NOT NULL, `rank` text NOT NULL ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+`username` text NOT NULL, `rank` text NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

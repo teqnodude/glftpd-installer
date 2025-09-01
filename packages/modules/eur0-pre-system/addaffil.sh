@@ -1,114 +1,234 @@
 #!/bin/bash
+VER=1.1
+#--[ Info ]-----------------------------------------------------
+#
 # A script by eur0dance to add affils the site (makes an existing group
 # on the site to be an affil) via "SITE ADDAFFIL" command.
-# Version 1.0
+#
+#--[ Settings ]-------------------------------------------------
 
-### CONFIG ###
-
-# Location of your glftpd.conf file, the path is CHROOTED to your glftpd dir.
-# In other words, if your glftpd dir is /glftpd then this path will probably be
-# /etc/glftpd.conf, the actual file will be /glftpd/etc/glftpd.conf and there
-# will be a symlink /etc/glftpd.conf pointing to /glftpd/etc/glftpd.conf.
+# Location of your glftpd.conf file, path is CHROOTED to your glftpd dir.
+# If your glftpd dir is /glftpd then this will usually be /etc/glftpd.conf
+# (a symlink to /glftpd/etc/glftpd.conf).
 glftpd_conf="/etc/glftpd.conf"
 
-# Locations of the base pre path - if the second parameter ('pre_dir_path') won't
-# be specified during exection of this script then this path will be used as
-# the default pre path.
+# Base PRE path. If the second CLI parameter (pre_dir_path) is omitted,
+# this is used as the default.
 base_pre_path="/site/PRE"
 
+#--[ Script Start ]---------------------------------------------
 
-### CODE ###
+usage()
+{
 
-if [ $# -ge 1 ]
-then
+	cat <<-EOF
+		Syntax: SITE ADDAFFIL <group> [pre_dir_path]
 
-    if [ $# -eq 2 ]
+		Example:
+		SITE ADDAFFIL MYGROUP
+		SITE ADDAFFIL MYGROUP /site/CUSTOM/PRE
+		SITE ADDAFFIL MYGROUP CUSTOM/PRE
+	EOF
+
+}
+
+need_file()
+{
+    local path=$1
+
+    if [[ ! -e "$path" ]]
     then
-	pre_path=$2
-    else
-	pre_path=$base_pre_path
+
+        echo "Error: required file not found: $path" >&2
+        exit 1
+
     fi
 
-    if [ `expr substr $pre_path 1 5`  != "/site" ]
-    then
-	if [ `expr substr $pre_path 1 1`  != "/" ]
-	then
-    	    pre_path="/site/$pre_path"
-	else
-	    pre_path="/site$pre_path"
-	fi
-    fi
+}
 
-    echo "Adding $1 ..."
+normalize_pre_path()
+{
+    local p=$1
 
-    if [ `grep "privpath $pre_path" $glftpd_conf | grep -c $1` -gt 0 ]
+    # Ensure path starts with /site...
+    if [[ $p != /site* ]]
     then
-	echo "The $pre_path/$1 line already exists in $glftpd_conf."
-    else
-    	echo "Trying to add $pre_path/$1 to $glftpd_conf ..."
-	/bin/addaffil $glftpd_conf $1 $pre_path
-        if [ -e /bin/tur-trial3.conf ]
-	then
-    	    echo "Adding affil to QUOTA_EXCLUDED_GROUPS in /glftpd/bin/tur-trial3.conf"
-	    sed -i '/^QUOTA_EXCLUDED_GROUPS=/a '"$1" /bin/tur-trial3.conf
-        fi
-        echo "Adding affil to denygroups in /glftpd/bin/tur-predircheck.sh"
-        if [ "`grep '^DENYGROUPS=""' /bin/tur-predircheck.sh | wc -l`" -eq 1 ]
+
+        if [[ $p != /* ]]
         then
-            sed -i "/^DENYGROUPS=/ s/\"$/\/site:[-]($1)$\"/" /bin/tur-predircheck.sh
+
+            p="/site/$p"
+
         else
-            startword=`grep "^DENYGROUPS" /bin/tur-predircheck.sh | sed 's/\[-](//' | tr -d ')$' | cut -d ':' -f2 | cut -d'|' -f1 | tr -d '"'`
-            sed -i "/DENYGROUPS/ s/$startword/$1|$startword/" /bin/tur-predircheck.sh
+
+            p="/site$p"
+
         fi
 
-        echo "Adding affil to hiddengroups in /glftpd/bin/sitewho.conf"
-	sed -i '/^hiddengroups/a '"$1" /bin/sitewho.conf
-	if [ -e /etc/pre.cfg ]
-	then
-	    sections=`grep "set sections" /sitebot/scripts/pzs-ng/ngBot.conf | cut -d '"' -f2- | tr -d '"' | tr ' ' '|' | sed -e 's/REQUEST//' -e 's/ARCHIVE//' -e 's/|$//' -e 's/^||//' -e 's/||/|/'`
-	    echo "Adding affil to /glftpd/etc/pre.cfg"
-	    if [ `grep "# group.dir" /etc/pre.cfg | wc -l` = 1 ]
-	    then
-		sed -i '/# group.dir/a group.'"$1"'.dir=/site/PRE/'"$1" /etc/pre.cfg
-	    else
-		echo "group.$1.dir=/site/PRE/$1" >> /etc/pre.cfg
-	    fi
-	    if [ `grep "# group.allow" /etc/pre.cfg | wc -l` = 1 ]
-	    then
-		sed -i '/# group.allow/a group.'"$1"'.allow='"$sections" /etc/pre.cfg
-	    else
-		echo "group.$1.allow=$sections" >> /etc/pre.cfg
-	    fi
-	fi
-
     fi
 
-    if [ -d "$pre_path/$1" ]
+    printf '%s\n' "$p"
+
+}
+
+add_affil_to_conf()
+{
+    local group=$1
+    local pre_path=$2
+
+    if grep -E -q "^[[:space:]]*privpath[[:space:]]+${pre_path}\b.*\b${group}\b" "$glftpd_conf"
     then
-    	echo "The dir $pre_path/$1 already exists, making sure it has permissions set to 777 ..."
-	chmod 777 "$pre_path/$1"
-	echo "Couldn't create $pre_path/$1 dir since it already existed. permissions got updated to 777."
-	echo "Group $1 can start preing now!!!"
-    else
-	mkdir -m777 "$pre_path/$1" >/dev/null 2>&1
-	mkdirres=$?
-	if [ $mkdirres -ne 0 ]
-	then
-	    echo "Error! Couldn't create $pre_path/$1."
-	    echo "Removing the $pre_path/$1 dir from $glftpd_conf ..."
-	    lines_num=`wc -l < $glftpd_conf`
-	    /bin/delaffil $glftpd_conf $1 $pre_path $lines_num
-	    echo "Group $1 wasn't set as an affil and it can't pre."
-	else
-	    echo "The $pre_path/$1 dir has been created."
-	    echo "Group $1 can start preing now!!!"
-	fi
+
+        echo "The ${pre_path}/${group} line already exists in $glftpd_conf."
+        return 0
+
     fi
 
-else
+    echo "Trying to add ${pre_path}/${group} to $glftpd_conf ..."
+    /bin/addaffil "$glftpd_conf" "$group" "$pre_path"
 
-   echo "Syntax: SITE ADDAFFIL <group> [pre_dir_path]"
+}
 
-fi
+update_tur_configs()
+{
+    local group=$1
 
-exit 0
+    if [[ -e /bin/tur-trial3.conf ]]
+    then
+
+        echo "Adding affil to QUOTA_EXCLUDED_GROUPS in /bin/tur-trial3.conf"
+        sed -i '/^QUOTA_EXCLUDED_GROUPS=/a '"$group"'' /bin/tur-trial3.conf
+
+    fi
+
+    echo "Adding affil to DENYGROUPS in /bin/tur-predircheck.sh"
+    if [[ "$(grep -E '^DENYGROUPS=""' /bin/tur-predircheck.sh | wc -l)" -eq 1 ]]
+    then
+
+        sed -i '/^DENYGROUPS=/ s/"$/\/site:[-]('"$group"')$"/' /bin/tur-predircheck.sh
+
+    else
+
+        # Extract the first alt inside the [-](...) group and prepend our group
+        local startword
+        startword=$(grep -E '^DENYGROUPS' /bin/tur-predircheck.sh \
+            | sed -E 's/.*\[-]\(([^|:)]+).*/\1/' \
+            | head -n1)
+        sed -i "/DENYGROUPS/ s/${startword}/${group}|${startword}/" /bin/tur-predircheck.sh
+
+    fi
+
+    echo "Adding affil to hiddengroups in /bin/sitewho.conf"
+    sed -i '/^hiddengroups/a '"$group"'' /bin/sitewho.conf
+
+}
+
+update_pre_cfg()
+{
+    local group=$1
+    local pre_path=$2
+
+    if [[ -e /etc/pre.cfg ]]
+    then
+
+        # Pull sections from ngBot.conf, sanitize, and turn into a | list
+        local sections
+        sections=$(grep -E 'set sections' /sitebot/scripts/pzs-ng/ngBot.conf \
+            | cut -d '"' -f2- \
+            | tr -d '"' \
+            | tr ' ' '|' \
+            | sed -E 's/\bREQUEST\b//g; s/\bARCHIVE\b//g; s/\|+$//; s/^\|+//; s/\|\|+/\|/g')
+
+        echo "Adding affil to /etc/pre.cfg"
+
+        if [[ "$(grep -c -E '^#\s*group\.dir' /etc/pre.cfg)" -eq 1 ]]
+        then
+
+            sed -i '/^#\s*group\.dir/a group.'"$group"'.dir='"$pre_path"'/'"$group"'' /etc/pre.cfg
+
+        else
+
+            echo "group.$group.dir=$pre_path/$group" >> /etc/pre.cfg
+
+        fi
+
+        if [[ "$(grep -c -E '^#\s*group\.allow' /etc/pre.cfg)" -eq 1 ]]
+        then
+
+            sed -i '/^#\s*group\.allow/a group.'"$group"'.allow='"$sections" /etc/pre.cfg
+
+        else
+
+            echo "group.$group.allow=$sections" >> /etc/pre.cfg
+
+        fi
+
+    fi
+
+}
+
+ensure_pre_dir()
+{
+    local group=$1
+    local pre_path=$2
+
+    if [[ -d "$pre_path/$group" ]]
+    then
+
+        echo "The dir $pre_path/$group already exists, ensuring permissions are 0777 ..."
+        chmod 0777 "$pre_path/$group"
+        echo "Couldn't create $pre_path/$group since it already existed. Permissions updated to 0777."
+        echo "Group $group can start preing now!!!"
+        return 0
+
+    fi
+
+    mkdir -m 0777 -p "$pre_path/$group" >/dev/null 2>&1
+    local mkdirres=$?
+
+    if (( mkdirres != 0 ))
+    then
+
+        echo "Error! Couldn't create $pre_path/$group."
+        echo "Removing the $pre_path/$group dir from $glftpd_conf ..."
+        local lines_num
+        lines_num=$(wc -l < "$glftpd_conf")
+        /bin/delaffil "$glftpd_conf" "$group" "$pre_path" "$lines_num"
+        echo "Group $group wasn't set as an affil and it can't pre."
+        return 1
+
+    fi
+
+    echo "The $pre_path/$group dir has been created."
+    echo "Group $group can start preing now!!!"
+
+}
+
+main()
+{
+
+    if (( $# < 1 ))
+    then
+
+        usage
+        exit 1
+
+    fi
+
+    need_file "$glftpd_conf"
+
+    local group=$1
+    local pre_arg=${2:-$base_pre_path}
+    local pre_path
+    pre_path=$(normalize_pre_path "$pre_arg")
+
+    echo "Adding $group ..."
+
+    add_affil_to_conf "$group" "$pre_path"
+    update_tur_configs "$group"
+    update_pre_cfg "$group" "$pre_path"
+    ensure_pre_dir "$group" "$pre_path"
+
+}
+
+main "$@"

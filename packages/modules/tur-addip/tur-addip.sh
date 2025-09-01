@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.3
+VER=1.4
 #--[ Intro ]-------------------------------------------------------------#
 #                                                                        #
 # Tur-AddIp. A script to allow users to add, del and list their own IPs. #
@@ -143,236 +143,411 @@ log=/glftpd/ftp-data/logs/tur-addip.log
 
 #--[ Script Start ]------------------------------------------------------#
 
-## Procedure for showing help.
-proc_help() {
-  echo "Tur-Addip $VER Usage:"
-  echo "NOTE: Everything is being logged. Abuse leads to deluser!"
-  echo "!addip <username> <password> <function>"
-  echo "Functions are: "
-  echo "list          = List all your IPs"
-  echo "add <IP>      = Adds an IP."
-  echo "del <#>       = Dels an IP. Specify the IP or the number shown when running 'list'"
-  echo "tag <tagline> = Changes tagline."
-  exit 0
+## Procedure for showing help
+proc_help()
+{
+
+	cat <<-EOF
+	Tur-Addip $VER Usage:
+	NOTE: Everything is being logged. Abuse leads to deluser!
+	
+	!addip <username> <password> <function>
+	
+	Functions are:
+	list          = List all your IPs
+	add <IP>      = Adds an IP.
+	del <#>       = Dels an IP. Specify the IP or the number shown when running 'list'
+	tag <tagline> = Changes tagline.
+	EOF
+
+    exit 0
+
 }
 
-proc_log() {
-  if [ "$log" ]; then
-    echo `date "+%a %b %e %T %Y"`" : $@" >> $log
-  fi
+
+proc_log()
+{
+
+    if [[ -n "$log" ]]
+    then
+
+        printf '%s : %s\n' "$(date '+%a %b %e %T %Y')" "$*" >> "$log"
+
+    fi
+
 }
 
-## Some general checks if everything can be execute and read.
-if [ ! -x "$ftp" ]; then
-  echo "Error. Can not execute ftp. Check path and perms."
-  exit 0
-elif [ ! -x "$passchk" ]; then
-  echo "Error. passchk can not be executed. Check path and perms."
-  exit 0
-elif [ ! -d "$usersdir" ]; then
-  echo "Error. Usersdir does not exist or arent a directory."
-  exit 0
-elif [ ! -r "$passwd" ]; then
-  echo "Error. passwd can not be read. Check path and perms."
-  exit 0
-fi
-if [ "$log" ]; then
-  if [ ! -e "$log" ]; then
-    echo "Log file; $log does not exist. Create it and set chmod 666 on it."
-    exit 0
-  elif [ ! -w "$log" ]; then
-    echo "I cant write to $log. Set chmod 666 on it."
-    exit 0
-  fi
+
+## Some general checks if everything can be executed and read.
+if [[ ! -x "$ftp" ]]
+then
+
+    echo "Error. Cannot execute ftp. Check path and perms."
+    exit 1
+
+elif [[ ! -x "$passchk" ]]
+then
+
+    echo "Error. passchk cannot be executed. Check path and perms."
+    exit 1
+
+elif [[ ! -d "$usersdir" ]]
+then
+
+    echo "Error. usersdir does not exist or isn't a directory."
+    exit 1
+
+elif [[ ! -r "$passwd" ]]
+then
+
+    echo "Error. passwd cannot be read. Check path and perms."
+    exit 1
+
 fi
 
-## Checking if 3 arguments was used. Show the help otherwise.
-if [ -z "$1" -o -z "$2" -o -z "$3" ]; then
-  proc_help
+
+if [[ -n "$log" ]]
+then
+
+    if [[ ! -e "$log" ]]
+    then
+
+        echo "Log file $log does not exist. Create it and set chmod 666 on it."
+        exit 1
+
+    elif [[ ! -w "$log" ]]
+    then
+
+        echo "Cannot write to $log. Set chmod 666 on it."
+        exit 1
+
+    fi
+
 fi
 
-## Put all arguments into other arguments.
+
+## Checking if 3 arguments were used. Show the help otherwise.
+if [[ -z "$1" || -z "$2" || -z "$3" ]]
+then
+
+    proc_help
+
+fi
+
+
+## Put all arguments into variables.
 USERNAME="$1"
 PASSWORD="$2"
-ACTION="$3"
-ACTION="`echo "$ACTION" | tr '[:upper:]' '[:lower:]'`"
+ACTION="${3,,}"
 CURIP="$4"
-ALLARGS="$* " ## Used for proc_tag.
+ALLARGS="$* "
+
 
 ## Check if the specified user exists.
-if [ ! -e "$usersdir/$USERNAME" ]; then
-  echo "User $USERNAME does not exist."
-  exit 0
-else
-  if [ "$nonoflags" ]; then
-    for badflag in $nonoflags; do
-      if [ "`grep "^FLAGS " "$usersdir/$USERNAME" | cut -d ' ' -f2 | grep "$badflag"`" ]; then
-        echo "You have flag $badflag and cant use the functions of this script."
-        exit 0
-      fi
-    done
-  fi
+if [[ ! -e "$usersdir/$USERNAME" ]]
+then
 
-  if [ "$max_ips" ] && [ "$ACTION" = "add" ]; then
-    ips="0"
-    for each in `grep "^IP " "$usersdir/$USERNAME" | cut -d ' ' -f1`; do
-      ips=$[$ips+1]
-    done
-    if [ "$ips" -ge "$max_ips" ]; then
-      echo "You have $ips IPs added. You need to delete some to get below max limit of $max_ips."
-      exit 0
+    echo "User $USERNAME does not exist."
+    exit 1
+
+else
+
+    if [[ -n "$nonoflags" ]]
+    then
+
+        for badflag in $nonoflags
+        do
+
+            if grep -Eq '^FLAGS[[:space:]]+.*'"$badflag" "$usersdir/$USERNAME"
+            then
+
+                echo "You have flag $badflag and cant use the functions of this script."
+                exit 1
+
+            fi
+
+        done
+
     fi
-  fi
+
+    if [[ -n "$max_ips" && "$ACTION" == "add" ]]
+    then
+
+        # Count existing IP lines quickly
+        ips=$(grep -cE '^IP[[:space:]]' "$usersdir/$USERNAME" 2>/dev/null || echo 0)
+
+        if (( ips >= max_ips ))
+        then
+
+            echo "You have $ips IPs added. You need to delete some to get below max limit of $max_ips."
+            exit 1
+
+        fi
+
+    fi
 
 fi
+
 
 ## Check if the password matches.
-if [ "`$passchk $USERNAME $PASSWORD $passwd`" != "MATCH" ]; then
-  echo "Password not accepted for user $USERNAME"
-  exit 0
+if [[ "$("$passchk" "$USERNAME" "$PASSWORD" "$passwd")" != "MATCH" ]]
+then
+
+    echo "Password not accepted for user $USERNAME"
+    exit 1
+
 fi
 
+
 ## Procedure for listing IPs
-proc_list() {
+proc_list()
+{
+
   echo "Current IPs added to $USERNAME"
-  for USERIP in `
-    echo -e "user $user $pass\nsite user $USERNAME" | $ftp -vn $host $port | grep "IP[0-9]:" | tr -s ' ' | cut -d ' ' -f3- | tr -d '|'
-  `; do
-    USERIP="`echo "$USERIP" | tr '^' ' '`"
-    if [ "`echo "$USERIP" | grep "IP[0-9]\:"`" ]; then
-      POS="$USERIP"
-    else
-      echo "$POS $USERIP"
-      unset POS
-      GOTONE="TRUE"
-    fi
-  done
+  while IFS= read -r USERIP
+  do
+
+    USERIP="$(echo "$USERIP" | tr '^' ' ')"
+    echo "$USERIP"
+    GOTONE="TRUE"
+
+  done < <(
+    printf "user %s %s\nsite user %s\n" "$user" "$pass" "$USERNAME" | "$ftp" -vn "$host" "$port" | grep -E "IP[0-9]:" | tr -d '|' | tr -s ' ' | cut -d ' ' -f2-
+  )
 
   proc_log "$USERNAME checks list of added IPs"
 
-  if [ -z "$GOTONE" ]; then
+  if [[ -z "$GOTONE" ]]
+  then
+
     echo "No IPs found..."
+
   fi
+
 }
+
+
+
 
 ## Procedure for adding IPs
-proc_add() {
-  if [ -z "$CURIP" ]; then
-    proc_help; exit 0
-  elif [ -z "`echo "$CURIP" | grep "\@"`" ]; then
-    echo "IP must be in ident@ip format."
-    exit 0
-  fi
+proc_add()
+{
 
-  proc_log "$USERNAME tries to add an IP: $CURIP"
+    if [[ -z "$CURIP" ]]
+    then
 
-  RESULT="`echo -e "user $user $pass\nsite addip $USERNAME $CURIP" | $ftp -vn $host $port | grep -B1 "Command Successful." | grep -v "Command Successful." | cut -d ' ' -f2-`"
+        proc_help
+        exit 1
 
-  if [ "$RESULT" ]; then
-    echo "$RESULT"
-  else
-    echo "No result. Make sure the user specified as 'user' have addip permissions and that he can log in."
-    exit 0
-  fi
+    elif ! grep -q "@" <<<"$CURIP"
+    then
 
-  if [ "$listonadd" = "TRUE" ]; then
-    unset log
-    proc_list
-  fi
+        echo "IP must be in ident@ip format."
+        exit 1
+
+    fi
+
+    proc_log "$USERNAME tries to add an IP: $CURIP"
+
+    RESULT="$(
+        printf 'user %s %s\nsite addip %s %s\n' "$user" "$pass" "$USERNAME" "$CURIP" \
+        | "$ftp" -vn "$host" "$port" \
+        | grep -B1 "Command Successful\." \
+        | grep -v "Command Successful\." \
+        | cut -d ' ' -f2-
+    )"
+
+    if [[ -n "$RESULT" ]]
+    then
+
+        echo "$RESULT"
+
+    else
+
+        echo "No result. Make sure the user specified as 'user' has addip permissions and can log in."
+        exit 1
+
+    fi
+
+    if [[ "$listonadd" == "TRUE" ]]
+    then
+
+        unset log
+        proc_list
+
+    fi
+
 }
 
+
 ## Procedure for deleting IPs
-proc_del() {
-  if [ -z "$CURIP" ]; then
-    proc_help; exit 0
-  fi
+proc_del()
+{
 
-  proc_log "$USERNAME tries to del an IP: $CURIP"
+    if [[ -z "$CURIP" ]]
+    then
 
-  RESULT="`echo -e "user $user $pass\nsite delip $USERNAME $CURIP" | $ftp -vn $host $port | grep -B1 "Done$" | grep -v "Done$" | cut -d ' ' -f2-`"
-  
-  if [ "$RESULT" ]; then
-    echo "$RESULT"
-  else
-    echo "No result. Make sure the user specified as 'user' have delip permissions and that he can log in."
-    exit 0
-  fi
+        proc_help
+        exit 1
 
-  if [ "$listondel" = "TRUE" ]; then
-    unset log
-    proc_list
-  fi
+    fi
+
+    proc_log "$USERNAME tries to del an IP: $CURIP"
+
+    RESULT="$(
+        printf 'user %s %s\nsite delip %s %s\n' "$user" "$pass" "$USERNAME" "$CURIP" \
+        | "$ftp" -vn "$host" "$port" \
+        | grep -B1 "Done$" \
+        | grep -v "Done$" \
+        | cut -d ' ' -f2-
+    )"
+
+    if [[ -n "$RESULT" ]]
+    then
+
+        echo "$RESULT"
+
+    else
+
+        echo "No result. Make sure the user specified as 'user' has delip permissions and can log in."
+        exit 1
+
+    fi
+
+    if [[ "$listondel" == "TRUE" ]]
+    then
+
+        unset log
+        proc_list
+
+    fi
+
 }
 
 ## Procedure for changing tagline.
-proc_tag() {
-  TAGLINE="`echo "$ALLARGS" | cut -d ' ' -f4-`"
-  if [ -z "$TAGLINE" ]; then
-    proc_help; exit 0
-  fi
+proc_tag()
+{
 
-  proc_log "$USERNAME tries to change tagline to: $TAGLINE"
+    # Build TAGLINE from the 4th argument onward, preserving spaces
+    set -- $ALLARGS
+    shift 3 || true
+    TAGLINE="$*"
 
-  RESULT="`echo -e "user $user $pass\nsite change $USERNAME tagline $TAGLINE" | $ftp -vn $host $port | grep "Command Successful."`"
+    if [[ -z "$TAGLINE" ]]
+    then
 
-  if [ "$RESULT" ]; then
-    RESULT="`echo "$RESULT" | cut -d ' ' -f2-`"
-    echo "$RESULT"
-    echo "Tagline changed to: $TAGLINE"
-  else
-    echo "No result. Make sure the user specified as 'user' have 'site change' permissions and that he can log in."
-  fi
-  exit 0
+        proc_help
+        exit 1
+
+    fi
+
+    proc_log "$USERNAME tries to change tagline to: $TAGLINE"
+
+    RESULT="$(
+        printf 'user %s %s\nsite change %s tagline %s\n' "$user" "$pass" "$USERNAME" "$TAGLINE" \
+        | "$ftp" -vn "$host" "$port" \
+        | grep 'Command Successful\.'
+    )"
+
+    if [[ -n "$RESULT" ]]
+    then
+
+        # Trim the first whitespace-separated field to mimic: cut -d' ' -f2-
+        RESULT="${RESULT#* }"
+        echo -e "$RESULT"
+        echo "Tagline changed to: $TAGLINE"
+
+    else
+
+        echo "No result. Make sure the user specified as 'user' has 'site change' permissions and can log in."
+        exit 1
+
+    fi
+
+    exit 0
+
 }
+
 
 ## Procedure for running the test.
-proc_test() {
-  if [ "$teston" != "TRUE" ]; then
-    proc_help; exit 0
-  fi
+proc_test()
+{
 
-  proc_log "$USERNAME runs a test."
-  echo "Testing that everything works as it should."
-  echo "It should log in and show the userstats for $user"
-  echo "Make sure that $user has access to '-usersothers', '-addip', '-delip' & 'site change'"
-  echo "Running: echo -e \"user $user $pass\nsite user $user\" | $ftp -vn $host $port"
+    if [[ "$teston" != "TRUE" ]]
+    then
 
-  until [ -n "$go" ]; do
-    echo -n "Ready to go? [Y]es [N]o: "
-    read go
-    case $go in
-      [Nn])
-        exit 0
-        continue
-        ;;
-      [Yy])
-        echo " "
-        go=n
-        ;;
-      *)
-       unset go
-       continue
-       ;;
-    esac
-  done
-  unset go
+        proc_help
+        exit 1
 
-  echo ""
-  echo -e "user $user $pass\nsite user $user" | $ftp -vn $host $port
-  echo ""
-  echo "If you see the info for $user above the login is good. You must make sure he has"
-  echo "permissions to list other users, add ips, del ips and 'site change'"
+    fi
+
+    proc_log "$USERNAME runs a test."
+
+    echo "Testing that everything works as it should."
+    echo "It should log in and show the userstats for $user"
+    echo "Make sure that $user has access to '-usersothers', '-addip', '-delip' & 'site change'"
+    echo "Running:"
+    echo "  printf 'user %s %s\nsite user %s\n' \"$user\" \"******\" \"$user\" | $ftp -vn $host $port"
+
+    while true
+    do
+
+        read -r -p "Ready to go? [Y]es [N]o: " go
+
+        case "$go" in
+
+            [Nn])
+
+                exit 0
+
+                ;;
+
+            [Yy])
+
+                echo
+                break
+
+                ;;
+
+            *)
+
+                continue
+
+                ;;
+
+        esac
+
+    done
+
+    echo
+
+    printf 'user %s %s\nsite user %s\n' "$user" "$pass" "$user" \
+    | "$ftp" -vn "$host" "$port"
+
+    echo
+    echo "If you see the info for $user above the login is good."
+    echo "You must make sure he has permissions to list other users, add ips, del ips and 'site change'."
+
 }
+
 
 ## Main menu.
 case $ACTION in
-  [lL][iI][sS][tT]) proc_list; exit 0;;
-  [aA][dD][dD])     proc_add;  exit 0;;
-  [dD][eE][lL])     proc_del;  exit 0;;
-  [tT][aA][gG])     proc_tag;  exit 0;;
-  [tT][eE][sS][tT]) proc_test; exit 0;;
-  *)                proc_help; exit 0;;
+
+    [lL][iI][sS][tT]) proc_list; exit 0;;
+
+    [aA][dD][dD])     proc_add;  exit 0;;
+
+    [dD][eE][lL])     proc_del;  exit 0;;
+
+    [tT][aA][gG])     proc_tag;  exit 0;;
+
+    [tT][eE][sS][tT]) proc_test; exit 0;;
+
+    *)                proc_help; exit 0;;
+
 esac
 
 echo "How did I get here? bug."
+
 exit 0

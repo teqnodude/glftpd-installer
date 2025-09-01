@@ -1,5 +1,7 @@
 Changelog for tur-precheck.sh
 
+1.6	  * Optimized code
+	
 1.5   * Added setting DENY_WHEN_NO_SFV="\.r[a0-9][r0-9]$ \.0[0-9][0-9]$ \.mp[2|3]"
 
         This will block those files from being uploaded if there is no .sfv file in

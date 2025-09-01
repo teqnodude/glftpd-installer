@@ -41,14 +41,14 @@ color3=
 if [ ! -f /bin/sort ]
 then
     echo "You need to copy sort binary to the bin folder inside glftpd"
-    echo "Do the command: cp `which sort` /glftpd/bin"
+    echo "Do the command: cp $(which sort) /glftpd/bin"
     exit 0
 fi
 
 if [ ! -f /bin/xargs ]
 then
     echo "You need to copy xargs binary to the bin folder inside glftpd"
-    echo "Do the command: cp `which xargs` /glftpd/bin"
+    echo "Do the command: cp $(which xargs) /glftpd/bin"
     exit 0
 fi
 
@@ -76,14 +76,14 @@ if [ "$1" = "all" ]
 then
     echo "Listing last login for all users"
     echo
-    for user in `ls -A | egrep -v $EXCLUDES`
+    for user in $(ls -A | egrep -v $EXCLUDES)
     do
-        TIME=`grep -w TIME $user | awk -F " " '{print $3}'`
-        LL=`date +"%Y-%m-%d" -d @$TIME`
-        FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
-        group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-        [ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
-        addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
+        TIME=$(grep -w TIME $user | awk -F " " '{print $3}')
+        LL=$(date +"%Y-%m-%d" -d @$TIME)
+        FLAGS=$(grep -w FLAGS $user | awk -F " " '{print $2}')
+        group=$(cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs)
+        [ ! -z "$EXGROUPS" ] && [ $(echo $group | egrep "$EXGROUPS" | wc -l) -eq 1 ] && continue
+        addedby=$(cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||')
         case $FLAGS in
         *6*)
 	    if [ "$skipcolor" = "no" ]
@@ -111,13 +111,13 @@ if [ "$1" = "user" ]
 then
     echo "Listing last login for user $2"
     echo
-    for user in `ls -A | grep $2`
+    for user in $(ls -A | grep $2)
     do
-        TIME=`grep -w TIME $user | awk -F " " '{print $3}'`
-        LL=`date +"%Y-%m-%d" -d @$TIME`
-        FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
-        group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-        addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
+        TIME=$(grep -w TIME $user | awk -F " " '{print $3}')
+        LL=$(date +"%Y-%m-%d" -d @$TIME)
+        FLAGS=$(grep -w FLAGS $user | awk -F " " '{print $2}')
+        group=$(cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs)
+        addedby=$(cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||')
         case $FLAGS in
         *6*)
             if [ "$skipcolor" = "no" ]
@@ -147,15 +147,15 @@ if [ "$1" = "inactive" ]; then
         DELETION="$2 months ago"
         MONTHS="$2"
     else
-        MONTHS=`echo $DELETION | cut -d "=" -f2 | tr -d "\"" | cut -d " " -f1`
+        MONTHS=$(echo $DELETION | cut -d "=" -f2 | tr -d "\"" | cut -d " " -f1)
     fi
 
     echo "Listing users that been inactive for longer than $MONTHS months that should be deleted"
     echo
-    for i in `ls -A | egrep -v $EXUSERS`
+    for i in $(ls -A | egrep -v $EXUSERS)
     do
-        TIME=`grep -w TIME $i | awk -F " " '{print $3}'`
-        LL=`date +"%Y-%m-%d" -d @$TIME`
+        TIME=$(grep -w TIME $i | awk -F " " '{print $3}')
+        LL=$(date +"%Y-%m-%d" -d @$TIME)
         echo "$i $LL" >> /tmp/lastlogin.txt
     done
 
@@ -171,14 +171,14 @@ if [ "$1" = "inactive" ]; then
 
     sed -i 's/ /^/g' /tmp/lastlogin3.txt
 
-    for i in `cat /tmp/lastlogin3.txt`
+    for i in $(cat /tmp/lastlogin3.txt)
     do
-	user=`echo "$i" | cut -d "^" -f1`
-        logindate=`echo "$i" | cut -d "^" -f2`
-        flags=`cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}'`
-    	group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-        [ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
-    	addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
+	user=$(echo "$i" | cut -d "^" -f1)
+        logindate=$(echo "$i" | cut -d "^" -f2)
+        flags=$(cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}')
+    	group=$(cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs)
+        [ ! -z "$EXGROUPS" ] && [ $(echo $group | egrep "$EXGROUPS" | wc -l) -eq 1 ] && continue
+    	addedby=$(cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||')
     	case $flags in
         *6*)
             if [ "$skipcolor" = "no" ]
@@ -217,15 +217,15 @@ then
         PURGE="$2 months ago"
         MONTHS="$2"
     else
-        MONTHS=`echo $PURGE | cut -d "=" -f2 | tr -d "\"" | cut -d " " -f1`
+        MONTHS=$(echo $PURGE | cut -d "=" -f2 | tr -d "\"" | cut -d " " -f1)
     fi
 
     echo "Listing users that been inactive for longer than $MONTHS months that should be purged"
     echo
-    for i in `ls -A | egrep -v $EXUSERS`
+    for i in $(ls -A | egrep -v $EXUSERS)
     do
-        TIME=`grep -w TIME $i | awk -F " " '{print $3}'`
-        LL=`date +"%Y-%m-%d" -d @$TIME`
+        TIME=$(grep -w TIME $i | awk -F " " '{print $3}')
+        LL=$(date +"%Y-%m-%d" -d @$TIME)
         echo "$i $LL" >> /tmp/lastlogin.txt
     done
 
@@ -242,14 +242,14 @@ then
 
     sed -i 's/ /^/g' /tmp/lastlogin3.txt
 
-    for i in `cat /tmp/lastlogin3.txt`
+    for i in $(cat /tmp/lastlogin3.txt)
     do
-	user=`echo "$i" | cut -d "^" -f1`
-        logindate=`echo "$i" | cut -d "^" -f2`
-	flags=`cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}'`
-        group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-        [ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
-        addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
+	user=$(echo "$i" | cut -d "^" -f1)
+        logindate=$(echo "$i" | cut -d "^" -f2)
+	flags=$(cat "$USERPATH/$user" | grep -w FLAGS | awk -F " " '{print $2}')
+        group=$(cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs)
+        [ ! -z "$EXGROUPS" ] && [ $(echo $group | egrep "$EXGROUPS" | wc -l) -eq 1 ] && continue
+        addedby=$(cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||')
     	case $flags in
         *6*)
             if [ "$skipcolor" = "no" ]
@@ -283,18 +283,18 @@ fi
 if [ "$1" = "notraffic" ]
 then
     echo "Lising users with 0 in upload & download the current month"
-    for user in `ls -A | egrep -v $EXUSERS`
+    for user in $(ls -A | egrep -v $EXUSERS)
     do
-        TIME=`grep -w TIME $user | awk -F " " '{print $3}'`
-        LL=`date +"%Y-%m-%d" -d @$TIME`
-        FLAGS=`grep -w FLAGS $user | awk -F " " '{print $2}'`
-        group=`cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs`
-        [ ! -z "$EXGROUPS" ] && [ `echo $group | egrep "$EXGROUPS" | wc -l` -eq 1 ] && continue
-        addedby=`cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||'`
-        monthdn=`cat "$USERPATH/$user" | grep -w MONTHDN | cut -d " " -f3` 
-        #monthdn=`expr $monthdn / 1024 / 1024`
-        monthup=`cat "$USERPATH/$user" | grep -w MONTHUP | cut -d " " -f3` 
-        #monthup=`expr $monthup / 1024 / 1024`
+        TIME=$(grep -w TIME $user | awk -F " " '{print $3}')
+        LL=$(date +"%Y-%m-%d" -d @$TIME)
+        FLAGS=$(grep -w FLAGS $user | awk -F " " '{print $2}')
+        group=$(cat "$USERPATH/$user" | grep -w GROUP | awk -F " " '{print $2}' | xargs)
+        [ ! -z "$EXGROUPS" ] && [ $(echo $group | egrep "$EXGROUPS" | wc -l) -eq 1 ] && continue
+        addedby=$(cat "$USERPATH/$user" | grep -w USER | sed 's|^USER ||')
+        monthdn=$(cat "$USERPATH/$user" | grep -w MONTHDN | cut -d " " -f3) 
+        #monthdn=$(expr $monthdn / 1024 / 1024)
+        monthup=$(cat "$USERPATH/$user" | grep -w MONTHUP | cut -d " " -f3) 
+        #monthup=$(expr $monthup / 1024 / 1024)
         case $FLAGS in
         *6*)
             if [ "$skipcolor" = "no" ]

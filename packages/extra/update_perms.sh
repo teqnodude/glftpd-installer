@@ -1,7 +1,23 @@
 #!/bin/bash
 
-chown -R root:root /glftpd/bin
-chmod 755 /glftpd/bin/*.sh
-chmod u+s /glftpd/bin/undupe /glftpd/bin/sed /glftpd/bin/nuker /glftpd/bin/cleanup /glftpd/bin/chown /glftpd/bin/foo-pre /glftpd/bin/foo-pre >/dev/null 2>&1
+# path to glftpd
+glroot=/glftpd
 
-exit 0
+# set ownership
+chown -R root:root "$glroot/bin"
+
+# ensure scripts are executable
+chmod 755 "$glroot"/bin/*.sh 2>/dev/null
+
+# setuid on selected binaries (ignore missing ones quietly)
+for f in undupe sed nuker cleanup chown foo-pre
+do
+
+    if [[ -f "$glroot/bin/$f" ]]
+    then
+
+        chmod u+s "$glroot/bin/$f"
+
+    fi
+
+done

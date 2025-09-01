@@ -1,35 +1,52 @@
-if [[ -f "$cache" && "`grep -w "psxcimdb" $cache | wc -l`" = 1 ]]
+if has_key "$cache" psxcimdb
 then
-    ask=`grep -w "psxcimdb" $cache | cut -d "=" -f2 | tr -d "\""`
+
+    ask=$(get_value "$cache" psxcimdb)
+
 else
+
     echo
-    echo -e "\e[4mDescription for PSXC-IMDB:\e[0m"
+    echo "${yellow}Description for PSXC-IMDB:${reset}"
     cat $rootdir/packages/modules/psxc-imdb/description
     echo
-    echo -n "Install PSXC-IMDB ? [Y]es [N]o, default Y : " ; read ask
+    read -p "Install PSXC-IMDB ? [Y]es [N]o, default Y : " ask
+
 fi
 
 case $ask in
+
     [Nn])
-        if [[ -f "$cache" && "`grep -w "psxcimdb=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" psxcimdb
         then
+
             echo 'psxcimdb="n"' >> $cache
+
         fi
         ;;
+
     [Yy]|*)
-        if [[ -f "$cache" && "`grep -w "psxcimdb=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" psxcimdb
         then
+
             echo 'psxcimdb="y"' >> $cache
+
         fi
 
-        if [[ -f "$cache" && "`grep -w "psxcimdbchan" $cache | wc -l`" = 1 ]]
+        if has_key "$cache" psxcimdbchan
         then
-            imdbchan=`grep -w "psxcimdbchan" $cache | cut -d "=" -f2 | tr -d "\""`
+
+            imdbchan=$(get_value "$cache" psxcimdbchan)
+
         else
-            echo -n "IMDB announce channels, default $announcechannels : " ; read imdbchan
+
+            read -p "IMDB announce channels, default $announcechannels : " imdbchan
+
         fi
 
-        echo -n "Installing PSXC-IMDB, please wait..." | awk '{printf("%-64s",$0)}'
+        print_status_start "Installing" "PSXC-IMDB"
+
         cp $rootdir/packages/modules/psxc-imdb/extras/* $glroot/bin
         cp $rootdir/packages/modules/psxc-imdb/addons/* $glroot/bin
         cp $rootdir/packages/modules/psxc-imdb/main/psxc-imdb.sh $glroot/bin
@@ -41,13 +58,18 @@ case $ask in
         touch $glroot/ftp-data/logs/psxc-moviedata.log
         echo "source scripts/pzs-ng/plugins/psxc-imdb.tcl" >> $glroot/sitebot/eggdrop.conf
         cat $rootdir/packages/modules/psxc-imdb/gl >> $glroot/etc/glftpd.conf
-        echo -e "[\e[32mDone\e[0m]"
-        [ -z "$imdbchan" ] && imdbchan=$announcechannels
+
+        [[ -z "$imdbchan" ]] && imdbchan=$announcechannels
         sed -i "s/#changethis/$imdbchan/" $glroot/sitebot/scripts/pzs-ng/plugins/psxc-imdb.tcl
 
-        if [[ -f "$cache" && "`grep -w "psxcimdbchan=" $cache | wc -l`" = 0 ]]
+        if ! has_key "$cache" psxcimdbchan
         then
+
             echo "psxcimdbchan=\"$imdbchan\"" >> $cache
+
         fi
+
+        print_status_done
         ;;
+
 esac

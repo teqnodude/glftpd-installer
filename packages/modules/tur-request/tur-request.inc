@@ -1,39 +1,54 @@
-if [[ -f "$cache" && "`grep -w "request" $cache | wc -l`" = 1 ]]
+if has_key "$cache" request
 then
-    ask=`grep -w "request" $cache | cut -d "=" -f2 | tr -d "\""`
+
+    ask=$(get_value "$cache" request)
+
 else
+
     echo
-    echo -e "\e[4mDescription for Tur-Request:\e[0m"
+    echo "${yellow}Description for Tur-Request:${reset}"
     cat $rootdir/packages/modules/tur-request/description
     echo
-    echo -n "Install Tur-Request ? [Y]es [N]o, default Y : " ; read ask
+    read -p "Install Tur-Request ? [Y]es [N]o, default Y : " ask
+
 fi
 
 case $ask in
+
     [Nn])
-        if [[ -f "$cache" && "`grep -w "request=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" request
         then
+
             echo 'request="n"' >> $cache
+
         fi
         ;;
+
     [Yy]|*)
-        if [[ -f "$cache" && "`grep -w "request=" $cache | wc -l`" = 0 ]]
+
+        if ! has_key "$cache" request
         then
+
             echo 'request="y"' >> $cache
+
         fi
 
-        echo -n "Installing Tur-Request, please wait..." | awk '{printf("%-64s",$0)}'
+        print_status_start "Installing" "Tur-Request"
+
         cp $rootdir/packages/modules/tur-request/tur-request.sh $glroot/bin
         cp $rootdir/packages/modules/tur-request/*.tcl $glroot/sitebot/scripts
 	[ ! -f $glroot/bin/file_date ] && gcc -o $glroot/bin/file_date $rootdir/packages/modules/tur-request/file_date.c
         sed "s/changeme/$sitename/" $rootdir/packages/modules/tur-request/tur-request.conf > $glroot/bin/tur-request.conf
         mkdir -m777 $glroot/site/REQUESTS
         touch $glroot/site/REQUESTS/.requests ; chmod 666 $glroot/site/REQUESTS/.requests
-        echo "1 18 * * *            $glroot/bin/tur-request.sh status auto >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-        echo "1 0 * * *             $glroot/bin/tur-request.sh checkold >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
+	add_cron_job "1 18 * * *" "$glroot/bin/tur-request.sh status auto"
+	add_cron_job "1 0 * * *" "$glroot/bin/tur-request.sh checkold"
         touch $glroot/ftp-data/logs/tur-request.log
         echo "source scripts/tur-request.no_auth.tcl" >> $glroot/sitebot/eggdrop.conf
         cat $rootdir/packages/modules/tur-request/gl >> $glroot/etc/glftpd.conf
-        echo -e "[\e[32mDone\e[0m]"
+
+        print_status_done
         ;;
+
 esac

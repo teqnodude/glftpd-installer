@@ -9,72 +9,73 @@
  * Please do not change settings you don not understand!
  *
  */
-#define debug_mode                      	FALSE
-#define debug_altlog                    	FALSE
-#define debug_announce                  	FALSE
+#define debug_mode                      		 FALSE
+#define debug_altlog                    		 FALSE
+#define debug_announce                  		 FALSE
+												 
+#define sitepath_dir                    		 "/site/"
+#define group_dirs                      		 "/site/PRE/"
+#define zip_dirs                        		 "/site/0DAY/ /site/REQUESTS/ /site/EBOOKS/"
+#define nocheck_dirs                    		 "/site/PRIVATE/"
+#define noforce_sfv_first_dirs          		 "/site/PRE/ /site/REQUESTS/"
+#define audio_nocheck_dirs              		 "/site/PRE/ /site/REQUESTS/"
+#define allowed_types_exemption_dirs    		 "/site/PRE/ /site/MVID/"
+#define allowed_types                   		 "jpg,jpeg,cue,m3u,txt,vob,png,m2ts,ts,log,mkv"
+#define sample_types							 "mpg,mpeg,m2v,m2p,avi,mkv,mov,mp4,wmv,vob,ts,jpg,jpeg,png,m2ts"
+												 
+#define status_bar_type                 		 BAR_FILE
+												 
+#define incompleteislink                		 1
+												 
+#define remove_dot_debug_on_delete      		 TRUE
+#define remove_dot_files_on_delete      		 TRUE
+												 
+#define deny_double_sfv                 		 TRUE
+#define force_sfv_first                 		 FALSE
+												 
+#define audio_genre_path                		 "/site/music.by.genre/"
+#define audio_artist_path               		 "/site/music.by.artist/"
+#define audio_year_path                 		 "/site/music.by.year/"
+#define audio_group_path                		 "/site/music.by.group/"
+#define allowed_constant_bitrates       		 "192,320"
+#define allowed_years                   		 "2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060"
+#define banned_genres                   		 ""
+#define allowed_genres                  		 ""
+#define audio_genre_sort                		 FALSE
+#define audio_year_sort                 		 FALSE
+#define audio_artist_sort               		 FALSE
+#define audio_group_sort                		 FALSE
+#define audio_cbr_check                 		 FALSE
+#define audio_cbr_warn                  		 FALSE
+#define audio_year_check                		 FALSE
+#define audio_year_warn                          FALSE
+#define audio_banned_genre_check                 FALSE
+#define audio_allowed_genre_check                FALSE
+#define audio_genre_warn                         FALSE
+												 
+#define announce_norace                          TRUE
+												 
+#define incomplete_cd_indicator        	 		 "../../[incomplete]-(%0)-%1"
+#define incomplete_indicator            		 "../[incomplete]-%0"
+#define incomplete_nfo_indicator        		 "../[no-nfo]-%0"
+#define incomplete_base_nfo_indicator   		 "../../[no-nfo]-%1"
+												 
+#define create_missing_sample_link 				 FALSE
+#define incomplete_sample_indicator 			 "../[no-sample]-%0"
+#define incomplete_base_sample_indicator 		 "../../[no-sample]-%1"
+#define check_for_missing_sample_dirs			 "/site/MBLURAY/ /site/TV-720/ /site/TV-1080/ /site/TV-2160/ /site/TV-HD/ /site/TV-NL/ /site/X264/ /site/X264-1080/ /site/X264-720/ /site/X265-2160/ /site/XVID/ /site/XXX/ /site/XXX-PAYSITE/"
+												 
+#define enable_nfo_script               		 TRUE
+#define nfo_script                      		 "/bin/psxc-imdb.sh"
+#define enable_complete_script          		 FALSE
+#define complete_script                 		 "/bin/mss-rlscomp.sh"
+												 
+#define mark_empty_dirs_as_incomplete_on_rescan  TRUE
+#define ignore_zero_sized_on_rescan     		 TRUE
+#define subdir_list                     		 "cd??,disc??,disk??,dvd??,extra?,sub?,subtitle?,vobsub?,sample?,subpack?,ac3,audioaddon,addon,ac3addon,proof,cover?,tools"
+#define speedtest_delfile               		 TRUE
+#define speedtest_dirs                  		 "/site/SPEEDTEST/"
+#define strict_path_match               		 TRUE
+#define extract_nfo                     		 FALSE
+#define test_for_password               		 FALSE
 
-#define sitepath_dir                    	"/site/"
-#define group_dirs                      	"/site/PRE/"
-#define zip_dirs                        	"/site/0DAY/ /site/REQUESTS/ /site/EBOOKS/"
-#define nocheck_dirs                    	"/site/PRIVATE/"
-#define noforce_sfv_first_dirs          	"/site/PRE/ /site/REQUESTS/"
-#define audio_nocheck_dirs              	"/site/PRE/ /site/REQUESTS/"
-#define allowed_types_exemption_dirs    	"/site/PRE/ /site/MVID/"
-#define allowed_types                   	"jpg,jpeg,cue,m3u,txt,vob,png,m2ts,ts,log,mkv"
-#define sample_types				"mpg,mpeg,m2v,m2p,avi,mkv,mov,mp4,wmv,vob,ts,jpg,jpeg,png,m2ts"
-    
-#define status_bar_type                 	BAR_FILE
-    
-#define incompleteislink                	1
-
-#define remove_dot_debug_on_delete      	TRUE
-#define remove_dot_files_on_delete      	TRUE
-    
-#define deny_double_sfv                 	TRUE
-#define force_sfv_first                 	FALSE
-    
-#define audio_genre_path                	"/site/music.by.genre/"
-#define audio_artist_path               	"/site/music.by.artist/"
-#define audio_year_path                 	"/site/music.by.year/"
-#define audio_group_path                	"/site/music.by.group/"
-#define allowed_constant_bitrates       	"192,320"
-#define allowed_years                   	"2017,2018,2019,2020,2021,2022,2023,2024,2025"
-#define banned_genres                   	""
-#define allowed_genres                  	""
-#define audio_genre_sort                	FALSE
-#define audio_year_sort                 	FALSE
-#define audio_artist_sort               	FALSE
-#define audio_group_sort                	FALSE
-#define audio_cbr_check                 	FALSE
-#define audio_cbr_warn                  	FALSE
-#define audio_year_check                	FALSE
-#define audio_year_warn                         FALSE
-#define audio_banned_genre_check                FALSE
-#define audio_allowed_genre_check               FALSE
-#define audio_genre_warn                        FALSE
-
-#define announce_norace                         TRUE
-
-#define incomplete_cd_indicator        	 	"../../[incomplete]-(%0)-%1"
-#define incomplete_indicator            	"../[incomplete]-%0"
-#define incomplete_nfo_indicator        	"../[no-nfo]-%0"
-#define incomplete_base_nfo_indicator   	"../../[no-nfo]-%1"
-
-#define create_missing_sample_link 		FALSE
-#define incomplete_sample_indicator 		"../[no-sample]-%0"
-#define incomplete_base_sample_indicator 	"../../[no-sample]-%1"
-#define check_for_missing_sample_dirs		"/site/MBLURAY/ /site/TV-720/ /site/TV-1080/ /site/TV-2160/ /site/TV-HD/ /site/TV-NL/ /site/X264/ /site/X264-1080/ /site/X264-720/ /site/X265-2160/ /site/XVID/ /site/XXX/ /site/XXX-PAYSITE/"
-
-#define enable_nfo_script               	TRUE
-#define nfo_script                      	"/bin/psxc-imdb.sh"
-#define enable_complete_script          	FALSE
-#define complete_script                 	"/bin/mss-rlscomp.sh"
-
-#define mark_empty_dirs_as_incomplete_on_rescan TRUE
-#define ignore_zero_sized_on_rescan     	TRUE
-#define subdir_list                     	"cd??,disc??,disk??,dvd??,extra?,sub?,subtitle?,vobsub?,sample?,subpack?,ac3,audioaddon,addon,ac3addon,proof,cover?,tools"
-#define speedtest_delfile               	TRUE
-#define speedtest_dirs                  	"/site/SPEEDTEST/"
-#define strict_path_match               	TRUE
-#define extract_nfo                     	FALSE
-#define test_for_password               	FALSE
