@@ -50,7 +50,7 @@ VER=3.4
 #  KEY $(FTPuser) ($(FTPuser)(2)),
 #  KEY $(Section) ($(section)(2)),
 #  KEY $(Filename) ($(filename)(8))
-# ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4_general_ci;
+# ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 #
 #
 # CREATE INDEX idx_section_datetime_ftpuser ON transfers(section, datetime, FTPuser);
