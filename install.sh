@@ -1944,7 +1944,7 @@ glftpd()
     sed -i "s/changeme/$sitename/" "$glroot/bin/tur-free.sh"
 
     # Compile and install binaries
-    gcc ../scripts/tur-predircheck/glftpd2/dirloglist_gl.c -o "$glroot/bin/dirloglist_gl" 2>/dev/null
+    gcc ../scripts/tur-predircheck/glftpd2/dirloglist_gl.c -o "$glroot/bin/dirloglist_gl"
     gcc -O2 ../extra/tur-ftpwho/tur-ftpwho.c -o "$glroot/bin/tur-ftpwho"
     gcc ../extra/tuls/tuls.c -o "$glroot/bin/tuls"
 
