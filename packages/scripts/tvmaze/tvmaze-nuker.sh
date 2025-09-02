@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=3.3
+VER=3.4
 #--[ Info ]-----------------------------------------------------
 #
 # This script comes without any warranty, use it at your own risk.
@@ -21,6 +21,7 @@ VER=3.3
 #		  slow down the creation of new dirs
 # 2024-02-17 v3.2 Fixed the cleanup function of adapative blocklist and added logging of cleanup to logfile  
 # 2025-08-29 v3.3 Improved version with better error handling, performance optimizations, and safer variable usage.
+# 2025-09-02 v3.4 Fixed the nuke_section_languages that got broken after latest optimization
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
@@ -554,12 +555,12 @@ then
     do
 
         section="$(echo "$rawdata" | cut -d ':' -f1)"
-        denied="$(echo "$rawdata" | cut -d ':' -f2)"
+        allowed="$(echo "$rawdata" | cut -d ':' -f2)"
 
         if echo "$RLS_NAME" | grep -iq "$section/"
         then
 
-            if ! echo "$SHOW_LANGUAGE" | grep -iq "$denied"
+            if ! echo "$SHOW_LANGUAGE" | grep -Eiq "$allowed"
             then
 
                 [[ "$SHOW_LANGUAGE" == "null" ]] && exit 0
