@@ -1,9 +1,6 @@
 ## Intended systems
 
-This installer is intended to be used on systems that do not have existing MariaDB databases running. If it's being used on systems that have existing databases running, then keep in mind that this installer will backup the 
-existing /etc/mysql/mariadb.conf.d/50-server.cnf to /etc/mysql/mariadb.conf.d/50-server.cnf.bak and install its own version if section-traffic or tur-trial3 is installed. This could potentially 
-stop existing databases from working properly. If you want to use the installer despite having existing databases, then I would recommend you do not choose to install section-traffic or 
-tur-trial3 and do this manually instead.
+Debian
 
 ## To download
 
@@ -55,13 +52,13 @@ git clone https://github.com/teqnodude/glftpd-installer
 
 ## Requirements
 
-The installer needs to be run as root and it has only been tested in **Debian** and **Slackware**
+The installer needs to be run as root and it has only been tested in **Debian**
 
-List of required packages for every script to work
+List of required packages for every script to work that the installer check for and installs if not found.
 
 **Debian**
 ``` 
-apt-get install cron gcc systemd autoconf bc curl diffutils ftp git libflac-dev libssl-dev lm-sensors lynx make mariadb-server ncftp passwd rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip bsdmainutils rsyslog
+cron gcc systemd autoconf bc curl diffutils ftp git libflac-dev libssl-dev lm-sensors lynx make mariadb-server ncftp passwd rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip bsdmainutils rsyslog
 ``` 
 **BASH** needs to be the default shell. To change from default DASH to BASH in Debian do 
 ``` 
