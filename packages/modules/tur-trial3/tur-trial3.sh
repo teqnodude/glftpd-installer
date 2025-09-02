@@ -62,7 +62,7 @@ if [ -z "$FLAGS" ]; then
   RUN_MODE="irc"
 
   ## Set SQL command..
-  SQL="$SQLBIN -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
+  SQL="$SQLBIN -P 3307 -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
 
   ## Set all dirs below to include $GLROOT since were not inside glftpd.
   USERSDIR="$GLROOT$USERSDIR"
