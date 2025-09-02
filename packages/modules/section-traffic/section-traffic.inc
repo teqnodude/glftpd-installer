@@ -77,7 +77,7 @@ case $ask in
             systemctl enable --now mariadb-glftpd >/dev/null 2>&1
 	    
 	    	# Copy and configure scripts
-            for script in xferlog-import_3.3.sh section-traffic.sh
+            for script in xferlog-import.sh section-traffic.sh
 	    	do
 
                 if [[ -f "$rootdir/packages/modules/section-traffic/$script" ]]
@@ -134,7 +134,7 @@ case $ask in
             fi
 
             # Add cron jobs
-            add_cron_job "*/30 * * * *" "$glroot/bin/xferlog-import_3.3.sh"
+            add_cron_job "*/30 * * * *" "$glroot/bin/xferlog-import.sh"
             add_cron_job "30 0 * * *" "$glroot/bin/section-traffic.sh cleanup"
 
             print_status_done
