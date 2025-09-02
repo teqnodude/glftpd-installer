@@ -1264,7 +1264,7 @@ port()
    	if ! has_key "$cache" "port"
     then
 
-    	echo "port=\$port\"" >> "$cache"
+    	echo "port=\"$port\"" >> "$cache"
 
     fi
 }
