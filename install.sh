@@ -208,7 +208,7 @@ requirements()
 
     local packages=(
         cron gcc systemd autoconf bc curl diffutils ftp git libflac-dev
-        libssl-dev lm-sensors lynx make mariadb-server ncftp passwd
+        iputils-ping libssl-dev lm-sensors lynx make mariadb-server ncftp passwd
         rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip
         bsdmainutils rsyslog
     )
