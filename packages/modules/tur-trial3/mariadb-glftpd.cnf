@@ -1,0 +1,13 @@
+[mysqld]
+# unique to this instance
+datadir=/glftpd/backup/mysql
+socket=/run/mysqld/mariadb-glftpd.sock
+port=3307
+pid-file=/run/mysqld/mariadb-glftpd.pid
+log-error=/var/log/mysql/mariadb-glftpd.err
+
+# local-only access (your scripts can use the socket or 127.0.0.1:3307)
+bind-address=127.0.0.1
+
+# optional: sane defaults
+innodb_file_per_table=1

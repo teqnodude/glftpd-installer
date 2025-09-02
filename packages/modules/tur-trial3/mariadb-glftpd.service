@@ -1,0 +1,16 @@
+[Unit]
+Description=MariaDB (glftpd instance)
+After=network.target
+RequiresMountsFor=/glftpd/backup/mysql
+
+[Service]
+User=mysql
+Group=mysql
+ExecStart=/usr/sbin/mariadbd --defaults-file=/etc/mysql/mariadb-glftpd.cnf
+Restart=on-failure
+PrivateTmp=true
+RuntimeDirectory=mysqld
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target
