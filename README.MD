@@ -58,7 +58,7 @@ List of required packages for every script to work that the installer check for 
 
 **Debian**
 ``` 
-cron gcc systemd autoconf bc curl diffutils ftp git libflac-dev libssl-dev lm-sensors lynx make mariadb-server ncftp passwd rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip bsdmainutils rsyslog
+cron gcc systemd autoconf bc curl diffutils ftp git iputils-ping libflac-dev libssl-dev lm-sensors lynx make mariadb-server ncftp passwd rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip bsdmainutils rsyslog
 ``` 
 **BASH** needs to be the default shell. To change from default DASH to BASH in Debian do 
 ``` 
