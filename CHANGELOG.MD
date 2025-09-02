@@ -1,3 +1,10 @@
+## 12.x
+
+### Fixes
+
+- I silenced a compiling error of dirloglist_gl that was non-critical
+- When providing default ip for user and passive adress it used ipv6, changed to ipv4
+
 ## 12.0 - 2025-09-01
 
 ### Updated

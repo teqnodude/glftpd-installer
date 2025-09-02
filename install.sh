@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=12.0
+VER=12.x
 
 # Set debug mode (0=off, 1=on)
 DEBUG=0
@@ -1841,7 +1841,7 @@ glftpd()
 	[Yy])
 
 	    curlbinary=$(command -v curl)
-	    ipcheck="$($curlbinary -fsS https://ifconfig.me/)"
+	    ipcheck="$($curlbinary -4fsS https://ifconfig.me/)"
 
 	    if has_key "$cache" pasv_addr
 	    then
@@ -1944,7 +1944,7 @@ glftpd()
     sed -i "s/changeme/$sitename/" "$glroot/bin/tur-free.sh"
 
     # Compile and install binaries
-    gcc ../scripts/tur-predircheck/glftpd2/dirloglist_gl.c -o "$glroot/bin/dirloglist_gl"
+    gcc ../scripts/tur-predircheck/glftpd2/dirloglist_gl.c -o "$glroot/bin/dirloglist_gl" 2>/dev/null
     gcc -O2 ../extra/tur-ftpwho/tur-ftpwho.c -o "$glroot/bin/tur-ftpwho"
     gcc ../extra/tuls/tuls.c -o "$glroot/bin/tuls"
 
@@ -2388,7 +2388,7 @@ usercreation()
     fi
 
     localip=$(ip -o -4 addr show | awk '/scope global/ {split($4, a, "."); print a[1]"."a[2]"."a[3]".*"}' | head -1)
-    netip=$(curl -fsS https://ifconfig.me/ | awk -F. '{OFS="."; print $1,$2,$3,"*"}')
+    netip=$(curl -4fsS https://ifconfig.me/ | awk -F. '{OFS="."; print $1,$2,$3,"*"}')
 	
     if has_key "$cache" ip
     then
