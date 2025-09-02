@@ -348,10 +348,10 @@ then
                 if [[ "$NUKE_ADAPTIVE" == "1" ]]
                 then
 
-		    section=$(echo $RLS_NAME | cut -d'/' -f1-3)
+		    		section=$(echo $RLS_NAME | cut -d'/' -f1-3)
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
-		    [ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
+		    		[ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
 
                 fi
 
@@ -382,14 +382,14 @@ then
             if echo "$SHOW_TYPE" | grep -iq "$denied"
             then
 
-        	type="$(echo $SHOW_TYPE | egrep -oi $denied)"
+        		type="$(echo $SHOW_TYPE | egrep -oi $denied)"
 
                 if [[ "$NUKE_ADAPTIVE" == "1" ]]
                 then
 
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
-		    [ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
+		    		[ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
 
                 fi
 
@@ -427,7 +427,7 @@ then
 
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
-		    [ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
+		    		[ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
 
                 fi
 
@@ -479,22 +479,22 @@ fi
 if [[ "$NUKE_ORIGIN_COUNTRY" == "1" ]]
 then
 
-    if [ -n "$NUKE_ORIGIN_COUNTRIES" ]
+    if [[ -n "$NUKE_ORIGIN_COUNTRIES" ]]
     then
 
         for country in $NUKE_ORIGIN_COUNTRIES
         do
 
-            if [ "$SHOW_COUNTRY" == "$country" ]
+            if [[ "$SHOW_COUNTRY" == "$country" ]]
             then
 
-    		if [[ "$NUKE_ADAPTIVE" == "1" ]]
+    			if [[ "$NUKE_ADAPTIVE" == "1" ]]
             	then
 
-		    section=$(echo $RLS_NAME | cut -d'/' -f1-3)
+		    		section=$(echo $RLS_NAME | cut -d'/' -f1-3)
             	    exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
             	    block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
-		    [ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
+		    		[ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
 
             	fi
 
@@ -531,9 +531,11 @@ then
                     
                     if ! grep -q "$section" "$BLOCKFILE" && grep -q "$block" "$BLOCKFILE"
                     then
-                        addblock "$section" "$block"
-                    fi
-
+                    
+						addblock "$section" "$block"
+                
+					fi
+				
                 fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "${RLS_NAME}" "$NUKE_MULTIPLER" "Network $network is not allowed"
@@ -573,8 +575,10 @@ then
                     
                     if ! grep -q "$section" "$BLOCKFILE" || ! grep -q "$block" "$BLOCKFILE"
                     then
-                        addblock "$section" "$block"
-                    fi
+                 
+						addblock "$section" "$block"
+                    
+					fi
 
                 fi
 
@@ -614,8 +618,10 @@ then
                     
                     if ! grep -q "$section" "$BLOCKFILE" || ! grep -q "$block" "$BLOCKFILE"
                     then
-                        addblock "$section" "$block"
-                    fi
+                        
+						addblock "$section" "$block"
+                    
+					fi
 
                 fi
 
@@ -656,8 +662,10 @@ then
                     
                     if ! grep -q "$section" "$BLOCKFILE" || ! grep -q "$block" "$BLOCKFILE"
                     then
-                        addblock "$section" "$block"
-                    fi
+                        
+						addblock "$section" "$block"
+                    
+					fi
 
                 fi
 
