@@ -77,7 +77,7 @@ int main (void) {
 
    read_conf_datapath(datapath, config_file);
    
-   sprintf(dirlogfile, "/ftp-data/logs/dirlog", datapath);
+   strcpy(dirlogfile, "/ftp-data/logs/dirlog");
    printf("PATH: %s\n", dirlogfile);
 
    if((fp = fopen(dirlogfile, "r")) == NULL) {
