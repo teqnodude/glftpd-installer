@@ -217,12 +217,12 @@ rescan()
 	    if [[ "${!var}" == "null" || -z "${!var}" ]]
 	    then
 	
-		declare "$var=NA"
+			declare "$var=NA"
 	
 	    elif [[ "$var" == "SHOW_IMDB" && "${!var}" != "NA" ]]
 	    then
 	
-		declare "$var=https://imdb.com/title/${!var}"
+			declare "$var=https://imdb.com/title/${!var}"
 	
 	    fi
 	
@@ -289,16 +289,16 @@ rescan()
 		============================ TVMAZE INFO v$TVMAZE_VER ================================
 		EOF
 
-	    #rm -f "$1/$rls_name/"*TVMAZE*
+	    rm -f "$1/$rls_name/"*TVMAZE*
 	    TAG_FILE="$1/$rls_name/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
 	    touch "$TAG_FILE" && chmod 666 "$TAG_FILE"
 
 	    if [ "$preserve" -eq 1 ]
 	    then
 
-		dir="$1/$rls_name"
-		file="$(ls -t -- "$dir" | sed -n '3p')"
-		[[ -n "$file" ]] &&  touch -mr "$dir/$file" "$dir"
+			dir="$1/$rls_name"
+			file="$(ls -t -- "$dir" | sed -n '3p')"
+			[[ -n "$file" ]] &&  touch -mr "$dir/$file" "$dir"
 
 	    fi
 
@@ -317,69 +317,70 @@ do
     depth=$(echo $section | cut -d ':' -f2)
 
     case $depth in
-    3x)
+		3x)
 
-	for subdir in $(ls $glroot$sec)
-	do
+			for subdir in $(ls $glroot$sec)
+			do
 
-	    for subdir2 in $(ls $glroot$sec/$subdir)
-	    do
+				for subdir2 in $(ls $glroot$sec/$subdir)
+				do
 
-		for subdir3 in $(ls $glroot$sec/$subdir/$subdir2)
-		do
+				for subdir3 in $(ls $glroot$sec/$subdir/$subdir2)
+				do
 
-		    rescan "$glroot$sec/$subdir/$subdir2/$subdir3"
+					rescan "$glroot$sec/$subdir/$subdir2/$subdir3"
 
-		done
+				done
 
-	    done
+				done
 
-	done
+			done
 
-        i=$(($i))
-	echo
-	echo "Total scanned directories: $i"	
-	;;
+			i=$(($i))
+			echo
+			echo "Total scanned directories: $i"
+			;;
 
-    2x)
-	for subdir in $(ls $glroot$sec)
-	do
-	
-	    for subdir2 in $(ls $glroot$sec/$subdir)
-	    do
-	
-		rescan "$glroot$sec/$subdir/$subdir2"
-	
-	    done
-	
-	done
-        
-        i=$(($i))
-	echo
-	echo "Total scanned directories: $i"		
-	;;
+		2x)
 
-    1x)
+			for subdir in $(ls $glroot$sec)
+			do
 
-	for subdir in $(ls $glroot$sec)
-	do
+				for subdir2 in $(ls $glroot$sec/$subdir)
+				do
 
-	    rescan "$glroot$sec/$subdir"
+				rescan "$glroot$sec/$subdir/$subdir2"
 
-	done
+				done
 
-	i=$(($i))
-	echo
-	echo "Total scanned directories: $i"	
+			done
 
-        ;;
-    *)
+			i=$(($i))
+			echo
+			echo "Total scanned directories: $i"
+			;;
 
-	rescan "$glroot$sec"
-	i=$(($i))
-	echo
-	echo "Total scanned directories: $i"	
-	;;
+		1x)
+
+			for subdir in $(ls $glroot$sec)
+			do
+
+				rescan "$glroot$sec/$subdir"
+
+			done
+
+			i=$(($i))
+			echo
+			echo "Total scanned directories: $i"
+			;;
+			
+		*)
+
+			rescan "$glroot$sec"
+			i=$(($i))
+			echo
+			echo "Total scanned directories: $i"
+			;;
 
     esac
 
