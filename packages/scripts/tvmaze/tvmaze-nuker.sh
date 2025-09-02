@@ -122,7 +122,7 @@ BLOCKDAYS=180 # 180 days = 6 months
 
 # Length of rows in chars in BLOCKFILE. Its relevance is to the number of rows and blocks before losing speed when creating new dirs.
 # WARNING: If you change this number you have to empty the file BLOCKFILE to avoid problems.
-LENGTH=210
+LENGTH=400
 
 #--[ Script Start ]---------------------------------------------
 
