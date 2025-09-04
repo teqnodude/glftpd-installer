@@ -45,10 +45,10 @@ then
 
 else
 
-    touch "$tmp/rescan_fix.lock"
+    touch $tmp/rescan_fix.lock
     trap 'rm -f "$tmp/rescan_fix.lock"' EXIT
 
-    check=$(find "$glroot/ftp-data/pzs-ng" -name '*.lock' -mmin +"$minutes" -print)
+    check=$(find $glroot/ftp-data/pzs-ng -name *.lock -mmin +$minutes)
 
     if [[ -z "$check" ]]
     then
@@ -57,29 +57,28 @@ else
 
     else
 
+        echo "Looking for lock files older than $minutes minutes"
         log "Looking for lock files older than $minutes minutes"
 
         for result in $check
         do
 
-            # Example: /glroot/ftp-data/pzs-ng/<path>/headdata.lock
-            # Build a glob to remove all related lock files (e.g. headdata.*)
-            lock_glob="${result%.lock}*"
+            lock=$(echo $result | sed 's|.lock|*|')
+            release=$(echo $result | sed 's|'"$glroot"'/ftp-data/pzs-ng||' | sed 's|headdata.lock||')
 
-            # Compute the release path under $glroot (strip prefix + trailing filename)
-            release="${result#"$glroot/ftp-data/pzs-ng"}"
-            release="${release%headdata.lock}"
-
+            echo "Removing -missing files from $glroot$release"
             log "Removing -missing files from $glroot$release"
-            find "$glroot$release" -name '*-missing' -exec rm -rf {} +
+            find "$glroot$release" -name "*-missing" -exec rm -rf {} +
 
-            log "Removing lock file(s) from pzs-ng dir $glroot/ftp-data/pzs-ng$release"
-            # Intentionally unquoted to expand the glob to matching files
-            rm -f $lock_glob
+            echo "Removing lock file from pzs-ng dir $glroot/ftp-data/pzs-ng$release"
+            log "Removing lock file from pzs-ng dir $glroot/ftp-data/pzs-ng$release"
+            rm -f $lock
 
+            echo "Doing a rescan of dir to check if $glroot$release is complete"
             log "Doing a rescan of dir to check if $glroot$release is complete"
-            "$glroot/bin/rescan" --chroot="$glroot" --normal --dir="$release"
+            $glroot/bin/rescan --chroot=$glroot --normal --dir=$release
 
+            echo "Done"
             log "Done"
 
         done
