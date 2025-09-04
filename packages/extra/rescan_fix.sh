@@ -86,7 +86,4 @@ else
 
     fi
 
-    rm -f "$tmp/rescan_fix.lock"
-    trap - EXIT
-
 fi
