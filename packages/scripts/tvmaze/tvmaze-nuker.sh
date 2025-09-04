@@ -193,7 +193,7 @@ SHOW_TYPE=$(remove_quotes "$7")
 EP_AIR_DATE=$(remove_quotes "$8")
 SHOW_RATING=$(remove_quotes "$9")
 
-addblock()
+function addblock
 {
 
 today=$(date "+%Y-%m-%d")
@@ -206,30 +206,14 @@ then
 
 else
 
-    if [[ "$(grep "$1" $BLOCKFILE | tail -1 | wc -c)" -ge "$LENGTH" ]]
+    if [ "$(grep "$1" $BLOCKFILE | tail -1 | wc -c)" -ge "$LENGTH" ]
     then
 
         $GLROOT/bin/sed -i -e "$(grep -n "/site/$section:^" $BLOCKFILE | tail -1 | cut -f1 -d':')a /site/$section:^($2)[._-]:$today" $BLOCKFILE
 
     else
 
-	# Get the last matching line
-	line=$(grep "^/site/$1:^(" "$BLOCKFILE" | tail -n 1)
-
-	# Extract the content between :^( and )[._-]
-	if [[ -n "$line" ]]
-	then
-
-	    content="${line#*:^(}"
-	    content="${content%)[._-]*}"
-	    startword="${content%%|*}"
-
-	else
-
-	    startword=""
-
-	fi        
-
+        startword=$(grep "$1:^(" $BLOCKFILE | tail -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1)
         $GLROOT/bin/sed -i "/\/site\/$section:^(/ s/$startword/$2|$startword/" $BLOCKFILE
 
     fi
@@ -237,6 +221,7 @@ else
 fi
 
 }
+
 
 if [[ "$DEBUG" == "1" ]]
 then
@@ -705,37 +690,39 @@ then
 
 fi
 
-if [[ "${NUKE_CLEAN_BLOCKLIST}" == "1" ]]
+if [[ "$NUKE_CLEAN_BLOCKLIST" -eq 1 ]]
 then
+
+    current_epoch=$(date +%s)
+    declare -A seen
+    to_delete=()
 
     while IFS= read -r row
     do
 
         blockdate=$(echo "$row" | cut -d ':' -f3)
-        
-        # Skip if blockdate is empty or invalid
-        if [[ -z "$blockdate" ]] || ! date --date "$blockdate" &>/dev/null
+
+        # Skip invalid dates
+        if ! date --date "$blockdate" &>/dev/null
         then
 
             continue
 
         fi
 
-        current_epoch=$(date +%s)
-        block_epoch=$(date +%s --date "$blockdate" 2>/dev/null)
-        
-        # Calculate days difference safely
-        if [[ -n "$block_epoch" ]]
+        block_epoch=$(date +%s --date "$blockdate")
+        days=$(( (current_epoch - block_epoch) / 86400 ))
+
+        if [[ "$days" -ge "$BLOCKDAYS" ]]
         then
 
-            seconds_diff=$((current_epoch - block_epoch))
-            days=$((seconds_diff / 86400))  # 3600*24=86400
+            LogMsg "Automatic removal of blocks with date $blockdate"
 
-            if [[ "$days" -ge "${BLOCKDAYS:-0}" ]]
+            if [[ -z "${seen[$blockdate]}" ]]
             then
 
-                LogMsg "Automatic removal of blocks with date $blockdate"
-                $GLROOT/bin/sed -i "/$blockdate/d" "$BLOCKFILE"
+                to_delete+=( "$blockdate" )
+                seen[$blockdate]=1
 
             fi
 
@@ -743,4 +730,20 @@ then
 
     done < "$BLOCKFILE"
 
+    if (( ${#to_delete[@]} > 0 ))
+    then
+
+        sed_script=
+        for d in "${to_delete[@]}"
+        do
+
+            sed_script+="/$d/d;"
+
+        done
+
+        "$GLROOT/bin/sed" -i -e "$sed_script" "$BLOCKFILE"
+
+    fi
+
 fi
+
