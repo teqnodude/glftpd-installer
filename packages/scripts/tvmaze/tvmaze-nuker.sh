@@ -379,10 +379,10 @@ then
         if echo "$RLS_NAME" | grep -iq "$section/"
         then
 
-            if echo "$SHOW_TYPE" | grep -iq "$denied"
+            if echo "$SHOW_TYPE" | grep -Eiq "$denied"
             then
 
-        		type="$(echo $SHOW_TYPE | egrep -oi $denied)"
+        		type="$(echo $SHOW_TYPE | grep -Eoi $denied)"
 
                 if [[ "$NUKE_ADAPTIVE" == "1" ]]
                 then
@@ -417,10 +417,10 @@ then
         if echo "$RLS_NAME" | grep -iq "$section/"
         then
 
-            if echo "$SHOW_GENRES" | grep -iq "$denied"
+            if echo "$SHOW_GENRES" | grep -Eiq "$denied"
             then
 
-                genre="$(echo $SHOW_GENRES | egrep -oi $denied)"
+                genre="$(echo $SHOW_GENRES | grep -Eoi $denied)"
 
                 if [[ "$NUKE_ADAPTIVE" == "1" ]]
                 then
