@@ -12,19 +12,9 @@ nonfo=1
 
 #--[ Script ]---------------------------------------------------
 
-colors=$(tput colors 2>/dev/null || echo 0)
-if (( colors >= 16 ))
-then
-
-    red="$(tput setaf 9)"
-
-else
-
-    red="$(tput bold; tput setaf 1)"
-
-fi
-grey="$(tput setaf 8)"
-reset="$(tput setaf 7)"
+red=4
+grey=14
+reset=
 
 # derive sections from botconf if present
 if [[ -n "$botconf" && -e "$botconf" ]]
@@ -90,19 +80,19 @@ do
             if [[ -n "$percent" && "$percent" != "100%" ]]
             then
 
-                echo "$secname: ${red}${secrel}${reset}${grey} is${red} $percent ${grey}complete.${reset}"
+                echo "$secname:${red} ${secrel}${reset}${grey} is${red} $percent ${grey}complete.${reset}"
                 ((found++))
 
             elif [[ -z "$percent" ]]
             then
 
-            	echo "$secname:${red}${secrel}${reset}${grey} has no sfv file or progress marker.${reset}"
+            	echo "$secname:${red} ${secrel}${reset}${grey} has no sfv file or progress marker.${reset}"
                 ((found++))
 
             elif (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" 2>/dev/null | wc -l) -eq 0 ]]
             then
 
-				echo "$secname:${red}${secrel}${reset}${grey} is missing a NFO.${reset}"
+				echo "$secname:${red} ${secrel}${reset}${grey} is missing a NFO.${reset}"
 				((found++))
 
             fi
