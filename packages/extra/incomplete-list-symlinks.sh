@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.1
+VER=1.2
 #--[ Info ]-----------------------------------------------------
 #
 # Put in crontab:
@@ -18,7 +18,7 @@ create=1
 incomplete=INCOMPLETES
 
 # set to 1 to also symlink fully-complete releases that are missing an NFO
-nonfo=0
+nonfo=1
 
 #--[ Script ]---------------------------------------------------
 
@@ -26,7 +26,7 @@ nonfo=0
 if [[ -n "$botconf" && -e "$botconf" ]]
 then
 
-    sections="$(grep -E '^set[[:space:]]+paths\(' "$botconf" | sed 's/^set paths(\(.*\))[[:space:]]\{1,\}"\(.*\)\*"/\1:\2/' | sort)"
+    sections="$(grep -E '^set[[:space:]]+paths\(' "$botconf" | sed 's/^set paths(\(.*\))[[:space:]]\{1,\}"\(.*\)\*"/\1:\2/' | sed 's|\*||g' | sed 's|//$|/|' | sort)"
 
 fi
 
@@ -53,10 +53,6 @@ then
 
 fi
 
-# run cleanup once and reuse (keep /Subs for special linking; exclude /Sample)
-cleanup_raw="$("$cleanup" "$glroot" 2>/dev/null)"
-cleanup_lines="$(printf '%s\n' "$cleanup_raw" | grep -E '^Incomplete' | tr '\"' '\n' | grep -Ev '/Sample' | tr -s '/' | sort)"
-
 IFSORIG="$IFS"
 IFS=$'\n'
 
@@ -69,52 +65,57 @@ do
     for secpath in $secpaths
     do
 
-        results="$(printf '%s\n' "$cleanup_lines" | grep -F "$secpath")"
+        # Add glroot to section path for matching since cleanup outputs full paths
+        full_secpath="$glroot$secpath"
+
+        # Get results using the original parsing method
+        results="$("$cleanup" "$glroot" 2>/dev/null | grep -E '^Incomplete' | tr '\"' '\n' | grep -F "$full_secpath" | grep -Ev '/Sample' | tr -s '/' | sort)"
+
         [[ -z "$results" ]] && continue
 
         for result in $results
         do
 
-            secrel="$(echo "$result" | sed "s|$secpath||" | tr -s '/' | sed "s|$glroot||")"
-            target="$glroot/site/$secname/$secrel"
+            # Extract relative path from full section path
+            secrel="$(echo "$result" | sed "s|$full_secpath||" | sed 's|^/||')"
 
-            # Approved_by gate
-            if [[ $(find "$target" -maxdepth 0 -type f -iname "Approved_by*" | wc -l) -ne 0 ]]
+            # The target is the actual result path (already includes glroot)
+            target="$result"
+
+            # Approved_by gate - check if Approved_by file exists
+            if [[ $(find "$target" -maxdepth 1 -type f -iname "Approved_by*" 2>/dev/null | wc -l) -ne 0 ]]
             then
 
+                echo "DEBUG: Skipping $target - has Approved_by file" >&2
                 continue
 
             fi
 
-            comp="$(ls -1 "$result"/ 2>/dev/null | grep -F "$releaseComplete")"
-            percent="$(awk '{for(i=1;i<=NF;i++) if($i~/^[0-9]+%$/){print $i; exit}}' <<< "$comp")"
-
+            # Check for completion status
+            comp="$(ls -1 "$target/" 2>/dev/null | grep -F "$releaseComplete" | head -1)"
+            percent="$(echo "$comp" | awk '{for(i=1;i<=NF;i++) if($i~/^[0-9]+%$/){print $i; exit}}')"
             to_link=""
 
             if [[ -n "$percent" && "$percent" != "100%" ]]
             then
 
-                echo "$secname: $secrel is $percent complete."
+                echo "$secname: ${secrel} is $percent complete."
                 to_link=1
 
-            else
+            elif [[ -z "$percent" ]]
+            then
 
-                if [[ -z "$percent" ]]
-                then
+                echo "$secname:${secrel} has no sfv file or progress marker."
+                to_link=1
 
-                    echo "$secname: $secrel has no progress marker."
-                    to_link=1
+            elif (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" 2>/dev/null | wc -l) -eq 0 ]]
+            then
 
-                elif (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" | wc -l) -eq 0 ]]
-                then
-
-                    echo "$secname: $secrel is complete but missing NFO."
-                    to_link=1
-
-                fi
+                echo "$secname:${secrel} is missing a NFO."
+                to_link=1
 
             fi
-
+            
             if [[ -n "$to_link" && "$create" -eq 1 ]]
             then
 
@@ -144,6 +145,4 @@ do
 
 done
 
-echo "No more incompletes found."
 IFS="$IFSORIG"
-exit 0

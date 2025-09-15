@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.1
+VER=1.2
 #--[ Settings ]-------------------------------------------------
 
 glroot=/glftpd
@@ -9,21 +9,23 @@ nukeuser=glftpd
 reason="-Auto- Not completed for"
 multiplier=5
 glconf=$glroot/etc/glftpd.conf
-now="$( date +%Y-%m-%d" "%H:%M:%S )"
+now="$(date +%Y-%m-%d" "%H:%M:%S)"
 minutes=720
 
 # Set to 1 to also nuke when complete but missing NFO
-nonfo=0
+nonfo=1
 
 log=$glroot/ftp-data/logs/incomplete-list-nuker.log
-botconf=/glftpd/sitebot/scripts/pzs-ng/ngBot.conf
-sections=""
+botconf=$glroot/sitebot/scripts/pzs-ng/ngBot.conf
 releaseComplete="Complete -"
 
 #--[ Script Start ]---------------------------------------------
 
 lockfile="$glroot/tmp/incomplete-list-nuker.lock"
-[[ -f "$lockfile" ]] && [[ -n "$(find "$lockfile" -mmin +20 -type f 2>/dev/null)" ]] && rm -f "$lockfile"
+if [[ -f "$lockfile" && -n "$(find "$lockfile" -mmin +20 -type f 2>/dev/null)" ]]
+then
+    rm -f "$lockfile"
+fi
 
 if [[ -e "$lockfile" ]]
 then
@@ -46,10 +48,14 @@ then
 
 fi
 
+# derive sections from botconf if present
 if [[ -n "$botconf" && -e "$botconf" ]]
 then
 
-    sections="$(grep -E '^set[[:space:]]+paths\(' "$botconf" | sed 's/^set paths(\(.*\))[[:space:]]\{1,\}"\(.*\)\*"/\1:\2/')"
+    # Remove the wildcards from section paths for matching and fix double slashes
+    sections="$(grep -E '^set[[:space:]]+paths\(' "$botconf" \
+        | sed -E 's/^set paths\((.*)\)[[:space:]]+"(.*)\*"/\1:\2/' \
+        | sed -E 's|\*||g;s|//$|/|' | sort)"
 
 fi
 
@@ -61,7 +67,7 @@ then
 
 fi
 
-#--[ Main ]-----------------------------------------------------
+#--[ Functions ]------------------------------------------------
 
 duration_str()
 {
@@ -88,6 +94,8 @@ duration_str()
 
 }
 
+#--[ Main ]-----------------------------------------------------
+
 age_str="$(duration_str "$minutes")."
 
 IFSORIG="$IFS"
@@ -98,86 +106,75 @@ do
 
     secname="$(echo "$section" | cut -d ':' -f 1)"
     secpaths="$(echo "$section" | cut -d ':' -f 2- | tr ' ' '\n')"
-
-    for secpath in $secpaths
+    
+	for secpath in $secpaths
     do
 
-        results="$("$cleanup" "$glroot" 2>/dev/null \
-                    | grep -E '^Incomplete' \
-                    | tr '\"' '\n' \
-                    | grep -F "$secpath" \
-                    | grep -Ev '/Sample|/Subs' \
-                    | tr -s '/' \
-                    | sort)"
+        # Add glroot to section path for matching since cleanup outputs full paths
+        full_secpath="$glroot$secpath"
 
-        if [[ -z "$results" ]]
-        then
+        # Get results using the same parsing method as incomplete-list.sh
+        results="$("$cleanup" "$glroot" 2>/dev/null | grep -E '^Incomplete' | tr '\"' '\n' | grep -F "$full_secpath" | grep -Ev '/Sample' | tr -s '/' | sort)"
 
-            continue
+    	[[ -z "$results" ]] && continue
 
-        fi
+	    for result in $results
+    	do
 
-        for result in $results
-        do
+	        secrel="$(echo "$result" | sed "s|$full_secpath||" | sed 's|^/||')"
+    	    target="$result"
+        	nukesite="${result#$glroot}"
 
-            secrel="$(echo "$result" | sed "s|$secpath||" | tr -s '/' | sed "s|$glroot||")"
-            target="$glroot/site/$secname/$secrel"
-            nukesite="/site/$secname/$secrel"
+	        # Skip if Approved_by exists
+    	    if [[ $(find "$target" -maxdepth 1 -type f -iname "Approved_by*" 2>/dev/null | wc -l) -ne 0 ]]
+        	then
+ 
+            	continue
+ 
+	        fi
 
-            comp="$(ls -1 "$result"/ 2>/dev/null | grep -F "$releaseComplete")"
-            percent="$(awk '{for(i=1;i<=NF;i++) if($i~/^[0-9]+%$/){print $i; exit}}' <<< "$comp")"
+    	    comp="$(ls -1 "$target/" 2>/dev/null | grep -F "$releaseComplete" | head -1)"
+        	percent="$(echo "$comp" | awk '{for(i=1;i<=NF;i++) if($i~/^[0-9]+%$/){print $i; exit}}')"
 
-            if [[ -n "$percent" && "$percent" != "100%" ]]
-            then
+	        if [[ -n "$percent" && "$percent" != "100%" ]]
+    	    then
 
-                echo "$secname: ${secrel} is $percent complete."
-                if [[ $(find "$target" -maxdepth 0 -type f -iname "Approved_by*" | wc -l) == 0 ]]
-                then
+	            echo "$secname: ${secrel} is $percent complete."
+	            if [[ $(find "$target" -maxdepth 0 -type d -mmin +$minutes 2>/dev/null | wc -l) -ne 0 ]]
+	            then
 
-                    find "$target" -maxdepth 0 -type d -mmin +$minutes \
-                        -exec sh -c 'echo "'"$now"' - Nuking incomplete release '"$secrel"' in section '"$secname"'" >> "'"$log"'"' ';' \
-                        -exec "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str" ';'
+	                echo "$now - Nuking incomplete release $secrel in section $secname" >> "$log"
+	                "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
 
-                fi
+	            fi
 
-            else
+	        elif [[ -z "$percent" ]]
+	        then
 
-                if [[ -z "$percent" ]]
-                then
+	            echo "$secname: ${secrel} has no progress marker (.sfv/Complete)."
+	            if [[ $(find "$target" -maxdepth 0 -type d -mmin +$minutes 2>/dev/null | wc -l) -ne 0 ]]
+	            then
 
-                    echo "$secname: ${secrel} has no .sfv file."
-                    if [[ $(find "$target" -maxdepth 0 -type f -iname "Approved_by*" | wc -l) == 0 ]]
-                    then
+	                echo "$now - Nuking release (no progress marker) $secrel in section $secname" >> "$log"
+	                "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
 
-                        find "$target" -maxdepth 0 -type d -mmin +$minutes \
-                            -exec sh -c 'echo "'"$now"' - Nuking release (no progress marker) '"$secrel"' in section '"$secname"'" >> "'"$log"'"' ';' \
-                            -exec "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str" ';'
+	            fi
 
-                    fi
+	        elif (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" 2>/dev/null | wc -l) -eq 0 ]]
+	        then
 
-                else
+	            echo "$secname: ${secrel} is complete but missing NFO."
+	            if [[ $(find "$target" -maxdepth 0 -type d -mmin +$minutes 2>/dev/null | wc -l) -ne 0 ]]
+	            then
 
-                    # percent == 100% (complete); optionally nuke if missing NFO
-                    if (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" | wc -l) == 0 ]]
-                    then
+	                echo "$now - Nuking no-nfo release $secrel in section $secname" >> "$log"
+	                "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
 
-                        echo "$secname: ${secrel} is missing NFO."
-                        if [[ $(find "$target" -maxdepth 0 -type f -iname "Approved_by*" | wc -l) == 0 ]]
-                        then
+	            fi
 
-                            find "$target" -maxdepth 0 -type d -mmin +$minutes \
-                                -exec sh -c 'echo "'"$now"' - Nuking no-nfo release '"$secrel"' in section '"$secname"'" >> "'"$log"'"' ';' \
-                                -exec "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str" ';'
+	        fi
 
-                        fi
-
-                    fi
-
-                fi
-
-            fi
-
-        done
+		done
 
     done
 
