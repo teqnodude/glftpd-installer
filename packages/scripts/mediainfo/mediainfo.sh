@@ -296,18 +296,18 @@ main()
 	fi
 
 	local tv movie
-	tv="$(printf '%s' "$input" | grep -o ".*.S[0-9][0-9]E[0-9][0-9].\|.*.E[0-9][0-9].\|.*.[0-9][0-9][0-9][0-9].[0-9][0-9].[0-9][0-9].\|.*.Part.[0-9]." | sed 's|^/||')"
+    tv=$(printf '%s\n' "$input" | grep -Eo '.*(S[0-9]{2}E[0-9]{2}|E[0-9]{2}|[0-9]{4}\.[0-9]{2}\.[0-9]{2}|Part\.[0-9])' | sed 's|^/||')
 
-	if [[ "$(printf '%s' "$input" | sed 's/[0-9][0-9][0-9][0-9]p//' | grep -o ".*.[0-9][0-9][0-9][0-9]." | sed 's|^/||' | cut -d'/' -f4)" ]]
-	then
+    if [[ "$(printf '%s' "$input" | sed -E 's/[0-9]{4}p//' | grep -Eo '.*\.[0-9]{4}\.' | sed 's|^/||' | cut -d'/' -f4)" ]]
+    then
 
-		movie="$(printf '%s' "$input" | sed 's/[0-9][0-9][0-9][0-9]p//' | grep -o ".*.[0-9][0-9][0-9][0-9]." | sed 's|^/||')"
+        movie="$(printf '%s' "$input" | sed -E 's/[0-9]{4}p//' | grep -Eo '.*\.[0-9]{4}\.' | sed 's|^/||')"
 
-	else
+    else
 
-		movie="$(printf '%s' "$input" | sed 's|[0-9][0-9][0-9][0-9]p.*||')"
+        movie="$(printf '%s' "$input" | sed -E 's/[0-9]{4}p.*//')"
 
-	fi
+    fi
 
 	IFS='|' read -r section release <<<"$(select_section "$input" "$tv" "$movie")"
 
