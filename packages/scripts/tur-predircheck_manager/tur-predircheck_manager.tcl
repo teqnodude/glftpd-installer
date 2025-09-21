@@ -14,6 +14,9 @@
 #                                                                            #
 ##############################################################################
 
+# path to the .sh script
+set shfile "/glftpd/bin/tur-predircheck_manager.sh"
+
 bind pub o !block pub:tur-predircheck
 bind pub - !banned pub:banned
 bind pub - !blocked pub:banned
@@ -23,32 +26,33 @@ set mainchannel "changeme"
 ##############################################################################
 
 ## Public chan.
-proc pub:tur-predircheck {nick output binary chan text} {
+proc pub:tur-predircheck {nick output chan text} {
 
-	set binary {/glftpd/bin/tur-predircheck_manager.sh}
-  	global mainchannel
+  	global mainchannel shfile
   	
-  	if {$chan == $mainchannel} {
+  	if {$chan eq $mainchannel} {
     
-    	foreach line [split [exec $binary $nick $text] "\n"] {
-       	putquick "PRIVMSG $chan :$line"
+    	foreach line [split [exec $shfile $nick $text] "\n"] {
     
-    }
-  
-  }
+       		putquick "PRIVMSG $chan :$line"
+	
+	    }
+
+  	}
 
 }
 
-proc pub:banned {nick output binary chan text} {
-	set binary {/glftpd/bin/tur-predircheck_manager.sh}
+proc pub:banned {nick output chan text} {
+	
+	global shfile
     
-    foreach line [split [exec $binary $nick list groups] "\n"] {
+    foreach line [split [exec $shfile $nick list groups] "\n"] {
        
        putquick "PRIVMSG $nick :$line"
 
     }
 
-    foreach line [split [exec $binary $nick list sections] "\n"] {
+    foreach line [split [exec $shfile $nick list sections] "\n"] {
 
        putquick "PRIVMSG $nick :$line"
 
@@ -56,4 +60,12 @@ proc pub:banned {nick output binary chan text} {
 
 }
 
-putlog "Tur-Predircheck_Manager.tcl 1.8 by Teqno loaded"
+set fh [open $shfile r]
+set data [read $fh]
+close $fh
+
+if {![regexp -- {VER\s*=\s*([A-Za-z0-9._-]+)} $data -> VERSION]} {
+    set VERSION "unknown"
+}
+
+putlog "Tur-Predircheck_Manager.tcl $VERSION by Teqno loaded"
