@@ -5,6 +5,8 @@
 - I silenced a compiling error of dirloglist_gl that was non-critical
 - When providing default ip for user and passive adress it used ipv6, changed to ipv4
 - incomplete-list, incomplete-list-nuker and incomplete-list-symlinks work as they should now after refactoring
+- various fixes in numerous scripts been made
+- mediainfo didn't work properly under ARCHIVE and REQUESTS
 
 ## 12.0 - 2025-09-01
 
