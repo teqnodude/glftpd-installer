@@ -60,6 +60,15 @@ select_section()
                 # Keep your normal movie-based release pattern
                 release="$movie*"
             ;;
+            
+            *ARCHIVE/*)
+
+                # Handle layouts like: ARCHIVE/X265-2160/<Release>/
+                # Extract the first segment after ARCHIVE/ as the section (e.g., X265-2160)
+                section=$(printf '%s\n' "$input" | awk -F 'ARCHIVE/' '{print $2}' | cut -d'/' -f1)
+
+                release="$movie*"
+            ;;
 
             *REQUESTS/*)
                 
@@ -102,7 +111,6 @@ select_section()
 
 		case "$input" in
 		
-
             *ARCHIVE/TV/*)
 
                 # Extract the section after ARCHIVE/TV (e.g., TV-X264, TV-X265, TV-1080, TV-2160)
@@ -114,6 +122,15 @@ select_section()
                 release="$tv*"
             ;;		
 		
+
+            *ARCHIVE/*)
+
+                # Handle layouts like: ARCHIVE/TV-X265/Show/S02/<Episode>/
+                # Keep the nested parent path after ARCHIVE/, drop the final leaf (episode dir)
+                section=$(printf '%s\n' "$input" | awk -F 'ARCHIVE/' '{print $2}' | sed 's|/[^/]*$||')
+
+                release="$tv*"
+            ;;
 	        
             *REQUESTS/*)
 
@@ -213,7 +230,7 @@ scan_and_print()
 
 	# Try primary site root first, then ARCHIVE/MOVIES and ARCHIVE/TV
 	local found=""
-	for base in "$GLROOT/site" "$GLROOT/site/ARCHIVE/MOVIES" "$GLROOT/site/ARCHIVE/TV"
+	for base in "$GLROOT/site" "$GLROOT/site/ARCHIVE/MOVIES" "$GLROOT/site/ARCHIVE/TV" "$GLROOT/site/ARCHIVE"
 	do
 		
 		if [[ -d "$base/$section/$input_leaf" ]]
