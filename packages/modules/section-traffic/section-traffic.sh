@@ -42,7 +42,7 @@ BOLD=""
 
 EXCLUDED="PRE|SPEEDTEST|lost\+found|Search_Links|ARCHIVE.EXP|INCOMING|INCOMPLETES|MUSIC.BY.ARTIST|MUSIC.BY.GENRE|!Today_0DAY|!Today_FLAC|!Today_MP3|MOVIES_SORTED"
 
-TRIGGER=$(grep "bind pub" $GLROOT/sitebot/scripts/section-traffic.tcl | cut -d " " -f4)
+TRIGGER=$(grep "::pub_section_traffic" $GLROOT/sitebot/scripts/section-traffic.tcl | awk '{print $4}')
 
 #--[ Script start ]---------------------------------------------
 

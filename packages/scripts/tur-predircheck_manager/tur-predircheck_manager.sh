@@ -41,7 +41,7 @@ VER=1.82
 
 glroot="/glftpd"
 predircheck="$glroot/bin/tur-predircheck.sh"
-irctrigger=$(grep "block" $glroot/sitebot/scripts/tur-predircheck_manager.tcl| grep "tur-predircheck" | cut -d " " -f4)
+irctrigger=$(grep "::pub_tur_predircheck" /glftpd/sitebot/scripts/tur-predircheck_manager.tcl | awk '{print $4}')
 
 # How long should the block line under DENYDIRS be allowed to be before making a new line
 length=210

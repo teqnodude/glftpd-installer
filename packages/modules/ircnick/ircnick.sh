@@ -15,7 +15,7 @@ logfile=$glroot/ftp-data/logs/glftpd.log
 
 #--[ Script Start ]---------------------------------------------
 
-trigger=$(grep "bind pub" "$glroot/sitebot/scripts/ircnick.tcl" | awk '{print $4}')
+trigger=$(grep "::pub_ircnick" "$glroot/sitebot/scripts/ircnick.tcl" | awk '{print $4}')
 
 if [[ -z "$1" ]]
 then

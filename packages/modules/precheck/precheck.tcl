@@ -9,20 +9,42 @@
 #                                                               #
 #################################################################
 
-bind pub - !precheck pub:precheck
+namespace eval precheck {
 
-proc pub:precheck {nick output binary chan text} {
-    set binary {/glftpd/bin/precheck.sh}
-    set who [lindex $text 0]
+    variable shfile "/glftpd/bin/precheck.sh"
+    variable VERSION "unknown"
     
-    foreach line [split [exec $binary $who] "\n"] {
-
-	putquick "PRIVMSG $nick :$line"
-
+    # Initialize the namespace
+    proc init {} {
+        variable shfile
+        variable VERSION
+        
+        # Read version from script file
+        set fh [open $shfile r]
+        set data [read $fh]
+        close $fh
+        
+        if {[regexp -- {VER\s*=\s*([A-Za-z0-9._-]+)} $data -> version]} {
+            set VERSION $version
+        }
+        
+        # Set up binds
+        bind pub - !precheck [namespace current]::pub_precheck
+        
+        putlog "Precheck $VERSION by Teqno loaded"
+    }
+    
+    # Precheck command
+    proc pub_precheck {nick host handle chan text} {
+        variable shfile
+        
+        set who [lindex $text 0]
+        foreach line [split [exec $shfile $who] "\n"] {
+            putquick "PRIVMSG $nick :$line"
+        }
     }
 
 }
 
-putlog "Precheck 1.2 by Teqno loaded"
-
-		     
+# Initialize the namespace
+precheck::init		     

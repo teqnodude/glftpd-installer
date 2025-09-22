@@ -23,7 +23,7 @@ precheck=$glroot/ftp-data/logs/precheck.log
 
 #--[ Script Start ]---------------------------------------------
 
-trigger=$(grep "bind pub" $glroot/sitebot/scripts/precheck.tcl | cut -d " " -f4)
+trigger=$(grep "::pub_precheck" $glroot/sitebot/scripts/precheck.tcl | awk '{print $4}')
 
 if [[ -z "$1" ]]
 then

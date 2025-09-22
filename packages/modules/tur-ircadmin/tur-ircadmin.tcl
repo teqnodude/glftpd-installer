@@ -1,5 +1,5 @@
 ##############################################################################
-# Tur-IrcAdmin.tcl 1.1 by Turranius                                          #
+# Tur-IrcAdmin.tcl by Turranius                                          	 #
 # Change binds below to whatever you want the trigger the script with.       #
 # pub is for public chan command & msg is for private msg.                   #
 #                                                                            #      
@@ -17,41 +17,49 @@
 # with that flag, in the #mainchan.                                          #
 ##############################################################################
 
+set mainchan 	"changeme"
+set shfile		"/glftpd/bin/tur-ircadmin.sh"
+
 bind pub o !site pub:tur-ircadmin
 bind msg o !site msg:tur-ircadmin
 
-set mainchania "changeme"
+proc pub:tur-ircadmin {nick host output chan text} {
 
-##############################################################################
+  	global mainchan shfile
 
-## Public chan.
-proc pub:tur-ircadmin {nick output binary chan text} {
-  set binary {/glftpd/bin/tur-ircadmin.sh}
-  global mainchania
-  if {$chan == $mainchania} {
-    foreach line [split [exec $binary $nick $text] "\n"] {
-       putquick "PRIVMSG $chan :$line"
-    }
+ 	if {$chan eq $mainchan} {
+
+	    foreach line [split [exec $shfile $nick $text] "\n"] {
+    		putquick "PRIVMSG $chan :$line"
+ 		}
   }
 }
 
 ## /msg to bot.
-proc msg:tur-ircadmin { nick host hand text } {
-  set binary {/glftpd/bin/tur-ircadmin.sh}
-  global mainchania
-  set founduser "0"
-  foreach user [chanlist $mainchania] {
-    if {$nick == $user} {
-      set founduser "1"
-    }
-  }
+proc msg:tur-ircadmin { nick host output hand text } {
+
+	global mainchan shfile
+  	set founduser "0"
+  	foreach user [chanlist $mainchan] {
+
+    	if {$nick == $user} {
+
+      		set founduser "1"
+
+    	}
+  	}
 
 
- if {$founduser == "1"} {
-  foreach line [split [exec $binary $nick $text] "\n"] {
-       putquick "PRIVMSG $nick :$line"
-  }
- }
+	if {$founduser == "1"} {
+	
+  		foreach line [split [exec $shfile $nick $text] "\n"] {
+       	
+       		putquick "PRIVMSG $nick :$line"
+  		
+  		}
+
+ 	}
+
 }
 
 putlog "Tur-IrcAdmin.tcl 1.1 by Turranius loaded"
