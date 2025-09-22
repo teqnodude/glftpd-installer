@@ -1,5 +1,5 @@
 #                                                                            #
-# Section-Traffic.tcl 1.0 by Teqno                                           #
+# Section-Traffic.tcl by Teqno                                           	 #
 # Change binds below to whatever you want the trigger the script with.       #
 #                                                                            #
 # If section-traffic.sh is not located in /glftpd/bin/, then                 #

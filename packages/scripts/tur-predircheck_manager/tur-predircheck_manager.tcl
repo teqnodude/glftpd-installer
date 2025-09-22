@@ -1,4 +1,4 @@
-#									     #
+#									     									 #
 # Tur-Predircheck_Manager.tcl by Teqno                                       #
 # Change binds below to whatever you want the trigger the script with.       #
 # pub is for public chan command & msg is for private msg.                   #
