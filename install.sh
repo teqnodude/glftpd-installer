@@ -1998,7 +1998,7 @@ glftpd()
     sed -i 's/10.10s/10.20s/' "$glroot/ftp-data/text/ginfo.body"
 
     # Copy essential binaries
-    bins="basename bash bc chmod chown date du echo expr find grep mv pwd sed sort tac touch which xargs"
+    bins="basename bash bc chmod chown date du echo expr find grep mktemp mv pwd sed sort tac touch which xargs"
 
     for file in $bins
     do
