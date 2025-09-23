@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.1
+VER=1.11
 #--[ Info ]-----------------------------------------------------
 #
 # Syscheck by Teqno                                             
@@ -48,7 +48,7 @@ color_bad()
     if [[ "$v" = "N/A" ]]
     then
 
-        printf "%s%s%s" "$RED" "$v" "$RST"
+        printf "%s %s%s" "$RED" "$v" "$RST"
         return
 
     fi
@@ -63,7 +63,7 @@ color_bad()
             if (( gt0 ))
             then
 
-                printf "%s%s%s" "$RED" "$v" "$RST"
+                printf "%s %s%s" "$RED" "$v" "$RST"
                 return
 
             fi
@@ -73,7 +73,7 @@ color_bad()
             if (( v > 0 ))
             then
 
-                printf "%s%s%s" "$RED" "$v" "$RST"
+                printf "%s %s%s" "$RED" "$v" "$RST"
                 return
 
             fi
@@ -82,10 +82,10 @@ color_bad()
 
     fi
 
-    if [[ "$v" = "PASSED" ]]
+    if [[ "$v" = "PASSED" || "$v" = 0 ]]
     then
 
-        printf "%s%s%s" "$GREEN" "$v" "$RST"
+        printf "%s %s%s" "$GREEN" "$v" "$RST"
         return
 
     fi
@@ -206,10 +206,10 @@ case "$1" in
             echo
             echo "Device Model:${RED} $model ${RST}- User Capacity:${RED} $capacity${RST}"
             echo "Serial Number:${RED} $serial${RST}"
-            echo "HDD:${RED} /dev/$disk ${RST}- Health: $(color_bad "$health")${RST} - TEMP:$(color_temp "$temp")${RST}ºc"
-            echo "Reallocated_Sector_Ct: $(color_bad "$reallocated")${RST}"
-            echo "Current_Pending_Sector: $(color_bad "$pending")${RST}"
-            echo "Media and Data Integrity Errors: $(color_bad "$media_errors")${RST}"
+            echo "HDD:${RED} /dev/$disk ${RST}- Health:$(color_bad "$health")${RST} - TEMP:$(color_temp "$temp")${RST}ºc"
+            echo "Reallocated_Sector_Ct:$(color_bad "$reallocated")${RST}"
+            echo "Current_Pending_Sector:$(color_bad "$pending")${RST}"
+            echo "Media and Data Integrity Errors:$(color_bad "$media_errors")${RST}"
             echo "Percentage Used: $percent_used${RST}"
             echo "-"
 
