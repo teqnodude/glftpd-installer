@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=2.0
+VER=2.01
 #---------------------------------------------------------------
 #                                                               
 # Mediainfo by Teqno                                            
@@ -9,30 +9,38 @@ VER=2.0
 #                                                               
 #--[ Settings ]-------------------------------------------------
 
-GLROOT=/glftpd
-TMP=$GLROOT/tmp
-TMPFILE=$TMP/mediainfo.txt
-COLOR1=7 # Orange
-COLOR2=14 # Dark grey
-COLOR3=4 # Red
-SECTIONS="ARCHIVE/TV ARCHIVE/MOVIES/X264-1080 ARCHIVE/MOVIES/X265-2160 REQUESTS TV-720 TV-1080 TV-2160 TV-BLURAY TV-NL TV-NO TV-NORDIC X264-1080 X264-NORDIC X264-WEB X265-2160"
+glroot=/glftpd
+tmp=$glroot/tmp
+tmpfile=$(mktemp $tmp/mediainfo.XXXXXX)
+color1=7 # Orange
+color2=14 # Dark grey
+color3=4 # Red
+sections="ARCHIVE/TV ARCHIVE/MOVIES/X264-1080 ARCHIVE/MOVIES/X265-2160 REQUESTS TV-720 TV-1080 TV-2160 TV-BLURAY TV-NL TV-NO TV-NORDIC X264-1080 X264-NORDIC X264-WEB X265-2160"
 
 #--[ Script Start ]---------------------------------------------
+
+# Setup automatic cleanup trap
+cleanup() {
+
+    rm -f "$tmpfile"
+
+}
+trap cleanup EXIT
 
 print_help()
 {
 	
 	local rendered_sections
-	rendered_sections="$(for SEC in $SECTIONS
+	rendered_sections="$(for sec in $sections
 	do
 		
-		printf "%s%s %s|\n" "$COLOR3" "$SEC" "$COLOR2"
+		printf "%s%s %s|\n" "$color3" "$sec" "$color2"
 	
 	done | sed 's/|$//')"
 
 	cat <<-EOF
-		${COLOR2}Please enter full releasename ie ${COLOR3}Terminator.Salvation.2009.THEATRICAL.1080p.BluRay.x264-FLAME
-		${COLOR2}Only works for releases in: 
+		${color2}Please enter full releasename ie ${color3}Terminator.Salvation.2009.THEATRICAL.1080p.BluRay.x264-FLAME
+		${color2}Only works for releases in: 
 		${rendered_sections}
 	EOF
 
@@ -230,7 +238,7 @@ scan_and_print()
 
 	# Try primary site root first, then ARCHIVE/MOVIES and ARCHIVE/TV
 	local found=""
-	for base in "$GLROOT/site" "$GLROOT/site/ARCHIVE/MOVIES" "$GLROOT/site/ARCHIVE/TV" "$GLROOT/site/ARCHIVE"
+	for base in "$glroot/site" "$glroot/site/ARCHIVE/MOVIES" "$glroot/site/ARCHIVE/TV" "$glroot/site/ARCHIVE"
 	do
 		
 		if [[ -d "$base/$section/$input_leaf" ]]
@@ -259,8 +267,8 @@ scan_and_print()
 
 		else
 
-			cd "$GLROOT/bin" || { echo "Cannot cd to $GLROOT/bin" ; exit 1 ; }
-			[[ -d "$TMP" ]] || mkdir -m 0777 -p "$TMP"
+			cd "$glroot/bin" || { echo "Cannot cd to $glroot/bin" ; exit 1 ; }
+			[[ -d "$tmp" ]] || mkdir -m 0777 -p "$tmp"
 
 			shopt -s nullglob
 
@@ -298,29 +306,27 @@ scan_and_print()
 
 					fi
 
-					local tmpfile
-					tmpfile="$(mktemp "${TMP}/mediainfo.XXXXXX")"
 					./mediainfo-rar "$media_file" > "$tmpfile"
 
 					local rel_name filesize duration obitrate vbitrate nbitrate audio abitrate mabitrate formtitle format channels language
 
 					rel_name="$(grep '^Filename' "$tmpfile" | cut -d ':' -f2- | sed -e "s|$found/||" -e 's|/.*||' -e 's/ //g')"
-					echo -en "${COLOR1} $rel_name${COLOR2}"
+					echo -en "${color1} $rel_name${color2}"
 
 					filesize="$(grep '^File size' "$tmpfile" | grep -E 'MiB|GiB' | cut -d ':' -f2- | sed 's/ //g')"
-					[[ -n "$filesize" ]] && echo -en " |${COLOR1} $filesize${COLOR2}"
+					[[ -n "$filesize" ]] && echo -en " |${color1} $filesize${color2}"
 
 					duration="$(sed -n '/General/,/Video/p' "$tmpfile" | grep '^Duration' | uniq | cut -d ':' -f2- | sed 's/ //g')"
-					[[ -n "$duration" ]] && echo -en " |${COLOR1} $duration${COLOR2}"
+					[[ -n "$duration" ]] && echo -en " |${color1} $duration${color2}"
 
 					obitrate="$(sed -n '/General/,/Video/p' "$tmpfile" | grep -v 'Overall bit rate mode' | grep '^Overall bit rate' | cut -d ':' -f2- | sed 's/ //g')"
-					[[ -n "$obitrate" ]] && echo -en " | Overall:${COLOR1} $obitrate${COLOR2}"
+					[[ -n "$obitrate" ]] && echo -en " | Overall:${color1} $obitrate${color2}"
 
 					vbitrate="$(sed -n '/Video/,/Audio/p' "$tmpfile" | grep '^Bit rate  ' | cut -d ':' -f2- | sed 's/ //g')"
-					[[ -n "$vbitrate" ]] && echo -en " | Video:${COLOR1} $vbitrate${COLOR2}"
+					[[ -n "$vbitrate" ]] && echo -en " | Video:${color1} $vbitrate${color2}"
 
 					nbitrate="$(sed -n '/Video/,/Forced/p' "$tmpfile" | grep '^Nominal bit rate  ' | cut -d ':' -f2- | sed 's/ //g')"
-					[[ -n "$nbitrate" ]] && echo -en " | Video Nominal:${COLOR1} $nbitrate${COLOR2}"
+					[[ -n "$nbitrate" ]] && echo -en " | Video Nominal:${color1} $nbitrate${color2}"
 
 					if [[ -z "$(sed -n '/Audio #1/,/Forced/p' "$tmpfile")" ]]
 					then
@@ -334,29 +340,29 @@ scan_and_print()
 					fi
 
 					abitrate="$(sed -n "/$audio/,/Forced/p" "$tmpfile" | grep '^Bit rate  ' | cut -d ':' -f2- | sed 's/ //g')"
-					[[ -n "$abitrate" ]] && echo -en " | Audio:${COLOR1} $abitrate${COLOR2}"
+					[[ -n "$abitrate" ]] && echo -en " | Audio:${color1} $abitrate${color2}"
 
 					mabitrate="$(sed -n "/$audio/,/Forced/p" "$tmpfile" | grep '^Maximum bit rate  ' | cut -d ':' -f2- | sed 's/ //g')"
-					[[ -n "$mabitrate" ]] && echo -en " | Max Audio:${COLOR1} $mabitrate${COLOR2}"
+					[[ -n "$mabitrate" ]] && echo -en " | Max Audio:${color1} $mabitrate${color2}"
 
 					formtitle="$(sed -n "/$audio/,/Forced/p" "$tmpfile" | grep '^Title  ' | cut -d ':' -f2- | sed 's/ //')"
 					if [[ "$formtitle" =~ DTS-HD ]]
 					then
 
-						echo -en " |${COLOR1} $formtitle${COLOR2}"
+						echo -en " |${color1} $formtitle${color2}"
 
 					else
 
 						format="$(sed -n "/$audio/,/Forced/p" "$tmpfile" | grep '^Format  ' | cut -d ':' -f2- | sed -e 's/^ //' -e 's/UTF-8//')"
-						[[ -n "$format" ]] && echo -en " |${COLOR1} $format${COLOR2}"
+						[[ -n "$format" ]] && echo -en " |${color1} $format${color2}"
 
 						channels="$(sed -n "/$audio/,/Forced/p" "$tmpfile" | grep '^Channel(s)' | cut -d ':' -f2- | sed 's/ //g')"
-						[[ -n "$channels" ]] && echo -en "${COLOR1} $channels${COLOR2}"
+						[[ -n "$channels" ]] && echo -en "${color1} $channels${color2}"
 
 					fi
 
 					language="$(sed -n "/$audio/,/Forced/p" "$tmpfile" | grep '^Language  ' | cut -d ':' -f2- | sed 's/^ //' | head -1)"
-					[[ -n "$language" ]] && echo -en "${COLOR1} $language${COLOR2}"
+					[[ -n "$language" ]] && echo -en "${color1} $language${color2}"
 
 					echo
 
