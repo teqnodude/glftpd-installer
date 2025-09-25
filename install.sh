@@ -1385,19 +1385,24 @@ device_name()
     then
 
     	device=$(get_value "$cache" device)
-    	echo "Sitename           = $sitename"
-    	echo "Port               = $port"
-    	echo "glFTPd version     = $version bit" 
-    	echo "Device             = $device"
+		cat <<-EOF
+			Sitename           = $sitename
+			Port               = $port
+			glFTPd version     = $version bit
+			Device             = $device
+		EOF
 
     else
+	
+		cat <<-EOF
+			Please enter which device you will use for the $glroot/site folder
+			e.g. /dev/sda1
+			e.g. /dev/mapper/lvm-lvm
+			e.g. /dev/md0
+			Default: /dev/sda1
+		EOF
 
-    	echo "Please enter which device you will use for the $glroot/site folder"
-    	echo "eg /dev/sda1"
-    	echo "eg /dev/mapper/lvm-lvm"
-    	echo "eg /dev/md0"
-    	echo "Default: /dev/sda1"
-    	read -p "Device : " device
+		read -p "Device : " device
     	echo
     
 	[[ -z "$device" ]] && device="/dev/sda1"
@@ -1812,18 +1817,19 @@ glftpd()
     print_status_done
 
     cd ../core
-    echo "##########################################################################" > glftpd.conf
-    echo "# Server shutdown: 0=server open, 1=deny all but siteops, !*=deny all, etc" >> glftpd.conf
-    echo "shutdown 1" >> glftpd.conf
-    echo "#" >> glftpd.conf
-    echo "sitename_long           $sitename" >> glftpd.conf
-    echo "sitename_short          $sitename" >> glftpd.conf
-    echo "email                   root@localhost.org" >> glftpd.conf
-    echo "login_prompt			$sitename[:space:]Ready" >> glftpd.conf
-    echo "mmap_amount     		100"  >> glftpd.conf
-    echo "# SECTION				KEYWORD		DIRECTORY	SEPARATE CREDITS" >> glftpd.conf
-    echo "stat_section			DEFAULT 	* 			no" >> glftpd.conf
-
+	cat <<-EOF > glftpd.conf
+		##########################################################################
+		# Server shutdown: 0=server open, 1=deny all but siteops, !*=deny all, etc
+		shutdown 1
+		#
+		sitename_long			$sitename
+		sitename_short			$sitename
+		email					root@localhost.org
+		login_prompt			$sitename[:space:]Ready
+		mmap_amount				100
+		# SECTION				KEYWORD     DIRECTORY   SEPARATE CREDITS
+		stat_section			DEFAULT     *           no
+	EOF
     if has_key "$cache" router
     then
 
@@ -2047,16 +2053,32 @@ eggdrop()
     cat "$rootdir/.tmp/bot.chan.tmp" > "$glroot/sitebot/logs/bot.chan"
 
     # Create botchk script
-    {
-        cat botchkhead
-        echo "botdir=$glroot/sitebot"
-        echo "botscript=sitebot"
-        echo "botname=$sitename"
-        echo "userfile=./logs/bot.user"
-        echo "pidfile=pid.$sitename"
-        cat botchkfoot
-    } > "$glroot/sitebot/botchk"
-    chmod 755 "$glroot/sitebot/botchk"
+	cat <<-EOF > "$glroot/sitebot/botchk"
+		#!/bin/bash
+		botdir=$glroot/sitebot
+		botscript=sitebot
+		botname=$sitename
+		userfile=./logs/bot.user
+		pidfile=pid.$sitename
+		$(cat botchkfoot)
+	EOF
+	chmod 755 "$glroot/sitebot/botchk"
+    
+    # Create start and kill script
+    cat <<-EOF >> $glroot/sitebot/start.sh
+		#!/bin/bash
+
+		su - sitebot -c "./botchk"
+	EOF
+	
+    cat <<-EOF >> $glroot/sitebot/kill.sh
+		#!/bin/bash
+
+		site=$sitename
+		[[ -f "pid.$site" ]] && kill \$(cat pid.$site)
+	EOF
+   
+    chmod 755 $glroot/sitebot/start.sh $glroot/sitebot/kill.sh    
 
     # Setup cron job
     touch "/var/spool/cron/crontabs/$BOTU"
@@ -2101,9 +2123,6 @@ eggdrop()
     cp ../scripts/tur-rules/*.tcl ../scripts/tur-free/*.tcl "$glroot/sitebot/scripts/"
     cp ../scripts/tur-predircheck_manager/tur-predircheck_manager.tcl "$glroot/sitebot/scripts/"
     sed -i "s/changeme/$channelops/g" "$glroot/sitebot/scripts/tur-predircheck_manager.tcl"
-    
-    cp ../extra/kill.sh "$glroot/sitebot/"
-    sed -i "s/changeme/$sitename/g" "$glroot/sitebot/kill.sh"
     
     echo "source scripts/tur-free.tcl" >> "$glroot/sitebot/eggdrop.conf"
 
@@ -2245,8 +2264,6 @@ pzshfile()
 pzsbotfile()
 {
     cat packages/core/dzshead > ngBot.conf
-    sed -i "/^set device(0)/ s|\"\"|\"$device SITE\"|" ngBot.conf
-    cat packages/core/dzsbnc >> ngBot.conf
     echo "REQUEST" >> "$rootdir/.tmp/.validsections"
 
     # --- Fixed alignment from global pzs_width ---
@@ -2276,8 +2293,6 @@ pzsbotfile()
       | sort -f -k1,1 \
       | cut -f2- > "$rootdir/.tmp/dzschan.sorted"
     mv "$rootdir/.tmp/dzschan.sorted" "$rootdir/.tmp/dzschan"
-
-    cat packages/core/dzsmidl >> ngBot.conf
 
     # --- Build the sorted, de-duped sections list and align it with the same width ---
     local sections_value
@@ -2638,16 +2653,18 @@ modules
 usercreation
 cleanup
 
-echo 
-echo "If you are planning to uninstall glFTPd then run cleanup.sh"
-echo
-echo "To get the bot running you HAVE to do this ONCE to create the initial userfile"
-echo "su - sitebot -c \"$glroot/sitebot/sitebot -m\""
-echo
-echo "If you want automatic cleanup of site then please review the settings in $glroot/bin/tur-space.conf and enable the line in crontab"
-echo 
-echo "All good to go and I recommend people to check the different settings for the different scripts including glFTPd itself."
-echo
-echo "Enjoy!"
-echo 
-echo "Installer script created by Teqno" 
+cat <<-EOF
+
+If you are planning to uninstall glFTPd then run cleanup.sh
+
+To get the bot running you HAVE to do this ONCE to create the initial userfile
+su - sitebot -c "$glroot/sitebot/sitebot -m"
+
+If you want automatic cleanup of site then please review the settings in $glroot/bin/tur-space.conf and enable the line in crontab
+
+All good to go and I recommend people to check the different settings for the different scripts including glFTPd itself.
+
+Enjoy!
+
+Installer script created by Teqno
+EOF

@@ -1,5 +1,9 @@
 ## 12.x
 
+### Updated
+
+- Various optimization of code and removal of unnecessary files
+
 ### Fixes
 
 - I silenced a compiling error of dirloglist_gl that was non-critical
