@@ -366,9 +366,6 @@ scan_and_print()
 
 					echo
 
-					rm -f "$tmpfile"
-
-				
 				fi
 			
 			done
