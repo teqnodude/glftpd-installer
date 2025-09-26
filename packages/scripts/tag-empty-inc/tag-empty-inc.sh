@@ -29,7 +29,7 @@ VER=1.0
 #--[ Settings ]-------------------------------------------------
 
 # What directories should not be tagged as incomplete during creation?
-subdirs="cd??|disc??|disk??|dvd??|extra?|sub?|subtitle?|vobsub?|sample?|subpack?|ac3|audioaddon|addon|ac3addon|proof|cover?|tools|dirfix|nfofix|prooffix|proofix|subfix|dir.fix|nfo.fix|proof.fix|SAMPLE.FiX|SAMPLEFIX|readnfo"
+subdirs="cd??|disc??|disk??|dvd??|extra?|sub?|subtitle?|vobsub?|sample?|subpack?|s??|ac3|audioaddon|addon|ac3addon|proof|cover?|tools|dirfix|nfofix|prooffix|proofix|subfix|dir.fix|nfo.fix|proof.fix|SAMPLE.FiX|SAMPLEFIX|readnfo"
 
 #--[ Script start ]---------------------------------------------
 
