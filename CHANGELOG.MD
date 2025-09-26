@@ -1,5 +1,9 @@
 ## 12.x
 
+### Added
+
+- Added a new script called tag-empty-inc.sh under folder scripts that can be used to tag new directories as empty during creation that can be extremely useful for sites that like to keep things tidy
+
 ### Updated
 
 - Various optimization of code and removal of unnecessary files

@@ -1943,6 +1943,7 @@ glftpd()
        ../scripts/tur-predircheck/tur-predircheck.sh \
        ../scripts/tur-predircheck_manager/tur-predircheck_manager.sh \
        ../scripts/tur-free/tur-free.sh \
+       ../scripts/tag-empty-inc/tag-empty-inc.sh \
        "$glroot/bin/"
 
     # Configure tur-free.sh

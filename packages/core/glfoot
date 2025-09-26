@@ -93,6 +93,7 @@ cscript                 SITE[:space:]NUKE       post    /bin/cleanup
 cscript                 SITE[:space:]UNNUKE     post    /bin/postunnuke
 cscript                 SITE[:space:]WIPE       post    /bin/cleanup
 cscript                 RETR                    post    /bin/dl_speedtest
+#cscript					MKD						post	/bin/tag-empty-inc.sh
 
 site_cmd                RULES          TEXT     /ftp-data/misc/site.rules
 custom-rules            *
