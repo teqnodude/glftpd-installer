@@ -10,7 +10,7 @@ reason="-Auto- Not completed for"
 multiplier=5
 glconf=$glroot/etc/glftpd.conf
 now="$(date +%Y-%m-%d" "%H:%M:%S)"
-minutes=1
+minutes=720
 log=$glroot/ftp-data/logs/incomplete-list-nuker.log
 botconf=$glroot/sitebot/scripts/pzs-ng/ngBot.conf
 releaseComplete=" Complete "
@@ -19,7 +19,7 @@ releaseComplete=" Complete "
 prefix="$(grep nukedir_style $glroot/etc/glftpd.conf | awk '{print $2}' | cut -d '-' -f1)-"
 cache_file=$glroot/tmp/incomplete-list-nuker.cache
 cleannuked=1
-nukeage=1
+nukeage=720
 
 # Set to 1 to also nuke when complete but missing NFO
 nonfo=1
