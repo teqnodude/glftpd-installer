@@ -126,9 +126,6 @@ BLOCKDAYS=180 # 180 days = 6 months
 # WARNING: If you change this number you have to empty the file BLOCKFILE to avoid problems.
 LENGTH=400
 
-# NUKE cache file for incomplete-list-nuker
-NUKE_CACHE=$GLROOT/bin/incomplete-list-nuker.cache
-
 #--[ Script Start ]---------------------------------------------
 
 LogMsg()
@@ -137,12 +134,6 @@ LogMsg()
     DATE=$(date "+%Y-%m-%d %H:%M:%S")
     echo "$DATE $@" >> $LOG_FILE
 
-}
-
-LogNuke()
-{
-    DATE=$(date "+%Y-%m-%d %H:%M:%S")
-    [[ -f "$NUKE_CACHE" ]] && echo "$DATE:$@" >> $NUKE_CACHE
 }
 
 if [[ "$1" = "sanity" ]]
@@ -352,7 +343,6 @@ then
 
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type TV shows are not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $SHOW_TYPE which is not allowed."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
@@ -391,7 +381,6 @@ then
 
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type type of TV show is not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $type which is not allowed in section $section."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
@@ -430,7 +419,6 @@ then
 
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$genre genre is not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its genre is $genre which is not allowed in section $section."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
@@ -467,7 +455,6 @@ then
 
         $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "${RLS_NAME}" "$NUKE_MULTIPLER" "Episode air date must be $NUKE_EPS_BEFORE_YEAR or newer"
         LogMsg "Nuked release: ${RLS_NAME} because its year of release of $ep_air_year is before $NUKE_EPS_BEFORE_YEAR"
-        LogNuke "$RLS_NAME"
         exit 0
 
     fi
@@ -499,7 +486,6 @@ then
 
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "TV shows from $country are not allowed"
                 LogMsg "Nuked release: {$RLS_NAME} because its country of origin is $SHOW_COUNTRY which is not allowed."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
@@ -540,7 +526,6 @@ then
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "${RLS_NAME}" "$NUKE_MULTIPLER" "Network $network is not allowed"
                 LogMsg "Nuked release: ${RLS_NAME} because its network is $SHOW_NETWORK which is not allowed."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
@@ -583,9 +568,8 @@ then
 
                 fi
 
-                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Language $SHOW_LANGUAGE is not allowed"
+                "$GLROOT/bin/nuker" -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Language $SHOW_LANGUAGE is not allowed"
                 LogMsg "Nuked release: $RLS_NAME because its language is $SHOW_LANGUAGE which is not allowed in section $section."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
@@ -627,9 +611,8 @@ then
 
                 fi
 
-                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Rating $SHOW_RATING is below the limit of $limit"
+                "$GLROOT/bin/nuker" -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Rating $SHOW_RATING is below the limit of $limit"
                 LogMsg "Nuked release: $RLS_NAME because its rating $SHOW_RATING is below the limit of $limit for section $section."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
@@ -672,9 +655,8 @@ then
 
                 fi
 
-                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "The status of show is $SHOW_STATUS which is not allowed"
+                "$GLROOT/bin/nuker" -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "The status of show is $SHOW_STATUS which is not allowed"
                 LogMsg "Nuked release: $RLS_NAME because its status is $SHOW_STATUS which is not allowed in section $section."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
@@ -697,9 +679,8 @@ then
             if echo "$RLS_NAME" | grep -iq "$title"
             then
 
-                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "show not allowed"
+                "$GLROOT/bin/nuker" -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "show not allowed"
                 LogMsg "Nuked release: $RLS_NAME because show is not allowed."
-                LogNuke "$RLS_NAME"
                 exit 0
 
             fi
