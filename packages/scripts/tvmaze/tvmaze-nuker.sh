@@ -568,7 +568,7 @@ then
 
                 fi
 
-                "$GLROOT/bin/nuker" -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Language $SHOW_LANGUAGE is not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Language $SHOW_LANGUAGE is not allowed"
                 LogMsg "Nuked release: $RLS_NAME because its language is $SHOW_LANGUAGE which is not allowed in section $section."
                 exit 0
 
@@ -611,7 +611,7 @@ then
 
                 fi
 
-                "$GLROOT/bin/nuker" -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Rating $SHOW_RATING is below the limit of $limit"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Rating $SHOW_RATING is below the limit of $limit"
                 LogMsg "Nuked release: $RLS_NAME because its rating $SHOW_RATING is below the limit of $limit for section $section."
                 exit 0
 
@@ -655,7 +655,7 @@ then
 
                 fi
 
-                "$GLROOT/bin/nuker" -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "The status of show is $SHOW_STATUS which is not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "The status of show is $SHOW_STATUS which is not allowed"
                 LogMsg "Nuked release: $RLS_NAME because its status is $SHOW_STATUS which is not allowed in section $section."
                 exit 0
 
@@ -679,7 +679,7 @@ then
             if echo "$RLS_NAME" | grep -iq "$title"
             then
 
-                "$GLROOT/bin/nuker" -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "show not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "show not allowed"
                 LogMsg "Nuked release: $RLS_NAME because show is not allowed."
                 exit 0
 
