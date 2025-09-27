@@ -36,7 +36,7 @@ subdirs="cd??|disc??|disk??|dvd??|extra?|sub?|subtitle?|vobsub?|sample?|subpack?
 target=$(echo $1 | awk '{print $2}')
 
 # Skip common subdirs (mirror of your subdir_list)
-case "$target" in
+case "$(echo "$target" | tr '[:upper:]' '[:lower:]')" in
 	
 	$subdirs)
     exit 0
