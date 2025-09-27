@@ -190,7 +190,7 @@ do
 
         # Get results using the same parsing method as incomplete-list.sh
         results="$("$cleanup" "$glroot" 2>/dev/null | grep -E '^Incomplete' | tr '\"' '\n' | grep -F "$full_secpath" | grep -Ev '/Sample' | tr -s '/' | sort)"
-
+		
     	[[ -z "$results" ]] && continue
 
 	    for result in $results
@@ -199,7 +199,9 @@ do
 	        secrel="$(echo "$result" | sed "s|$full_secpath||" | sed 's|^/||')"
     	    target="$result"
         	nukesite="${result#$glroot}"
-
+        	reldir="$(echo $nukesite | awk -F '/' '{print $NF}')"
+        	relname="$(echo $nukesite | sed "s|$reldir|$prefix$reldir|")"
+        	
 	        # Skip if Approved_by exists
     	    if [[ $(find "$target" -maxdepth 1 -type f -iname "Approved_by*" 2>/dev/null | wc -l) -ne 0 ]]
         	then
@@ -225,7 +227,7 @@ do
 			
 					echo "$now - Nuking incomplete release $secrel in section $secname" >> "$log"
 					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-					echo "$now:/site/$secname/$prefix$secrel" >> "$cache_file"
+					echo "$now:$relname" >> "$cache_file"
 			
 				fi
 				
@@ -238,7 +240,7 @@ do
 			
 					echo "$now - Nuking no-nfo release $secrel in section $secname" >> "$log"
 					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-					echo "$now:/site/$secname/$prefix$secrel" >> "$cache_file"
+					echo "$now:$relname" >> "$cache_file"
 			
 				fi				
 			
@@ -251,7 +253,7 @@ do
 			
 					echo "$now - Nuking release (no progress marker) $secrel in section $secname" >> "$log"
 					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-					echo "$now:/site/$secname/$prefix$secrel" >> "$cache_file"
+					echo "$now:$relname" >> "$cache_file"
 					
 				fi
 			
