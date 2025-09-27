@@ -160,7 +160,7 @@ then
 
     else
 
-        echo "Cache file not found: $cache_file"
+        touch $cache_file && chmod 666 $cache_file
 
     fi
 
