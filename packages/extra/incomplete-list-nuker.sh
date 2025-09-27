@@ -17,7 +17,7 @@ releaseComplete=" Complete "
 
 # cleaning of [NUKED]- releases
 prefix="$(grep nukedir_style $glroot/etc/glftpd.conf | awk '{print $2}' | cut -d '-' -f1)-"
-cache_file=$glroot/tmp/incomplete-list-nuker.cache
+cache_file=$glroot/bin/incomplete-list-nuker.cache
 cleannuked=1
 nukeage=720
 

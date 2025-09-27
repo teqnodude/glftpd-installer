@@ -19,7 +19,7 @@ VER=1.0
 #
 #--[ Script start ]---------------------------------------------
 
-cache_file=/tmp/incomplete-list-nuker.cache
+cache_file=/bin/incomplete-list-nuker.cache
 prefix="$(grep nukedir_style /etc/glftpd.conf | awk '{print $2}' | cut -d '-' -f1)-"
 now="$(date +%Y-%m-%d" "%H:%M:%S)"
 
