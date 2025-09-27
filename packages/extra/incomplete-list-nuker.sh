@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.2
+VER=1.3
 #--[ Settings ]-------------------------------------------------
 
 glroot=/glftpd
@@ -10,14 +10,19 @@ reason="-Auto- Not completed for"
 multiplier=5
 glconf=$glroot/etc/glftpd.conf
 now="$(date +%Y-%m-%d" "%H:%M:%S)"
-minutes=720
+minutes=1
+log=$glroot/ftp-data/logs/incomplete-list-nuker.log
+botconf=$glroot/sitebot/scripts/pzs-ng/ngBot.conf
+releaseComplete=" Complete "
+
+# cleaning of [NUKED]- releases
+prefix="$(grep nukedir_style $glroot/etc/glftpd.conf | awk '{print $2}' | cut -d '-' -f1)-"
+cache_file=$glroot/tmp/incomplete-list-nuker.cache
+cleannuked=1
+nukeage=1
 
 # Set to 1 to also nuke when complete but missing NFO
 nonfo=1
-
-log=$glroot/ftp-data/logs/incomplete-list-nuker.log
-botconf=$glroot/sitebot/scripts/pzs-ng/ngBot.conf
-releaseComplete="Complete -"
 
 #--[ Script Start ]---------------------------------------------
 
@@ -96,6 +101,76 @@ duration_str()
 
 #--[ Main ]-----------------------------------------------------
 
+if [[ "$cleannuked" -eq 1 ]]
+then
+
+    if [[ -f "$cache_file" ]]
+    then
+
+        current_time="$(date +%s)"
+
+        while IFS= read -r line
+        do
+
+            if [[ "$line" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})\ ([0-9]{2}:[0-9]{2}:[0-9]{2}):(.+)$ ]]
+            then
+
+                date_str="${BASH_REMATCH[1]}"
+                time_str="${BASH_REMATCH[2]}"
+                release_path="${BASH_REMATCH[3]}"
+                release_name="$(basename "$release_path")"
+                relname="${release_name#\[NUKED\]-}"
+
+                file_timestamp="$(date -d "$date_str $time_str" +%s 2>/dev/null)"
+
+                if [[ -n "$file_timestamp" ]]
+                then
+
+                    age_seconds=$(( current_time - file_timestamp ))
+                    age_minutes=$(( age_seconds / 60 ))
+
+                    if [[ "$age_minutes" -gt "$nukeage" ]]
+                    then
+
+                        if [[ -d "$glroot$release_path" ]]
+                        then
+
+                            echo "Removing NUKED release older than ${nukeage} minutes: $release_path"
+                            sed -i "\|$relname|d" "$cache_file"
+                            rm -rf "$glroot$release_path"
+                            chroot "$glroot" /bin/cleanup
+
+                        fi
+
+                    else
+
+                        echo "NUKED release within age limit (${age_minutes}/${nukeage} minutes): $release_path"
+
+                    fi
+
+                fi
+
+                [[ ! -d "$glroot$release_path" ]] && sed -i "\|$relname|d" "$cache_file"
+
+            fi
+
+        done < "$cache_file"
+        
+        chroot "$glroot" /bin/cleanup
+
+    else
+
+        echo "Cache file not found: $cache_file"
+
+    fi
+
+else
+
+    echo "NUKED release cleaning is disabled (cleannuked=0)"
+
+fi
+
+
 age_str="$(duration_str "$minutes")."
 
 IFSORIG="$IFS"
@@ -133,46 +208,55 @@ do
  
 	        fi
 
-    	    comp="$(ls -1 "$target/" 2>/dev/null | grep -F "$releaseComplete" | head -1)"
+    	    comp="$(ls -1 "$target/" 2>/dev/null | grep -i "$releaseComplete" | head -1)"
         	percent="$(echo "$comp" | awk '{for(i=1;i<=NF;i++) if($i~/^[0-9]+%$/){print $i; exit}}')"
 
-	        if [[ -n "$percent" && "$percent" != "100%" ]]
-    	    then
+			# Pre-calc to avoid repeated find calls
+			dir_old_count="$(find "$target" -maxdepth 0 -type d -mmin +"$minutes" 2>/dev/null | wc -l)"
+			nfo_count="$(find "$target" -maxdepth 1 -type f -iname "*.nfo" 2>/dev/null | wc -l)"
+			
 
-	            echo "$secname: ${secrel} is $percent complete."
-	            if [[ $(find "$target" -maxdepth 0 -type d -mmin +$minutes 2>/dev/null | wc -l) -ne 0 ]]
-	            then
+			if [[ -n "$percent" && "$percent" != "100%" ]]
+			then
+			
+				echo "$secname: ${secrel} is $percent complete."
+				if [[ "$dir_old_count" -ne 0 ]]
+				then
+			
+					echo "$now - Nuking incomplete release $secrel in section $secname" >> "$log"
+					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
+					echo "$now:/site/$secname/$prefix$secrel" >> "$cache_file"
+			
+				fi
+				
+			elif [[ ! -z "$comp" && "$nonfo" -eq 1 && "$nfo_count" -eq 0 ]]
+			then
+			
+				echo "$secname: ${secrel} is complete but missing NFO."
+				if [[ "$dir_old_count" -ne 0 ]]
+				then
+			
+					echo "$now - Nuking no-nfo release $secrel in section $secname" >> "$log"
+					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
+					echo "$now:/site/$secname/$prefix$secrel" >> "$cache_file"
+			
+				fi				
+			
+			elif [[ -z "$comp" ]]
+			then
+			
+				echo "$secname: ${secrel} has no progress marker (.sfv/Complete)."
+				if [[ "$dir_old_count" -ne 0 ]]
+				then
+			
+					echo "$now - Nuking release (no progress marker) $secrel in section $secname" >> "$log"
+					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
+					echo "$now:/site/$secname/$prefix$secrel" >> "$cache_file"
+					
+				fi
+			
+			fi
 
-	                echo "$now - Nuking incomplete release $secrel in section $secname" >> "$log"
-	                "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-
-	            fi
-
-	        elif [[ -z "$percent" ]]
-	        then
-
-	            echo "$secname: ${secrel} has no progress marker (.sfv/Complete)."
-	            if [[ $(find "$target" -maxdepth 0 -type d -mmin +$minutes 2>/dev/null | wc -l) -ne 0 ]]
-	            then
-
-	                echo "$now - Nuking release (no progress marker) $secrel in section $secname" >> "$log"
-	                "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-
-	            fi
-
-	        elif (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" 2>/dev/null | wc -l) -eq 0 ]]
-	        then
-
-	            echo "$secname: ${secrel} is complete but missing NFO."
-	            if [[ $(find "$target" -maxdepth 0 -type d -mmin +$minutes 2>/dev/null | wc -l) -ne 0 ]]
-	            then
-
-	                echo "$now - Nuking no-nfo release $secrel in section $secname" >> "$log"
-	                "$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-
-	            fi
-
-	        fi
 
 		done
 

@@ -1,11 +1,11 @@
 #!/bin/bash
-VER=1.2
+VER=1.3
 #--[ Settings ]-------------------------------------------------
 
 glroot=/glftpd
 cleanup=$glroot/bin/cleanup
 botconf=/glftpd/sitebot/scripts/pzs-ng/ngBot.conf
-releaseComplete="Complete -"
+releaseComplete=" Complete "
 
 # set to 1 to list fully-complete releases that are missing an NFO
 nonfo=1
@@ -74,7 +74,7 @@ do
             fi
 
             # Check for completion status
-            comp="$(ls -1 "$target/" 2>/dev/null | grep -F "$releaseComplete" | head -1)"
+            comp="$(ls -1 "$target/" 2>/dev/null | grep -i "$releaseComplete" | head -1)"
             percent="$(echo "$comp" | awk '{for(i=1;i<=NF;i++) if($i~/^[0-9]+%$/){print $i; exit}}')"
 
             if [[ -n "$percent" && "$percent" != "100%" ]]
@@ -83,17 +83,17 @@ do
                 echo "$secname:${red} ${secrel}${reset}${grey} is${red} $percent ${grey}complete.${reset}"
                 ((found++))
 
-            elif [[ -z "$percent" ]]
-            then
-
-            	echo "$secname:${red} ${secrel}${reset}${grey} has no sfv file or progress marker.${reset}"
-                ((found++))
-
-            elif (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" 2>/dev/null | wc -l) -eq 0 ]]
+            elif [[ ! -z "$comp" && "$nonfo" -eq 1 && "$nfo_count" -eq 0 ]]
             then
 
 				echo "$secname:${red} ${secrel}${reset}${grey} is missing a NFO.${reset}"
 				((found++))
+
+            elif [[ -z "$comp" ]]
+            then
+
+            	echo "$secname:${red} ${secrel}${reset}${grey} has no sfv file or progress marker.${reset}"
+                ((found++))
 
             fi
 

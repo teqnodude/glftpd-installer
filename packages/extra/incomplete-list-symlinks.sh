@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.2
+VER=1.3
 #--[ Info ]-----------------------------------------------------
 #
 # Put in crontab:
@@ -11,7 +11,7 @@ glroot=/glftpd
 cleanup=$glroot/bin/cleanup
 botconf=/glftpd/sitebot/scripts/pzs-ng/ngBot.conf
 sections=""
-releaseComplete="Complete -"
+releaseComplete=" Complete "
 
 # create symlinks under /site/$incomplete
 create=1
@@ -92,7 +92,7 @@ do
             fi
 
             # Check for completion status
-            comp="$(ls -1 "$target/" 2>/dev/null | grep -F "$releaseComplete" | head -1)"
+            comp="$(ls -1 "$target/" 2>/dev/null | grep -i "$releaseComplete" | head -1)"
             percent="$(echo "$comp" | awk '{for(i=1;i<=NF;i++) if($i~/^[0-9]+%$/){print $i; exit}}')"
             to_link=""
 
@@ -101,17 +101,17 @@ do
 
                 echo "$secname: ${secrel} is $percent complete."
                 to_link=1
-
-            elif [[ -z "$percent" ]]
-            then
-
-                echo "$secname:${secrel} has no sfv file or progress marker."
-                to_link=1
-
-            elif (( nonfo == 1 )) && [[ $(find "$target" -maxdepth 1 -type f -iname "*.nfo" 2>/dev/null | wc -l) -eq 0 ]]
+                
+            elif [[ ! -z "$comp" && "$nonfo" -eq 1 && "$nfo_count" -eq 0 ]]
             then
 
                 echo "$secname:${secrel} is missing a NFO."
+                to_link=1
+
+            elif [[ -z "$comp" ]]
+            then
+
+                echo "$secname:${secrel} has no sfv file or progress marker."
                 to_link=1
 
             fi

@@ -27,7 +27,7 @@ EXCLUDES="PRE nfofix nfo.fix nfo.update dirfix dir.fix sample.fix samplefix repa
 ALLOWED="[Approved_by_"    # What makes release ok?
 
 #---[ Totally empty module ]---#
-TOTALLYEMPTY="TRUE"     # Check for empty folders at all?
+TOTALLYEMPTY="FALSE"     # Check for empty folders at all?
 PRENUKEEMPTY="TRUE"     # Send pre-nuke warning?
 EARLYEMPTY="60"          # Minutes before sending a per-nuke warning.
 TIMEEMPTY="720"          # Minutes before nuke.
@@ -102,7 +102,7 @@ ALLOWHOURS="FALSE"    	# Use hours in bot and log output?
 
 
 #---[ Generics ]---#
-DELETENUKES="TRUE"      # Delete nuked folders after...
+DELETENUKES="FALSE"      # Delete nuked folders after...
 TIMETODELEM="12"        # the are this many >hours< old.
 
 USEREXCLUDE="UNKNOWN"   # Dont show in EMBARRES nuke output.
