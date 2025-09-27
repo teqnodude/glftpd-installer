@@ -138,7 +138,6 @@ then
                             echo "Removing NUKED release older than ${nukeage} minutes: $release_path"
                             sed -i "\|$relname|d" "$cache_file"
                             rm -rf "$glroot$release_path"
-                            chroot "$glroot" /bin/cleanup
 
                         fi
 
@@ -156,8 +155,6 @@ then
 
         done < "$cache_file"
         
-        chroot "$glroot" /bin/cleanup
-
     else
 
         touch $cache_file && chmod 666 $cache_file
