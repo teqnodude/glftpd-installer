@@ -29,20 +29,20 @@ VER=1.0
 #--[ Settings ]-------------------------------------------------
 
 # What directories should not be tagged as incomplete during creation?
-subdirs="cd??|disc??|disk??|dvd??|extra?|sub?|subtitle?|vobsub?|sample?|subpack?|s??|ac3|audioaddon|addon|ac3addon|proof|cover?|tools|dirfix|nfofix|prooffix|proofix|subfix|dir.fix|nfo.fix|proof.fix|SAMPLE.FiX|SAMPLEFIX|readnfo"
+subdirs="cd[0-9]{1,2}|disc[0-9]{1,2}|disk[0-9]{1,2}|dvd[0-9]{1,2}|extra[0-9]?|sub[0-9]?|subtitle[0-9]?|vobsub[0-9]?|sample[0-9]?|subpack[0-9]?|s[0-9]{1,2}|proof|cover[0-9]?|tools"
+words="dirfix|nfofix|prooffix|proofix|subfix|dir.fix|nfo.fix|proof.fix|sample.fix|samplefix|readnfo|ac3|audioaddon|addon|ac3addon"
 
 #--[ Script start ]---------------------------------------------
 
-target=$(echo $1 | awk '{print $2}')
+target=$(echo $1 | awk '{print $2}' | tr '[:upper:]' '[:lower:]')
 
-# Skip common subdirs (mirror of your subdir_list)
-case "$(echo "$target" | tr '[:upper:]' '[:lower:]')" in
-	
-	$subdirs)
+# Skip common subdirs using improved regex matching
+if [[ "$target" =~ (^(${subdirs})|${words}) ]]
+then
+
     exit 0
-    ;;
-    
-esac
+
+fi
 
 # Fire-and-forget so MKD isn’t slowed down.
 # IMPORTANT: cd into the dir and then call rescan --quick (no --dir=)
