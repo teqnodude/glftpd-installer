@@ -89,7 +89,7 @@ post_check              /bin/zipscript-c        *
 
 cscript                 DELE                    post    /bin/postdel
 cscript                 RMD                     post    /bin/datacleaner
-cscript                 SITE[:space:]NUKE       post    /bin/cleanup
+cscript                 SITE[:space:]NUKE       post    /bin/nuke_cache.sh
 cscript                 SITE[:space:]UNNUKE     post    /bin/postunnuke
 cscript                 SITE[:space:]WIPE       post    /bin/cleanup
 cscript                 RETR                    post    /bin/dl_speedtest

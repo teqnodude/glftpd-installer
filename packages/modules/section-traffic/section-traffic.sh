@@ -7,7 +7,7 @@ VER=1.3
 # This script requires the use of xferlog-import to work. It    
 # shows the up / down / total stats for sections on site.       
 #                                                               
-#-[ Install ]---------------------------------------------------
+#--[ Install ]--------------------------------------------------
 #                                                               
 # Copy this script to $GLROOT/bin and chmod it 755. Go through  
 # the settings and ensure they are correct. If you change       

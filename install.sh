@@ -1978,6 +1978,7 @@ glftpd()
     cp ../extra/incomplete-list.sh \
        ../extra/incomplete-list-nuker.sh \
        ../extra/incomplete-list-symlinks.sh \
+       ../extra/nuke_cache.sh \
        ../extra/lastlogin.sh \
        "$glroot/bin/"
 
