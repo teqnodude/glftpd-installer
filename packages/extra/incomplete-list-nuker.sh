@@ -1,5 +1,10 @@
 #!/bin/bash
 VER=1.3
+#--[ Info ]-----------------------------------------------------
+#
+# Put in crontab:
+# */10 * * * * /glftpd/bin/incomplete-list-nuker.sh >/dev/null 2>&1
+#
 #--[ Settings ]-------------------------------------------------
 
 glroot=/glftpd
