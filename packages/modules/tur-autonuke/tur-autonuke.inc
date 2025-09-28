@@ -9,13 +9,13 @@ else
     echo "${yellow}Description for Tur-Autonuke:${reset}"
     cat $rootdir/packages/modules/tur-autonuke/description
     echo
-    read -p "Install Tur-Autonuke ? [Y]es [N]o, default Y : " ask
+    read -p "Install Tur-Autonuke ? [Y]es [N]o, default N : " ask
 
 fi
 
 case $ask in
 
-    [Nn])
+    [Nn]|*)
 
         if ! has_key "$cache" autonuke
         then
@@ -25,7 +25,7 @@ case $ask in
         fi
         ;;
 
-    [Yy]|*)
+    [Yy])
 
         if ! has_key "$cache" autonuke
         then
