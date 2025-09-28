@@ -114,9 +114,9 @@ pasv_ports="6000-7000" 			# Port range to use for passive mode for glFTPd
 ircserver="irc.example.org +7000 ircpassword" 
 
 addip="y" 						# Install Tur-Addip
-botnuke="y" 					# Install Botnuke
 archiver="y"				 	# Install Tur-Archiver
 autonuke="y" 					# Install Tur-Autonuke
+botnuke="y" 					# Install Botnuke
 eur0presystem="y" 				# Install Eur0-pre-system with foo-pre
 ircadmin="y" 					# Install Tur-Ircadmin
 ircnick="y" 					# Install Ircnick
