@@ -342,6 +342,7 @@ then
                 fi
 
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type TV shows are not allowed"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $SHOW_TYPE which is not allowed."
                 exit 0
 
@@ -380,6 +381,7 @@ then
                 fi
 
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type type of TV show is not allowed"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $type which is not allowed in section $section."
                 exit 0
 
@@ -418,6 +420,7 @@ then
                 fi
 
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$genre genre is not allowed"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: {$RLS_NAME} because its genre is $genre which is not allowed in section $section."
                 exit 0
 
@@ -454,6 +457,7 @@ then
         fi
 
         $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "${RLS_NAME}" "$NUKE_MULTIPLER" "Episode air date must be $NUKE_EPS_BEFORE_YEAR or newer"
+        [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
         LogMsg "Nuked release: ${RLS_NAME} because its year of release of $ep_air_year is before $NUKE_EPS_BEFORE_YEAR"
         exit 0
 
@@ -485,6 +489,7 @@ then
             	fi
 
                 $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "TV shows from $country are not allowed"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: {$RLS_NAME} because its country of origin is $SHOW_COUNTRY which is not allowed."
                 exit 0
 
@@ -525,6 +530,7 @@ then
                 fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "${RLS_NAME}" "$NUKE_MULTIPLER" "Network $network is not allowed"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: ${RLS_NAME} because its network is $SHOW_NETWORK which is not allowed."
                 exit 0
 
@@ -569,6 +575,7 @@ then
                 fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Language $SHOW_LANGUAGE is not allowed"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: $RLS_NAME because its language is $SHOW_LANGUAGE which is not allowed in section $section."
                 exit 0
 
@@ -612,6 +619,7 @@ then
                 fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Rating $SHOW_RATING is below the limit of $limit"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: $RLS_NAME because its rating $SHOW_RATING is below the limit of $limit for section $section."
                 exit 0
 
@@ -656,6 +664,7 @@ then
                 fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "The status of show is $SHOW_STATUS which is not allowed"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: $RLS_NAME because its status is $SHOW_STATUS which is not allowed in section $section."
                 exit 0
 
@@ -680,6 +689,7 @@ then
             then
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "show not allowed"
+                [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: $RLS_NAME because show is not allowed."
                 exit 0
 

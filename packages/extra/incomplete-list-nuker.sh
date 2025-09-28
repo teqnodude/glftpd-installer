@@ -79,6 +79,15 @@ fi
 
 #--[ Functions ]------------------------------------------------
 
+store_nuke()
+{
+
+    nukedir="$(echo $1 | awk -F '/' '{print $NF}')"
+    nukepath="$(echo $1 | sed "s|$nukedir|$prefix$nukedir|")"
+    echo "$now:$nukepath" >> $cache_file
+
+}
+
 duration_str()
 {
 
@@ -105,6 +114,14 @@ duration_str()
 }
 
 #--[ Main ]-----------------------------------------------------
+
+if [[ "$1" == "store" ]]
+then
+
+    store_nuke $2
+    exit 0
+
+fi
 
 if [[ "$cleannuked" -eq 1 ]]
 then
@@ -229,7 +246,7 @@ do
 			
 					echo "$now - Nuking incomplete release $secrel in section $secname" >> "$log"
 					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-					echo "$now:$relname" >> "$cache_file"
+					store_nuke $nukesite
 			
 				fi
 				
@@ -242,7 +259,7 @@ do
 			
 					echo "$now - Nuking no-nfo release $secrel in section $secname" >> "$log"
 					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-					echo "$now:$relname" >> "$cache_file"
+					store_nuke $nukesite
 			
 				fi				
 			
@@ -255,7 +272,7 @@ do
 			
 					echo "$now - Nuking release (no progress marker) $secrel in section $secname" >> "$log"
 					"$nukeprog" -r "$glconf" -N "$nukeuser" -n "$nukesite" "$multiplier" "$reason $age_str"
-					echo "$now:$relname" >> "$cache_file"
+					store_nuke $nukesite
 					
 				fi
 			

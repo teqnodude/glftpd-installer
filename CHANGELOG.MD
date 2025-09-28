@@ -11,6 +11,7 @@
 - Various optimization of code and removal of unnecessary files
 - I've set tag-empty-inc.sh as default and no longer use tur-autonuke.sh by default
 - Updated incomplete-list.sh, incomplete-list-symlinks and incomplete-list-nuker.sh
+- Enabled the storage of nukes in psxc-imdb-nuker.sh by creating a store function in incomplete-list-nuker.sh that can be called upon by external scripts like psxc-imdb-nuker.sh
 
 ### Fixes
 

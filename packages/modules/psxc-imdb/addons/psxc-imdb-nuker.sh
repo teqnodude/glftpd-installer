@@ -579,6 +579,7 @@ fi
 
 if [ -z "$NUKE_WARN_FILE" ] && [ -z "$NUKE_LOGFILE" ]; then
  $GLROOT/bin/nuker -r $GLFTPD_CONF -N $NUKER_PERSON -n {$IMDBRELPATH}/ $MULTIPLIER $NUKE_REASON >/dev/null 2>&1
+ [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $IMDBRELPATH
 else
  if [ ! -z "$NUKE_LOGFILE" ]; then
   echo "$DATE $IMDBRELPATH $MULTIPLIER $NUKE_REASON" >> $NUKE_LOGFILE
