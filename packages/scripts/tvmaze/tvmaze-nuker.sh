@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=3.41
+VER=3.42
 #--[ Info ]-----------------------------------------------------
 #
 # This script comes without any warranty, use it at your own risk.
@@ -23,6 +23,7 @@ VER=3.41
 # 2025-08-29 v3.3 Improved version with better error handling, performance optimizations, and safer variable usage.
 # 2025-09-02 v3.4 Fixed the nuke_section_languages that got broken after latest optimization
 # 2025-09-04 v3.41 Fixed the automatic adding of blocks to blockfile that became broken after optimization
+# 2025-09-05 v3.42 Calling the storage of nuke function in incomplete-list-nuker.sh if the file exists to ensure nuked dirs are cleaned up
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
