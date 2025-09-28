@@ -339,7 +339,10 @@ then
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
 
-                    if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+                    if ! grep "^$section:^(" "$BLOCKFILE" \
+                        | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+                        | tr '|' '\n' \
+                        | grep -Fxq "$block"
                     then
 
                         addblock "$section" "$block"
@@ -384,7 +387,10 @@ then
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
 
-                    if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+                    if ! grep "^$section:^(" "$BLOCKFILE" \
+                        | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+                        | tr '|' '\n' \
+                        | grep -Fxq "$block"
                     then
 
                         addblock "$section" "$block"
@@ -429,7 +435,10 @@ then
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
 
-                    if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+                    if ! grep "^$section:^(" "$BLOCKFILE" \
+                        | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+                        | tr '|' '\n' \
+                        | grep -Fxq "$block"
                     then
 
                         addblock "$section" "$block"
@@ -466,7 +475,10 @@ then
             exclude=$(echo "$RLS_NAME" | cut -d'/' -f4- | grep -Eo ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[0-9]{4}.[0-9]{2}.[0-9]{2}.*|.Part.[0-9].*")
             block=$(echo "$RLS_NAME" | cut -d'/' -f4- | sed "s/$exclude//")
 
-            if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+            if ! grep "^$section:^(" "$BLOCKFILE" \
+				| sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+				| tr '|' '\n' \
+				| grep -Fxq "$block"
             then
 				
 				addblock "$section" "$block"
@@ -504,7 +516,10 @@ then
             	    exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
             	    block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
 
-                    if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+                    if ! grep "^$section:^(" "$BLOCKFILE" \
+                        | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+                        | tr '|' '\n' \
+                        | grep -Fxq "$block"
                     then
 
                         addblock "$section" "$block"
@@ -545,7 +560,10 @@ then
                     exclude=$(echo "$RLS_NAME" | cut -d'/' -f4- | grep -Eo ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo "$RLS_NAME" | cut -d'/' -f4- | sed "s/$exclude//")
 
-                    if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+                    if ! grep "^$section:^(" "$BLOCKFILE" \
+                        | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+                        | tr '|' '\n' \
+                        | grep -Fxq "$block"
                     then
 
                         addblock "$section" "$block"
@@ -590,7 +608,10 @@ then
                     exclude=$(echo "$RLS_NAME" | cut -d'/' -f4- | grep -Eo ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo "$RLS_NAME" | cut -d'/' -f4- | sed "s/$exclude//")
                     
-                    if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+                    if ! grep "^$section:^(" "$BLOCKFILE" \
+                        | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+                        | tr '|' '\n' \
+                        | grep -Fxq "$block"
                     then
                  
 						addblock "$section" "$block"
@@ -634,7 +655,10 @@ then
                     exclude=$(echo "$RLS_NAME" | cut -d'/' -f4- | grep -Eo ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo "$RLS_NAME" | cut -d'/' -f4- | sed "s/$exclude//")
                     
-                    if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+                    if ! grep "^$section:^(" "$BLOCKFILE" \
+                        | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+                        | tr '|' '\n' \
+                        | grep -Fxq "$block"
                     then
                         
 						addblock "$section" "$block"
@@ -679,7 +703,10 @@ then
                     exclude=$(echo "$RLS_NAME" | cut -d'/' -f4- | grep -Eo ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo "$RLS_NAME" | cut -d'/' -f4- | sed "s/$exclude//")
                     
-                    if ! grep -q "^$section:.*$block" "$BLOCKFILE"
+                    if ! grep "^$section:^(" "$BLOCKFILE" \
+                        | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
+                        | tr '|' '\n' \
+                        | grep -Fxq "$block"
                     then
                         
 						addblock "$section" "$block"
