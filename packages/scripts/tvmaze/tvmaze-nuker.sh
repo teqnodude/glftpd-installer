@@ -338,11 +338,11 @@ then
 		    		section=$(echo $RLS_NAME | cut -d'/' -f1-3)
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
-		    		[ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
+		    		[[ ! $(grep "$section" $BLOCKFILE | grep "$block") ]] && addblock $section $block
 
                 fi
 
-                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type TV shows are not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$type TV shows are not allowed"
                 [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $SHOW_TYPE which is not allowed."
                 exit 0
@@ -377,11 +377,11 @@ then
 
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
-		    		[ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
+		    		[[ ! $(grep "$section" $BLOCKFILE | grep "$block") ]] && addblock $section $block
 
                 fi
 
-                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$type type of TV show is not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$type type of TV show is not allowed"
                 [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: {$RLS_NAME} because its show type is $type which is not allowed in section $section."
                 exit 0
@@ -416,11 +416,11 @@ then
 
                     exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
-		    		[ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
+		    		[[ ! $(grep "$section" $BLOCKFILE | grep "$block") ]] && addblock $section $block
 
                 fi
 
-                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "$genre genre is not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$genre genre is not allowed"
                 [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: {$RLS_NAME} because its genre is $genre which is not allowed in section $section."
                 exit 0
@@ -457,7 +457,7 @@ then
 
         fi
 
-        $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "${RLS_NAME}" "$NUKE_MULTIPLER" "Episode air date must be $NUKE_EPS_BEFORE_YEAR or newer"
+        $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Episode air date must be $NUKE_EPS_BEFORE_YEAR or newer"
         [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
         LogMsg "Nuked release: ${RLS_NAME} because its year of release of $ep_air_year is before $NUKE_EPS_BEFORE_YEAR"
         exit 0
@@ -485,11 +485,11 @@ then
 		    		section=$(echo $RLS_NAME | cut -d'/' -f1-3)
             	    exclude=$(echo $RLS_NAME | cut -d'/' -f4- | egrep -o ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
             	    block=$(echo $RLS_NAME | cut -d'/' -f4- | sed "s/$exclude//")
-		    		[ ! $(grep "$section" $BLOCKFILE | grep "$block") ] && addblock $section $block
+		    		[[ ! $(grep "$section" $BLOCKFILE | grep "$block") ]] && addblock $section $block
 
             	fi
 
-                $GLROOT/bin/nuker -r $GLCONF -N $NUKE_USER -n {$RLS_NAME} $NUKE_MULTIPLER "TV shows from $country are not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "TV shows from $country are not allowed"
                 [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: {$RLS_NAME} because its country of origin is $SHOW_COUNTRY which is not allowed."
                 exit 0
@@ -530,7 +530,7 @@ then
 				
                 fi
 
-                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "${RLS_NAME}" "$NUKE_MULTIPLER" "Network $network is not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "Network $network is not allowed"
                 [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: ${RLS_NAME} because its network is $SHOW_NETWORK which is not allowed."
                 exit 0
