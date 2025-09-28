@@ -79,55 +79,60 @@ cron gcc systemd autoconf bc curl diffutils ftp git iputils-ping libflac-dev lib
 After a regular installation you are left with a file called install.cache located in install dir that will be used automatically the next time you run the installation script. Here are the various variables in install.cache if you want to make your installation unattended.
 
 ```
-sitename="Test" # Name of the site. Don't use space in sitename. 
-port="2010" # Port for the FTP
-device="/dev/sda1" # What device to use for /site
-channelnr="2" # How many channels the bot will be in
-channame1="#main n nopass" # Channelname of 1st chan with no password requirement
-channame2="#flood y testing" # Channelname of 2nd chan with password requirement
+sitename="Test" 				# Name of the site. Don't use space in sitename. 
+port="2010" 					# Port for the FTP
+device="/dev/sda1" 				# What device to use for /site
+channelnr="2" 					# How many channels the bot will be in
+channame1="#main n nopass" 		# Channelname of 1st chan with no password requirement
+channame2="#flood y testing" 	# Channelname of 2nd chan with password requirement
 announcechannels="#main #flood" # Announce channels
-channelops="#main" # Ops channel 
-ircnickname="l337" # Irc nickname of bot owner
-sections="3" # How many sections will be created, max 22 sections allowed
+channelops="#main" 				# Ops channel 
+ircnickname="l337" 				# Irc nickname of bot owner
+sections="3" 					# How many sections will be created, max 22 sections allowed
+
 # Recommended section names: 
 # 0DAY ANIME APPS DOX EBOOKS FLAC GAMES MBLURAY MP3 NSW PS4 PS5 TV-1080 TV-2160 
 # TV-720 TV-HD TV-NL X264 X264-1080 X264-720 X265-2160 XVID XXX XXX-PAYSITE
-section1="0DAY" # Name of section 1
-section1dated="y" # Dated section?
-section1zipfiles="y" # Zip files?
-section1movie="n" # Movie section?
-section2="MP3" # Name of section 2
-section2dated="y" # Dated section?
-section2zipfiles="n" # Zip files?
-section2movie="n" # Movie section?
-section3="DVDR" # Name of section 3 
-section3dated="n" # Dated section?
-section3zipfiles="n" # Zip files?
-section3movie="Y" # Movie section?
-router="y" # If site is behind router
-pasv_addr="123.123.123.123" # IP or DNS to use as passive address for glFTPd
-pasv_ports="6000-7000" # Port range to use for passive mode for glFTPd
+
+section1="0DAY" 				# Name of section 1
+section1dated="y" 				# Dated section?
+section1zipfiles="y" 			# Zip files?
+section1movie="n" 				# Movie section?
+section2="MP3" 					# Name of section 2
+section2dated="y" 				# Dated section?
+section2zipfiles="n" 			# Zip files?
+section2movie="n" 				# Movie section?
+section3="DVDR" 				# Name of section 3 
+section3dated="n" 				# Dated section?
+section3zipfiles="n" 			# Zip files?
+section3movie="Y" 				# Movie section?
+router="y" 						# If site is behind router
+pasv_addr="123.123.123.123" 	# IP or DNS to use as passive address for glFTPd
+pasv_ports="6000-7000" 			# Port range to use for passive mode for glFTPd
+
 # What ircserver should the bot connect to. + = SSL port. Remove :ircpassword if no password is required
 ircserver="irc.example.org +7000 ircpassword" 
-eur0presystem="y" # Install Eur0-pre-system with foo-pre
-slvprebw="y" # Install Slv-PreBW
-ircadmin="y" # Install Tur-Ircadmin
-request="y" # Install Tur-Request
-trial="y" # Install Tur-Trial
-vacation="y" # Install Tur-Vacation
-whereami="y" # Install Whereami
-precheck="y" # Install Precheck
-autonuke="y" # Install Tur-Autonuke
-psxcimdb="y" # Install PSXC-IMDB
-psxcimdbchan="#main" # Trigger chan for PSXC-IMDB
-addip="y" # Install Tur-Addip
-top="y" # Install Top
-ircnick="y" # Install Ircnick
-archiver="y" # Install Tur-Archiver
-section_traffic="y" # Install Section-Traffic
-username="admin" # Username for Administrator account
-password="password" # Password for Administrator account
-ip="*@192.168.1.*" # IP for Administrator account
+
+addip="y" 						# Install Tur-Addip
+botnuke="y" 					# Install Botnuke
+archiver="y"				 	# Install Tur-Archiver
+autonuke="y" 					# Install Tur-Autonuke
+eur0presystem="y" 				# Install Eur0-pre-system with foo-pre
+ircadmin="y" 					# Install Tur-Ircadmin
+ircnick="y" 					# Install Ircnick
+precheck="y" 					# Install Precheck
+psxcimdbchan="#main" 			# Trigger chan for PSXC-IMDB
+psxcimdb="y" 					# Install PSXC-IMDB
+request="y" 					# Install Tur-Request
+section_traffic="y" 			# Install Section-Traffic
+slvprebw="y" 					# Install Slv-PreBW
+top="y" 						# Install Top
+trial="y" 						# Install Tur-Trial
+vacation="y" 					# Install Tur-Vacation
+whereami="y" 					# Install Whereami
+username="admin" 				# Username for Administrator account
+password="password" 			# Password for Administrator account
+ip="*@192.168.1.*" 				# IP for Administrator account
 ```
 
 ## FAQ

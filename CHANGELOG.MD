@@ -5,6 +5,7 @@
 - Added a new script called tag-empty-inc.sh under folder scripts that can be used to tag new directories as empty during creation that can be extremely useful for sites that like to keep things tidy
 - Added a new script called nuke_cache.sh under folder extra that can be used to tag and track manual nukes in incomplete-list-nuker.cache that later can be used for cleanup by incomplete-list-nuker.sh. I have 
   enabled it in glftpd.conf.
+- Added turranius script botnuke as a module to enable public nukes/unnukes where it's been modified to include the storage of nukes in incomplete-list-nuker.cache
 
 ### Updated
 
