@@ -15,16 +15,6 @@ fi
 
 case $ask in
 
-    [Nn]|*)
-
-        if ! has_key "$cache" autonuke
-        then
-
-            echo 'autonuke="n"' >> $cache
-
-        fi
-        ;;
-
     [Yy])
 
         if ! has_key "$cache" autonuke
@@ -43,5 +33,15 @@ case $ask in
 
         print_status_done
         ;;
+        
+    [Nn]|*)
 
+        if ! has_key "$cache" autonuke
+        then
+
+            echo 'autonuke="n"' >> $cache
+
+        fi
+        ;;
+        
 esac
