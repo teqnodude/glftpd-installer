@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.3
+VER=1.31
 #--[ Info ]-----------------------------------------------------
 #
 # Put in crontab:
@@ -88,6 +88,14 @@ store_nuke()
 
 }
 
+remove_nuke()
+{
+
+    nukedir="$(echo $1 | awk -F '/' '{print $NF}')"
+    sed -i "/$nukedir/d" $cache_file
+
+}
+
 duration_str()
 {
 
@@ -115,13 +123,21 @@ duration_str()
 
 #--[ Main ]-----------------------------------------------------
 
-if [[ "$1" == "store" ]]
-then
+case $1 in
 
-    store_nuke $2
-    exit 0
+    store)
 
-fi
+        store_nuke "$2"
+        exit 0
+        ;;
+
+    remove)
+
+        remove_nuke "$2"
+        exit 0
+        ;;
+
+esac
 
 if [[ "$cleannuked" -eq 1 ]]
 then

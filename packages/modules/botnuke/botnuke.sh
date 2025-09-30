@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.3
+VER=1.31
 
 #--[ Intro ]-------------------------------------------------
 #                                                            	
@@ -65,44 +65,6 @@ VER=1.3
 #                                                            
 # Contact Turranius on efnet. Usually in #glftpd.            
 # WEB: http://www.grandis.nu                                 
-#                                                            
-#--[ Changelog ]---------------------------------------------
-#															 
-# 1.3	   : Calling the storage of nukes in external script,
-#		     also did a refactoring of existing code. /teqnodude
-#                                                            
-# 1.2.1    : The alloweddir setting only worked when you did 
-#            not specify full path to the rel. Works fine    
-#            in both ways I hope =)                          
-#                                                            
-# 1.2      : Added setting 'alloweddir'. If a dir or file    
-#            with the defined name exists in the release dir 
-#            it will not be nuked. By default, its "allowed" 
-#            so that allowed/approved rels cant be nuked.    
-#            It is not case sensitive.                       
-#                                                            
-# 1.1      : Added ability to search glftpd.log for the full 
-#            path of the release instead of specifing it.    
-#            If you have no slash (/) in the release when    
-#            nuking, it will try and look it up in           
-#            glftpd instead. It will search backwards so if  
-#            you do !nuke CD1 1 repack                       
-#            it will nuke the CD1 folder in the last uploaded
-#            release.                                        
-#            It searches on NEWDIR in glftpd, so for preed   
-#            folders etc, you have to use full path.         
-#            Above was made on request by soehest. All hail. 
-#                                                            
-#            Added link to sudo for those that cant get the  
-#            chroot to work.                                 
-#                                                            
-#            Added a check to make sure there are no spaces  
-#            in 'reason'. Replace the .tcl with the one in   
-#            this package if you are upgrading.              
-#            Hated it when I did "!nuke test 1 suck it" and  
-#            it got nuked with reason "suck".                
-#                                                            
-# 1.0      : Initial release                                 
 #                                                            
 #--[ Settings ]----------------------------------------------
 
@@ -286,6 +248,7 @@ case $action in
         then
 
             $nuker -r "$glconf" -N "$nukeuser" -u "/$siteroot/$release" "$reason"
+            [[ -f "$glroot/bin/incomplete-list-nuker.sh" ]] && $glroot/bin/incomplete-list-nuker.sh remove $fullrelease
             exit 0
 
         else
@@ -294,6 +257,7 @@ case $action in
             then
 
                 $nuker -r "$glconf" -N "$nukeuser" -u "/$fullrelease" "$reason"
+                [[ -f "$glroot/bin/incomplete-list-nuker.sh" ]] && $glroot/bin/incomplete-list-nuker.sh remove $fullrelease
                 exit 0
 
             else
