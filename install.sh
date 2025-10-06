@@ -207,7 +207,7 @@ requirements()
     fi
 
     local packages=(
-        cron gcc systemd autoconf bc curl diffutils ftp git libflac-dev
+        cron gcc systemd autoconf bc curl diffutils ftp gawk git libflac-dev
         iputils-ping libssl-dev lm-sensors lynx make mariadb-server ncftp passwd
         rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip
         bsdmainutils rsyslog
