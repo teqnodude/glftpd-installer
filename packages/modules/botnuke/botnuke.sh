@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.31
+VER=1.32
 
 #--[ Intro ]-------------------------------------------------
 #                                                            	
@@ -203,7 +203,7 @@ case $action in
                 dirtocheck="$glroot$siteroot/$release"
                 proc_checkallowed
                 $nuker -r "$glconf" -N "$nukeuser" -n "/$siteroot/$release" "$multiplier" "$reason"
-                [[ -f "$glroot/bin/incomplete-list-nuker.sh" ]] && $glroot/bin/incomplete-list-nuker.sh store $fullrelease
+                [[ -f "$glroot/bin/incomplete-list-nuker.sh" ]] && $glroot/bin/incomplete-list-nuker.sh store "/$siteroot/$release"
                 exit 0
 
             else
@@ -248,7 +248,7 @@ case $action in
         then
 
             $nuker -r "$glconf" -N "$nukeuser" -u "/$siteroot/$release" "$reason"
-            [[ -f "$glroot/bin/incomplete-list-nuker.sh" ]] && $glroot/bin/incomplete-list-nuker.sh remove $fullrelease
+            [[ -f "$glroot/bin/incomplete-list-nuker.sh" ]] && $glroot/bin/incomplete-list-nuker.sh remove "/$siteroot/$release"
             exit 0
 
         else
