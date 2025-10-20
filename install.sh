@@ -2084,6 +2084,7 @@ eggdrop()
 
     # Setup cron job
     touch "/var/spool/cron/crontabs/$BOTU"
+    chmod 600 /var/spool/cron/crontabs/$BOTU
     add_cron_job "*/10 * * * *" "$glroot/sitebot/botchk" "$BOTU"
 
     # Cleanup files
