@@ -73,20 +73,20 @@ then
 
 	Title........: $SHOW_NAME
 	Premiered....: $SHOW_PREMIERED
-	-
+	
 	IMDB Link....: $SHOW_IMDB
 	TVMaze Link..: $SHOW_URL
 	Episode Link.: $EP_URL
 	Genre........: $SHOW_GENRES
 	Type.........: $SHOW_TYPE
 	User Rating..: $SHOW_RATING
-	-
+	
 	Country......: $SHOW_COUNTRY
 	Language.....: $SHOW_LANGUAGE
 	Network......: $SHOW_NETWORK
 	Status.......: $SHOW_STATUS
 	Airdate......: $EP_AIR_DATE
-	-
+	
 	Plot.........: $SHOW_SUMMARY
 	
 	============================ TVMAZE INFO v$VER ================================
@@ -102,20 +102,20 @@ else
 	
 	Title........: $SHOW_NAME
 	Premiered....: $SHOW_PREMIERED
-	-
+	
 	IMDB Link....: $SHOW_IMDB
 	TVMaze Link..: $SHOW_URL
 	Episode Link.: $EP_URL
 	Genre........: $SHOW_GENRES
 	Type.........: $SHOW_TYPE
 	User Rating..: $SHOW_RATING
-	-
+	
 	Country......: $SHOW_COUNTRY
 	Language.....: $SHOW_LANGUAGE
 	Network......: $SHOW_NETWORK
 	Status.......: $SHOW_STATUS
 	Airdate......: $EP_AIR_DATE
-	-
+	
 	Plot.........: $SHOW_SUMMARY
 	
 	============================ TVMAZE INFO v$VER ================================
