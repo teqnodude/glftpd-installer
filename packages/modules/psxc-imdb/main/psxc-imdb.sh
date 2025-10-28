@@ -550,7 +550,7 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     fi
     COUNTRY="Country......: $(grep -o '"countriesOfOrigin":{[^}]*}' $TMPFILE | grep -o '"id":"[^"]*' | cut -d'"' -f4 | uniq | sed 's/GB/United Kingdom/; s/US/United States/' | paste -sd '/' - | head -n $COUNTRYNUM)"
     COUNTRYCLEAN=$(echo $COUNTRY | sed "s/Country......: *//")
-    TAGLINE="Tagline......: $(grep -o '"taglines":{[^}]*}' $TMPFILE | grep -o '"text":"[^"]*' | cut -d'"' -f4 | head -1)"
+    TAGLINE=$(grep -oP '"taglines":\{[^}]*"text":"\K(?:\\.|[^"\\])*' "$TMPFILE" | head -1 | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/[\r\n]\+/ /g')
     TAGLINECLEAN=$(echo $TAGLINE | sed "s/Tagline......: *//")
     LANGUAGE="Language.....: $(grep -o '"spokenLanguages":\[[^]]*' $TMPFILE | head -1 | grep -o '"text":"[^"]*' | cut -d'"' -f4 | uniq | paste -sd '/' -)"
     LANGUAGECLEAN=$(echo $LANGUAGE | sed "s/Language.....: *//")

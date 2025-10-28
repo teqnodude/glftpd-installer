@@ -2077,7 +2077,7 @@ eggdrop()
 		#!/bin/bash
 
 		site=$sitename
-		[[ -f "pid.$site" ]] && kill \$(cat pid.$site)
+		[[ -f "pid.$sitename" ]] && kill \$(cat pid.$sitename)
 	EOF
    
     chmod 755 $glroot/sitebot/start.sh $glroot/sitebot/kill.sh    
