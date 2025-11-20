@@ -23,6 +23,7 @@
 - mediainfo didn't work properly under ARCHIVE and REQUESTS
 - Fixed incomplete-list.sh, incomplete-list-symlinks and incomplete-list-nuker.sh that didn't trigger properly based on whether it was totally empty, partly or complete but lacked nfo
 - psxc-imdb.sh couldn't handle taglines properly when they had " in them
+- psxc-imdb.sh and psxc-imdb-find.sh stopped working again
 
 ## 12.0 - 2025-09-01
 

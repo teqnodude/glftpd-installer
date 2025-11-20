@@ -174,13 +174,13 @@ fi
 
 MYLYNXFLAGS=`echo $LYNXFLAGS | sed "s| -nolist||"`
 if [ -z "$URLTOUSE" ]; then
- CONTENT=`lynx $MYLYNXFLAGS "https://www.imdb.com/find/?s=tt&q=$IMDBSEARCHTITLE" 2>/dev/null`
+ CONTENT=$(curl -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -L "https://www.imdb.com/find/?s=tt&q=$IMDBSEARCHTITLE" 2> /dev/null | grep -oi "title/tt[0-9][0-9]*/?ref_=fn_i_1" | head -1 | cut -d '?' -f1)
  if [ $? -gt 0 ]; then
   echo "$PREWORD Internal Error. www.imdb.com may be down, or not answering. Try again later."
   exit 0
  fi
  if [ -z "$IMDBLIST" ]; then
-  URLTOUSE=`echo "$CONTENT" | grep -i "\.imdb\.[a-z]*/title/tt[0-9][0-9]*/?ref_=fn_ttl_ttl_1" | tr ' ' '\n' | grep "tt[0-9][0-9][0-9][0-9][0-9]*/.*$" | head -n1 | sed "s|/pro\.|/www\.|" | cut -d'?' -f1 | grep -i "^https*://[a-z]*\.imdb\.[a-z]*/title/tt"`
+  URLTOUSE=$(echo "$CONTENT" | sed 's|title/|https://www.imdb.com/title/|')
  else
   a=1
   b=1
