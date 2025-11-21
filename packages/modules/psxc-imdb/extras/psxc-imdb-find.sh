@@ -174,7 +174,7 @@ fi
 
 MYLYNXFLAGS=`echo $LYNXFLAGS | sed "s| -nolist||"`
 if [ -z "$URLTOUSE" ]; then
- CONTENT=$(curl -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -L "https://www.imdb.com/find/?s=tt&q=$IMDBSEARCHTITLE" 2> /dev/null | grep -oi "title/tt[0-9][0-9]*/?ref_=fn_i_1" | head -1 | cut -d '?' -f1)
+ CONTENT=$(curl -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -L "https://www.imdb.com/find/?s=tt&q=$IMDBSEARCHTITLE" 2> /dev/null | grep -oi "title/tt[0-9][0-9]*/?ref_=fn_t_1" | head -1 | cut -d '?' -f1)
  if [ $? -gt 0 ]; then
   echo "$PREWORD Internal Error. www.imdb.com may be down, or not answering. Try again later."
   exit 0
