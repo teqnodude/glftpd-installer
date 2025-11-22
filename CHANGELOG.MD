@@ -13,6 +13,7 @@
 - I've set tag-empty-inc.sh as default and no longer use tur-autonuke.sh by default
 - Updated incomplete-list.sh, incomplete-list-symlinks and incomplete-list-nuker.sh
 - Enabled the storage of nukes in psxc-imdb-nuker.sh by creating a store function in incomplete-list-nuker.sh that can be called upon by external scripts like psxc-imdb-nuker.sh
+- Disabled some features in psxc-imdb.conf business, premiere, limited that I felt was really not that important but that increases the speed of script execution for imdb output in irc channel
 
 ### Fixes
 
@@ -24,6 +25,7 @@
 - Fixed incomplete-list.sh, incomplete-list-symlinks and incomplete-list-nuker.sh that didn't trigger properly based on whether it was totally empty, partly or complete but lacked nfo
 - psxc-imdb.sh couldn't handle taglines properly when they had " in them
 - psxc-imdb.sh and psxc-imdb-find.sh stopped working again
+- minor fix for psxc-imdb.sh when it comes to the output in .imdb
 
 ## 12.0 - 2025-09-01
 

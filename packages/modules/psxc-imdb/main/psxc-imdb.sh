@@ -978,7 +978,7 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      echo "$RATING" | fold -s -w $IMDBWIDTH | head -n 1 >> "$IMDBLNK"
     fi
     if [ ! -z "$TAGLINE" ]; then
-     echo "$TAGLINE" | fold -s -w $IMDBWIDTH >> "$IMDBLNK"
+     echo "$TAGLINE" | tr -d '\\' | fold -s -w $IMDBWIDTH >> "$IMDBLNK"
     fi
     echo "-" >> "$IMDBLNK"
     if [ ! -z "$COUNTRY" ]; then
@@ -1011,8 +1011,7 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     fi
     if [ ! -z "$PLOT" ]; then
      echo "-" >> "$IMDBLNK"
-     #echo "$PLOT" | fold -s -w $IMDBWIDTH >> "$IMDBLNK"
-     echo "$PLOT" | sed s/"$NEWLINE"//g | fold -s -w $IMDBWIDTH >> "$IMDBLNK"
+     echo "$PLOT" | sed "s/$NEWLINE//g" | fold -s -w $IMDBWIDTH >> "$IMDBLNK"
     fi
     if [ ! -z "$SHOWCOMMENT" ] && [ ! -z "$COMMENT" ]; then
      echo "---" >> "$IMDBLNK"
