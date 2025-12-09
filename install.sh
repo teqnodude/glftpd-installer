@@ -223,7 +223,7 @@ requirements()
         
         else
         
-            if ! sudo apt-get install -y "$pkg" >/dev/null 2>&1
+            if ! apt-get install -y "$pkg" >/dev/null 2>&1
             then
             
                 echo "Error: Failed to install $pkg. Aborting."
