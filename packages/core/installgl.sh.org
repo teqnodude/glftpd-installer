@@ -872,37 +872,7 @@ echo ""
 # Configure inetd or xinetd or rlinetd as appropriate
 [ "$jail" = "y" -o "$servicename" != "glftpd" ] && confpath="-r $confdir/${servicename}.conf"
 
-[ -f /etc/inetd.conf ] && SUPERSERVERS="${SUPERSERVERS} inetd"
-#[ -f /etc/xinetd.conf ] && SUPERSERVERS="${SUPERSERVERS} xinetd"
-#[ -f /etc/rlinetd.conf ] && SUPERSERVERS="${SUPERSERVERS} rlinetd"
-[ -d /etc/systemd/system ] && SUPERSERVERS="${SUPERSERVERS} systemd"
-#[ "${os}" = "darwin" ] && SUPERSERVERS="${SUPERSERVERS} launchd"
-COUNT_SUPERSERVERS=( $SUPERSERVERS )
-if [ ${#COUNT_SUPERSERVERS[@]} -eq 0 ]; then
-    echo "ERROR: Can't determine if you are using (openbsd-)inetd, rlinetd, xinetd or launchd!"
-    echo "This is usually because neither is running at the moment -"
-    echo "install/start one of them and re-run this installer."
-    exit 1
-elif [ ${#COUNT_SUPERSERVERS[@]} -eq 1 ]; then
-    netd="${SUPERSERVERS:1:1}";
-else
-    unset whichnetd
-    for superserver in ${SUPERSERVERS}; do
-        s_options="${s_options}${superserver:0:1}";
-    done
-    until [ -n "$whichnetd" ]; do
-        for superserver in ${SUPERSERVERS}; do
-            printf "[\033[1m${superserver:0:1}\033[0m]${superserver:1}\n"
-        done
-        echo -n "choose superserver: "
-        read whichnetd
-        whichnetd=$(echo ${whichnetd}|tr '[:upper:]' '[:lower:]')
-        case "${s_options}" in
-            *${whichnetd}*) netd=${whichnetd} ;;
-            *) echo "pick one!"; unset whichnetd; continue ;;
-        esac
-    done
-fi
+netd="s"
 
 # Only a dummyflag needed when not using tcpd and using inetd or rlinetd
 [ ! "$usetcpd" = "y" ] && ( [ "$netd" = "i" ] || [ "$netd" = "r" ] ) && dummyflag="glftpd"
