@@ -15,6 +15,7 @@
 - Enabled the storage of nukes in psxc-imdb-nuker.sh by creating a store function in incomplete-list-nuker.sh that can be called upon by external scripts like psxc-imdb-nuker.sh
 - Disabled some features in psxc-imdb.conf business, premiere, limited that I felt was really not that important but that increases the speed of script execution for imdb output in irc channel
 - Removed inetd detection from installgl.sh and forced the use of systemd for the installation of glFTPd
+- Moved USERAGENT in psxc-imdb into psxc-imdb.conf
 
 ### Fixes
 

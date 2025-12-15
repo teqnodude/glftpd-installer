@@ -58,6 +58,10 @@ fi
 export LC_ALL=""
 export LANG=""
 
+if [ -z "$USERAGENT" ]; then
+  USERAGENT="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3"
+fi
+
 if [ ! -z "$RECVDARGS" ]; then
 
 # This is what is run under zs-c, chrooted.
@@ -456,7 +460,7 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     OUTPUTOK="OK"
     while [ $LYNXTRIES -gt 0 ]; do
      if [ -z "$USEWGET" ] && [ -z "$USECURL" ]; then
-     lynx $LYNXFLAGS $IMDBURL/reference | grep -a -v "^$" | tr '\t' ' ' | tr -s ' ' | tr '\n' '~' | sed "s/\.\.\.~ /... /g" | tr '~' '\n' | sed 's/*/\\\*/' > $TMPFILE 2>&1
+     lynx $LYNXFLAGS $IMDBURL/reference/ | grep -a -v "^$" | tr '\t' ' ' | tr -s ' ' | tr '\n' '~' | sed "s/\.\.\.~ /... /g" | tr '~' '\n' | sed 's/*/\\\*/' > $TMPFILE 2>&1
       if [ $? = "0" ]; then
        LYNXTRIES=$LYNXTRIESORIG
        break
@@ -467,9 +471,9 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      else
       if [ ! -z "$USEWGET" ]; then
        #http_proxy=192.168.0.1:8080
-       wget $WGETFLAGS -U "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -O $TMPFILE --timeout=30 $IMDBURL/reference >/dev/null 2>&1
+       wget $WGETFLAGS -U "$USERAGENT" -O $TMPFILE --timeout=30 $IMDBURL/reference >/dev/null 2>&1
       elif [ ! -z "$USECURL" ]; then
-       curl $CURLFLAGS -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -o $TMPFILE --connect-timeout 30 $IMDBURL/reference >/dev/null 2>&1
+       curl $CURLFLAGS -A "$USERAGENT" -o $TMPFILE --connect-timeout 30 $IMDBURL/reference >/dev/null 2>&1
       fi
       if [ $? = "0" ] || [ -z "$(cat $TMPFILE)" ]; then
        TMBURL=$(grep -a "\.jpg" $TMPFILE | head -n 1 | tr ' \"' '\n' | grep -a "\.jpg" | head -n 1)
@@ -664,9 +668,9 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      else
       if [ ! -z "$USEWGET" ]; then
        #http_proxy=192.168.0.1:8080
-       wget $WGETFLAGS -U "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -O $TMPFILE --timeout=30 $BUSINESSURL >/dev/null 2>&1
+       wget $WGETFLAGS -U "$USERAGENT" -O $TMPFILE --timeout=30 $BUSINESSURL >/dev/null 2>&1
       elif [ ! -z "$USECURL" ]; then
-       curl $CURLFLAGS -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -o $TMPFILE --connect-timeout 30 $BUSINESSURL >/dev/null 2>&1
+       curl $CURLFLAGS -A "$USERAGENT" -o $TMPFILE --connect-timeout 30 $BUSINESSURL >/dev/null 2>&1
       fi
       if [ $? = "0" ] || [ -z "$(cat $TMPFILE)" ]; then
        LYNXTRIES=$LYNXTRIESORIG
@@ -711,9 +715,9 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      else
       if [ ! -z "$USEWGET" ]; then
        #http_proxy=192.168.0.1:8080
-       wget $WGETFLAGS -U "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -O $TMPFILE --timeout=30 $RELEASEURL >/dev/null 2>&1
+       wget $WGETFLAGS -U "$USERAGENT" -O $TMPFILE --timeout=30 $RELEASEURL >/dev/null 2>&1
       elif [ ! -z "$USECURL" ]; then
-       curl $CURLFLAGS -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -o $TMPFILE --connect-timeout 30 $RELEASEURL >/dev/null 2>&1
+       curl $CURLFLAGS -A "$USERAGENT" -o $TMPFILE --connect-timeout 30 $RELEASEURL >/dev/null 2>&1
       fi
       if [ $? = "0" ] || [ -z "$(cat $TMPFILE)" ]; then
        LYNXTRIES=$LYNXTRIESORIG
@@ -761,9 +765,9 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      else
       if [ ! -z "$USEWGET" ]; then
        #http_proxy=192.168.0.1:8080
-       wget $WGETFLAGS -U "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -O $TMPFILE --timeout=30 $BOMURL >/dev/null 2>&1
+       wget $WGETFLAGS -U "$USERAGENT" -O $TMPFILE --timeout=30 $BOMURL >/dev/null 2>&1
       elif [ ! -z "$USECURL" ]; then
-       curl $CURLFLAGS -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -o $TMPFILE --connect-timeout 30 $BOMURL >/dev/null 2>&1
+       curl $CURLFLAGS -A "$USERAGENT" -o $TMPFILE --connect-timeout 30 $BOMURL >/dev/null 2>&1
       fi
       if [ $? = "0" ] || [ -z "$(cat $TMPFILE)" ]; then
        LYNXTRIES=$LYNXTRIESORIG
@@ -790,9 +794,9 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      else
       if [ ! -z "$USEWGET" ]; then
        #http_proxy=192.168.0.1:8080
-       wget $WGETFLAGS -U "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -O $TMPFILE --timeout=30 $BOMURLRELEASEGROUP >/dev/null 2>&1
+       wget $WGETFLAGS -U "$USERAGENT" -O $TMPFILE --timeout=30 $BOMURLRELEASEGROUP >/dev/null 2>&1
       elif [ ! -z "$USECURL" ]; then
-       curl $CURLFLAGS -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -o $TMPFILE --connect-timeout 30 $BOMURLRELEASEGROUP >/dev/null 2>&1
+       curl $CURLFLAGS -A "$USERAGENT" -o $TMPFILE --connect-timeout 30 $BOMURLRELEASEGROUP >/dev/null 2>&1
       fi
       if [ $? = "0" ] || [ -z "$(cat $TMPFILE)" ]; then
        LYNXTRIES=$LYNXTRIESORIG
@@ -820,9 +824,9 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
      else
       if [ ! -z "$USEWGET" ]; then
        #http_proxy=192.168.0.1:8080
-       wget $WGETFLAGS -U "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -O $TMPFILE --timeout=30 $BOMURLRELEASE >/dev/null 2>&1
+       wget $WGETFLAGS -U "$USERAGENT" -O $TMPFILE --timeout=30 $BOMURLRELEASE >/dev/null 2>&1
       elif [ ! -z "$USECURL" ]; then
-       curl $CURLFLAGS -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -o $TMPFILE --connect-timeout 30 $BOMURLRELEASE >/dev/null 2>&1
+       curl $CURLFLAGS -A "$USERAGENT" -o $TMPFILE --connect-timeout 30 $BOMURLRELEASE >/dev/null 2>&1
       fi
       if [ $? = "0" ] || [ -z "$(cat $TMPFILE)" ]; then
        LYNXTRIES=$LYNXTRIESORIG
@@ -1067,9 +1071,9 @@ if [ ! -z "$RUNCONTINOUS" ] || [ -z "$RECVDARGS" ]; then
     FILENAME=$(ls -1Ftr "$GLROOT$IMDBLKL" | grep -a -v "/" | grep -a -v "@" | grep -a -e "[.][nN][fF][oO]" | head -n 1)
     TMBNAME=$(echo $FILENAME | sed "s/\.nfo/.jpg/")
     if [ ! -z "$USEWGET" ]; then
-     wget $WGETFLAGS -U "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -O $TMPFILE --timeout=30 $GLROOT$IMDBLKL/$TMBNAME >/dev/null 2>&1
+     wget $WGETFLAGS -U "$USERAGENT" -O $TMPFILE --timeout=30 $GLROOT$IMDBLKL/$TMBNAME >/dev/null 2>&1
     elif [ ! -z "$USECURL" ]; then
-     curl $CURLFLAGS -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3" -o $TMPFILE --connect-timeout 30 $GLROOT$IMDBLKL/$TMBNAME >/dev/null 2>&1
+     curl $CURLFLAGS -A "$USERAGENT" -o $TMPFILE --connect-timeout 30 $GLROOT$IMDBLKL/$TMBNAME >/dev/null 2>&1
     fi
    fi
 
