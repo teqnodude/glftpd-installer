@@ -4,17 +4,17 @@ VER=1.3
 #
 # Lastlogin by Teqno
 #
-# Let's you check what users that been inactive and that are
-# marked for both deletion and purge based on settings below.
+# Let's you check what users that have been inactive and that are
+# marked for both deletion and purge based on the settings below.
 #
-# Add following to glftpd.conf and copy this script to bin
-# folder of glftpd
+# Add the following to glftpd.conf and copy this script to bin
+# folder of glftpd.
 #
 # site_cmd LASTLOGIN      EXEC            /bin/lastlogin.sh
 # custom-lastlogin        1
 #
-# Number of color are taken from irc, press CTRL+K in mIRC
-# client to list them
+# Number of color is taken from irc, press CTRL+K in mIRC
+# client to list them.
 #
 #--[ Settings ]-------------------------------------------------
 
