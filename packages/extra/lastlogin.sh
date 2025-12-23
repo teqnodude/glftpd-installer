@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.3
+VER=1.31
 #--[ Info ]-----------------------------------------------------
 #
 # Lastlogin by Teqno
@@ -20,6 +20,9 @@ VER=1.3
 
 # Path to glftpd
 glroot="/glftpd"
+
+# Path to tmp folder inside glftpd
+tmp="/tmp"
 
 # Path to users dir
 userpath="/ftp-data/users"
