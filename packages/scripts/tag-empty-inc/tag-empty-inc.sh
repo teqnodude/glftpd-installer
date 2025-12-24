@@ -12,7 +12,7 @@ VER=1.0
 # resource heavy. Why is that? Because they have to rely on linux "find" 
 # that not only drains the cpu, but it also makes the hdds really busy. 
 #
-#-[ Install ]---------------------------------------------------
+#--[ Install ]--------------------------------------------------
 #
 # Put this script in /glftpd/bin and ensure that you have set this in 
 # zsconfig.h in pzs-ng, if you haven't yet, please do and then 
