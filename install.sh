@@ -207,7 +207,7 @@ requirements()
     fi
 
     local packages=(
-        cron gcc systemd autoconf bc curl diffutils ftp gawk git libflac-dev
+        cron cmake gcc systemd autoconf bc curl diffutils ftp gawk git libflac-dev
         iputils-ping libssl-dev lm-sensors lynx make mariadb-server ncftp passwd
         rsync smartmontools tcl tcl-dev tcllib tcl-tls tcpd wget zip
         bsdmainutils rsyslog
@@ -2334,9 +2334,18 @@ pzsng()
 
     print_status_start "Installing" "pzs-ng"
 
-    cd packages/pzs-ng
-    ./configure >/dev/null 2>&1 ; make >/dev/null 2>&1 ; make install >/dev/null 2>&1
-    $glroot/libcopy.sh >/dev/null 2>&1
+	cd $rootdir/packages/pzs-ng
+	pzs_ng_path=$(pwd)
+	git clone -q https://github.com/zlib-ng/zlib-ng ${pzs_ng_path}/zlib-ng
+	mkdir -p ${pzs_ng_path}/zlib-ng/build && cd ${pzs_ng_path}/zlib-ng/build
+	cmake .. -DCMAKE_BUILD_TYPE=Release >/dev/null 2>&1
+	make -j$(nproc) >/dev/null 2>&1 && cd ${pzs_ng_path}
+	
+    ./configure --with-zlib-ng-path=${pzs_ng_path}/zlib-ng/build --with-zlib-ng-include=${pzs_ng_path}/zlib-ng/build >/dev/null 2>&1 ; make >/dev/null 2>&1 ; make install >/dev/null 2>&1
+	for lib in $(ldd $glroot/bin/zipscript-c | grep libz | awk '{print $1}'); do
+		cp ${pzs_ng_path}/zlib-ng/build/$lib $glroot/lib/x86_64-linux-gnu
+	done
+	
     cp sitebot/ngB* $glroot/sitebot/scripts/pzs-ng/
     mkdir $glroot/sitebot/scripts/pzs-ng/modules
     cp sitebot/modules/glftpd.tcl $glroot/sitebot/scripts/pzs-ng/modules
