@@ -1,0 +1,35 @@
+##############################################################################
+#                                                                            #
+#  TMDB.zpt  -  TMDB: Movie Info Pzs-ng Plug-in (Default Theme)              #
+#                                                                            #
+##############################################################################
+#	set ${np}::zeroconvert(%tmdb_movie_title)                 	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_id)                  	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_genres)               	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_country)              	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_language)             	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_status)               	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_release_date)         	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_year)                 	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_runtime)              	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_rating)               	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_vote_count)           	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_popularity)           	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_tagline)              	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_overview)             	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_imdb_id)              	"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_tmdb_url)          		"N/A"
+#	set ${np}::zeroconvert(%tmdb_movie_movie_cast)         		"N/A"
+##############################################################################
+
+# New directory announcement
+announce.TMDB                 = "%b{INFO}%c1{:} %c1{Genre:} %c3{%b{%tmdb_movie_genres}} %c1{-} %c1{Link:} %c3{%tmdb_movie_imdb_id} %c1{-} %c1{Runtime:} %c3{%b{%tmdb_movie_runtime}} %c1{-} %c1{Rating:} %c3{%b{%tmdb_movie_rating/10}} %c1{(}%c3{%tmdb_movie_vote_count}%c1{)} %c1{-} %c1{Released:} %c3{%b{%tmdb_movie_release_date}} %c1{-} %c1{Language:} %c3{%tmdb_movie_language}"
+
+# Pre announcement (same format as NEWDIR)
+announce.TMDB-PRE             = "%b{INFO}%c1{:} %c1{Genre:} %c3{%b{%tmdb_movie_genres}} %c1{-} %c1{Link:} %c3{%tmdb_movie_imdb_id} %c1{-} %c1{Runtime:} %c3{%b{%tmdb_movie_runtime}} %c1{-} %c1{Rating:} %c3{%b{%tmdb_movie_rating/10}} %c1{(}%c3{%tmdb_movie_vote_count}%c1{)} %c1{-} %c1{Released:} %c3{%b{%tmdb_movie_release_date}} %c1{-} %c1{Language:} %c3{%tmdb_movie_language}"
+
+# Movie search output (detailed)
+announce.TMDB-MSGFULL         = "%c3{%tmdb_movie_title} %c1{(}%c3{%tmdb_movie_year}%c1{)} %c1{-} %c1{Genre:} %c3{%tmdb_movie_genres} %c1{-} %c1{Runtime:} %c3{%tmdb_movie_runtime} %c1{-} %c1{Rating:} %c3{%tmdb_movie_rating/10} %c1{(}%c3{%tmdb_movie_vote_count}%c1{)} %c1{-} %c1{Released:} %c3{%tmdb_movie_release_date}\n%c1{Tagline:} %c3{%tmdb_movie_tagline}\n%c1{Overview:} %c3{%tmdb_movie_overview}\n%c1{Cast:} %c3{%tmdb_movie_cast}\n%c1{Status:} %c3{%tmdb_movie_status} %c1{-} %c1{Language:} %c3{%tmdb_movie_language} %c1{-} %c1{Country:} %c3{%tmdb_movie_country}\n%c1{IMDb:} %c3{%tmdb_movie_imdb_id} %c1{-} %c1{TMDB:} %c3{%tmdb_movie_tmdb_url}"
+
+# Same as MSGFULL (for compatibility)
+announce.TMDB-MSGSHOW         = "%c3{%tmdb_movie_title} %c1{(}%c3{%tmdb_movie_year}%c1{)} %c1{-} %c1{Genre:} %c3{%tmdb_movie_genres} %c1{-} %c1{Runtime:} %c3{%tmdb_movie_runtime} %c1{-} %c1{Rating:} %c3{%tmdb_movie_rating/10} %c1{(}%c3{%tmdb_movie_vote_count}%c1{)} %c1{-} %c1{Released:} %c3{%tmdb_movie_release_date}\n%c1{Tagline:} %c3{%tmdb_movie_tagline}\n%c1{Overview:} %c3{%tmdb_movie_overview}\n%c1{Cast:} %c3{%tmdb_movie_cast}\n%c1{Status:} %c3{%tmdb_movie_status} %c1{-} %c1{Language:} %c3{%tmdb_movie_language} %c1{-} %c1{Country:} %c3{%tmdb_movie_country}\n%c1{IMDb:} %c3{%tmdb_movie_imdb_id} %c1{-} %c1{TMDB:} %c3{%tmdb_movie_tmdb_url}"

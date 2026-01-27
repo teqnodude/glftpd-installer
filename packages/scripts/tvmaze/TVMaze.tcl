@@ -2,7 +2,7 @@
 #                                                                              #
 #                TVMaze - TV Show & Episode Pzs-ng Plug-in                     #
 #              Initial code for TVRage by Meij <meijie@gmail.com>              #
-#                           TVMaze rework by MrCode                            #
+#                           TVMaze rework by MrCode, Teqno & TeRRaNoVA         
 #                                                                              #
 # APIs https://www.tvmaze.com/api                                              #
 #                                                                              #
@@ -21,27 +21,6 @@
 #    source pzs-ng/plugins/TVMaze.tcl
 #
 # 4. Rehash or restart your eggdrop for the changes to take effect.
-#
-# Changelog:
-# - 20250809 - Teqno: Changed the order in the execution of tvmaze.sh and tvmaze-nuker.sh to fix the error that was generated because of a nuke of a release by tvmaze-nuker.sh
-# - 20210228 - Teqno: Added the passing of TVMaze link for show and episode to tvmaze.sh
-# - 20210227 - Teqno: Removed the enforcement of http:// to https:// for show_url after the update of TVMaze api
-# - 20210226 - Teqno: Added support for the creation of .imdb and tag file with TVMaze info that require external tvmaze.sh script. To enable set tvmaze(imdbfile) true in the settings below.
-# - 20210219 - TeRRaNoVA: Added support for Sxx / Dxx / SxxDxx / Exx
-# - 20210102 - Teqno/TeRRaNoVA: Releases with 2020+ in releasename couldn't be found due to incorrect regex
-# - 20201219 - Teqno: With the help of sirmarksalot fix for checking next episode number
-# - 20201217 - Teqno: With the help of sirmarksalot releases with date is now supported
-# - 20201214 - Teqno: With the help of sirmarksalot the lookup of releases by specific country is now fixed
-# - 20201103 - Teqno: Changed regex for TVMaze lookup since old regex broke down with certain names
-# - 20201024 - Teqno: Defined arguments for use with tvmaze-nuker and added show_rating as variable passed on shell script
-# - 20201020 - Teqno/TeRRaNoVA: Added imdb-rating, imdb url, language etc with required shell script for nuke
-# - 20200223 - Sked: Add average rating as variable (thanks to teqnodude)
-# - 20200222 - Sked: Use https (thanks to teqnodude)
-# - 20190815 - Sked: Fix finding shows with newer Tcl packages
-# - 20160310 - Sked: Fix show_network
-# - 20160117 - Sked: Cleanup for inclusion in pzs-ng
-# - 20160115 - MrCode: Refactoring
-# - 20151222 - MrCode: Revamp TVRage to TVMaze
 #
 #################################################################################
 
@@ -68,7 +47,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 	set tvmaze(sections) {}
 	##
 	## Timeout in milliseconds. (default: 3000)
-	set tvmaze(timeout)  3000
+	set tvmaze(timeout)  6000
 	##
 	## Announce when no data was found. (default: false)
 	set tvmaze(announce-empty) false
@@ -89,7 +68,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 	set tvmaze(splitter) " / "
 	## 
 	## Creation of .imdb file with TVMaze info that require tvmaze.sh external script in /glftpd/bin
-	set tvmaze(imdbfile) false
+	set tvmaze(imdbfile) true
 	##
 	## Pre line regexp.
 	##  We need to reconstruct the full path to the release. Since not all
@@ -108,46 +87,46 @@ namespace eval ::ngBot::plugin::TVMaze {
 	## TVMAZE is used on NEWDIR, TVMAZE-PRE on PRE,
 	## TVMAZE-MSGFULL is used with !tv-trigger with specific episode
 	## and TVMAZE-MSGSHOW is used with !tv-trigger with only a showname or invalid episode number
-	set ${np}::disable(TVMAZE)                                  0   
-	set ${np}::disable(TVMAZE-PRE)                              0   
-	set ${np}::disable(TVMAZE-MSGFULL)                          0   
-	set ${np}::disable(TVMAZE-MSGSHOW)                          0   
+	set ${np}::disable(TVMAZE)         0
+	set ${np}::disable(TVMAZE-PRE)     0
+	set ${np}::disable(TVMAZE-MSGFULL) 0
+	set ${np}::disable(TVMAZE-MSGSHOW) 0
 	##
 	## Convert empty or zero variables into something else.
-	set ${np}::zeroconvert(%tvmaze_show_name)                 	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_id)                   	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_genres)               	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_country)              	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_language)             	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_network)              	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_status)               	"ENDED"
-	set ${np}::zeroconvert(%tvmaze_show_latest_title)         	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_latest_episode)       	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_latest_airdate)       	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_next_title)           	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_next_episode)         	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_next_airdate)         	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_url)                  	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_type)                 	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_premiered)            	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_started)              	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_ended)                	"Said"
-	set ${np}::zeroconvert(%tvmaze_show_airtime)              	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_runtime)              	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_rating)               	"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_imdb)      		  		"N/A"
-	set ${np}::zeroconvert(%tvmaze_show_summary)                "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_url)                 "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_season_episode)      "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_season)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_number)              "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_original_airdate)    "N/A"
-	set ${np}::zeroconvert(%tvmaze_episode_title)              	"N/A"
+	set ${np}::zeroconvert(%tvmaze_show_name)                 "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_id)                   "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_genres)               "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_country)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_language)             "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_network)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_status)               "ENDED"
+	set ${np}::zeroconvert(%tvmaze_show_latest_title)         "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_latest_episode)       "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_latest_airdate)       "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_next_title)           "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_next_episode)         "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_next_airdate)         "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_url)                  "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_type)                 "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_premiered)            "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_started)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_ended)                "Said"
+	set ${np}::zeroconvert(%tvmaze_show_airtime)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_runtime)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_rating)               "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_imdb)      		  	  "N/A"
+	set ${np}::zeroconvert(%tvmaze_show_summary)              "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_url)               "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_season_episode)    "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_season)            "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_number)            "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_original_airdate)  "N/A"
+	set ${np}::zeroconvert(%tvmaze_episode_title)             "N/A"
 	##
 	##################################################
 
 	## Version
-	set tvmaze(version) "20250809"
+	set tvmaze(version) "20260127"
 	## Useragent
 	set tvmaze(useragent) "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.5) Gecko/2008120122 Firefox/3.0.5"
 
@@ -355,62 +334,58 @@ namespace eval ::ngBot::plugin::TVMaze {
 
 				if {($empty == 0) || ([string is true -strict $tvmaze(announce-empty)])} {
 					set listlength [llength $logData]
-					if {$listlength > 32} {
-						append rls_name "\"[string map {" " _} [lindex $logData 0]]\""
-						append user "\"[string map {" " _} [lindex $logData 1]]\""
-						append group "\"[string map {" " _} [lindex $logData 2]]\""
-						append tagline "\"[string map {" " _} [lindex $logData 3]]\""
-						append show_name "\"[string map {" " _} [lindex $logData 4]]\""
-						append show_id "\"[string map {" " _} [lindex $logData 5]]\""
-						append show_genres "\"[string map {" " _} [lindex $logData 6]]\""
-						append show_country "\"[string map {" " _} [lindex $logData 7]]\""
-						append show_language "\"[string map {" " _} [lindex $logData 8]]\""
-						append show_network "\"[string map {" " _} [lindex $logData 9]]\""
-						append show_status "\"[string map {" " _} [lindex $logData 10]]\""
-						append show_latest_title "\"[string map {" " _} [lindex $logData 11]]\""
-						append show_latest_episode "\"[string map {" " _} [lindex $logData 12]]\""
-						append show_latest_airdate "\"[string map {" " _} [lindex $logData 13]]\""
-						append show_next_title "\"[string map {" " _} [lindex $logData 14]]\""
-						append show_next_episode "\"[string map {" " _} [lindex $logData 15]]\""
-						append show_next_airdate "\"[string map {" " _} [lindex $logData 16]]\""
-						append show_url "\"[string map {" " _} [lindex $logData 17]]\""
-						append show_type "\"[string map {" " _} [lindex $logData 18]]\""
-						append show_premiered "\"[string map {" " _} [lindex $logData 19]]\""
-						append show_started "\"[string map {" " _} [lindex $logData 20]]\""
-						append show_ended "\"[string map {" " _} [lindex $logData 21]]\""
-						append show_airtime "\"[string map {" " _} [lindex $logData 22]]\""
-						append show_runtime "\"[string map {" " _} [lindex $logData 23]]\""
-						append show_rating "\"[string map {" " _} [lindex $logData 24]]\""
-						append show_imdb "\"[string map {" " _} [lindex $logData 25]]\""
-						append show_summary "\"[string map {" " _} [lindex $logData 26]]\""
-						append ep_url "\"[string map {" " _} [lindex $logData 27]]\""
-						append ep_season_episode "\"[string map {" " _} [lindex $logData 28]]\""
-						append ep_season "\"[string map {" " _} [lindex $logData 29]]\""
-						append ep_number "\"[string map {" " _} [lindex $logData 30]]\""
-						append ep_airdate "\"[string map {" " _} [lindex $logData 31]]\""
-						append ep_title "\"[string map {" " _} [lindex $logData 32]]\""
+                    if {$listlength > 32} {
+                        append rls_name "\"[string map {" " _} [lindex $logData 0]]\""
+                        append user "\"[string map {" " _} [lindex $logData 1]]\""
+                        append group "\"[string map {" " _} [lindex $logData 2]]\""
+                        append tagline "\"[string map {" " _} [lindex $logData 3]]\""
+                        append show_name "\"[string map {" " _} [lindex $logData 4]]\""
+                        append show_id "\"[string map {" " _} [lindex $logData 5]]\""
+                        append show_genres "\"[string map {" " _} [lindex $logData 6]]\""
+                        append show_country "\"[string map {" " _} [lindex $logData 7]]\""
+                        append show_language "\"[string map {" " _} [lindex $logData 8]]\""
+                        append show_network "\"[string map {" " _} [lindex $logData 9]]\""
+                        append show_status "\"[string map {" " _} [lindex $logData 10]]\""
+                        append show_latest_title "\"[string map {" " _} [lindex $logData 11]]\""
+                        append show_latest_episode "\"[string map {" " _} [lindex $logData 12]]\""
+                        append show_latest_airdate "\"[string map {" " _} [lindex $logData 13]]\""
+                        append show_next_title "\"[string map {" " _} [lindex $logData 14]]\""
+                        append show_next_episode "\"[string map {" " _} [lindex $logData 15]]\""
+                        append show_next_airdate "\"[string map {" " _} [lindex $logData 16]]\""
+                        append show_url "\"[string map {" " _} [lindex $logData 17]]\""
+                        append show_type "\"[string map {" " _} [lindex $logData 18]]\""
+                        append show_premiered "\"[string map {" " _} [lindex $logData 19]]\""
+                        append show_started "\"[string map {" " _} [lindex $logData 20]]\""
+                        append show_ended "\"[string map {" " _} [lindex $logData 21]]\""
+                        append show_airtime "\"[string map {" " _} [lindex $logData 22]]\""
+                        append show_runtime "\"[string map {" " _} [lindex $logData 23]]\""
+                        append show_rating "\"[string map {" " _} [lindex $logData 24]]\""
+                        append show_imdb "\"[string map {" " _} [lindex $logData 25]]\""
+                        append show_summary "\"[string map {" " _} [lindex $logData 26]]\""
+                        append ep_url "\"[string map {" " _} [lindex $logData 27]]\""
+                        append ep_season_episode "\"[string map {" " _} [lindex $logData 28]]\""
+                        append ep_season "\"[string map {" " _} [lindex $logData 29]]\""
+                        append ep_number "\"[string map {" " _} [lindex $logData 30]]\""
+                        append ep_airdate "\"[string map {" " _} [lindex $logData 31]]\""
+                        append ep_title "\"[string map {" " _} [lindex $logData 32]]\""
+
 
 						if {[string equal $tvmaze(imdbfile) "true"]} {
-
 							exec /glftpd/bin/tvmaze.sh $rls_name $show_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating $show_imdb $show_summary $show_premiered $show_url $ep_url
-
 						}
-                        
-                        exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
-
-
+                        	exec /glftpd/bin/tvmaze-nuker.sh $rls_name $show_genres $show_country $show_language $show_network $show_status $show_type $ep_airdate $show_rating
                     }
 			
-			    	${np}::sndall $target $section [${np}::ng_format $target $section $logData]
+			    		${np}::sndall $target $section [${np}::ng_format $target $section $logData]
 				}
 
 				break
 			}
 
+
 		}
 
 		return 1
-
 	}
 
 	proc FindInfo {string logData {strict true}} {
@@ -456,6 +431,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		regexp {(.*)\s(19[4-9][0-9]|20[0-9][0-9])$} $show -> show year
 		regexp {(.*)\s(AU|US|CA|UK|NZ)$} $show -> show country
 		set data [GetFromApi "https://api.tvmaze.com/search/shows?q=" $show]
+		::ngBot::plugin::TVMaze::Debug "Searching TVMaze for: '$show'"
 		if {[string equal "Connection" [string range $data 0 9]]} {
 			return -code error $data
 		}
@@ -504,16 +480,16 @@ namespace eval ::ngBot::plugin::TVMaze {
 		if {$matches != 1} {
 			return -code error "No results found for \"$show\""
 		}
-		set info(show_language) [dict get [dict get $data show] language]
-                regexp {(\d+)} [dict get [dict get $data show] id] -> info(show_id)
+        set info(show_language) [dict get [dict get $data show] language]
+        regexp {(\d+)} [dict get [dict get $data show] id] -> info(show_id)
 		set info(show_name) [dict get [dict get $data show] name]
 		set info(show_url) [dict get [dict get $data show] url]
 		set info(show_status) [dict get [dict get $data show] status]
 		set info(show_premiered) [dict get [dict get $data show] premiered]
 		set info(show_type) [dict get [dict get $data show] type]
 		set info(show_summary) [dict get [dict get $data show] summary]
-                regexp {(\d+)} [dict get [dict get $data show] runtime] -> info(show_runtime)
-                regexp {(\d+(\.\d+)?)} [dict get [dict get [dict get $data show] rating] average] -> info(show_rating)
+        regexp {(\d+)} [dict get [dict get $data show] runtime] -> info(show_runtime)
+        regexp {(\d+(\.\d+)?)} [dict get [dict get [dict get $data show] rating] average] -> info(show_rating)
 
 		if {[dict exists [dict get $data show] network] && [dict get [dict get $data show] network] != "null"} {
 			set info(show_country) [dict get [dict get [dict get [dict get $data show] network] country] code]
@@ -526,8 +502,6 @@ namespace eval ::ngBot::plugin::TVMaze {
 			}
 			set info(show_network) [dict get [dict get [dict get $data show] webChannel] name]
 		}
-
-
 
 		# genre(s)
 		set show_genres [dict get [dict get $data show] genres]
@@ -595,7 +569,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 				set info(show_ended) [string range $info(show_latest_airdate) 0 3]
 			}
 		}
-
+		
 		# imdb url
 		regexp {\"externals\":.*?\"imdb\":\"(.*?)\"} $data -> show_imdb
 	    	if {[info exists show_imdb]} {
@@ -617,6 +591,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 			regexp {\"name\":\"(.*?)\"} $data -> info(episode_title)
 			regexp {\"url\":\"(.*?)\"} $data -> info(episode_url)
 			regexp {\"airdate\":\"(.*?)\"} $data -> info(episode_original_airdate)
+			::ngBot::plugin::TVMaze::Debug "Found show ID: $info(show_id) - $info(show_name) ($info(episode_original_airdate))"
 
 			regexp {\"season\":(\d+)} $data -> info(episode_season)
 			regexp {\"number\":(\d+)} $data -> info(episode_number)

@@ -1,4 +1,4 @@
-## 12.x
+## 12.1 - 2026-01-27
 
 ### Added
 
@@ -6,6 +6,7 @@
 - Added a new script called nuke_cache.sh under folder extra that can be used to tag and track manual nukes in incomplete-list-nuker.cache that later can be used for cleanup by incomplete-list-nuker.sh. I have 
   enabled it in glftpd.conf.
 - Added turranius script botnuke as a module to enable public nukes/unnukes where it's been modified to include the storage of nukes in incomplete-list-nuker.cache
+- Added my own TMDB scripts to scripts dir that can be used as a replacement of psxc-imdb. It requires an API key to work, but they are given out freely at https://themoviedb.org.
 
 ### Updated
 
@@ -16,6 +17,7 @@
 - Disabled some features in psxc-imdb.conf business, premiere, limited that I felt was really not that important but that increases the speed of script execution for imdb output in irc channel
 - Removed inetd detection from installgl.sh and forced the use of systemd for the installation of glFTPd
 - Moved USERAGENT in psxc-imdb into psxc-imdb.conf
+- Refactored and optimized TVMaze scripts
 
 ### Fixes
 

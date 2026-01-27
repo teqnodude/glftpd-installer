@@ -1,33 +1,27 @@
 #!/bin/bash
-VER=1.6
-#--[ Info ]-----------------------------------------------------#
+VER=1.7
+#--[ Info ]-----------------------------------------------------
+#
+# TVMaze Info by Teqno
+#
+# This script comes without any warranty, use it at your own risk.
 #
 # This script enables the creation of .imdb and tag file with
 # TVMaze info. Copy this to /glftpd/bin and chmod 755.
 #
-# Changelog
-# 2025-08-29 v1.6 Improved version with better error handling, performance optimizations, and safer variable usage.
-# 2022-04-21 v1.5 Added ability to set user/group for tvmaze files in rls dir
-# 2021-03-25 v1.4 Code for airdate was not properly set
-# 2021-03-03 v1.3 Added option for maximum width for plot summary
-# 2021-03-02 v1.2 Cosmetic changes in code and change from premiered to show type in tag file
-# 2021-02-28 v1.1 Added TVMaze link for show and episode
-# 2021-02-26 v1.0 Orginal creator Teqno
-#
-#--[ Settings ]-------------------------------------------------#
+#--[ Settings ]-------------------------------------------------
 
-glroot=/glftpd
-debug=0
-# Maximum width for text written to .imdb
-width=77
+GLROOT=/glftpd
+DEBUG=0
+
 # What user/group to set for tmaze files in rls dir, requires chmod u+s /glftpd/bin/chown
-setuser=glftpd
-setgroup=NoGroup
+SETUSER=glftpd
+SETGROUP=NoGroup
 
-#--[ Script Start ]---------------------------------------------#
+#--[ Script Start ]---------------------------------------------
 
-user=$(grep $setuser $glroot/etc/passwd | cut -d ':' -f3)
-group=$(grep $setgroup $glroot/etc/group | cut -d ':' -f3)
+user=$(grep "^${SETUSER}:" "$GLROOT/etc/passwd" | cut -d ':' -f3)
+group=$(grep "^${SETGROUP}:" "$GLROOT/etc/group" | cut -d ':' -f3)
 
 # Remove surrounding quotes and replace underscores with spaces where needed
 remove_quotes() { printf '%s' "${1//\"/}"; }
@@ -63,67 +57,43 @@ do
 
 done
 
+# Create the output content once
+TVMAZE_INFO=$(cat <<- EOF
+============================ TVMAZE INFO v$VER ================================
 
-if (( debug == 1 ))
+Title........: $SHOW_NAME
+Premiered....: $SHOW_PREMIERED
+	
+IMDB Link....: $SHOW_IMDB
+TVMaze Link..: $SHOW_URL
+Episode Link.: $EP_URL
+Genre........: $SHOW_GENRES
+Type.........: $SHOW_TYPE
+User Rating..: $SHOW_RATING
+	
+Country......: $SHOW_COUNTRY
+Language.....: $SHOW_LANGUAGE
+Network......: $SHOW_NETWORK
+Status.......: $SHOW_STATUS
+Airdate......: $EP_AIR_DATE
+	
+Plot.........: $SHOW_SUMMARY
+	
+============================ TVMAZE INFO v$VER ================================
+EOF
+)
+if (( DEBUG == 1 ))
 then
-
-    # Output to console
-    cat <<- EOF
-	============================ TVMAZE INFO v$VER ================================
-
-	Title........: $SHOW_NAME
-	Premiered....: $SHOW_PREMIERED
-	
-	IMDB Link....: $SHOW_IMDB
-	TVMaze Link..: $SHOW_URL
-	Episode Link.: $EP_URL
-	Genre........: $SHOW_GENRES
-	Type.........: $SHOW_TYPE
-	User Rating..: $SHOW_RATING
-	
-	Country......: $SHOW_COUNTRY
-	Language.....: $SHOW_LANGUAGE
-	Network......: $SHOW_NETWORK
-	Status.......: $SHOW_STATUS
-	Airdate......: $EP_AIR_DATE
-	
-	Plot.........: $SHOW_SUMMARY
-	
-	============================ TVMAZE INFO v$VER ================================
-	EOF
-
+	echo "$TVMAZE_INFO"
 else
 
     # Output to file
-    output_file="$glroot$RLS_NAME/.imdb"
-    
-    cat <<- EOF > "$output_file"
-	============================ TVMAZE INFO v$VER ================================
-	
-	Title........: $SHOW_NAME
-	Premiered....: $SHOW_PREMIERED
-	
-	IMDB Link....: $SHOW_IMDB
-	TVMaze Link..: $SHOW_URL
-	Episode Link.: $EP_URL
-	Genre........: $SHOW_GENRES
-	Type.........: $SHOW_TYPE
-	User Rating..: $SHOW_RATING
-	
-	Country......: $SHOW_COUNTRY
-	Language.....: $SHOW_LANGUAGE
-	Network......: $SHOW_NETWORK
-	Status.......: $SHOW_STATUS
-	Airdate......: $EP_AIR_DATE
-	
-	Plot.........: $SHOW_SUMMARY
-	
-	============================ TVMAZE INFO v$VER ================================
-	EOF
+    output_file="$GLROOT$RLS_NAME/.imdb"
+    echo "$TVMAZE_INFO" > "$output_file"
 
     # Format genres for filename
     SHOW_GENRES=$(echo "$SHOW_GENRES" | sed -e 's/ /_/g' -e 's|/|-|g')
-    tvmarker_file="$glroot$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
+    tvmarker_file="$GLROOT$RLS_NAME/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
     
     touch "$tvmarker_file"
 
@@ -131,7 +101,7 @@ else
     then
 
         chmod 666 "$tvmarker_file" "$output_file"
-        $glroot/bin/chown $user:$group "$tvmarker_file" "$output_file"
+        $GLROOT/bin/chown $user:$group "$tvmarker_file" "$output_file"
 
     fi
 

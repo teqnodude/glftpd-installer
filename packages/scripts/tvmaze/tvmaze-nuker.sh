@@ -1,30 +1,10 @@
 #!/bin/bash
-VER=3.42
+VER=3.5
 #--[ Info ]-----------------------------------------------------
 #
-# This script comes without any warranty, use it at your own risk.
+# TVMaze Nuker by Teqno/TeRRaNoVA/Sokar aka PicdleRick
 #
-# Changelog
-# 20XX-00-00 v1x 	Orginale creator Sokar aka PicdleRick
-# 2020-10-20 v2x 	Code modifications and improvements Teqno/TeRRaNoVA
-# 2020-10-23 v2.1  	Changed the way languages are handled by Teqno
-# 2020-10-24 v2.2  	Added the ability to nuke shows based on rating by Teqno
-# 2020-12-26 v2.3  	Added the creation of blockfile for adaptive blocking in tur-predircheck by Teqno
-# 2021-01-03 v2.4  	Fixed format of adaptive blocking
-# 2021-01-05 v2.5  	Fixed check for previous blocks
-# 2021-01-08 v2.6  	Automatic sorting of adaptive blocklist
-# 2021-01-26 v2.7  	Fixed incorrect nuke when language is null
-# 2021-03-03 v2.8  	Added the ability to nuke shows based on status
-# 2021-05-25 v2.9  	Added the ability to nuke shows based on title 
-# 2022-04-16 v3.0  	Updated adaptive blocklist to put blocks in wide rows instead of one block per row to prevent problems of speed when creating new dirs
-# 2022-04-21 v3.1  	Added a cleanup option of adaptive blocklist based on the number of days for those sites that have a lot of blocks but that doesn't want them to 
-#		  		   	slow down the creation of new dirs
-# 2024-02-17 v3.2  	Fixed the cleanup function of adapative blocklist and added logging of cleanup to logfile  
-# 2025-08-29 v3.3  	Improved version with better error handling, performance optimizations, and safer variable usage.
-# 2025-09-02 v3.4  	Fixed the nuke_section_languages that got broken after latest optimization
-# 2025-09-04 v3.41 	Fixed the automatic adding of blocks to blockfile that became broken after optimization
-# 2025-09-28 v3.42 	Calling the storage of nuke function in incomplete-list-nuker.sh if the file exists to ensure nuked dirs are cleaned up. Also fixed a grep line that wasn't working properly
-#                  	that prevented blocks from being added if they were part of shows name.
+# This script comes without any warranty, use it at your own risk.
 #
 # Installation: copy tvmaze-nuker.sh to glftpd/bin and chmod it
 # 755. Copy the modificated TVMaze.tcl into your eggdrop pzs-ng
@@ -55,7 +35,7 @@ NUKE_SHOW_TYPES="Game_Show"
 
 # Show Types: Animation Award_Show Documentary Game_Show News Panel_Show Reality Scripted Sports Talk_Show Variety
 NUKE_SECTION_TYPES="
-/site/TV-HD:(Sports|Award_Show|Game_Show)
+/site/TV-720:(Sports)
 "
 
 # Configured like NUKE_SECTION_TYPES
@@ -76,7 +56,7 @@ NUKE_NETWORKS="CraveTV"
 
 # Languages to NOT nuke.
 NUKE_SECTION_LANGUAGES="
-/site/TV-HD:(English)
+/site/TV-720:(English)
 "
 
 # What rating should be the minimum *allowed* per section? For now, no decimals are allowed.
@@ -349,7 +329,7 @@ then
                         addblock "$section" "$block"
 
                     fi
-
+                    
                 fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$type TV shows are not allowed"
@@ -397,7 +377,7 @@ then
                         addblock "$section" "$block"
 
                     fi
-
+                    
                 fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$type type of TV show is not allowed"
@@ -445,7 +425,7 @@ then
                         addblock "$section" "$block"
 
                     fi
-
+                    
                 fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$genre genre is not allowed"
@@ -475,15 +455,15 @@ then
             section=$(echo "$RLS_NAME" | cut -d'/' -f1-3)
             exclude=$(echo "$RLS_NAME" | cut -d'/' -f4- | grep -Eo ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[0-9]{4}.[0-9]{2}.[0-9]{2}.*|.Part.[0-9].*")
             block=$(echo "$RLS_NAME" | cut -d'/' -f4- | sed "s/$exclude//")
-
+            
             if ! grep "^$section:^(" "$BLOCKFILE" \
 				| sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
 				| tr '|' '\n' \
 				| grep -Fxq "$block"
             then
-				
-				addblock "$section" "$block"
-
+            
+                addblock "$section" "$block"
+            
             fi
 
         fi
@@ -526,7 +506,7 @@ then
                         addblock "$section" "$block"
 
                     fi
-
+                    
             	fi
 
                 $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "TV shows from $country are not allowed"
@@ -560,16 +540,16 @@ then
                     section=$(echo "$RLS_NAME" | cut -d'/' -f1-3)
                     exclude=$(echo "$RLS_NAME" | cut -d'/' -f4- | grep -Eo ".S[0-9][0-9]E[0-9][0-9].*|.E[0-9][0-9].*|.[[:digit:]]{4}.[[:digit:]]{2}.[[:digit:]]{2}.*|.Part.[0-9].*")
                     block=$(echo "$RLS_NAME" | cut -d'/' -f4- | sed "s/$exclude//")
-
+                    
                     if ! grep "^$section:^(" "$BLOCKFILE" \
                         | sed -E 's#^.*:\^\(([^)]*)\)\[._-].*#\1#' \
                         | tr '|' '\n' \
                         | grep -Fxq "$block"
                     then
-
-                        addblock "$section" "$block"
-
-                    fi
+                    
+						addblock "$section" "$block"
+                
+					fi
 				
                 fi
 

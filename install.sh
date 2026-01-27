@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=12.x
+VER=12.1
 
 # Set debug mode (0=off, 1=on)
 DEBUG=0
@@ -2612,6 +2612,33 @@ cleanup()
 	    "$glroot/bin/tvmaze-nuker.sh" sanity >/dev/null 2>&1
 
 	fi
+	
+    # Setup TMDB if MOVIE directories exist
+    if find "$glroot/site" -maxdepth 1 -type d -name "X26[45]*" -print -quit | grep -q .
+    then
+
+        cp -f packages/scripts/tmdb/{tmdb.tcl,tmdb.zpt} "$glroot/sitebot/scripts/pzs-ng/plugins"
+        cp packages/scripts/tmdb/*.sh "$glroot/bin"
+        echo "#source scripts/pzs-ng/plugins/tmdb.tcl" >> "$glroot/sitebot/eggdrop.conf"
+
+        sections=""
+
+        for movie in "$glroot/site"/X264* "$glroot/site"/X265*
+        do
+
+            [[ -d "$movie" ]] || continue
+            sections+=" \"/site/$(basename "$movie")/\""
+
+        done
+
+        # Replace only the content inside the braces, preserving indentation
+        # Matches:  ^[spaces/tabs]set[spaces]tvmaze(sections)[spaces]{  ...  }
+        sed -i "s|^\([[:space:]]*set[[:space:]]\{1,\}tmdb(sections)[[:space:]]*{\).*}|\1$sections }|" \
+            "$glroot/sitebot/scripts/pzs-ng/plugins/tmdb.tcl"
+
+        "$glroot/bin/tmdb-nuker.sh" sanity >/dev/null 2>&1
+
+    fi
 
     # Add disabled cron job and setup tur-space
     add_cron_job "#*/5 * * * *" "$glroot/bin/tur-space.sh go"
