@@ -46,6 +46,7 @@ namespace eval ::ngBot::plugin::TMDB {
 	set tmdb(proxyuser) "username"
 	set tmdb(proxypass) "password"
 	##
+	## set tmdb(sections) { "/site/X264/" "/site/X265-2160/" }
 	set tmdb(sections) {}
 	##
 	## Timeout in milliseconds. (default: 3000)
