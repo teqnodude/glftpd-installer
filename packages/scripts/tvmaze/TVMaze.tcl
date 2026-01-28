@@ -431,7 +431,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 		regexp {(.*)\s(19[4-9][0-9]|20[0-9][0-9])$} $show -> show year
 		regexp {(.*)\s(AU|US|CA|UK|NZ)$} $show -> show country
 		set data [GetFromApi "https://api.tvmaze.com/search/shows?q=" $show]
-		::ngBot::plugin::TVMaze::Debug "Searching TVMaze for: '$show'"
+		#::ngBot::plugin::TVMaze::Debug "Searching TVMaze for: '$show'"
 		if {[string equal "Connection" [string range $data 0 9]]} {
 			return -code error $data
 		}
@@ -591,7 +591,7 @@ namespace eval ::ngBot::plugin::TVMaze {
 			regexp {\"name\":\"(.*?)\"} $data -> info(episode_title)
 			regexp {\"url\":\"(.*?)\"} $data -> info(episode_url)
 			regexp {\"airdate\":\"(.*?)\"} $data -> info(episode_original_airdate)
-			::ngBot::plugin::TVMaze::Debug "Found show ID: $info(show_id) - $info(show_name) ($info(episode_original_airdate))"
+			#::ngBot::plugin::TVMaze::Debug "Found show ID: $info(show_id) - $info(show_name) ($info(episode_original_airdate))"
 
 			regexp {\"season\":(\d+)} $data -> info(episode_season)
 			regexp {\"number\":(\d+)} $data -> info(episode_number)

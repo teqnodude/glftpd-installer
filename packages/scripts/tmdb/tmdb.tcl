@@ -244,7 +244,7 @@ namespace eval ::ngBot::plugin::TMDB {
 	    set search_str [string map {" " "."} [string trim $text]]
 	    
 	    # Debug
-	    putlog "\[TMDB\] DEBUG: Trigger search string: '$search_str'"
+	    #::ngBot::plugin::TMDB::Debug "Trigger search string: '$search_str'"
 	    
 	    # Call FindInfo - it will parse the string like a release name
 	    if {[catch {${ns}::FindInfo $search_str [list] "false"} logData] != 0} {
@@ -411,7 +411,7 @@ namespace eval ::ngBot::plugin::TMDB {
 			append url "&year=$year"
 		}
 		
-		::ngBot::plugin::TMDB::Debug "Searching TMDB for: '$clean_title' Year: '$year'"
+		#::ngBot::plugin::TMDB::Debug "Searching TMDB for: '$clean_title' Year: '$year'"
 		
 		set data [::ngBot::plugin::TMDB::GetFromApi $url ""]
 		if {[string equal "Connection" [string range $data 0 9]]} {
@@ -449,7 +449,7 @@ namespace eval ::ngBot::plugin::TMDB {
 		set movie [lindex [dict get $parsed_data results] 0]
 		set movie_id [dict get $movie id]
 		
-		::ngBot::plugin::TMDB::Debug "Found movie ID: $movie_id - [dict get $movie title] ([dict get $movie release_date])"
+		#::ngBot::plugin::TMDB::Debug "Found movie ID: $movie_id - [dict get $movie title] ([dict get $movie release_date])"
 		
 		# Get full movie details
 		set url "https://api.themoviedb.org/3/movie/$movie_id?api_key=$tmdb(apikey)&append_to_response=credits"
