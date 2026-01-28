@@ -86,8 +86,13 @@ do
 
 		rank="$(ls $GLROOT/site/$section/$dir | grep -E "IMDB|TMDB" | egrep -o "Score_(NA|[0-9]|[0-9].[0-9])" | cut -d "_" -f2 | sed 's|.[0-9]||')"
 	    year="$(ls $GLROOT/site/$section/$dir | grep -E "IMDB|TMDB" | egrep -o "([0-9][0-9][0-9][0-9])" | tr -s '()')"
-		genres="$(ls $GLROOT/site/$section/$dir | grep -E "IMDB|TMDB" | grep -o "Score_.*" | sed -e 's/Score_([0-9.]\+)_-_//g' -e 's/Score_\([0-9]\(\.[0-9]\)\?\|NA\)_-_//g' -e 's/(.*//' -e 's/_-_/ /g' -e 's/-/ /g' -e 's/_/ /g' -e 's/Science Fiction/Sci-Fi/g' -e 's/Sci Fi/Sci-Fi/g' -e 's/ Sci / Sci-Fi /g' -e 's/ Sci$/ Sci-Fi/' -e 's/^Sci$/Sci-Fi/' | sed -E 's/\bSci\b/Sci-Fi/' | sed -e 's/Sci-Fi-Fi/Sci-Fi/g' -e 's/TV Movie//')"
-
+		genres="$(ls "$GLROOT/site/$section/$dir" | grep -E "\[IMDB\]|\[TMDB\]" | \
+		    sed -n 's/.*Score_[0-9.]\+_-_\([^_]*\)_-_.*/\1/p' | \
+		    sed 's/-/ /g' | \
+		    sed 's/Science Fiction/Sci-Fi/g; s/Sci Fi/Sci-Fi/g' | \
+		    sed 's/\bSci\b/Sci-Fi/g' | \
+		    sed 's/Sci-Fi-Fi/Sci-Fi/g; s/TV Movie//g' | \
+		    sed 's/  */ /g; s/^ //; s/ $//')"
 		for genre in $genres
     	do
 
