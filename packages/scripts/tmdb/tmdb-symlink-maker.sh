@@ -35,13 +35,13 @@ then
 
 fi
 
-lockfile="$GLROOT$TMP/tmdb-symlink-maker.lock"
+lockfile="$TMP/tmdb-symlink-maker.lock"
 
 # Improved cleanup function
 cleanup()
 {
 
-    [[ -f "$GLROOT$TMP/tmdb-symlink-maker.tmp" ]] && rm -f "$GLROOT$TMP/tmdb-symlink-maker.tmp"
+    [[ -f "$TMP/tmdb-symlink-maker.tmp" ]] && rm -f "$TMP/tmdb-symlink-maker.tmp"
     [[ -f "$lockfile" ]] && rm -f "$lockfile"
     exit
 
