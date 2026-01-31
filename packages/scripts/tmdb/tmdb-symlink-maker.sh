@@ -23,7 +23,7 @@ EXCLUDE="^\[NUKED\]-|^\[incomplete\]-|^\[no-nfo\]-|^\[no-sample\]-"
 # Comment out the lines below or leave them empty to disable them
 SORT_BY_GENRE=Sorted.By.Genre
 SORT_BY_RANK=Sorted.By.Rank
-LOG=$GLROOT/ftp-data/logs/imdb-scan.log
+LOG=$GLROOT/ftp-data/logs/tmdb-scan.log
 
 #--[ Script Start ]---------------------------------------------
 
