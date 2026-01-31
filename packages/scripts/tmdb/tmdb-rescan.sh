@@ -68,7 +68,16 @@ else
     RED=''; GREEN=''; YELLOW=''; RESET=''
 fi
 
-
+# Indentation levels (number of spaces)
+INDENT_CHECK=2    # "  Check:"
+INDENT_SKIP=2     # "  Skip:"
+INDENT_SEARCH=2   # "  Search:"
+INDENT_FOUND=4    # "    Found:"
+INDENT_TAG=4      # "    Tag file:"
+INDENT_USE=4      # "    Using .nfo file"
+INDENT_CREATED=4  # "    Created .imdb file"
+INDENT_WARN=4     # "    Warning:"
+INDENT_TIME=4     # "    Restored timestamp from:", "    Would restore timestamp from:", "    No reference file"
 
 # Parse arguments
 for arg in "$@"; do
@@ -118,12 +127,12 @@ restore_dir_timestamp() {
     if [[ -n "$ref_file" ]]; then
         if [[ "$DRY_RUN" == false ]]; then
             touch -r "$ref_file" "$dir"
-            echo "    ${GREEN}Restored timestamp from: $(basename "$ref_file")${RESET}"
+            printf "%${INDENT_TIME}s%sRestored timestamp from: %s%s\n" "" "$GREEN" "$(basename "$ref_file")" "$RESET"
         else
-            echo "    ${YELLOW}Would restore timestamp from: $(basename "$ref_file")${RESET}"
+            printf "%${INDENT_TIME}s%sWould restore timestamp from: %s%s\n" "" "$YELLOW" "$(basename "$ref_file")" "$RESET"
         fi
     else
-        echo "    ${YELLOW}No reference file (.rar or .nfo) found${RESET}"
+        printf "%${INDENT_TIME}s%sNo reference file (.rar or .nfo) found%s\n" "" "$YELLOW" "$RESET"
     fi
 }
 
@@ -448,15 +457,14 @@ main() {
             
             if [[ "$TIMESTAMP_ONLY" == true ]]; then
                 # TIMESTAMP ONLY MODE: Just restore timestamp
-                echo "  Check: $dir_name"
+                printf "%${INDENT_CHECK}sCheck: %s\n" "" "$dir_name"
                 restore_dir_timestamp "$dir"
                 continue
             fi
                         
-            
             # NORMAL MODE: Skip if already has info
             if has_existing_info "$dir"; then
-                echo "  Skip: $dir_name (has info)"
+                printf "%${INDENT_SKIP}sSkip: %s (has info)\n" "" "$dir_name"
                 continue
             fi
             
@@ -471,27 +479,28 @@ main() {
             # Clean title
             title=$(clean_title "$title")
             
-            echo "  Search: $title ${year:+($year)}"
+            printf "%${INDENT_SEARCH}sSearch: %s %s\n" "" "$title" "${year:+($year)}"
             
             # Search TMDB
             local movie_id=$(search_tmdb "$title" "$year")
             
             if [[ -z "$movie_id" ]]; then
-                echo "    ${RED}Not found${RESET}"
+                printf "%${INDENT_FOUND}s%sNot found%s\n" "" "$RED" "$RESET"
                 continue
             fi
             
-			# Get details
-			local result=$(get_movie_details "$movie_id")
-			
-			# Extract tagfile (everything before first |)
-			local tagfile="${result%%|*}"
-			
-			# Extract content (everything after first |)
-			local content="${result#*|}"            
+            # Get details
+            local result=$(get_movie_details "$movie_id")
             
-            echo "    ${GREEN}Found: $(echo "$content" | grep "Title" | cut -d: -f2- | head -1)${RESET}"
-            echo "    Tag file: $tagfile"
+            # Extract tagfile (everything before first |)
+            local tagfile="${result%%|*}"
+            
+            # Extract content (everything after first |)
+            local content="${result#*|}"            
+            
+            found_title=$(echo "$content" | grep "Title" | cut -d: -f2- | head -1)
+            printf "%${INDENT_FOUND}s%sFound: %s%s\n" "" "$GREEN" "$found_title" "$RESET"
+            printf "%${INDENT_TAG}sTag file: %s\n" "" "$tagfile"
             
             # Create files
             if [[ "$DRY_RUN" == false ]]; then
@@ -500,42 +509,42 @@ main() {
 
                 # First try .nfo files
                 for f in "$dir"/*.nfo; do
-                if [[ -f "$f" ]]; then
-                    ref_file="$f"
-                    echo "    ${GREEN}Using .nfo file for timestamp reference: $(basename "$f")${RESET}"
-                    break
-                fi
+                    if [[ -f "$f" ]]; then
+                        ref_file="$f"
+                        printf "%${INDENT_USE}s%sUsing .nfo file for timestamp reference: %s%s\n" "" "$GREEN" "$(basename "$f")" "$RESET"
+                        break
+                    fi
                 done
 
                 # If no .nfo found, try .rar files
                 if [[ -z "$ref_file" ]]; then
-                for f in "$dir"/*.rar; do
-                    if [[ -f "$f" ]]; then
-                    ref_file="$f"
-                    echo "    ${GREEN}Using .rar file for timestamp reference: $(basename "$f")${RESET}"
-                    break
-                    fi
-                done
+                    for f in "$dir"/*.rar; do
+                        if [[ -f "$f" ]]; then
+                            ref_file="$f"
+                            printf "%${INDENT_USE}s%sUsing .rar file for timestamp reference: %s%s\n" "" "$GREEN" "$(basename "$f")" "$RESET"
+                            break
+                        fi
+                    done
                 fi
 
                 # Create .imdb file with content
                 echo "$content" > "$dir/.imdb"
-                echo "    ${GREEN}Created .imdb file${RESET}"
+                printf "%${INDENT_CREATED}s%sCreated .imdb file%s\n" "" "$GREEN" "$RESET"
 
                 # Create empty tag file with the name
                 printf '' > "$dir/$tagfile"
-                echo "    ${GREEN}Created empty tag file: $tagfile${RESET}"
+                printf "%${INDENT_CREATED}s%sCreated empty tag file: %s%s\n" "" "$GREEN" "$tagfile" "$RESET"
 
                 # Restore directory timestamp using reference file
                 if [[ -n "$ref_file" ]]; then
-                touch -r "$ref_file" "$dir"
-                echo "    ${GREEN}Restored directory timestamp from: $(basename "$ref_file")${RESET}"
+                    touch -r "$ref_file" "$dir"
+                    printf "%${INDENT_USE}s%sRestored directory timestamp from: %s%s\n" "" "$GREEN" "$(basename "$ref_file")" "$RESET"
                 else
-                echo "    ${YELLOW}Warning: No .rar or .nfo file found to restore timestamp${RESET}"
+                    printf "%${INDENT_WARN}s%sWarning: No .rar or .nfo file found to restore timestamp%s\n" "" "$YELLOW" "$RESET"
                 fi
             else
-                echo "    ${YELLOW}Would create: .imdb and $tagfile${RESET}"
-                echo "    ${YELLOW}Would look for .rar or .nfo file to restore timestamp${RESET}"
+                printf "%${INDENT_USE}s%sWould create: .imdb and %s%s\n" "" "$YELLOW" "$tagfile" "$RESET"
+                printf "%${INDENT_USE}s%sWould look for .rar or .nfo file to restore timestamp%s\n" "" "$YELLOW" "$RESET"
             fi
             
             # Be nice to API

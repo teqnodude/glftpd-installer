@@ -90,9 +90,13 @@ else
     RED=''; GREEN=''; YELLOW=''; RESET=''
 fi
 
+# Indentation levels (number of spaces)
+INDENT_SKIP=2      # "  Skip:"
+INDENT_SCAN=2      # "  Scanning dir:"
+INDENT_ECHO=2      # "  Skip:" in the TV show check
+
 rescan()
 {
-
     local TVMAZE_VER="$(grep 'VER=' $GLROOT/bin/tvmaze.sh | cut -d'=' -f2)"
     i=0
     
@@ -102,7 +106,7 @@ rescan()
 		if [[ ! $rls_name =~ (S[0-9]{2}E[0-9]{2}|E[0-9]{2}|[0-9]{4}\.[0-9]{2}\.[0-9]{2}|Part\.[0-9]) ]]
 		then
 		
-			echo "  Skip: $rls_name (no TV Show)"
+			printf "%${INDENT_ECHO}sSkip: %s (no TV Show)\n" "" "$rls_name"
 			continue
 	
 		fi
@@ -111,7 +115,7 @@ rescan()
 		if [[ "$SKIP" -eq 1 && -e "$1/$rls_name/.imdb" ]]
 		then
 		
-			echo "  Skip: $rls_name (has info already)"
+			printf "%${INDENT_SKIP}sSkip: %s (has info already)\n" "" "$rls_name"
 	    	continue
 
 		fi
@@ -142,7 +146,7 @@ rescan()
 		if [[ -z "$SHOW_NAME" ]] || [[ "$SHOW_NAME" == "N/A" ]]
 		then
 			
-			echo "  Skip: $rls_name (no info found on TVMaze)"
+			printf "%${INDENT_SKIP}sSkip: %s (no info found on TVMaze)\n" "" "$rls_name"
 			
 			# Be nice to API
 			sleep 1
@@ -264,7 +268,7 @@ rescan()
 		else
 
 		    IMDB_FILE="$1/$rls_name/.imdb"
-		    echo "  Scanning dir: $1/$rls_name"
+		    printf "%${INDENT_SCAN}sScanning dir: %s/%s\n" "" "$1" "$rls_name"
 	    	echo "$TVMAZE_INFO" > "$IMDB_FILE"
 		    rm -f "$1/$rls_name/"*TVMAZE*
 	    	touch "$1/$rls_name/[TVMAZE]=-_Score_${SHOW_RATING}_-_${SHOW_GENRES}_-_(${SHOW_TYPE})_-=[TVMAZE]"
