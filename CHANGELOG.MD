@@ -18,6 +18,7 @@
 - Removed inetd detection from installgl.sh and forced the use of systemd for the installation of glFTPd
 - Moved USERAGENT in psxc-imdb into psxc-imdb.conf
 - Refactored and optimized TVMaze scripts
+- Added the option to section-traffic to check for the last upload for a specific section
 
 ### Fixes
 

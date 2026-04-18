@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.3
+VER=1.31
 #--[ Info ]-----------------------------------------------------
 #                                                               
 # Section Traffic by Teqno                                      
@@ -61,14 +61,15 @@ then
 
     cat <<-EOF
 	${COLOR2}Run without argument to show stats for current month.
-	${COLOR2}To check another month: ${COLOR1}$TRIGGER 2020-08
-	${COLOR2}To check a specific user: ${COLOR1}$TRIGGER user <username>
-	${COLOR2}To check a specific user and month: ${COLOR1}$TRIGGER user <username> month 2020-08
-	${COLOR2}To check the top 10 downloaded releases for current month: ${COLOR1}$TRIGGER top
-	${COLOR2}To check the top 10 downloaded releases for specific month: ${COLOR1}$TRIGGER top month 2020-08
-	${COLOR2}To check the top 30 downloaded releases for current month: ${COLOR1}$TRIGGER top 30
-	${COLOR2}To check the top 30 downloaded releases for specific month: ${COLOR1}$TRIGGER top month 2020-08 30
-	${COLOR2}To check stats for specific release: ${COLOR1}$TRIGGER release <releasename> <username>
+	${COLOR2}To check another month:${COLOR1}$TRIGGER 2020-08
+	${COLOR2}To check a specific user:${COLOR1}$TRIGGER user <username>
+	${COLOR2}To check a specific user and month:${COLOR1}$TRIGGER user <username> month 2020-08
+	${COLOR2}To check the top 10 downloaded releases for current month:${COLOR1}$TRIGGER top
+	${COLOR2}To check the top 10 downloaded releases for specific month:${COLOR1}$TRIGGER top month 2020-08
+	${COLOR2}To check the top 30 downloaded releases for current month:${COLOR1}$TRIGGER top 30
+	${COLOR2}To check the top 30 downloaded releases for specific month:${COLOR1}$TRIGGER top month 2020-08 30
+	${COLOR2}To check stats for specific release:${COLOR1}$TRIGGER release <releasename> <username>
+	${COLOR2}To check the last upload for a specific section:${COLOR1}$TRIGGER section <section>
 	EOF
 
     exit 0
@@ -366,6 +367,27 @@ then
     echo "${COLOR3}The statistics have a 30 min delay"
 
     exit 0    
+
+fi
+
+if [[ "$ARGS" = "section"* ]]
+then
+
+    section=$(echo "$ARGS" | cut -d ' ' -f2)
+    datetime=$($SQL -t -e "SELECT datetime FROM $SQLTB WHERE section = '$section' AND direction='i' ORDER BY datetime DESC LIMIT 1" | grep -oP '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}')
+
+    if [[ -z "$datetime" ]]
+    then
+
+        echo "${COLOR2}No records found for section:${COLOR1} $section"
+
+    else
+
+        echo "${COLOR2}Section:${COLOR1} $section ${COLOR2}- Last upload:${COLOR1} $datetime"
+
+    fi
+
+    exit 0
 
 fi
 
