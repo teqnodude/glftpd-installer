@@ -112,17 +112,17 @@ then
     username=$(echo $ARGS | cut -d ' ' -f3)
     echo "${COLOR2}Stats for release${COLOR1} $release ${COLOR2}for user${COLOR1} $username"
     query=$($SQL -e "SELECT
-			ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
-			ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
-			ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
-			COUNT(CASE WHEN direction = 'i' THEN id END) AS filesinc,
-			COUNT(CASE WHEN direction = 'o' THEN id END) AS filesout
+				ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
+				ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
+				ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
+				COUNT(CASE WHEN direction = 'i' THEN id END) AS filesinc,
+				COUNT(CASE WHEN direction = 'o' THEN id END) AS filesout
 		    FROM
-			$SQLTB
+				$SQLTB
 		    WHERE
-			relname = '$release'
+				relname = '$release'
 		    AND 
-			FTPuser = '$username'")
+				FTPuser = '$username'")
 
     echo $query | while read -r traffic incoming outgoing filesinc filesout;
     do
@@ -212,18 +212,18 @@ then
     do
 
         query=$($SQL -e "SELECT
-			    ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
-		    	    ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
-		    	    ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
-		    	    MAX(CASE WHEN direction = 'i' THEN datetime END) AS lastup
-			FROM
+				    ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
+	    		    ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
+	    		    ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
+	    	    	MAX(CASE WHEN direction = 'i' THEN datetime END) AS lastup
+				FROM
 		    	    $SQLTB
-			WHERE
-		    	    section = '$section'
+				WHERE
+	    		    section = '$section'
 		    	AND 
 		    	    datetime LIKE '$month%'
-		        AND 
-		    	    FTPuser = '$username'")
+	    	    AND 
+	    		    FTPuser = '$username'")
 
 	echo $query | while read -r traffic incoming outgoing lastup;
 	do
@@ -408,16 +408,16 @@ for section in $(ls $GLROOT/site | egrep -v "$EXCLUDED" | sed '/^\s*$/d')
 do
 
     query=$($SQL -e "SELECT
-			ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
-			ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
-			ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
-			MAX(CASE WHEN direction = 'i' THEN datetime END) AS lastup
+				ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
+				ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
+				ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
+				MAX(CASE WHEN direction = 'i' THEN datetime END) AS lastup
 		    FROM
-			$SQLTB
+				$SQLTB
 		    WHERE
-			section = '$section'
+				section = '$section'
 		    AND 
-			datetime LIKE '$month%'")
+				datetime LIKE '$month%'")
 
     if [[ -z "$query" ]]
     then
@@ -493,7 +493,7 @@ do
 done
 
 query=$($SQL -e "SELECT
-		ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
+			ROUND(SUM(bytes / 1024 / 1024 / 1024), 2) AS traffic,
 	        ROUND(SUM(CASE WHEN direction = 'i' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS incoming,
 	        ROUND(SUM(CASE WHEN direction = 'o' THEN bytes / 1024 / 1024 / 1024 ELSE 0 END), 2) AS outgoing,
 	        MAX(CASE WHEN direction = 'i' THEN datetime END) AS lastup
@@ -532,9 +532,9 @@ do
     then
 
         rawtraffic=$(echo "$traffic / 1024" | bc -l)
-	firstnum=$(echo $rawtraffic | cut -d'.' -f1)
+		firstnum=$(echo $rawtraffic | cut -d'.' -f1)
         secondnum=$(echo $rawtraffic | cut -d'.' -f2 | cut -b1-2)
-	traffic="$firstnum.$secondnum"
+		traffic="$firstnum.$secondnum"
         tunit=TB
 
     fi
@@ -542,19 +542,19 @@ do
     if [[ $(echo $incoming | cut -d'.' -f1) -gt 1024 ]]
     then
 
-	rawtraffic=$(echo "$incoming / 1024" | bc -l)
+		rawtraffic=$(echo "$incoming / 1024" | bc -l)
         firstnum=$(echo $rawtraffic | cut -d'.' -f1)
-	secondnum=$(echo $rawtraffic | cut -d'.' -f2 | cut -b1-2)
+		secondnum=$(echo $rawtraffic | cut -d'.' -f2 | cut -b1-2)
         incoming="$firstnum.$secondnum"
-	iunit=TB
+		iunit=TB
     fi
 
     if [[ $(echo $outgoing | cut -d'.' -f1) -gt 1024 ]]
     then
 
-	rawtraffic=$(echo "$outgoing / 1024" | bc -l)
+		rawtraffic=$(echo "$outgoing / 1024" | bc -l)
         firstnum=$(echo $rawtraffic | cut -d'.' -f1)
-	secondnum=$(echo $rawtraffic | cut -d'.' -f2 | cut -b1-2)
+		secondnum=$(echo $rawtraffic | cut -d'.' -f2 | cut -b1-2)
         outgoing="$firstnum.$secondnum"
         ounit=TB
     fi
