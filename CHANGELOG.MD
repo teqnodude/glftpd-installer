@@ -19,7 +19,8 @@
 - Moved USERAGENT in psxc-imdb into psxc-imdb.conf
 - Refactored and optimized TVMaze scripts
 - Added the option to section-traffic to check for the last upload for a specific section
-- tmdb now renames the Science Fiction genre set by TMDB to Sci-Fi when creating the tag file for each movie
+- tmdb now renames the Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
+- tmdb-rescan also updated where it renames Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
 
 ### Fixes
 

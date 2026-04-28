@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.01
 #--[ Info ]-----------------------------------------------------
 # 
 # TMDB Movie Rescanner by Teqno
@@ -156,6 +156,12 @@ extract_movie_info() {
     fi
 }
 
+# Convert genre names (e.g., "Science Fiction" to "Sci-Fi")
+convert_genre() {
+    local genre="$1"
+    echo "$genre" | sed 's/Science Fiction/Sci-Fi/g'
+}
+
 # Clean title for API
 clean_title() {
     local title="$1"
@@ -227,7 +233,7 @@ get_movie_details() {
                 fi
             fi
         done
-        genres=$(echo "$genres_json" | grep -o '"name":"[^"]*"' | sed 's/"name":"\([^"]*\)"/\1/g' | head -3 | tr '\n' '_' | sed 's/_$//')
+        genres=$(echo "$genres_json" | grep -o '"name":"[^"]*"' | sed 's/"name":"\([^"]*\)"/\1/g' | head -3 | while read -r g; do convert_genre "$g"; done | tr '\n' '_' | sed 's/_$//')
     fi
     
     # EXTRACT CAST - WORKING
@@ -448,7 +454,8 @@ main() {
         
         # Get directories in the section
         for dir in "$path"/*/; do
-            [[ ! -d "$dir" ]] && continue
+            # Skip non-directories and symlinks
+            [[ ! -d "${dir%/}" || -h "${dir%/}" ]] && continue
             
             # Remove trailing slash if present
 		    dir="${dir%/}"
