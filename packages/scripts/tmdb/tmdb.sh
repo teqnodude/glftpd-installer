@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.01
 #--[ Info ]-----------------------------------------------------
 #
 # TMDB by Teqno
@@ -26,9 +26,19 @@ group=$(grep "^${SETGROUP}:" "$GLROOT/etc/group" | cut -d ':' -f3)
 remove_quotes() { printf '%s' "${1//\"/}"; }
 remove_quotes_and_underscores() { printf '%s' "${1//\"/}" | tr '_' ' '; }
 
+# Function to convert "Science Fiction" to "Sci-Fi" (handles spaces and underscores)
+convert_genre() {
+    local genre="$1"
+    # First convert underscores to spaces, then replace Science Fiction, then convert back if needed
+    genre=$(echo "$genre" | tr '_' ' ')
+    genre=$(echo "$genre" | sed 's/Science Fiction/Sci-Fi/g')
+    echo "$genre"
+}
+
 RLS_NAME=$(remove_quotes "$1")
 MOVIE_TITLE=$(remove_quotes_and_underscores "$2")
-MOVIE_GENRES=$(remove_quotes_and_underscores "$3")
+MOVIE_GENRES_RAW=$(remove_quotes_and_underscores "$3")
+MOVIE_GENRES=$(convert_genre "$MOVIE_GENRES_RAW")
 MOVIE_COUNTRY=$(remove_quotes_and_underscores "$4")
 MOVIE_LANGUAGE=$(remove_quotes_and_underscores "$5")
 MOVIE_STATUS=$(remove_quotes_and_underscores "$6")
