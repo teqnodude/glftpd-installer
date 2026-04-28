@@ -32,6 +32,7 @@
 - psxc-imdb.sh and psxc-imdb-find.sh stopped working again
 - Minor fix for psxc-imdb.sh when it comes to the output in .imdb
 - Removed wrong usage of sudo in install.sh
+- tmdb-symlink-maker didn't have the proper regex for handling genres
 
 ## 12.0 - 2025-09-01
 

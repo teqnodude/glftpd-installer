@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.0
+VER=1.01
 #--[ Info ]-----------------------------------------------------
 #
 # TMDB Symlink Maker by Teqno
@@ -86,13 +86,18 @@ do
 
 		rank="$(ls $GLROOT/site/$section/$dir | grep -E "IMDB|TMDB" | egrep -o "Score_(NA|[0-9]|[0-9].[0-9])" | cut -d "_" -f2 | sed 's|.[0-9]||')"
 	    year="$(ls $GLROOT/site/$section/$dir | grep -E "IMDB|TMDB" | egrep -o "([0-9][0-9][0-9][0-9])" | tr -s '()')"
-		genres="$(ls "$GLROOT/site/$section/$dir" | grep -E "\[IMDB\]|\[TMDB\]" | \
-		    sed -n 's/.*Score_[0-9.]\+_-_\([^_]*\)_-_.*/\1/p' | \
-		    sed 's/-/ /g' | \
-		    sed 's/Science Fiction/Sci-Fi/g; s/Sci Fi/Sci-Fi/g' | \
-		    sed 's/\bSci\b/Sci-Fi/g' | \
-		    sed 's/Sci-Fi-Fi/Sci-Fi/g; s/TV Movie//g' | \
-		    sed 's/  */ /g; s/^ //; s/ $//')"
+        genres="$(ls "$GLROOT/site/$section/$dir" | grep -E "\[IMDB\]|\[TMDB\]" | \
+                sed -n 's/.*Score_[0-9.]\+_-_\(.*\)_-_([0-9][0-9][0-9][0-9])_.*/\1/p' | \
+                sed 's/Science Fiction/Sci+Fi/g' | \
+                sed 's/Sci Fi/Sci+Fi/g' | \
+                sed 's/Sci-Fi/Sci+Fi/g' | \
+                sed 's/_/ /g' | \
+                sed 's/-/\n/g' | \
+                sed 's/Sci+Fi/Sci-Fi/g' | \
+                awk '{for(i=1;i<=NF;i++) print $i}' | \
+                sed '/^TV Movie$/d' | \
+                paste -sd ' ')"
+
 		for genre in $genres
     	do
 
