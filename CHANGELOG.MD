@@ -1,3 +1,20 @@
+## 12.x - 
+
+### Updated
+
+- Added cmake as a required package in the list of packages in README since compilation of zlib-ng requires it
+- Disabled some debug code in tmdb.tcl and TVMaze.tcl
+- Added example how to set sections properly in tmdb.tcl
+- Added an extra row on NEWDIR and PRE to increase clarity in tmdb.zpt
+- Added the option to section-traffic to check for the last upload for a specific section
+- tmdb now renames the Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
+- tmdb-rescan also updated where it renames Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
+
+### Fixes
+
+- lockfile wasn't properly working in tmdb-symlink-maker
+- tmdb-symlink-maker didn't have the proper regex for handling genres
+
 ## 12.1 - 2026-01-27
 
 ### Added
@@ -18,9 +35,6 @@
 - Removed inetd detection from installgl.sh and forced the use of systemd for the installation of glFTPd
 - Moved USERAGENT in psxc-imdb into psxc-imdb.conf
 - Refactored and optimized TVMaze scripts
-- Added the option to section-traffic to check for the last upload for a specific section
-- tmdb now renames the Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
-- tmdb-rescan also updated where it renames Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
 
 ### Fixes
 
@@ -34,7 +48,6 @@
 - psxc-imdb.sh and psxc-imdb-find.sh stopped working again
 - Minor fix for psxc-imdb.sh when it comes to the output in .imdb
 - Removed wrong usage of sudo in install.sh
-- tmdb-symlink-maker didn't have the proper regex for handling genres
 
 ## 12.0 - 2025-09-01
 
