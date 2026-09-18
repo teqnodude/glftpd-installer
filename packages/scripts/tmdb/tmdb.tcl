@@ -117,7 +117,7 @@ namespace eval ::ngBot::plugin::TMDB {
 	##################################################
 
 	## Version
-	set tmdb(version) "20260127"
+	set tmdb(version) "20260918"
 	## Useragent
 	set tmdb(useragent) "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.5) Gecko/2008120122 Firefox/3.0.5"
 
@@ -409,7 +409,7 @@ namespace eval ::ngBot::plugin::TMDB {
 		set query [string map {" " "%20"} $clean_title]
 		set url "https://api.themoviedb.org/3/search/movie?api_key=$tmdb(apikey)&query=$query&include_adult=false"
 		if {$year != "" && [string is integer $year] && $year >= 1900 && $year <= 2100} {
-			append url "&year=$year"
+			append url "&primary_release_year=$year"
 		}
 		
 		#::ngBot::plugin::TMDB::Debug "Searching TMDB for: '$clean_title' Year: '$year'"
