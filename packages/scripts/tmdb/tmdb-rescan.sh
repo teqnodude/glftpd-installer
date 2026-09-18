@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.01
+VER=1.02
 #--[ Info ]-----------------------------------------------------
 # 
 # TMDB Movie Rescanner by Teqno
@@ -181,7 +181,7 @@ search_tmdb() {
     local query="${title// /%20}"
     local url="https://api.themoviedb.org/3/search/movie?api_key=$TMDB_API_KEY&query=$query&include_adult=false"
     
-    [[ -n "$year" ]] && url="$url&year=$year"
+    [[ -n "$year" ]] && url="$url&primary_release_year=$year"
     
     # Get first result
     local response=$(curl -s "$url")
