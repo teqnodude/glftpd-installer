@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=3.5
+VER=3.51
 #--[ Info ]-----------------------------------------------------
 #
 # TVMaze Nuker by Teqno/TeRRaNoVA/Sokar aka PicdleRick
@@ -176,35 +176,164 @@ SHOW_TYPE=$(remove_quotes "$7")
 EP_AIR_DATE=$(remove_quotes "$8")
 SHOW_RATING=$(remove_quotes "$9")
 
+# Clean old blocklist rows
+
+if [[ "$NUKE_CLEAN_BLOCKLIST" -eq 1 ]]
+then
+
+    exec {CLEANFD}>>$BLOCKFILE
+    if ! flock -x -w 5 $CLEANFD
+    then
+
+        LogMsg "clean-blocklist: could not acquire lock on $BLOCKFILE within 5s"
+
+    else
+
+        current_epoch=$(date +%s)
+        declare -A seen
+        to_delete=()
+
+        while IFS= read -r row
+        do
+
+            blockdate="${row##*:}"
+
+            if ! date --date "$blockdate" &>/dev/null
+            then
+
+                continue
+
+            fi
+
+            block_epoch=$(date +%s --date "$blockdate")
+            days=$(( (current_epoch - block_epoch) / 86400 ))
+
+            if [[ "$days" -ge "$BLOCKDAYS" ]]
+            then
+
+                LogMsg "Automatic removal of blocks with date $blockdate"
+
+                if [[ -z "${seen[$row]}" ]]
+                then
+
+                    to_delete+=( "$row" )
+                    seen[$row]=1
+
+                fi
+
+            fi
+
+        done < "$BLOCKFILE"
+
+        if (( ${#to_delete[@]} > 0 ))
+        then
+
+            printf '%s\n' "${to_delete[@]}" > $BLOCKFILE.del
+            awk 'NR==FNR{del[$0]=1; next} !($0 in del)' $BLOCKFILE.del $BLOCKFILE > $BLOCKFILE.tmp && mv $BLOCKFILE.tmp $BLOCKFILE
+            rm -f $BLOCKFILE.del
+
+        fi
+
+        flock -u $CLEANFD
+
+    fi
+
+    exec {CLEANFD}>&-
+
+fi
+
 function addblock
 {
 
 today=$(date "+%Y-%m-%d")
-section=$(echo $1 | cut -d '/' -f3)
 
-if [[ ! "$(grep "$1" $BLOCKFILE)" ]]
+if [[ -z "$2" ]]
+then
+
+    LogMsg "addblock: empty block for $1, skipping"
+    return 1
+
+fi
+
+exec {LOCKFD}>>$BLOCKFILE
+if ! flock -x $LOCKFD
+then
+
+    LogMsg "addblock: could not acquire lock on $BLOCKFILE"
+    exec {LOCKFD}>&-
+    return 1
+
+fi
+
+# Any line for this section already containing the block? Then nothing to do.
+if grep -qF "$1:^(" $BLOCKFILE && awk -v p="$1:^(" -v b="$2" '
+    index($0, p) == 1 {
+        s = substr($0, length(p) + 1)
+        sub(/\).*/, "", s)
+        n = split(s, a, "|")
+        for (i = 1; i <= n; i++) if (a[i] == b) found = 1
+    }
+    END { exit !found }
+' $BLOCKFILE
+then
+
+    flock -u $LOCKFD
+    exec {LOCKFD}>&-
+    return 0
+
+fi
+
+# Last line for this section (if any)
+lineno=$(grep -nF "$1:^(" $BLOCKFILE | tail -1 | cut -d: -f1)
+
+if [[ -z "$lineno" ]]
 then
 
     echo "$1:^($2)[._-]:$today" >> $BLOCKFILE
 
 else
 
-    if [[ "$(grep "$1" $BLOCKFILE | tail -1 | wc -c)" -ge "$LENGTH" ]]
+    lastline=$(sed -n "${lineno}p" $BLOCKFILE)
+
+    if [[ "${#lastline}" -ge "$LENGTH" ]]
     then
 
-        $GLROOT/bin/sed -i -e "$(grep -n "/site/$section:^" $BLOCKFILE | tail -1 | cut -f1 -d':')a /site/$section:^($2)[._-]:$today" $BLOCKFILE
+        awk -v n="$lineno" -v ins="$1:^($2)[._-]:$today" 'NR==n{print; print ins; next} {print}' $BLOCKFILE > $BLOCKFILE.tmp && mv $BLOCKFILE.tmp $BLOCKFILE
 
     else
 
-        startword=$(grep "$1:^(" $BLOCKFILE | tail -1 | sed -e 's/\^(//' -e 's/)\[._-]//' | cut -d':' -f2 | cut -d'|' -f1)
-        $GLROOT/bin/sed -i "/\/site\/$section:^(/ s/$startword/$2|$startword/" $BLOCKFILE
+        # /site/TV-720:^(Old1|Old2)[._-]:2026-06-15
+        # prefix = /site/TV-720
+        # after  = Old1|Old2)[._-]:2026-06-15
+        # alt    = Old1|Old2
+        # suffix = [._-]:2026-06-15
+        prefix="${lastline%%:^(*}"
+        after="${lastline#*:^(}"
+        alt="${after%%)*}"
+        suffix="${after#*)}"
+
+        if [[ -z "$alt" ]]
+        then
+
+            LogMsg "addblock: could not parse alternation from line $lineno: $lastline"
+            flock -u $LOCKFD
+            exec {LOCKFD}>&-
+            return 1
+
+        fi
+
+        newline="${prefix}:^($2|$alt)${suffix}"
+
+        awk -v n="$lineno" -v repl="$newline" 'NR==n{print repl; next} {print}' $BLOCKFILE > $BLOCKFILE.tmp && mv $BLOCKFILE.tmp $BLOCKFILE
 
     fi
 
 fi
 
-}
+flock -u $LOCKFD
+exec {LOCKFD}>&-
 
+}
 
 if [[ "$DEBUG" == "1" ]]
 then
@@ -733,61 +862,3 @@ then
     fi
 
 fi
-
-if [[ "$NUKE_CLEAN_BLOCKLIST" -eq 1 ]]
-then
-
-    current_epoch=$(date +%s)
-    declare -A seen
-    to_delete=()
-
-    while IFS= read -r row
-    do
-
-        blockdate=$(echo "$row" | cut -d ':' -f3)
-
-        # Skip invalid dates
-        if ! date --date "$blockdate" &>/dev/null
-        then
-
-            continue
-
-        fi
-
-        block_epoch=$(date +%s --date "$blockdate")
-        days=$(( (current_epoch - block_epoch) / 86400 ))
-
-        if [[ "$days" -ge "$BLOCKDAYS" ]]
-        then
-
-            LogMsg "Automatic removal of blocks with date $blockdate"
-
-            if [[ -z "${seen[$blockdate]}" ]]
-            then
-
-                to_delete+=( "$blockdate" )
-                seen[$blockdate]=1
-
-            fi
-
-        fi
-
-    done < "$BLOCKFILE"
-
-    if (( ${#to_delete[@]} > 0 ))
-    then
-
-        sed_script=
-        for d in "${to_delete[@]}"
-        do
-
-            sed_script+="/$d/d;"
-
-        done
-
-        "$GLROOT/bin/sed" -i -e "$sed_script" "$BLOCKFILE"
-
-    fi
-
-fi
-
