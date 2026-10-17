@@ -2039,7 +2039,7 @@ eggdrop()
 
     print_status_start "Installing" "eggdrop"
 
-    cd ../$PK3DIR ; ./configure --prefix="$glroot/sitebot" >/dev/null 2>&1 && make config >/dev/null 2>&1  && make >/dev/null 2>&1 && make install >/dev/null 2>&1
+    cd ../$PK3DIR ; ./configure --prefix="$glroot/sitebot" >/dev/null 2>&1 && make config >/dev/null 2>&1 && make >/dev/null 2>&1 && make install >/dev/null 2>&1
     cd ../core
     # Create eggdrop.conf
     cat egghead > eggdrop.conf
