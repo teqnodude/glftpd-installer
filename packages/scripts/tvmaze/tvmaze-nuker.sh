@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=3.51
+VER=3.52
 #--[ Info ]-----------------------------------------------------
 #
 # TVMaze Nuker by Teqno/TeRRaNoVA/Sokar aka PicdleRick
