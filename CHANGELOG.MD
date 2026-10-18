@@ -9,6 +9,9 @@
 - Added the option to section-traffic to check for the last upload for a specific section
 - tmdb now renames the Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
 - tmdb-rescan also updated where it renames Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
+- Added .dms and .lha to allowed file types in zsconfig.h and tur-precheck.sh
+- Removed legacy : before IRC password in eggdrop.conf
+- Optimized code and reduced it with almost 30%
 
 ### Fixes
 
@@ -17,6 +20,7 @@
 - incomplete-list, incomplete-list-nuker, incomplete-list-symlinks didn't handle releases with 100% incomplete tag and incomplete-list lacked a variable for checking nfo's
 - All relevant libraries wasn't copied to $glroot/lib
 - Adding and removing blocks with tvmaze-nuker.sh didn't work properly that ended up with a broken .block file
+- Removing blocks with tvmaze-nuker.sh still didn't work properly but have tested it now successfully with new code
 
 ## 12.1 - 2026-01-27
 

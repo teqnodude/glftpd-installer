@@ -177,7 +177,6 @@ EP_AIR_DATE=$(remove_quotes "$8")
 SHOW_RATING=$(remove_quotes "$9")
 
 # Clean old blocklist rows
-
 if [[ "$NUKE_CLEAN_BLOCKLIST" -eq 1 ]]
 then
 
@@ -228,9 +227,27 @@ then
         if (( ${#to_delete[@]} > 0 ))
         then
 
-            printf '%s\n' "${to_delete[@]}" > $BLOCKFILE.del
-            awk 'NR==FNR{del[$0]=1; next} !($0 in del)' $BLOCKFILE.del $BLOCKFILE > $BLOCKFILE.tmp && mv $BLOCKFILE.tmp $BLOCKFILE
-            rm -f $BLOCKFILE.del
+            # Read surviving lines into memory first
+            lines=()
+            while IFS= read -r row
+            do
+
+                [[ -n "${seen[$row]}" ]] && continue
+                lines+=( "$row" )
+
+            done < "$BLOCKFILE"
+
+            # Truncate via the writable fd and write survivors back
+            exec {WRITEFD}>$BLOCKFILE
+            for row in "${lines[@]}"
+            do
+
+                printf '%s\n' "$row" >&$WRITEFD
+
+            done
+            exec {WRITEFD}>&-
+
+            unset lines
 
         fi
 
