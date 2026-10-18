@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=3.52
+VER=3.53
 #--[ Info ]-----------------------------------------------------
 #
 # TVMaze Nuker by Teqno/TeRRaNoVA/Sokar aka PicdleRick
@@ -263,6 +263,7 @@ function addblock
 {
 
 today=$(date "+%Y-%m-%d")
+section=$(echo $1 | cut -d '/' -f3)
 
 if [[ -z "$2" ]]
 then
@@ -273,17 +274,18 @@ then
 fi
 
 exec {LOCKFD}>>$BLOCKFILE
-if ! flock -x $LOCKFD
+if ! flock -x -w 5 $LOCKFD
 then
 
-    LogMsg "addblock: could not acquire lock on $BLOCKFILE"
+    LogMsg "addblock: could not acquire lock on $BLOCKFILE within 5s"
     exec {LOCKFD}>&-
     return 1
 
 fi
 
-# Any line for this section already containing the block? Then nothing to do.
-if grep -qF "$1:^(" $BLOCKFILE && awk -v p="$1:^(" -v b="$2" '
+# Any line for this section already containing the block as an exact
+# alternation member? Then nothing to do.
+if [[ -n "$(grep -F "$1:^(" $BLOCKFILE)" ]] && awk -v p="$1:^(" -v b="$2" '
     index($0, p) == 1 {
         s = substr($0, length(p) + 1)
         sub(/\).*/, "", s)
@@ -300,25 +302,40 @@ then
 
 fi
 
-# Last line for this section (if any)
+# Line number of the last entry for this section, if any.
 lineno=$(grep -nF "$1:^(" $BLOCKFILE | tail -1 | cut -d: -f1)
 
 if [[ -z "$lineno" ]]
 then
 
+    # No entry for this section yet: plain append (no dir write needed).
     echo "$1:^($2)[._-]:$today" >> $BLOCKFILE
 
 else
+
+    if ! [[ "$lineno" =~ ^[0-9]+$ ]]
+    then
+
+        LogMsg "addblock: bad lineno '$lineno' for $1, skipping"
+        flock -u $LOCKFD
+        exec {LOCKFD}>&-
+        return 1
+
+    fi
 
     lastline=$(sed -n "${lineno}p" $BLOCKFILE)
 
     if [[ "${#lastline}" -ge "$LENGTH" ]]
     then
 
-        awk -v n="$lineno" -v ins="$1:^($2)[._-]:$today" 'NR==n{print; print ins; next} {print}' $BLOCKFILE > $BLOCKFILE.tmp && mv $BLOCKFILE.tmp $BLOCKFILE
+        # Line is full: insert a new physical line after it using setuid sed.
+        # Only backslash and ampersand need escaping in the `a` text.
+        esc_ins=$(printf '%s' "$1:^($2)[._-]:$today" | $GLROOT/bin/sed 's/[\\&]/\\&/g')
+        $GLROOT/bin/sed -i "${lineno}a\\${esc_ins}" $BLOCKFILE
 
     else
 
+        # Merge into the existing alternation.
         # /site/TV-720:^(Old1|Old2)[._-]:2026-06-15
         # prefix = /site/TV-720
         # after  = Old1|Old2)[._-]:2026-06-15
@@ -341,7 +358,11 @@ else
 
         newline="${prefix}:^($2|$alt)${suffix}"
 
-        awk -v n="$lineno" -v repl="$newline" 'NR==n{print repl; next} {print}' $BLOCKFILE > $BLOCKFILE.tmp && mv $BLOCKFILE.tmp $BLOCKFILE
+        # Replace exactly line $lineno with the rebuilt line using setuid sed.
+        # `c` changes the addressed line; only backslash and ampersand need
+        # escaping in the replacement text.
+        esc_newline=$(printf '%s' "$newline" | $GLROOT/bin/sed 's/[\\&]/\\&/g')
+        $GLROOT/bin/sed -i "${lineno}c\\${esc_newline}" $BLOCKFILE
 
     fi
 
