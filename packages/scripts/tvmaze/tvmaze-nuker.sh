@@ -499,7 +499,7 @@ then
                     
                 fi
 
-                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$type TV shows are not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$SHOW_TYPE TV shows are not allowed"
                 [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
                 LogMsg "Nuked release: $RLS_NAME because its show type is $SHOW_TYPE which is not allowed."
                 exit 0
@@ -527,8 +527,6 @@ then
             if echo "$SHOW_TYPE" | grep -Eiq "$denied"
             then
 
-        		type="$(echo $SHOW_TYPE | grep -Eoi $denied)"
-
                 if [[ "$NUKE_ADAPTIVE" == "1" ]]
                 then
 
@@ -547,9 +545,9 @@ then
                     
                 fi
 
-                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$type type of TV show is not allowed"
+                $GLROOT/bin/nuker -r "$GLCONF" -N "$NUKE_USER" -n "$RLS_NAME" "$NUKE_MULTIPLER" "$SHOW_TYPE type of TV show is not allowed"
                 [[ -f "$GLROOT/bin/incomplete-list-nuker.sh" ]] && $GLROOT/bin/incomplete-list-nuker.sh store $RLS_NAME
-                LogMsg "Nuked release: $RLS_NAME because its show type is $type which is not allowed in section $section."
+                LogMsg "Nuked release: $RLS_NAME because its show type is $SHOW_TYPE which is not allowed in section $section."
                 exit 0
 
             fi

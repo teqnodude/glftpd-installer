@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.32
+VER=1.33
 #--[ Info ]-----------------------------------------------------
 #
 # Put in crontab:
@@ -82,17 +82,17 @@ fi
 store_nuke()
 {
 
-    nukedir="$(echo $1 | awk -F '/' '{print $NF}')"
-    nukepath="$(echo $1 | sed "s|$nukedir|$prefix$nukedir|")"
-    echo "$now:$nukepath" >> $cache_file
+    [[ -z "$1" ]] && return
+    echo "$now:${1%/*}/$prefix${1##*/}" >> "$cache_file"
 
 }
 
 remove_nuke()
 {
 
-    nukedir="$(echo $1 | awk -F '/' '{print $NF}')"
-    sed -i "/$nukedir/d" $cache_file
+    [[ -z "$1" ]] && return
+    local path="${1%/*}/$prefix${1##*/}"
+    sed -i "\|:$path\$|d" "$cache_file"
 
 }
 
@@ -174,8 +174,16 @@ then
                         then
 
                             echo "Removing NUKED release older than ${nukeage} minutes: $release_path"
-                            sed -i "\|$relname|d" "$cache_file"
-                            rm -rf "$glroot$release_path"
+                            if rm -rf "$glroot$release_path"
+                            then
+
+                                sed -i "\|$relname|d" "$cache_file"
+
+                            else
+
+                                echo "WARNING: failed to remove $release_path, keeping in cache" >&2
+
+                            fi
 
                         fi
 
