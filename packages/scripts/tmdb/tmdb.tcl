@@ -117,7 +117,7 @@ namespace eval ::ngBot::plugin::TMDB {
 	##################################################
 
 	## Version
-	set tmdb(version) "20260918"
+	set tmdb(version) "20261023"
 	## Useragent
 	set tmdb(useragent) "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.5) Gecko/2008120122 Firefox/3.0.5"
 
@@ -584,14 +584,17 @@ namespace eval ::ngBot::plugin::TMDB {
 		if {[dict exists $movie spoken_languages]} {
 			set spoken_langs [dict get $movie spoken_languages]
 			
-			# Check for invalid values first
-			if {$spoken_langs eq "null" || $spoken_langs eq "No Language" || [llength $spoken_langs] == 0} {
+			if {[llength $spoken_langs] == 0} {
 				set info(movie_language) "N/A"
 			} else {
 				set language_list {}
 				foreach lang_dict $spoken_langs {
 					if {[dict exists $lang_dict english_name]} {
-						lappend language_list [dict get $lang_dict english_name]
+						set lang_name [dict get $lang_dict english_name]
+						# Skip the placeholder value TMDB uses for no language
+						if {$lang_name ne "No Language" && $lang_name ne ""} {
+							lappend language_list $lang_name
+						}
 					}
 				}
 				

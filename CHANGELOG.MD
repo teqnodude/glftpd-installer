@@ -21,6 +21,7 @@
 - All relevant libraries wasn't copied to $glroot/lib
 - Adding and removing blocks with tvmaze-nuker.sh didn't work properly that ended up with a broken .block file
 - Removing blocks with tvmaze-nuker.sh still didn't work properly but have tested it now successfully with new code
+- tmdb.tcl and tmdb-rescan.sh incorrectly showed "No Language" as language instead of N/A because of some movies having the literal text as value for language
 
 ## 12.1 - 2026-01-27
 

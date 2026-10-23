@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.02
+VER=1.03
 #--[ Info ]-----------------------------------------------------
 # 
 # TMDB Movie Rescanner by Teqno
@@ -334,23 +334,26 @@ get_movie_details() {
 
     # Check if spoken_languages array exists in response
     if echo "$response" | grep -q '"spoken_languages":\['; then
-        # Extract all english_name fields from spoken_languages array
-        local languages=$(echo "$response" |
-        sed -n '/"spoken_languages":\[/,/\],/p' |  # Get the spoken_languages array block
-        grep '"english_name"' |                    # Find all english_name lines
-        sed 's/.*"english_name":"\([^"]*\)".*/\1/' |  # Extract the value
-        tr '\n' ',' |                              # Replace newlines with commas
-        sed 's/,$//'                               # Remove trailing comma
-        )
+        local languages=""
 
         # Alternative method using jq if available (much cleaner)
         if command -v jq >/dev/null 2>&1; then
-        languages=$(echo "$response" | jq -r '.spoken_languages[]?.english_name // empty' | tr '\n' ',' | sed 's/,$//')
+            # Skip TMDB's "No Language" placeholder (iso_639_1 "xx")
+            languages=$(echo "$response" | jq -r '.spoken_languages[]? | select(.iso_639_1 != "xx" and .english_name != "No Language") | .english_name // empty' | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
+        else
+            # Extract english_name from spoken_languages, skipping the "No Language" placeholder
+            languages=$(echo "$response" |
+            sed -n '/"spoken_languages":\[/,/\],/p' |         # Get the spoken_languages array block
+            grep '"english_name"' |                            # Find all english_name lines
+            sed 's/.*"english_name":"\([^"]*\)".*/\1/' |       # Extract the value
+            grep -vx 'No Language' |                           # Drop the placeholder
+            tr '\n' ',' |                                      # Replace newlines with commas
+            sed 's/,$//'                                       # Remove trailing comma
+            )
         fi
 
         if [[ -n "$languages" ]] && [[ "$languages" != "null" ]]; then
-        # Replace commas with comma+space for better readability
-        language=$(echo "$languages" | sed 's/,/, /g')
+            language=$(echo "$languages" | sed 's/,/, /g')
         fi
     fi
     

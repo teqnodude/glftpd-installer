@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.01
+VER=1.02
 #--[ Info ]-----------------------------------------------------
 #
 # TMDB by Teqno
@@ -63,7 +63,7 @@ for var in MOVIE_GENRES MOVIE_COUNTRY MOVIE_LANGUAGE MOVIE_STATUS \
 do
     if [[ "${!var}" == "null" || -z "${!var}" || "${!var}" == "N/A" ]]
     then
-        declare "$var=NA"
+        declare "$var=N/A"
     fi
 done
 
