@@ -629,15 +629,31 @@ version()
     PK2DIR="pzs-ng"
     PK3DIR="eggdrop"    
 
-    # Download and extract
-    if ! wget -q "$url/files/$latest" -P packages/ || ! tar xf "packages/$latest" -C packages/
-    then
-
-		echo "${red}Failed to download or extract glFTPd package${reset}"
-		exit 1
-
+    # Download
+    if ! wget -q "$url/files/$latest" -P packages/; then
+        echo "${red}Failed to download glFTPd package${reset}"
+        exit 1
     fi
-    
+
+    # Determine the actual top-level directory from the archive (upstream renames it)
+    first=$(tar -tzf "packages/$latest" | head -1)
+    if [[ "$first" != */* ]]; then
+        echo "${red}$latest has no top-level directory; aborting${reset}"
+        exit 1
+    fi
+    PK1DIR="${first%%/*}"
+
+    # Extract
+    if ! tar xf "packages/$latest" -C packages/; then
+        echo "${red}Failed to extract glFTPd package${reset}"
+        exit 1
+    fi
+
+    if [[ ! -d "packages/$PK1DIR" ]]; then
+        echo "${red}Expected packages/$PK1DIR after extraction, not found${reset}"
+        exit 1
+    fi
+        
     # Clone pzs-ng with error checking
     if ! git clone -q https://github.com/glftpd/pzs-ng "packages/$PK2DIR" >/dev/null 2>&1
     then
