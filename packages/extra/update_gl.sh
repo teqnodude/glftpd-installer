@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.2
+VER=1.21
 #--[ Info ]-----------------------------------------------------
 #
 # glFTPd Upgrader                                               
@@ -137,24 +137,46 @@ fi
 
 echo "${green}download complete → $pkg_file${reset}"
 
-# extract and copy new binaries
+# extract
 tar -xf "$pkg_file"
 
-for f in glftpd-LNX*/bin/*
-do
+# determine the actual top-level directory (upstream may rename it)
+first=$(tar -tzf "$pkg_file" | head -1)
+PK1DIR="${first%%/*}"
+PK1DIR="${PK1DIR#./}"
+if [[ -z "$PK1DIR" || "$PK1DIR" == "." || ! -d "$PK1DIR" ]]
+then
+    echo "${red}could not determine top-level directory in $pkg_file${reset}"
+    exit 1
+fi
 
+# sanity check: it must look like a glftpd tree
+if [[ ! -d "$PK1DIR/bin" ]]
+then
+    echo "${red}$PK1DIR/bin not found after extraction; aborting${reset}"
+    exit 1
+fi
+
+# copy new binaries
+shopt -s nullglob
+bins=("$PK1DIR"/bin/*)
+shopt -u nullglob
+if (( ${#bins[@]} == 0 ))
+then
+    echo "${red}no binaries found in $PK1DIR/bin; aborting${reset}"
+    exit 1
+fi
+for f in "${bins[@]}"
+do
     bn=$(basename "$f")
     if [[ "$bn" != "dated.sh" ]]
     then
-
         cp -rf "$f" "$glroot/bin"
-
     fi
-
 done
 
 # copy docs
-cp -r glftpd-LNX*/docs "$glroot"/ 2>/dev/null
+cp -r "$PK1DIR"/docs "$glroot"/ 2>/dev/null
 
 # patch sources safely
 if [[ -f "$glroot/bin/sources/olddirclean2.c" ]]
@@ -173,7 +195,7 @@ then
 fi
 
 # clean extracted dirs
-rm -rf glftpd-LNX* 2>/dev/null
+rm -rf "$PK1DIR"
 
 # recompile
 if [[ -d "$glroot/bin/sources" ]]

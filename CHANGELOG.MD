@@ -23,6 +23,7 @@
 - Removing blocks with tvmaze-nuker.sh still didn't work properly but have tested it now successfully with new code
 - tmdb.tcl and tmdb-rescan.sh incorrectly showed "No Language" as language instead of N/A because of some movies having the literal text as value for language
 - Installer didn't work with glFTPd version 2.17
+- update_gl didn't work with glFTPd version 2.17
 
 ## 12.1 - 2026-01-27
 
