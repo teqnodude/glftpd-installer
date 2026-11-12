@@ -24,6 +24,7 @@
 - tmdb.tcl and tmdb-rescan.sh incorrectly showed "No Language" as language instead of N/A because of some movies having the literal text as value for language
 - Installer didn't work with glFTPd version 2.17
 - update_gl didn't work with glFTPd version 2.17
+- theme file wrongly used KB/MB/GB when technically it should have used KiB/MiB/GiB
 
 ## 12.1 - 2026-01-27
 
