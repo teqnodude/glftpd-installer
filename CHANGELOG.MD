@@ -12,6 +12,7 @@
 - Added .dms and .lha to allowed file types in zsconfig.h and tur-precheck.sh
 - Removed legacy : before IRC password in eggdrop.conf
 - Optimized code and reduced it with almost 30%
+- Added the restriction for uploading rar files into /sample directories in tur-precheck.sh
 
 ### Fixes
 

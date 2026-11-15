@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=1.6
+VER=1.61
 #--[ Settings ]-------------------------------------------------
 
 VERIFY_RAR_WITH_SFV="FALSE"
@@ -18,6 +18,7 @@ NODOUBLENFO="TRUE"
 NOFTPRUSHNFOS="TRUE"
 DENY_SFV_NFO_IN_SAMPLE_DIRS="TRUE"
 DENY_IMAGE_IN_SAMPLE_DIRS="TRUE"
+DENY_RAR_IN_SAMPLE_DIRS="TRUE"
 
 #DENY_WHEN_NO_SFV="\.r[a0-9][r0-9]$ \.0[0-9][0-9]$ \.mp[2|3]$ \.flac$"
 DENY_WHEN_NO_SFV=""
@@ -36,6 +37,7 @@ ERROR6="This nfo file format is not allowed ($1)"
 ERROR7="You can't upload a .sfv or .nfo file into a Sample, Covers or Proof dir."
 ERROR8="You must upload the .sfv file first."
 ERROR9="You can't upload a .jpg into a Sample dir."
+ERROR10="You can't upload a .rar/.rXX file into a Sample dir."
 
 #--[ Script Start ]---------------------------------------------
 
@@ -277,6 +279,25 @@ then
         then
 
             printf '%s\n\n' "$ERROR9"
+            exit 2
+
+        fi
+
+    fi
+
+fi
+
+# DENY rar files in /sample
+if [[ "${DENY_RAR_IN_SAMPLE_DIRS:-}" == "TRUE" ]]
+then
+
+    if grep -Eiq '/sample$' <<< "$PWD"
+    then
+
+        if grep -Eiq '\.[rR0-9][aA0-9][rR0-9]$|\.rar$' <<< "$1"
+        then
+
+            printf '%s\n\n' "$ERROR10"
             exit 2
 
         fi
