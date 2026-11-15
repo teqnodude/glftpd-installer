@@ -9,7 +9,7 @@
 - Added the option to section-traffic to check for the last upload for a specific section
 - tmdb now renames the Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
 - tmdb-rescan also updated where it renames Science Fiction genre set by TMDB to Sci-Fi when creating the tag file and .imdb for each movie
-- Added .dms and .lha to allowed file types in zsconfig.h and tur-precheck.sh
+- Added .dms .lha and .lzx to allowed file types in zsconfig.h and tur-precheck.sh
 - Removed legacy : before IRC password in eggdrop.conf
 - Optimized code and reduced it with almost 30%
 - Added the restriction for uploading rar files into /sample directories in tur-precheck.sh
