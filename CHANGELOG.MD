@@ -13,6 +13,7 @@
 - Removed legacy : before IRC password in eggdrop.conf
 - Optimized code and reduced it with almost 30%
 - Added the restriction for uploading rar files into /sample directories in tur-precheck.sh
+- Optimized section-traffic.sh
 
 ### Fixes
 
