@@ -90,7 +90,7 @@ tmp=/glftpd/tmp
 
 #--[ Script Start ]---------------------------------------------
 
-SQL="$SQLBIN --ssl=0 -P 3307 -u $SQLUSER -p"$SQLPASS" -h $SQLHOST -D $SQLDB -N -s -e"
+SQL="$SQLBIN --ssl=0 -P 3307 -u $SQLUSER -p$SQLPASS -h $SQLHOST -D $SQLDB -N -s -e"
 
 DEBUG="FALSE"
 
