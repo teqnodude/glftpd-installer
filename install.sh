@@ -1,5 +1,5 @@
 #!/bin/bash
-VER=12.11
+VER=12.2
 
 # Set debug mode (0=off, 1=on)
 DEBUG=0
@@ -571,68 +571,101 @@ version()
 
     print_status_start "Downloading all required script packages"
 
-    url=""
-
-    for mirror in "https://glftpd.io" "https://mirror.glftpd.nl.eu.org"
-    do
-
-		if package_name=$(curl -sf --connect-timeout 10 "$mirror" | \
-	   		grep -o "glftpd-LNX-[^BETA]*\.tgz" | head -1) && \
-	 		[[ "$package_name" == glftpd-LNX* ]]
-
-		then
-
-		    url="$mirror"
-	    	break
-
-		fi
-
-    done
-
-    if [[ -z "$url" ]]
+    if ! command -v jq >/dev/null 2>&1
     then
 
-		echo
-		echo
-		echo "${red}No available website for downloading glFTPd, aborting installation.${reset}"
-		exit 1
+        echo "${red}'jq' is required but not installed.${reset}"
+        echo "Please install it (e.g. 'apt install jq') and re-run the installer."
+        exit 1
 
     fi
 
-    latest=$(curl -sf "$url" | grep -o "glftpd-LNX-[^BETA]*\.tgz" | head -1)
-    architecture=$(uname -m)
+    api=https://api.github.com/repos/glftpd/glftpd/releases
 
+    json=$(curl -fsSL -H 'Accept: application/vnd.github+json' "$api" || true)
+    if [[ -z "$json" ]]
+    then
+
+        echo "${red}No available release data from GitHub, aborting installation.${reset}"
+        exit 1
+
+    fi
+
+    # Newest non-preview release (skip drafts, prereleases, and dev/preview titles)
+    release_tag=$(printf "%s" "$json" | jq -r '
+        .[]
+        | select(.draft == false and .prerelease == false)
+        | select((.tag_name + " " + .name) | test("dev|preview"; "i") | not)
+        | .tag_name
+    ' | head -1)
+
+    if [[ -z "$release_tag" || "$release_tag" == "null" ]]
+    then
+
+        echo "${red}Could not determine the latest non-preview release, aborting.${reset}"
+        exit 1
+
+    fi
+
+    architecture=$(uname -m)
     case $architecture in
 
-		i686|i386)
+        i686|i386)
 
-	    	version="32"
-		    latest=${latest/x64/x86}
-		    ;;
+            echo "${red}No 32-bit glFTPd binaries are published on GitHub (only linux-x64 / fbsd-x64); aborting.${reset}"
+            exit 1
+            ;;
 
-		x86_64|amd64)
+        x86_64|amd64)
 
-		    version="64"
-	    	;;
+            asset_pattern="-linux-x64-binaries\\.tgz$"
+            version="64"
+            ;;
 
-		*)
+        *)
 
-		    version="$architecture"
-	    	echo "${red}Unsupported architecture: $architecture${reset}"
-		    exit 1
-		    ;;
+            echo "${red}Unsupported architecture: $architecture${reset}"
+            exit 1
+            ;;
 
     esac
-    
+
+    latest=$(printf "%s" "$json" | jq -r --arg tag "$release_tag" --arg pat "$asset_pattern" '
+        .[]
+        | select(.tag_name == $tag)
+        | .assets[]
+        | select(.name | test($pat; "i"))
+        | .name
+    ' | head -1)
+
+    asset_url=$(printf "%s" "$json" | jq -r --arg tag "$release_tag" --arg pat "$asset_pattern" '
+        .[]
+        | select(.tag_name == $tag)
+        | .assets[]
+        | select(.name | test($pat; "i"))
+        | .browser_download_url
+    ' | head -1)
+
+    if [[ -z "$latest" || "$latest" == "null" || -z "$asset_url" || "$asset_url" == "null" ]]
+    then
+
+        echo "${red}No Linux x64 tarball asset found for release $release_tag, aborting.${reset}"
+        exit 1
+
+    fi
+
     PK1="$latest"
-    PK1DIR="${latest%.tgz}"
+    PK1DIR=""
     PK2DIR="pzs-ng"
-    PK3DIR="eggdrop"    
+    PK3DIR="eggdrop"
 
     # Download
-    if ! wget -q "$url/files/$latest" -P packages/; then
+    if ! curl -fSLsS "$asset_url" -o "packages/$latest"
+    then
+
         echo "${red}Failed to download glFTPd package${reset}"
         exit 1
+
     fi
 
     # Determine the actual top-level directory from the archive (upstream renames it)
@@ -653,7 +686,7 @@ version()
         echo "${red}Expected packages/$PK1DIR after extraction, not found${reset}"
         exit 1
     fi
-        
+
     # Clone pzs-ng with error checking
     if ! git clone -q https://github.com/glftpd/pzs-ng "packages/$PK2DIR" >/dev/null 2>&1
     then
@@ -668,9 +701,9 @@ version()
     then
 
         echo "${red}Failed to clone eggdrop repository${reset}"
-		exit 1
-	
-    fi    
+        exit 1
+
+    fi
 
     # Check and create group/user while generating SQL pass
     BOTU="sitebot"
@@ -678,9 +711,9 @@ version()
 
     [[ $(getent group glftpd) ]] || groupadd glftpd -g 199
     [[ $(getent passwd sitebot) ]] || useradd -d "$glroot/sitebot" -m -g glftpd -s /bin/bash "$BOTU" && chfn -f 0 -r 0 -w 0 -h 0 "$BOTU"
-    
+
     # cleanup
-    rm "packages/$latest"    
+    rm "packages/$latest"
     mkdir -p packages/source
     cp -R packages/scripts packages/source/
     cp -f "$rootdir/packages/core/cleanup.sh" "$rootdir"

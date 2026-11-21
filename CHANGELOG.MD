@@ -1,4 +1,4 @@
-## 12.x - 
+## 12.2 - 2026-11-21
 
 ### Updated
 
@@ -15,6 +15,7 @@
 - Added the restriction for uploading rar files into /sample directories in tur-precheck.sh
 - Optimized section-traffic.sh
 - Updated update_gl.sh to pull the latest release from github instead of the official website
+- Updated install.sh to pull the latest release from github instead of the official website
 
 ### Fixes
 
