@@ -14,6 +14,7 @@
 - Optimized code and reduced it with almost 30%
 - Added the restriction for uploading rar files into /sample directories in tur-precheck.sh
 - Optimized section-traffic.sh
+- Updated update_gl.sh to pull the latest release from github instead of the official website
 
 ### Fixes
 

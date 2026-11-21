@@ -1,10 +1,11 @@
 #!/bin/bash
-VER=1.21
+VER=1.22
 #--[ Info ]-----------------------------------------------------
 #
-# glFTPd Upgrader                                               
-# - Fetch latest non-BETA build from primary/mirror             
-# - Copy binaries + docs, patch sources, recompile, fix perms   
+# glFTPd Upgrader
+# - Fetch latest non-preview release from GitHub releases
+# - Copy binaries + docs, patch sources, recompile, fix perms
+# - Clean up stale extracted glftpd-* dirs under $srcdir
 #
 #--[ settings ]-------------------------------------------------
 
@@ -30,48 +31,101 @@ then
 
 fi
 
-curversion=$("$glroot/bin/glftpd" 2>/dev/null | grep -Eo 'glFTPd[[:space:]]+[0-9][^ ]*' | awk '{print $2}')
-
-primary=https://glftpd.io
-mirror=https://mirror.glftpd.nl.eu.org
-
-html=$(curl -fsSL "$primary" || true)
-if [[ -n "$html" ]]
+if ! command -v jq >/dev/null 2>&1
 then
 
-    base="$primary"
-
-else
-
-    html=$(curl -fsSL "$mirror" || true)
-    base="$mirror"
-
-fi
-
-if [[ -z "$html" ]]
-then
-
-    echo
-    echo "${red}no available website for downloading glFTPd, aborting upgrade.${reset}"
+    echo "${red}'jq' is required but not installed.${reset}"
+    echo "Please install it (e.g. 'apt install jq' or 'pkg install jq') and re-run this script."
     exit 1
 
 fi
 
-# determine latest non-BETA package + version
-latest=$(printf "%s\n" "$html" | grep -Eo 'glftpd-LNX[^"]+\.tgz' | grep -v BETA | head -1)
-newversion=$(printf "%s\n" "$latest" | sed -E 's/^glftpd-LNX-([0-9.]+).*$/\1/')
+curversion=$("$glroot/bin/glftpd" 2>/dev/null | grep -Eo 'glFTPd[[:space:]]+[0-9][^ ]*' | awk '{print $2}')
 
-if [[ -z "$newversion" && -n "$latest" ]]
+api=https://api.github.com/repos/glftpd/glftpd/releases
+
+# Fetch releases (JSON). Unauthenticated: 60 req/h per IP.
+json=$(curl -fsSL -H 'Accept: application/vnd.github+json' "$api" || true)
+if [[ -z "$json" ]]
 then
 
-    newversion=$(printf "%s\n" "$latest" | sed -E 's/^glftpd-LNX-([0-9.]+)-.*/\1/')
+    echo
+    echo "${red}no available release data from GitHub, aborting upgrade.${reset}"
+    exit 1
 
 fi
 
-if [[ -z "$latest" ]]
+# Pick the newest non-preview release.
+#  - skip drafts and prereleases (dev/preview builds are flagged prerelease:true)
+#  - belt-and-suspenders: also skip any tag/name containing dev/preview
+# Releases come back newest-first, so the first match wins.
+release_tag=$(printf "%s" "$json" | jq -r '
+    .[]
+    | select(.draft == false and .prerelease == false)
+    | select((.tag_name + " " + .name) | test("dev|preview"; "i") | not)
+    | .tag_name
+' | head -1)
+
+if [[ -z "$release_tag" || "$release_tag" == "null" ]]
 then
 
-    echo "${red}could not determine the latest package name, aborting.${reset}"
+    echo "${red}could not determine the latest non-preview release, aborting.${reset}"
+    exit 1
+
+fi
+
+# Stable tag is bare (e.g. "2.17a"), so use it verbatim for comparison.
+newversion="$release_tag"
+
+if [[ -z "$newversion" ]]
+then
+
+    echo "${red}could not determine version from tag '$release_tag', aborting.${reset}"
+    exit 1
+
+fi
+
+# Select the architecture-specific tarball asset.
+# Actual asset names look like:
+#   glftpd-2.17a-2.17a-df4a994-linux-x64-binaries.tgz
+#   glftpd-2.17a-2.17a-df4a994-fbsd-x64-binaries.tgz
+arch=$(uname -m)
+case "$arch" in
+
+x86_64)
+
+    asset_pattern="-linux-x64-binaries\\.tgz$"
+
+    ;;
+
+i386|i486|i586|i686)
+
+    echo "${red}no 32-bit binaries are published on GitHub (only linux-x64 / fbsd-x64); aborting.${reset}"
+    exit 1
+
+    ;;
+
+*)
+
+    echo "${red}unsupported architecture: $arch${reset}"
+    exit 1
+
+    ;;
+
+esac
+
+asset_url=$(printf "%s" "$json" | jq -r --arg tag "$release_tag" --arg pat "$asset_pattern" '
+    .[]
+    | select(.tag_name == $tag)
+    | .assets[]
+    | select(.name | test($pat; "i"))
+    | .browser_download_url
+' | head -1)
+
+if [[ -z "$asset_url" || "$asset_url" == "null" ]]
+then
+
+    echo "${red}no Linux x64 tarball asset found for release $release_tag, aborting.${reset}"
     exit 1
 
 fi
@@ -79,7 +133,7 @@ fi
 if [[ -n "$curversion" && -n "$newversion" && "$curversion" = "$newversion" ]]
 then
 
-    echo "${green}you already have the latest non-BETA version ($curversion).${reset}"
+    echo "${green}you already have the latest non-preview version ($curversion).${reset}"
     exit 0
 
 fi
@@ -93,44 +147,50 @@ then
 fi
 cd "$srcdir" || exit 1
 
-# arch mapping and package name tweak
-arch=$(uname -m)
-case "$arch" in
-i386|i486|i586|i686)
+# Clean up stale extracted glftpd-* dirs left over from previous runs.
+# Only directories (not the .tgz packages) are removed, and only ones
+# matching the glftpd- prefix; anything else is left untouched.
+shopt -s nullglob
+stale_dirs=("$srcdir"/glftpd-*/)
+shopt -u nullglob
+if (( ${#stale_dirs[@]} > 0 ))
+then
 
-    latest="${latest/x64/x86}"
+    echo "${yellow}cleaning up stale extracted dirs:${reset}"
+    for d in "${stale_dirs[@]}"
+    do
+        echo "  removing $d"
+        rm -rf "$d"
+    done
 
-    ;;
+fi
 
-x86_64)
-
-    :
-
-    ;;
-
-*)
-
-    echo "${red}unsupported architecture: $arch${reset}"
-    exit 1
-
-    ;;
-
-esac
-
-pkg_url="$base/files/$latest"
+latest=$(basename "$asset_url")
 pkg_file="$srcdir/$latest"
-changelog="$base/files/docs/UPGRADING"
+
+# UPGRADING notes are published as the UPGRADING.txt asset.
+changelog=$(printf "%s" "$json" | jq -r --arg tag "$release_tag" '
+    .[]
+    | select(.tag_name == $tag)
+    | .assets[]
+    | select(.name == "UPGRADING.txt")
+    | .browser_download_url
+' | head -1)
+if [[ -z "$changelog" || "$changelog" == "null" ]]
+then
+    changelog="https://raw.githubusercontent.com/glftpd/glftpd/$release_tag/UPGRADING.txt"
+fi
 
 echo "${cyan}current version:${reset}   ${bold}${curversion:-unknown}${reset}"
 echo "${cyan}available version:${reset} ${bold}${newversion:-unknown}${reset}"
 echo
 echo "${yellow}downloading latest package:${reset} $latest"
-echo "from: $pkg_url"
+echo "from: $asset_url"
 
-if ! curl -fSLsS "$pkg_url" -o "$pkg_file"
+if ! curl -fSLsS "$asset_url" -o "$pkg_file"
 then
 
-    echo "${red}failed to download $pkg_url${reset}"
+    echo "${red}failed to download $asset_url${reset}"
     exit 1
 
 fi
@@ -175,7 +235,7 @@ do
     fi
 done
 
-# copy docs
+# copy docs if the tarball ships them
 cp -r "$PK1DIR"/docs "$glroot"/ 2>/dev/null
 
 # patch sources safely
@@ -194,7 +254,7 @@ then
 
 fi
 
-# clean extracted dirs
+# clean extracted dirs (the one we just used)
 rm -rf "$PK1DIR"
 
 # recompile
